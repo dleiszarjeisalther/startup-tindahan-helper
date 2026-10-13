@@ -39,3 +39,31 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## Offline-First Store & Realtime UI Architecture
+
+This application operates offline-first on a single device. All user interactions (scan, add to cart, quantity change, clear cart, complete sale, adjust stock, void/return) must update visible screens, tab badges, and totals immediately without navigation or pull-to-refresh.
+
+### 1. Single Immutable Snapshot & `useSyncExternalStore`
+- Maintain a single store instance for the application session.
+- Expose an immutable `StoreSnapshot` containing revision, cart summary, products, transactions, customers, and settings.
+- UI hooks (`useTindahanStore`) must subscribe via `useSyncExternalStore(subscribe, getSnapshot)`:
+  - Return the exact same snapshot object reference until state changes.
+  - Publish a new immutable snapshot object before notifying subscribers.
+  - Snapshot reads must be **100% pure**: zero database queries, zero hydration, and zero mutations during rendering.
+- Remove duplicate forced-render triggers (`setTick`) and redundant listener chains.
+
+### 2. Never Hydrate on Screen Focus
+- Hydrate store state from SQLite **once at startup (cold boot)**.
+- **NEVER** trigger automatic database re-hydration or cart resetting inside `useFocusEffect` or tab navigation callbacks. Screen transitions must read the live in-memory snapshot synchronously.
+- Retain explicit recovery reloads through dedicated user-initiated recovery actions only.
+
+### 3. Atomic SQLite Commits
+- Stage state mutations in memory, persist them durably to SQLite, then publish the new snapshot.
+- Execute multi-table mutations (sales receipt, stock deduction, monthly history, Utang balance, cart clearing) within **one atomic SQLite transaction** (`db.withTransactionSync`).
+- **Never swallow SQLite write failures**: If a write fails, roll back, retain the previous committed state, and present a clear, retryable error to the user. Never show a false success toast.
+- Enforce service-level completion locks to prevent double-tap or overlapping completion attempts.
+
+### 4. Direct UI-to-Snapshot Binding
+- Cart badges, floating tab counters, checkout line items, subtotals, and CTA enable/disable states must derive directly from the snapshot.
+- Clearing or completing a sale must immediately publish an empty cart state, instantly hiding badges and resetting forms across all active views.
