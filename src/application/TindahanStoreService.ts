@@ -146,24 +146,19 @@ export class TindahanStoreService {
         repo.hydrateFromSqlite();
       }
 
-      // 1. Hydrate Cart (Clean & validate against existing products)
-      const cartRows = db.getAllSync<{ product_id: string; quantity: number }>(
-        'SELECT * FROM cart_items'
-      );
-      const validProductIds = new Set(this.getProductsSnapshot().map((p) => p.id));
-      this.cartMap = new Map();
-      let hasOrphanedRows = false;
-      for (const r of cartRows) {
-        if (r.quantity > 0) {
-          if (validProductIds.size === 0 || validProductIds.has(r.product_id)) {
-            this.cartMap.set(r.product_id, r.quantity);
-          } else {
-            hasOrphanedRows = true;
+      // 1. Hydrate Cart (Only populate from SQLite on initial cold boot if memory map is empty)
+      if (this.cartMap.size === 0) {
+        const cartRows = db.getAllSync<{ product_id: string; quantity: number }>(
+          'SELECT * FROM cart_items'
+        );
+        const validProductIds = new Set(this.getProductsSnapshot().map((p) => p.id));
+        for (const r of cartRows) {
+          if (r.quantity > 0) {
+            if (validProductIds.size === 0 || validProductIds.has(r.product_id)) {
+              this.cartMap.set(r.product_id, r.quantity);
+            }
           }
         }
-      }
-      if (hasOrphanedRows && validProductIds.size > 0) {
-        this.persistCartToSqlite();
       }
 
       // 2. Hydrate Sales Transactions (No hardcoded seed transactions)
@@ -305,7 +300,7 @@ export class TindahanStoreService {
     if (!db) return;
     try {
       db.withTransactionSync(() => {
-        db.execSync('DELETE FROM cart_items;');
+        db.runSync('DELETE FROM cart_items');
         for (const [productId, qty] of this.cartMap.entries()) {
           if (qty > 0) {
             db.runSync('INSERT INTO cart_items (product_id, quantity) VALUES (?, ?)', [
@@ -480,13 +475,39 @@ export class TindahanStoreService {
   }
 
   public getCartItems(): CartItemDTO[] {
-    const products = this.getProductsSnapshot();
+    let products = this.getProductsSnapshot();
+    if (products.length === 0 && this.cartMap.size > 0) {
+      const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
+      if (typeof repo.hydrateFromSqlite === 'function') {
+        repo.hydrateFromSqlite();
+      }
+      products = this.getProductsSnapshot();
+    }
+
     const items: CartItemDTO[] = [];
+    const db = SqliteDatabase.getInstance().rawDb;
+
     for (const [productId, qty] of this.cartMap.entries()) {
       if (qty <= 0) {
         continue;
       }
-      const p = products.find((prod) => prod.id === productId);
+      let p = products.find((prod) => prod.id === productId);
+      if (!p && db) {
+        try {
+          const row = db.getFirstSync<{
+            id: string;
+            name: string;
+            default_price_php: number | null;
+          }>('SELECT id, name, default_price_php FROM products WHERE id = ?', [productId]);
+          if (row) {
+            p = {
+              id: row.id,
+              name: row.name,
+              defaultPricePhp: Number(row.default_price_php) || 1.0,
+            } as ProductDTO;
+          }
+        } catch {}
+      }
       if (!p) {
         continue;
       }
@@ -593,8 +614,50 @@ export class TindahanStoreService {
     customerName?: string;
     chargeShortfallToUtang?: boolean;
     isOneTimeBulkOrder?: boolean;
+    items?: CartItemDTO[];
   }): Promise<SaleTransactionRecord> {
-    const summary = this.getCartSummary();
+    // Failsafe 1: If cartMap was reset in memory, restore from passed items
+    if (this.cartMap.size === 0 && options.items && options.items.length > 0) {
+      for (const it of options.items) {
+        if (it.quantity > 0) {
+          this.cartMap.set(it.productId, it.quantity);
+        }
+      }
+    }
+
+    let summary = this.getCartSummary();
+
+    // Failsafe 2: If products were not hydrated, rehydrate from SQLite
+    if (summary.items.length === 0 && this.cartMap.size > 0) {
+      const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
+      if (typeof repo.hydrateFromSqlite === 'function') {
+        repo.hydrateFromSqlite();
+      }
+      summary = this.getCartSummary();
+    }
+
+    // Failsafe 3: If still empty, use passed items from active screen
+    if (summary.items.length === 0 && options.items && options.items.length > 0) {
+      const totalCount = options.items.reduce((sum, i) => sum + i.quantity, 0);
+      const subtotalPhp = options.items.reduce((sum, i) => sum + i.lineTotalPhp, 0);
+      const netTotalPhp = Math.max(0, subtotalPhp - this.discountPhp - this.exchangeCreditPhp);
+      summary = {
+        items: options.items,
+        totalCount,
+        subtotalPhp,
+        formattedSubtotal: Money.fromPhp(subtotalPhp).format(),
+        discountPhp: this.discountPhp,
+        formattedDiscount: Money.fromPhp(this.discountPhp).format(),
+        exchangeCreditPhp: this.exchangeCreditPhp,
+        formattedExchangeCredit: Money.fromPhp(this.exchangeCreditPhp).format(),
+        exchangeSourceReceiptId: this.exchangeSourceReceiptId,
+        totalPhp: netTotalPhp,
+        formattedTotal: Money.fromPhp(netTotalPhp).format(),
+        hasParkedCart: false,
+        lastRemovedItem: null,
+      };
+    }
+
     if (summary.items.length === 0) {
       throw new Error('Cannot complete sale with an empty cart.');
     }

@@ -91,6 +91,11 @@ export default function CheckoutNewSaleScreen() {
     }
   }, [cartSummary.discountPhp, discountInputText]);
 
+  const displayPaymentErrorMsg =
+    cartSummary.totalCount > 0 && paymentErrorMsg?.includes('empty cart')
+      ? null
+      : paymentErrorMsg;
+
   const hasUserTypedPayment = paymentInputText.trim() !== '';
   const parsedPaymentPhp = parseFloat(paymentInputText.replace(/[^0-9.]/g, '')) || 0;
 
@@ -154,6 +159,7 @@ export default function CheckoutNewSaleScreen() {
             : undefined,
         chargeShortfallToUtang,
         isOneTimeBulkOrder: false,
+        items: cartSummary.items,
       });
 
       setCompletedTx(tx);
@@ -161,6 +167,7 @@ export default function CheckoutNewSaleScreen() {
       setDiscountInputText('0.00');
       setGcashRefInput('');
       setChargeShortfallToUtang(false);
+      setPaymentErrorMsg(null);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       setPaymentErrorMsg(err instanceof Error ? err.message : 'Payment error');
@@ -599,9 +606,9 @@ export default function CheckoutNewSaleScreen() {
 
         </View>
 
-        {paymentErrorMsg ? (
+        {displayPaymentErrorMsg ? (
           <View style={styles.errorBox}>
-            <Text style={styles.errorBoxText}>{paymentErrorMsg}</Text>
+            <Text style={styles.errorBoxText}>{displayPaymentErrorMsg}</Text>
           </View>
         ) : null}
 
