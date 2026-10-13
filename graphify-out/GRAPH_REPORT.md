@@ -1,16 +1,16 @@
 # Graph Report - startupTindahanHelper  (2026-10-13)
 
 ## Corpus Check
-- 54 files · ~173,744 words
+- 56 files · ~175,750 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 494 nodes · 768 edges · 55 communities (20 shown, 34 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.8)
+- 517 nodes · 825 edges · 56 communities (19 shown, 36 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 21 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `33e690b5`
+- Built from commit: `6ec44c4f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -23,7 +23,6 @@
 - package.json
 - SeasonalForecastEngine.ts
 - include
-- TindahanStoreService.ts
 - reset-project.js
 - dependencies
 - animated-icon.tsx
@@ -36,7 +35,7 @@
 - Part 2: Common POS System Problems & Comprehensive Solutions
 - expo-glass-effect
 - expo-haptics
-- expo-image
+- TindahanStoreService.ts
 - expo-linking
 - expo-router
 - expo-splash-screen
@@ -52,7 +51,7 @@
 - react-native-reanimated
 - react-native-safe-area-context
 - react-native-screens
-- react-native-web
+- expo-audio
 - react-native-worklets
 - 3. Applying the 4 Pillars of OOP to Juan's Store POS (TypeScript Implementation)
 - Juan's Store POS 7-Screen Mobile UI Prototype
@@ -66,46 +65,48 @@
 - Welcome to your Expo app 👋
 - AGENTS.md
 - expo-camera
-- expo-image-picker
+- expo-file-system
 - react-dom
-- ProductOnboardingService
+- @expo/ui
+- @expo/vector-icons
+- expo-web-browser
 
 ## God Nodes (most connected - your core abstractions)
-1. `TindahanStoreService` - 41 edges
+1. `TindahanStoreService` - 45 edges
 2. `Product` - 30 edges
-3. `Barcode` - 19 edges
-4. `useTindahanStore()` - 19 edges
-5. `Money` - 16 edges
-6. `InMemoryProductRepository` - 14 edges
-7. `expo` - 13 edges
-8. `expo-router` - 12 edges
-9. `IProductRepository` - 12 edges
-10. `CheckoutNewSaleScreen()` - 9 edges
+3. `useTindahanStore()` - 21 edges
+4. `Barcode` - 19 edges
+5. `getTranslations()` - 17 edges
+6. `Money` - 16 edges
+7. `InMemoryProductRepository` - 14 edges
+8. `expo` - 13 edges
+9. `expo-router` - 12 edges
+10. `IProductRepository` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `CheckoutNewSaleScreen()` --calls--> `useIdempotentSubmit()`  [EXTRACTED]
   src/app/checkout.tsx → src/presentation/hooks/useIdempotentSubmit.ts
 - `CheckoutNewSaleScreen()` --calls--> `useTindahanStore()`  [EXTRACTED]
   src/app/checkout.tsx → src/presentation/hooks/useTindahanStore.ts
+- `CheckoutNewSaleScreen()` --calls--> `getTranslations()`  [EXTRACTED]
+  src/app/checkout.tsx → src/presentation/localization/i18n.ts
 - `SeasonalForecastScreen()` --calls--> `useTindahanStore()`  [EXTRACTED]
   src/app/explore.tsx → src/presentation/hooks/useTindahanStore.ts
-- `PosScanProductScreen()` --calls--> `useTindahanStore()`  [EXTRACTED]
-  src/app/index.tsx → src/presentation/hooks/useTindahanStore.ts
-- `MenuProfileScreen()` --calls--> `useTindahanStore()`  [EXTRACTED]
-  src/app/more.tsx → src/presentation/hooks/useTindahanStore.ts
+- `SalesHistoryScreen()` --calls--> `useTindahanStore()`  [EXTRACTED]
+  src/app/sales.tsx → src/presentation/hooks/useTindahanStore.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (55 total, 34 thin omitted)
+## Communities (56 total, 36 thin omitted)
 
 ### Community 0 - "Product"
-Cohesion: 0.07
-Nodes (12): Product, ProductDTO, ProductVisual, SellingUnitTier, StockStatus, IProductRepository, Barcode, BarcodeSource (+4 more)
+Cohesion: 0.06
+Nodes (4): Product, Barcode, Money, InMemoryProductRepository
 
 ### Community 1 - "useTindahanStore"
 Cohesion: 0.08
-Nodes (34): expo-router, SeasonalForecastScreen(), styles, PosScanProductScreen(), styles, InventoryManagementScreen(), PRODUCT_CATEGORIES, STOCK_FILTERS (+26 more)
+Nodes (42): expo-router, styles, SeasonalForecastScreen(), styles, PosScanProductScreen(), styles, InventoryManagementScreen(), PRODUCT_CATEGORIES (+34 more)
 
 ### Community 2 - "TindahanStoreService"
 Cohesion: 0.11
@@ -116,7 +117,7 @@ Cohesion: 0.12
 Nodes (20): styles, ExternalLink(), Props, HintRowProps, styles, styles, ThemedText(), ThemedTextProps (+12 more)
 
 ### Community 4 - "expo"
-Cohesion: 0.06
+Cohesion: 0.07
 Nodes (26): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, predictiveBackGestureEnabled, reactCompiler, typedRoutes (+18 more)
 
 ### Community 5 - "package.json"
@@ -131,17 +132,13 @@ Nodes (8): BaseSeasonalStrategy, ColdStartCategoryStrategy, ForecastConfidenceTi
 Cohesion: 0.15
 Nodes (12): ./assets/*, expo-env.d.ts, expo/tsconfig.base, .expo/types/**/*.ts, **/*.ts, **/*.tsx, compilerOptions, paths (+4 more)
 
-### Community 8 - "TindahanStoreService.ts"
-Cohesion: 0.09
-Nodes (16): styles, PERIODS, styles, AddProductCommand, AddProductResult, CartItemDTO, Listener, PaymentTenderType (+8 more)
-
 ### Community 9 - "reset-project.js"
 Cohesion: 0.22
 Nodes (7): exampleDirPath, fs, oldDirs, path, readline, rl, root
 
 ### Community 10 - "dependencies"
 Cohesion: 0.22
-Nodes (9): expo, expo-file-system, @expo/ui, expo-web-browser, dependencies, expo, expo-file-system, @expo/ui (+1 more)
+Nodes (9): expo, expo-image, expo-image-picker, dependencies, expo, expo-image, expo-image-picker, react-native-web (+1 more)
 
 ### Community 11 - "animated-icon.tsx"
 Cohesion: 0.29
@@ -159,6 +156,10 @@ Nodes (23): 1. How Seasonal Product Forecasting Works, 2. Mathematical Model & F
 Cohesion: 0.10
 Nodes (20): Complete Solution Architecture (Single-User Owner Model), Part 2: Common POS System Problems & Comprehensive Solutions, Problem 1: Product Returns, Refunds, Exchanges, and Transaction Voids (Owner-Operated Workflow), Problem 2: Inventory Distortion, Shrinkage & Unrecorded Stock Movements, Problem 3: Multi-Unit Selling (*Tingi* vs. Pack vs. Case) & Price Inconsistency, Problem 4: Payment Tender Input Errors, Underpayment, Neighborhood Credit (*Utang*) & Split Payments, Problem 5: Product Registration & Checkout Barcode Handling (Must Support Manual Input or Camera Scan), Problem 6: Offline Connectivity Outages & Multi-Device Sync Conflicts (+12 more)
 
+### Community 21 - "TindahanStoreService.ts"
+Cohesion: 0.06
+Nodes (31): expo-sqlite, AddProductCommand, AddProductResult, ProductOnboardingService, CartItemDTO, CartSummaryDTO, Listener, PaymentTenderType (+23 more)
+
 ### Community 25 - "Data Input, Data Output & Mobile POS UX Best Practices (React Native + Expo)"
 Cohesion: 0.11
 Nodes (18): 1.1 Dual-Mode Product Barcode Registration (`Manual Input` OR `Camera Scan`), 1.2 Match Every `TextInput` to the Exact Hardware Keyboard Type, 1.3 Eliminate Keyboard Occlusion ("Keyboard Bounce of Death"), 1.4 Hybrid User-Input Payment Tender (`TextInput`) + Quick-Fill Denomination Chips at Checkout (`Screen 3`), 1.5 Idempotent Submission & Double-Tap Prevention, 2.1 Tabular Currency Formatting & Integer Centavo Precision, 2.2 Triple-Encoded Stock & Forecast Badges (Color + Icon + Text), 2.3 Action-First Data Output for `Feature C: Seasonal Product Forecast` (+10 more)
@@ -175,29 +176,25 @@ Nodes (6): Get a fresh project, Get started, Join the community, Learn more, Oth
 Cohesion: 0.33
 Nodes (5): Building with EAS, Commands, Expo has changed — do not trust your training data, Navigation & Routing, Rules
 
-### Community 54 - "ProductOnboardingService"
-Cohesion: 0.23
-Nodes (4): ProductOnboardingService, ExternalProductCatalogResult, IExternalCatalogLookupService, OpenFoodFactsApiClient
-
 ## Knowledge Gaps
-- **197 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+192 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 250 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **34 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **205 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+200 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 259 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **36 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `expo-router` connect `useTindahanStore` to `TindahanStoreService.ts`, `app-tabs.web.tsx`, `expo`?**
-  _High betweenness centrality (0.105) - this node is a cross-community bridge._
-- **Why does `TindahanStoreService` connect `TindahanStoreService` to `TindahanStoreService.ts`, `useTindahanStore`?**
-  _High betweenness centrality (0.051) - this node is a cross-community bridge._
-- **Why does `plugins` connect `expo` to `useTindahanStore`?**
-  _High betweenness centrality (0.050) - this node is a cross-community bridge._
+- **Why does `expo-router` connect `useTindahanStore` to `app-tabs.web.tsx`, `expo`?**
+  _High betweenness centrality (0.104) - this node is a cross-community bridge._
+- **Why does `TindahanStoreService` connect `TindahanStoreService` to `TindahanStoreService.ts`?**
+  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+- **Why does `plugins` connect `expo` to `useTindahanStore`, `TindahanStoreService.ts`?**
+  _High betweenness centrality (0.052) - this node is a cross-community bridge._
+- **Are the 2 inferred relationships involving `useTindahanStore()` (e.g. with `getStoreVersion()` and `subscribeToStore()`) actually correct?**
+  _`useTindahanStore()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `slug`, `version` to the rest of the system?**
-  _197 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _205 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Product` be split into smaller, more focused modules?**
-  _Cohesion score 0.07012987012987013 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05647058823529412 - nodes in this community are weakly interconnected._
 - **Should `useTindahanStore` be split into smaller, more focused modules?**
-  _Cohesion score 0.07712765957446809 - nodes in this community are weakly interconnected._
-- **Should `TindahanStoreService` be split into smaller, more focused modules?**
-  _Cohesion score 0.11100832562442182 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07539450613676213 - nodes in this community are weakly interconnected._

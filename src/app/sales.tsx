@@ -1,5 +1,5 @@
 // src/app/sales.tsx — Screen 5: Sales History (+ Owner Return / Void / Exchange Wizard)
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ReturnDisposition } from '@/application/TindahanStoreService';
@@ -25,6 +25,7 @@ export default function SalesHistoryScreen() {
     voidEntireTransaction,
     processReturnOrExchange,
     settings,
+    refreshFromSqlite,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
@@ -36,7 +37,15 @@ export default function SalesHistoryScreen() {
   const [returnReason, setReturnReason] = useState<string>('Defective / Wrong Item');
   const [actionMsg, setActionMsg] = useState<string | null>(null);
 
+  // Re-hydrate from SQLite every time this tab comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refreshFromSqlite();
+    }, [refreshFromSqlite])
+  );
+
   const summary = getSalesSummary(selectedPeriod);
+
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -130,10 +139,14 @@ export default function SalesHistoryScreen() {
           {summary.transactions.length === 0 ? (
             <View style={{ padding: 20, alignItems: 'center', gap: 6 }}>
               <Text style={{ fontSize: 14, fontWeight: '700', color: '#475569' }}>
-                No sales recorded in database yet
+                {summary.allTransactions && summary.allTransactions.length > 0
+                  ? `No sales recorded for ${selectedPeriod}`
+                  : 'No sales recorded in database yet'}
               </Text>
               <Text style={{ fontSize: 12, color: '#94A3B8', textAlign: 'center' }}>
-                Add products to your cart and complete a sale in &quot;New Sale&quot; to record receipts in SQLite.
+                {summary.allTransactions && summary.allTransactions.length > 0
+                  ? 'Switch period above to Weekly or Monthly to view earlier receipts, or record a new sale in "New Sale".'
+                  : 'Add products to your cart and complete a sale in "New Sale" to record receipts in SQLite.'}
               </Text>
             </View>
           ) : null}

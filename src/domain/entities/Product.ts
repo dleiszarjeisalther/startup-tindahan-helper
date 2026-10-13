@@ -249,7 +249,7 @@ export class Product {
       effectiveLowStockThreshold: this.getEffectiveLowStockThreshold(activeSeasonalIndex),
       seasonalPeakMultiplier: activeSeasonalIndex > 1.25 ? activeSeasonalIndex : undefined,
       imageUri: this._imageUri,
-      visual: this.getDefaultVisual(),
+      visual: this._visual ?? this.getDefaultVisual(),
     };
   }
 }

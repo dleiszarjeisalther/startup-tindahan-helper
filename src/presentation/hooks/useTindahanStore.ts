@@ -14,6 +14,7 @@ export function useTindahanStore() {
     isSqliteActive: tindahanStoreService.isSqliteActive,
     products: tindahanStoreService.getProductsSnapshot(),
     cartSummary: tindahanStoreService.getCartSummary(),
+    transactions: tindahanStoreService.getTransactionsSnapshot(),
     settings: tindahanStoreService.getSettings(),
     utangCustomers: tindahanStoreService.getUtangCustomers(),
     refreshFromSqlite: () => tindahanStoreService.refreshFromSqlite(),

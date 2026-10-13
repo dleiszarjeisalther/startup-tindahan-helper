@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
@@ -25,8 +25,14 @@ const ADD_CATEGORIES = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
 
 export default function ProductListScreen() {
   const router = useRouter();
-  const { products, addToCart, addProductToDatabase, settings } = useTindahanStore();
+  const { products, addToCart, addProductToDatabase, settings, refreshFromSqlite } = useTindahanStore();
   const t = getTranslations(settings?.language);
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshFromSqlite();
+    }, [refreshFromSqlite])
+  );
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddForm, setShowAddForm] = useState(products.length === 0);

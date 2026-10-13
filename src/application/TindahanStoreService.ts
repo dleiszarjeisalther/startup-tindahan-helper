@@ -54,6 +54,7 @@ export interface SaleTransactionRecord {
   id: string;
   timeLabel: string;
   dateLabel: string;
+  timestampMs?: number;
   totalPhp: number;
   formattedTotal: string;
   amountTenderedPhp: number;
@@ -133,11 +134,7 @@ export class TindahanStoreService {
   private hydrateAllFromSqlite(): void {
     const db = SqliteDatabase.getInstance().rawDb;
     if (!db) {
-      this.cartMap = new Map();
-      this.transactions = [];
-      this.utangCustomers = [];
-      this.shrinkageLog = [];
-      this.monthlyHistoryMap = new Map();
+      // Do not wipe in-memory collections if SQLite is not open; keep active memory
       return;
     }
 
@@ -172,12 +169,14 @@ export class TindahanStoreService {
         status: SaleTransactionRecord['status'];
         void_or_return_note: string | null;
         items_json: string;
+        sort_order: number;
       }>('SELECT * FROM sales_transactions ORDER BY sort_order DESC');
 
       this.transactions = txRows.map((r) => ({
         id: r.id,
         timeLabel: r.time_label,
         dateLabel: r.date_label,
+        timestampMs: r.sort_order || Date.now(),
         totalPhp: r.total_php,
         formattedTotal: r.formatted_total,
         amountTenderedPhp: r.amount_tendered_php,
@@ -298,10 +297,11 @@ export class TindahanStoreService {
 
   private persistTransactionToSqlite(
     tx: SaleTransactionRecord,
-    sortOrder = Date.now()
+    sortOrder?: number
   ): void {
     const db = SqliteDatabase.getInstance().rawDb;
     if (!db) return;
+    const finalSortOrder = sortOrder ?? tx.timestampMs ?? Date.now();
     db.runSync(
       `INSERT OR REPLACE INTO sales_transactions (
         id, time_label, date_label, total_php, formatted_total,
@@ -326,7 +326,7 @@ export class TindahanStoreService {
         tx.status,
         tx.voidOrReturnNote ?? null,
         JSON.stringify(tx.items),
-        sortOrder,
+        finalSortOrder,
       ]
     );
   }
@@ -666,10 +666,12 @@ export class TindahanStoreService {
       year: 'numeric',
     });
 
+    const txTime = now.getTime();
     const newTx: SaleTransactionRecord = {
       id: `OR-${curYear}-${String(1 + this.transactions.length).padStart(4, '0')}`,
       timeLabel: `${hr12}:${mins} ${ampm}`,
       dateLabel,
+      timestampMs: txTime,
       totalPhp: summary.totalPhp,
       formattedTotal: summary.formattedTotal,
       amountTenderedPhp,
@@ -695,20 +697,59 @@ export class TindahanStoreService {
     };
 
     this.transactions.unshift(newTx);
-    this.persistTransactionToSqlite(newTx, Date.now());
-    this.clearCart();
+    this.persistTransactionToSqlite(newTx, txTime);
+    // Clear cart without triggering premature intermediate notification
+    this.cartMap.clear();
+    this.discountPhp = 0;
+    this.exchangeCreditPhp = 0;
+    this.exchangeSourceReceiptId = null;
+    this.lastRemovedItem = null;
+    this.persistCartToSqlite();
     this.notify();
     return newTx;
   }
 
+  public getTransactionsSnapshot(): SaleTransactionRecord[] {
+    return [...this.transactions];
+  }
+
   public getSalesSummary(period: 'Daily' | 'Weekly' | 'Monthly' = 'Daily') {
-    const activeTxs = this.transactions.filter((t) => t.status !== 'VOIDED');
-    const totalSalesPhp = activeTxs.reduce(
+    const now = new Date();
+    const todayYear = now.getFullYear();
+    const todayMonth = now.getMonth();
+    const todayDate = now.getDate();
+
+    const matchesPeriod = (tx: SaleTransactionRecord): boolean => {
+      const txMs = tx.timestampMs ?? new Date(tx.dateLabel).getTime();
+      if (!Number.isFinite(txMs) || isNaN(txMs)) {
+        return true; // Fallback: include if timestamp is unparseable
+      }
+      const d = new Date(txMs);
+
+      if (period === 'Daily') {
+        return (
+          d.getFullYear() === todayYear &&
+          d.getMonth() === todayMonth &&
+          d.getDate() === todayDate
+        );
+      }
+      if (period === 'Weekly') {
+        const diffMs = now.getTime() - txMs;
+        const diffDays = diffMs / (1000 * 60 * 60 * 24);
+        return diffDays >= 0 && diffDays < 7;
+      }
+      // Monthly
+      return d.getFullYear() === todayYear && d.getMonth() === todayMonth;
+    };
+
+    const periodTxs = this.transactions.filter(matchesPeriod);
+    const activePeriodTxs = periodTxs.filter((t) => t.status !== 'VOIDED');
+    const totalSalesPhp = activePeriodTxs.reduce(
       (sum, t) => sum + Math.max(0, t.totalPhp - t.refundedPhp),
       0
     );
-    const totalItems = activeTxs.reduce((sum, t) => sum + t.itemCount, 0);
-    const totalTransactions = activeTxs.length;
+    const totalItems = activePeriodTxs.reduce((sum, t) => sum + t.itemCount, 0);
+    const totalTransactions = activePeriodTxs.length;
 
     return {
       period,
@@ -716,7 +757,8 @@ export class TindahanStoreService {
       formattedTotalSales: Money.fromPhp(totalSalesPhp).format(),
       totalItems,
       totalTransactions,
-      transactions: [...this.transactions],
+      transactions: periodTxs,
+      allTransactions: [...this.transactions],
       shrinkageLog: [...this.shrinkageLog],
     };
   }

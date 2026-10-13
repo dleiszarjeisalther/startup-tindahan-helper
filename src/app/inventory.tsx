@@ -131,8 +131,11 @@ export default function InventoryManagementScreen() {
     if (params.autoBarcode) {
       const code = String(params.autoBarcode).trim();
       if (code) {
-        setShowAddForm(true);
-        handleBarcodeChange(code, 'SCAN');
+        const timer = setTimeout(() => {
+          setShowAddForm(true);
+          handleBarcodeChange(code, 'SCAN');
+        }, 0);
+        return () => clearTimeout(timer);
       }
     }
   }, [params.autoBarcode, handleBarcodeChange]);
@@ -319,6 +322,8 @@ export default function InventoryManagementScreen() {
       setNewStock('');
       setNewLowThreshold('5');
       setNewImageUri(null);
+      setSearchQuery('');
+      setSelectedFilter('All');
       setShowAddForm(false);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});

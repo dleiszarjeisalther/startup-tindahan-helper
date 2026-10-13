@@ -76,8 +76,16 @@ export default function CheckoutNewSaleScreen() {
   );
 
   useEffect(() => {
-    if (cartSummary.discountPhp === 0 && discountInputText !== '' && discountInputText !== '0' && discountInputText !== '0.00') {
-      setDiscountInputText('');
+    if (
+      cartSummary.discountPhp === 0 &&
+      discountInputText !== '' &&
+      discountInputText !== '0' &&
+      discountInputText !== '0.00'
+    ) {
+      const timer = setTimeout(() => {
+        setDiscountInputText('');
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [cartSummary.discountPhp, discountInputText]);
 
