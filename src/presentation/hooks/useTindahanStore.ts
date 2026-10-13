@@ -1,24 +1,22 @@
-// src/presentation/hooks/useTindahanStore.ts
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { tindahanStoreService } from '../../infrastructure/container';
 import { AddProductCommand } from '../../application/ProductOnboardingService';
 import { MonthlySalesRecord } from '../../domain/strategies/SeasonalForecastEngine';
 
 export function useTindahanStore() {
-  const [, setTick] = useState(0);
-
-  useEffect(() => {
-    return tindahanStoreService.subscribe(() => {
-      setTick((t) => t + 1);
-    });
-  }, []);
+  const version = useSyncExternalStore(
+    (callback) => tindahanStoreService.subscribe(callback),
+    () => tindahanStoreService.getVersion()
+  );
 
   return {
+    version,
     isSqliteActive: tindahanStoreService.isSqliteActive,
     products: tindahanStoreService.getProductsSnapshot(),
     cartSummary: tindahanStoreService.getCartSummary(),
     settings: tindahanStoreService.getSettings(),
     utangCustomers: tindahanStoreService.getUtangCustomers(),
+    refreshFromSqlite: () => tindahanStoreService.refreshFromSqlite(),
     getSalesSummary: (period: 'Daily' | 'Weekly' | 'Monthly' = 'Daily') =>
       tindahanStoreService.getSalesSummary(period),
     addProductToDatabase: (cmd: AddProductCommand) =>

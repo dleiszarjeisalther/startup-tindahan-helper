@@ -21,6 +21,22 @@ export interface CartItemDTO {
   bundleApplied: boolean;
 }
 
+export interface CartSummaryDTO {
+  items: CartItemDTO[];
+  totalCount: number;
+  subtotalPhp: number;
+  formattedSubtotal: string;
+  discountPhp: number;
+  formattedDiscount: string;
+  exchangeCreditPhp: number;
+  formattedExchangeCredit: string;
+  exchangeSourceReceiptId?: string | null;
+  totalPhp: number;
+  formattedTotal: string;
+  hasParkedCart: boolean;
+  lastRemovedItem: { productId: string; name: string; qty: number } | null;
+}
+
 export type ReturnDisposition = 'SELLABLE' | 'DAMAGED_QUARANTINE';
 export type ReturnResolution = 'CASH_REFUND' | 'EXCHANGE_CREDIT' | 'UTANG_DEDUCTION';
 export type PaymentTenderType = 'CASH' | 'GCASH' | 'UTANG' | 'SPLIT';
@@ -344,6 +360,25 @@ export class TindahanStoreService {
     );
   }
 
+  private version = 0;
+  private cachedProductsSnapshot: ProductDTO[] | null = null;
+  private cachedProductsVersion = -1;
+  private cachedCartSummary: CartSummaryDTO | null = null;
+  private cachedCartVersion = -1;
+
+  public getVersion(): number {
+    return this.version;
+  }
+
+  public refreshFromSqlite(): void {
+    const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
+    if (typeof repo.hydrateFromSqlite === 'function') {
+      repo.hydrateFromSqlite();
+    }
+    this.hydrateAllFromSqlite();
+    this.notify();
+  }
+
   public clearAllDatabaseData(): void {
     SqliteDatabase.getInstance().clearAllTablesForReset();
     const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
@@ -362,7 +397,16 @@ export class TindahanStoreService {
   }
 
   private notify(): void {
-    this.listeners.forEach((fn) => fn());
+    this.version++;
+    this.cachedProductsSnapshot = null;
+    this.cachedCartSummary = null;
+    this.listeners.forEach((fn) => {
+      try {
+        fn();
+      } catch (err) {
+        console.warn('Store subscriber callback warning:', err);
+      }
+    });
   }
 
   /**
@@ -410,9 +454,14 @@ export class TindahanStoreService {
   }
 
   public getProductsSnapshot(): ProductDTO[] {
+    if (this.cachedProductsSnapshot && this.cachedProductsVersion === this.version) {
+      return this.cachedProductsSnapshot;
+    }
     const raw = (this.productRepo as { getInitialDTOs?: () => ProductDTO[] }).getInitialDTOs
       ? (this.productRepo as unknown as { getInitialDTOs: () => ProductDTO[] }).getInitialDTOs()
       : [];
+    this.cachedProductsSnapshot = raw;
+    this.cachedProductsVersion = this.version;
     return raw;
   }
 
@@ -438,13 +487,16 @@ export class TindahanStoreService {
     return items;
   }
 
-  public getCartSummary() {
+  public getCartSummary(): CartSummaryDTO {
+    if (this.cachedCartSummary && this.cachedCartVersion === this.version) {
+      return this.cachedCartSummary;
+    }
     const items = this.getCartItems();
     const totalCount = items.reduce((sum, i) => sum + i.quantity, 0);
     const subtotalPhp = items.reduce((sum, i) => sum + i.lineTotalPhp, 0);
     const netTotalPhp = Math.max(0, subtotalPhp - this.discountPhp - this.exchangeCreditPhp);
 
-    return {
+    const summary = {
       items,
       totalCount,
       subtotalPhp,
@@ -459,6 +511,9 @@ export class TindahanStoreService {
       hasParkedCart: this.parkedCartMap !== null && this.parkedCartMap.size > 0,
       lastRemovedItem: this.lastRemovedItem,
     };
+    this.cachedCartSummary = summary;
+    this.cachedCartVersion = this.version;
+    return summary;
   }
 
   public addToCart(productId: string, deltaQty = 1): void {
