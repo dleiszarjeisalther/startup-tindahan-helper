@@ -1,6 +1,6 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
@@ -9,15 +9,61 @@ import { getTranslations } from '@/presentation/localization/i18n';
 
 // Safe custom tab bar receiving standard React Navigation BottomTabBarProps
 function CustomTindahanTabBar(props: any) {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { cartSummary, settings } = useTindahanStore();
   const [, setTick] = React.useState(0);
+
+  // React 19 & Expo SDK 57 Safe Render Rule: Use useState initializer instead of useRef.current
+  const heartbeatAnim = React.useState(() => new Animated.Value(1))[0];
 
   React.useEffect(() => {
     return tindahanStoreService.subscribe(() => {
       setTick((t) => t + 1);
     });
   }, []);
+
+  // Heartbeat pulse animation whenever there are active items in the sale
+  React.useEffect(() => {
+    let animLoop: Animated.CompositeAnimation | null = null;
+    if (cartSummary.totalCount > 0) {
+      animLoop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(heartbeatAnim, {
+            toValue: 1.15,
+            duration: 180,
+            useNativeDriver: true,
+          }),
+          Animated.timing(heartbeatAnim, {
+            toValue: 1.0,
+            duration: 180,
+            useNativeDriver: true,
+          }),
+          Animated.timing(heartbeatAnim, {
+            toValue: 1.1,
+            duration: 140,
+            useNativeDriver: true,
+          }),
+          Animated.timing(heartbeatAnim, {
+            toValue: 1.0,
+            duration: 220,
+            useNativeDriver: true,
+          }),
+          Animated.delay(650),
+        ])
+      );
+      animLoop.start();
+    } else {
+      heartbeatAnim.setValue(1);
+    }
+
+    return () => {
+      if (animLoop) {
+        animLoop.stop();
+      }
+      heartbeatAnim.setValue(1);
+    };
+  }, [cartSummary.totalCount, heartbeatAnim]);
 
   const t = getTranslations(settings?.language);
 
@@ -34,9 +80,15 @@ function CustomTindahanTabBar(props: any) {
     try {
       if (props?.navigation?.navigate) {
         props.navigation.navigate(routeTarget);
+      } else {
+        router.navigate(`/${routeTarget}` as any);
       }
     } catch {
-      // Fallback safe no-op
+      try {
+        router.navigate(`/${routeTarget}` as any);
+      } catch {
+        // Fallback safe no-op
+      }
     }
   };
 
@@ -85,18 +137,20 @@ function CustomTindahanTabBar(props: any) {
 
         {/* 3. Center Floating Green Cart FAB (Screen 3: New Sale / Checkout) */}
         <View style={styles.centerFabContainer}>
-          <Pressable
-            style={[styles.centerFab, isCheckout ? styles.centerFabActive : null]}
-            onPress={() => handleTabPress('checkout')}
-            hitSlop={10}
-          >
-            <Ionicons name="cart" size={24} color="#FFFFFF" />
+          <Animated.View style={{ transform: [{ scale: heartbeatAnim }], overflow: 'visible' }}>
+            <Pressable
+              style={[styles.centerFab, isCheckout ? styles.centerFabActive : null]}
+              onPress={() => handleTabPress('checkout')}
+              hitSlop={10}
+            >
+              <Ionicons name="cart" size={24} color="#FFFFFF" />
+            </Pressable>
             {cartSummary.totalCount > 0 ? (
-              <View style={styles.cartBadge}>
+              <View style={styles.cartBadge} pointerEvents="none">
                 <Text style={styles.cartBadgeText}>{cartSummary.totalCount}</Text>
               </View>
             ) : null}
-          </Pressable>
+          </Animated.View>
         </View>
 
         {/* 4. Inventory (Screen 4: Inventory Management) */}
@@ -219,6 +273,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'visible',
   },
   centerFab: {
     width: 58,
@@ -250,7 +305,7 @@ const styles = StyleSheet.create({
   },
   cartBadge: {
     position: 'absolute',
-    top: -4,
+    top: -22,
     right: -4,
     minWidth: 22,
     height: 22,
@@ -261,6 +316,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     borderWidth: 2,
     borderColor: '#FFFFFF',
+    elevation: 20,
+    zIndex: 9999,
   },
   cartBadgeText: {
     color: '#FFFFFF',

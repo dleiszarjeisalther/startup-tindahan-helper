@@ -62,13 +62,7 @@ export default function CheckoutNewSaleScreen() {
     setPaymentErrorMsg(null);
   }, []);
 
-  // Self-healing synchronization: If store count diverges from items (e.g. count > 0 but items empty),
-  // immediately purge the cart to ensure clean state when starting a new sale.
-  useEffect(() => {
-    if (cartSummary.totalCount > 0 && cartSummary.items.length === 0) {
-      clearCart();
-    }
-  }, [cartSummary.totalCount, cartSummary.items.length, clearCart]);
+
 
   useFocusEffect(
     useCallback(() => {
@@ -181,11 +175,7 @@ export default function CheckoutNewSaleScreen() {
           <Pressable
             style={styles.backBtn}
             onPress={() => {
-              if (router.canGoBack()) {
-                router.back();
-              } else {
-                router.replace('/');
-              }
+              router.navigate('/');
             }}
             hitSlop={10}
           >
@@ -281,6 +271,14 @@ export default function CheckoutNewSaleScreen() {
               <Text style={styles.emptyCartSub}>
                 {t.emptyCartSub}
               </Text>
+              <Pressable
+                style={styles.emptyCartScanBtn}
+                onPress={() => router.navigate('/')}
+                hitSlop={8}
+              >
+                <Ionicons name="barcode-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                <Text style={styles.emptyCartScanBtnText}>Scan or Pick Items to Sell</Text>
+              </Pressable>
             </View>
           ) : (
             cartSummary.items.map((item, idx) => {
@@ -699,7 +697,7 @@ export default function CheckoutNewSaleScreen() {
                 onPress={() => {
                   clearCart();
                   resetSaleForm();
-                  router.push('/');
+                  router.navigate('/');
                 }}
               >
                 <Ionicons name="barcode-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
@@ -710,7 +708,7 @@ export default function CheckoutNewSaleScreen() {
                 onPress={() => {
                   clearCart();
                   resetSaleForm();
-                  router.push('/sales');
+                  router.navigate('/sales');
                 }}
               >
                 <Ionicons name="receipt-outline" size={18} color="#334155" style={{ marginRight: 6 }} />
@@ -916,6 +914,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
     textAlign: 'center',
+  },
+  emptyCartScanBtn: {
+    marginTop: 12,
+    backgroundColor: '#0D7A52',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyCartScanBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
   },
   cartItemRow: {
     flexDirection: 'row',
