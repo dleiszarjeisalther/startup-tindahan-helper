@@ -9,6 +9,7 @@ import {
 } from './ProductOnboardingService';
 import { SqliteDatabase } from '../infrastructure/database/SqliteDatabase';
 import { MonthlySalesRecord } from '../domain/strategies/SeasonalForecastEngine';
+import { appKeyValueStorage } from '../infrastructure/storage/KeyValueStorage';
 
 export interface CartItemDTO {
   productId: string;
@@ -145,11 +146,23 @@ export class TindahanStoreService {
         repo.hydrateFromSqlite();
       }
 
-      // 1. Hydrate Cart (No hardcoded seed items)
+      // 1. Hydrate Cart (Clean & validate against existing products)
       const cartRows = db.getAllSync<{ product_id: string; quantity: number }>(
         'SELECT * FROM cart_items'
       );
-      this.cartMap = new Map(cartRows.map((r) => [r.product_id, r.quantity]));
+      const validProductIds = new Set(this.getProductsSnapshot().map((p) => p.id));
+      this.cartMap = new Map();
+      let hasOrphanedRows = false;
+      for (const r of cartRows) {
+        if (r.quantity > 0 && validProductIds.has(r.product_id)) {
+          this.cartMap.set(r.product_id, r.quantity);
+        } else {
+          hasOrphanedRows = true;
+        }
+      }
+      if (hasOrphanedRows) {
+        this.persistCartToSqlite();
+      }
 
       // 2. Hydrate Sales Transactions (No hardcoded seed transactions)
       const txRows = db.getAllSync<{
@@ -209,7 +222,10 @@ export class TindahanStoreService {
         lastUpdated: c.last_updated,
       }));
 
-      // 4. Hydrate Store Settings
+      // 4. Hydrate Store Settings (Hybrid MMKV Key-Value + SQLite fallback)
+      const mmkvSettings = appKeyValueStorage.loadSettings(this.settings);
+      this.settings = mmkvSettings;
+
       const settingsRow = db.getFirstSync<{
         store_name: string;
         address: string;
@@ -221,14 +237,15 @@ export class TindahanStoreService {
 
       if (settingsRow) {
         this.settings = {
-          storeName: settingsRow.store_name,
+          storeName: mmkvSettings.storeName || settingsRow.store_name,
           ownerTitle: 'Owner',
-          address: settingsRow.address,
-          language: settingsRow.language,
-          notifications: settingsRow.notifications === 1,
-          schoolOpeningMonth: settingsRow.school_opening_month,
-          wholesaleBudgetPhp: settingsRow.wholesale_budget_php,
+          address: mmkvSettings.address || settingsRow.address,
+          language: mmkvSettings.language || settingsRow.language,
+          notifications: mmkvSettings.notifications,
+          schoolOpeningMonth: mmkvSettings.schoolOpeningMonth,
+          wholesaleBudgetPhp: mmkvSettings.wholesaleBudgetPhp,
         };
+        appKeyValueStorage.saveSettings(this.settings);
       } else {
         this.persistSettingsToSqlite();
       }
@@ -468,10 +485,17 @@ export class TindahanStoreService {
   public getCartItems(): CartItemDTO[] {
     const products = this.getProductsSnapshot();
     const items: CartItemDTO[] = [];
+    const orphanedKeys: string[] = [];
     for (const [productId, qty] of this.cartMap.entries()) {
-      if (qty <= 0) continue;
+      if (qty <= 0) {
+        orphanedKeys.push(productId);
+        continue;
+      }
       const p = products.find((prod) => prod.id === productId);
-      if (!p) continue;
+      if (!p) {
+        orphanedKeys.push(productId);
+        continue;
+      }
       const lineTotalPhp = p.defaultPricePhp * qty;
       items.push({
         productId: p.id,
@@ -484,6 +508,14 @@ export class TindahanStoreService {
         bundleApplied: false,
       });
     }
+
+    if (orphanedKeys.length > 0) {
+      for (const k of orphanedKeys) {
+        this.cartMap.delete(k);
+      }
+      this.persistCartToSqlite();
+    }
+
     return items;
   }
 
@@ -1050,6 +1082,7 @@ export class TindahanStoreService {
 
   public updateSettings(partial: Partial<StoreSettingsState>): void {
     this.settings = { ...this.settings, ...partial, ownerTitle: 'Owner' };
+    appKeyValueStorage.saveSettings(this.settings);
     this.persistSettingsToSqlite();
     this.notify();
   }

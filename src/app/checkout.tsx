@@ -62,6 +62,14 @@ export default function CheckoutNewSaleScreen() {
     setPaymentErrorMsg(null);
   }, []);
 
+  // Self-healing synchronization: If store count diverges from items (e.g. count > 0 but items empty),
+  // immediately purge the cart to ensure clean state when starting a new sale.
+  useEffect(() => {
+    if (cartSummary.totalCount > 0 && cartSummary.items.length === 0) {
+      clearCart();
+    }
+  }, [cartSummary.totalCount, cartSummary.items.length, clearCart]);
+
   useFocusEffect(
     useCallback(() => {
       // Whenever New Sale tab comes into focus, ensure clean input state if cart was empty
@@ -198,7 +206,7 @@ export default function CheckoutNewSaleScreen() {
           <Pressable
             style={styles.trashBtn}
             onPress={() => {
-              if (cartSummary.items.length > 0) {
+              if (cartSummary.totalCount > 0 || cartSummary.items.length > 0) {
                 setShowClearConfirm((prev) => !prev);
               }
             }}
@@ -689,6 +697,7 @@ export default function CheckoutNewSaleScreen() {
               <Pressable
                 style={styles.receiptPrimaryBtn}
                 onPress={() => {
+                  clearCart();
                   resetSaleForm();
                   router.push('/');
                 }}
@@ -699,6 +708,7 @@ export default function CheckoutNewSaleScreen() {
               <Pressable
                 style={styles.receiptSecondaryBtn}
                 onPress={() => {
+                  clearCart();
                   resetSaleForm();
                   router.push('/sales');
                 }}

@@ -4,12 +4,21 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
+import { tindahanStoreService } from '@/infrastructure/container';
 import { getTranslations } from '@/presentation/localization/i18n';
 
 // Safe custom tab bar receiving standard React Navigation BottomTabBarProps
 function CustomTindahanTabBar(props: any) {
   const insets = useSafeAreaInsets();
   const { cartSummary, settings } = useTindahanStore();
+  const [, setTick] = React.useState(0);
+
+  React.useEffect(() => {
+    return tindahanStoreService.subscribe(() => {
+      setTick((t) => t + 1);
+    });
+  }, []);
+
   const t = getTranslations(settings?.language);
 
   const activeIndex = props?.state?.index ?? 0;
