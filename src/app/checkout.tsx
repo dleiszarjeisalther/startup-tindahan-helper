@@ -1,5 +1,4 @@
-// src/app/checkout.tsx — Screen 3: Checkout / Sales (New Sale)
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
@@ -52,6 +51,35 @@ export default function CheckoutNewSaleScreen() {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [completedTx, setCompletedTx] = useState<SaleTransactionRecord | null>(null);
   const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
+
+  const resetSaleForm = useCallback(() => {
+    setCompletedTx(null);
+    setPaymentInputText('');
+    setDiscountInputText('');
+    setSelectedCustomer('');
+    setGcashRefInput('');
+    setChargeShortfallToUtang(false);
+    setPaymentErrorMsg(null);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Whenever New Sale tab comes into focus, ensure clean input state if cart was empty
+      if (cartSummary.totalCount === 0) {
+        setPaymentInputText('');
+        setDiscountInputText('');
+        setSelectedCustomer('');
+        setGcashRefInput('');
+        setPaymentErrorMsg(null);
+      }
+    }, [cartSummary.totalCount])
+  );
+
+  useEffect(() => {
+    if (cartSummary.discountPhp === 0 && discountInputText !== '' && discountInputText !== '0' && discountInputText !== '0.00') {
+      setDiscountInputText('');
+    }
+  }, [cartSummary.discountPhp, discountInputText]);
 
   const hasUserTypedPayment = paymentInputText.trim() !== '';
   const parsedPaymentPhp = parseFloat(paymentInputText.replace(/[^0-9.]/g, '')) || 0;
@@ -188,6 +216,7 @@ export default function CheckoutNewSaleScreen() {
               style={styles.clearConfirmBtn}
               onPress={() => {
                 clearCart();
+                resetSaleForm();
                 setShowClearConfirm(false);
               }}
             >
@@ -423,14 +452,21 @@ export default function CheckoutNewSaleScreen() {
                 contentContainerStyle={styles.cashBillsRow}
               >
                 {[cartSummary.totalPhp, 20, 50, 100, 200, 500, 1000].map((bill, idx) => {
-                  const selected = Math.abs(parsedPaymentPhp - bill) < 0.01;
+                  const isExact = idx === 0;
+                  const selected = isExact
+                    ? !hasUserTypedPayment || Math.abs(parsedPaymentPhp - bill) < 0.01
+                    : hasUserTypedPayment && Math.abs(parsedPaymentPhp - bill) < 0.01;
                   return (
                     <Pressable
                       key={`${bill}_${idx}`}
                       style={[styles.billPill, selected ? styles.billPillActive : null]}
                       onPress={() => {
                         setPaymentErrorMsg(null);
-                        setPaymentInputText(bill.toFixed(2));
+                        if (isExact) {
+                          setPaymentInputText('');
+                        } else {
+                          setPaymentInputText(bill.toFixed(2));
+                        }
                       }}
                     >
                       <Text
@@ -439,7 +475,7 @@ export default function CheckoutNewSaleScreen() {
                           selected ? styles.billPillTextActive : null,
                         ]}
                       >
-                        {idx === 0 ? `Exact (₱${bill.toFixed(2)})` : `₱${bill}`}
+                        {isExact ? `Exact (${cartSummary.formattedTotal})` : `₱${bill}`}
                       </Text>
                     </Pressable>
                   );
@@ -639,7 +675,7 @@ export default function CheckoutNewSaleScreen() {
               <Pressable
                 style={styles.receiptPrimaryBtn}
                 onPress={() => {
-                  setCompletedTx(null);
+                  resetSaleForm();
                   router.push('/');
                 }}
               >
@@ -649,7 +685,7 @@ export default function CheckoutNewSaleScreen() {
               <Pressable
                 style={styles.receiptSecondaryBtn}
                 onPress={() => {
-                  setCompletedTx(null);
+                  resetSaleForm();
                   router.push('/sales');
                 }}
               >

@@ -3,11 +3,11 @@ import { tindahanStoreService } from '../../infrastructure/container';
 import { AddProductCommand } from '../../application/ProductOnboardingService';
 import { MonthlySalesRecord } from '../../domain/strategies/SeasonalForecastEngine';
 
+const subscribeToStore = (callback: () => void) => tindahanStoreService.subscribe(callback);
+const getStoreVersion = () => tindahanStoreService.getVersion();
+
 export function useTindahanStore() {
-  const version = useSyncExternalStore(
-    (callback) => tindahanStoreService.subscribe(callback),
-    () => tindahanStoreService.getVersion()
-  );
+  const version = useSyncExternalStore(subscribeToStore, getStoreVersion);
 
   return {
     version,
