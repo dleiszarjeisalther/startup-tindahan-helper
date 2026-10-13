@@ -172,7 +172,13 @@ export default function CheckoutNewSaleScreen() {
         <View style={styles.headerLeft}>
           <Pressable
             style={styles.backBtn}
-            onPress={() => router.back()}
+            onPress={() => {
+              if (router.canGoBack()) {
+                router.back();
+              } else {
+                router.replace('/');
+              }
+            }}
             hitSlop={10}
           >
             <Ionicons name="arrow-back" size={22} color="#111827" />

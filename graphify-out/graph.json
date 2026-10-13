@@ -2472,7 +2472,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L711"
+      "source_location": "L717"
     },
     {
       "id": "src_app_explore",
@@ -2494,7 +2494,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/explore.tsx",
-      "source_location": "L372"
+      "source_location": "L378"
     },
     {
       "id": "src_app_index",
@@ -2637,7 +2637,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/products.tsx",
-      "source_location": "L459"
+      "source_location": "L465"
     },
     {
       "id": "src_app_sales",
@@ -2692,7 +2692,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/settings.tsx",
-      "source_location": "L273"
+      "source_location": "L279"
     },
     {
       "id": "src_components_app_tabs",
@@ -6108,7 +6108,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L216",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -6120,7 +6120,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L226",
+      "source_location": "L232",
       "weight": 1.0
     },
     {
@@ -6132,7 +6132,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L310",
+      "source_location": "L316",
       "weight": 1.0
     },
     {
@@ -6168,7 +6168,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L523",
+      "source_location": "L529",
       "weight": 1.0
     },
     {
@@ -12745,7 +12745,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L711",
+      "source_location": "L717",
       "weight": 1.0
     },
     {
@@ -12767,7 +12767,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/explore.tsx",
-      "source_location": "L372",
+      "source_location": "L378",
       "weight": 1.0
     },
     {
@@ -12910,7 +12910,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/products.tsx",
-      "source_location": "L459",
+      "source_location": "L465",
       "weight": 1.0
     },
     {
@@ -12965,7 +12965,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/settings.tsx",
-      "source_location": "L273",
+      "source_location": "L279",
       "weight": 1.0
     },
     {
@@ -15565,5 +15565,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6ec44c4f3d5c56d5800bb783f250cfb3ff5cb390"
+  "built_at_commit": "ef303692f9d2405ec92c143fb97ebc2f7d747b0a"
 }

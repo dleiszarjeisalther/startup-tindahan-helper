@@ -78,15 +78,15 @@
     "semantic_hash": ""
   },
   "src/app/checkout.tsx": {
-    "mtime": 1791893592.647152,
-    "seen": 1791893758.3233104,
-    "ast_hash": "57dfc7fe76a7cf8f6baeb487f7d31207",
+    "mtime": 1791894063.9218547,
+    "seen": 1791894194.521031,
+    "ast_hash": "c8770991535ad26f935dfa6ff4822242",
     "semantic_hash": ""
   },
   "src/app/explore.tsx": {
-    "mtime": 1791893643.6561136,
-    "seen": 1791893758.3233192,
-    "ast_hash": "e7a8aa70ca1af1ef05742a4ab4fdb4b1",
+    "mtime": 1791894073.6419284,
+    "seen": 1791894194.5210364,
+    "ast_hash": "b0af13ac5ad14e1110a68a6ba3f07e90",
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
-    "mtime": 1791893677.5897493,
-    "seen": 1791893758.3233454,
-    "ast_hash": "6d720092a474382696eb19ea01f403ba",
+    "mtime": 1791894081.3242135,
+    "seen": 1791894194.5210574,
+    "ast_hash": "37caf10061d7915990fcd1be8bf5afe1",
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {
@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
-    "mtime": 1791885223.836887,
-    "seen": 1791886366.2367787,
-    "ast_hash": "29e71289a98b1b3de77740d5b83e3e2c",
+    "mtime": 1791894093.155311,
+    "seen": 1791894194.521067,
+    "ast_hash": "3a1cecd42f021b635bbf209bac693bb7",
     "semantic_hash": ""
   },
   "src/application/ProductOnboardingService.ts": {

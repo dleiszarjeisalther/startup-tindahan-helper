@@ -64,7 +64,13 @@ export default function SeasonalForecastScreen() {
       <View style={styles.headerRow}>
         <Pressable
           style={styles.backBtn}
-          onPress={() => router.back()}
+          onPress={() => {
+            if (router.canGoBack()) {
+              router.back();
+            } else {
+              router.replace('/sales');
+            }
+          }}
           hitSlop={10}
         >
           <Ionicons name="arrow-back" size={22} color="#111827" />
