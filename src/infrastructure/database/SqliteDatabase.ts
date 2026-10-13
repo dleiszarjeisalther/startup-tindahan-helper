@@ -83,7 +83,8 @@ export class SqliteDatabase {
         status TEXT NOT NULL,
         void_or_return_note TEXT,
         items_json TEXT NOT NULL,
-        sort_order INTEGER NOT NULL DEFAULT 0
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        transaction_type TEXT NOT NULL DEFAULT 'SALE'
       );
 
       CREATE TABLE IF NOT EXISTS utang_customers (
@@ -137,6 +138,12 @@ export class SqliteDatabase {
 
     try {
       this.db.execSync('ALTER TABLE products ADD COLUMN default_price_php REAL DEFAULT 0;');
+    } catch {
+      // Column already exists
+    }
+
+    try {
+      this.db.execSync("ALTER TABLE sales_transactions ADD COLUMN transaction_type TEXT NOT NULL DEFAULT 'SALE';");
     } catch {
       // Column already exists
     }

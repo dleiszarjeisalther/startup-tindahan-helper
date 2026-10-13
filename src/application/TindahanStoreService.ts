@@ -69,6 +69,7 @@ export interface SaleTransactionRecord {
   status: 'COMPLETED' | 'PARTIAL_RETURN' | 'REFUNDED' | 'VOIDED';
   voidOrReturnNote?: string;
   items: SaleLineItemRecord[];
+  transactionType?: 'SALE' | 'UTANG_PAYMENT';
 }
 
 export interface UtangCustomerRecord {
@@ -89,10 +90,26 @@ export interface StoreSettingsState {
   wholesaleBudgetPhp: number;
 }
 
+export interface StoreSnapshot {
+  revision: number;
+  cartRevision: number;
+  isSqliteActive: boolean;
+  products: ProductDTO[];
+  cartSummary: CartSummaryDTO;
+  transactions: SaleTransactionRecord[];
+  settings: StoreSettingsState;
+  utangCustomers: UtangCustomerRecord[];
+}
+
 type Listener = () => void;
 
 export class TindahanStoreService {
   private listeners = new Set<Listener>();
+  private readonly instanceId = `store_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  private version = 0;
+  private cartRevision = 0;
+  private snapshot!: StoreSnapshot;
+  private isCompletingSale = false;
 
   private cartMap = new Map<string, number>();
   private parkedCartMap: Map<string, number> | null = null;
@@ -125,14 +142,16 @@ export class TindahanStoreService {
     private readonly productRepo: IProductRepository,
     public readonly onboardingService: ProductOnboardingService
   ) {
-    this.hydrateAllFromSqlite();
+    this.hydrateAllFromSqlite(true);
+    this.snapshot = this.createSnapshot();
+    this.trace('initialized');
   }
 
   public get isSqliteActive(): boolean {
     return SqliteDatabase.getInstance().isPersistentSqliteActive;
   }
 
-  private hydrateAllFromSqlite(): void {
+  private hydrateAllFromSqlite(replaceCart = false): void {
     const db = SqliteDatabase.getInstance().rawDb;
     if (!db) {
       // Do not wipe in-memory collections if SQLite is not open; keep active memory
@@ -146,19 +165,22 @@ export class TindahanStoreService {
         repo.hydrateFromSqlite();
       }
 
-      // 1. Hydrate Cart (Only populate from SQLite on initial cold boot if memory map is empty)
-      if (this.cartMap.size === 0) {
+      // 1. Hydrate Cart. Explicit refreshes treat SQLite as the source of truth,
+      // including an empty table after another screen cleared the active sale.
+      if (replaceCart || this.cartMap.size === 0) {
         const cartRows = db.getAllSync<{ product_id: string; quantity: number }>(
           'SELECT * FROM cart_items'
         );
-        const validProductIds = new Set(this.getProductsSnapshot().map((p) => p.id));
+        const validProductIds = new Set(this.readProducts().map((p) => p.id));
+        const hydratedCart = new Map<string, number>();
         for (const r of cartRows) {
           if (r.quantity > 0) {
             if (validProductIds.size === 0 || validProductIds.has(r.product_id)) {
-              this.cartMap.set(r.product_id, r.quantity);
+              hydratedCart.set(r.product_id, r.quantity);
             }
           }
         }
+        this.cartMap = hydratedCart;
       }
 
       // 2. Hydrate Sales Transactions (No hardcoded seed transactions)
@@ -180,6 +202,7 @@ export class TindahanStoreService {
         void_or_return_note: string | null;
         items_json: string;
         sort_order: number;
+        transaction_type?: 'SALE' | 'UTANG_PAYMENT';
       }>('SELECT * FROM sales_transactions ORDER BY sort_order DESC');
 
       this.transactions = txRows.map((r) => ({
@@ -200,6 +223,7 @@ export class TindahanStoreService {
         status: r.status,
         voidOrReturnNote: r.void_or_return_note ?? undefined,
         items: JSON.parse(r.items_json),
+        transactionType: (r.transaction_type as 'SALE' | 'UTANG_PAYMENT') || 'SALE',
       }));
 
       // 3. Hydrate Utang Customers (No hardcoded seed customers)
@@ -295,24 +319,21 @@ export class TindahanStoreService {
     }
   }
 
-  private persistCartToSqlite(): void {
+  private persistCartToSqlite(cart: ReadonlyMap<string, number> = this.cartMap): void {
     const db = SqliteDatabase.getInstance().rawDb;
     if (!db) return;
-    try {
-      db.withTransactionSync(() => {
-        db.runSync('DELETE FROM cart_items');
-        for (const [productId, qty] of this.cartMap.entries()) {
-          if (qty > 0) {
-            db.runSync('INSERT INTO cart_items (product_id, quantity) VALUES (?, ?)', [
-              productId,
-              qty,
-            ]);
-          }
+    db.withTransactionSync(() => {
+      db.runSync('DELETE FROM cart_items');
+      for (const [productId, qty] of cart.entries()) {
+        if (qty > 0) {
+          db.runSync('INSERT INTO cart_items (product_id, quantity) VALUES (?, ?)', [
+            productId,
+            qty,
+          ]);
         }
-      });
-    } catch (err) {
-      console.warn('persistCartToSqlite transaction warning:', err);
-    }
+      }
+    });
+    this.trace('cart persisted', { count: this.countCart(cart) });
   }
 
   private persistTransactionToSqlite(
@@ -327,8 +348,9 @@ export class TindahanStoreService {
         id, time_label, date_label, total_php, formatted_total,
         amount_tendered_php, change_due_php, gcash_ref,
         refunded_php, item_count, tender_type, customer_name,
-        is_one_time_bulk_order, status, void_or_return_note, items_json, sort_order
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        is_one_time_bulk_order, status, void_or_return_note, items_json, sort_order,
+        transaction_type
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         tx.id,
         tx.timeLabel,
@@ -347,6 +369,7 @@ export class TindahanStoreService {
         tx.voidOrReturnNote ?? null,
         JSON.stringify(tx.items),
         finalSortOrder,
+        tx.transactionType ?? 'SALE',
       ]
     );
   }
@@ -380,28 +403,80 @@ export class TindahanStoreService {
     );
   }
 
-  private version = 0;
-
   public getVersion(): number {
     return this.version;
   }
 
+  public getSnapshot(): StoreSnapshot {
+    return this.snapshot;
+  }
+
+  private countCart(cart: ReadonlyMap<string, number> = this.cartMap): number {
+    let count = 0;
+    for (const quantity of cart.values()) count += quantity;
+    return count;
+  }
+
+  private trace(event: string, details?: Record<string, unknown>): void {
+    if (!__DEV__) return;
+    console.debug('[TindahanStore]', {
+      event,
+      instanceId: this.instanceId,
+      revision: this.version,
+      cartRevision: this.cartRevision,
+      cartCount: this.countCart(),
+      ...details,
+    });
+  }
+
+  private createSnapshot(): StoreSnapshot {
+    const products = this.readProducts();
+    const cartSummary = this.calculateCartSummary(products);
+    return Object.freeze({
+      revision: this.version,
+      cartRevision: this.cartRevision,
+      isSqliteActive: this.isSqliteActive,
+      products: Object.freeze([...products]) as ProductDTO[],
+      cartSummary: Object.freeze({
+        ...cartSummary,
+        items: Object.freeze([...cartSummary.items]) as CartItemDTO[],
+      }),
+      transactions: Object.freeze(this.transactions.map((tx) => ({
+        ...tx,
+        items: [...tx.items],
+      }))) as SaleTransactionRecord[],
+      settings: Object.freeze({ ...this.settings }),
+      utangCustomers: Object.freeze(this.utangCustomers.map((customer) => ({ ...customer }))) as UtangCustomerRecord[],
+    });
+  }
+
   public refreshFromSqlite(): void {
+    const previousCart = JSON.stringify([...this.cartMap.entries()]);
     const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
     if (typeof repo.hydrateFromSqlite === 'function') {
       repo.hydrateFromSqlite();
     }
-    this.hydrateAllFromSqlite();
+    this.hydrateAllFromSqlite(true);
+    if (previousCart !== JSON.stringify([...this.cartMap.entries()])) this.cartRevision++;
     this.notify();
   }
 
   public clearAllDatabaseData(): void {
     SqliteDatabase.getInstance().clearAllTablesForReset();
+    this.cartMap.clear();
+    this.parkedCartMap = null;
+    this.lastRemovedItem = null;
+    this.discountPhp = 0;
+    this.exchangeCreditPhp = 0;
+    this.exchangeSourceReceiptId = null;
+    this.transactions = [];
+    this.utangCustomers = [];
+    this.monthlyHistoryMap.clear();
     const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
     if (repo.hydrateFromSqlite) {
       repo.hydrateFromSqlite();
     }
-    this.hydrateAllFromSqlite();
+    this.hydrateAllFromSqlite(true);
     this.notify();
   }
 
@@ -414,6 +489,8 @@ export class TindahanStoreService {
 
   private notify(): void {
     this.version++;
+    this.snapshot = this.createSnapshot();
+    this.trace('published', { subscribers: this.listeners.size });
     this.listeners.forEach((fn) => {
       try {
         fn();
@@ -449,10 +526,24 @@ export class TindahanStoreService {
    * Deletes a product from the SQLite database and removes it from any active cart.
    */
   public async deleteProductFromDatabase(productId: string): Promise<void> {
-    await this.productRepo.deleteById(productId);
-    this.cartMap.delete(productId);
+    if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');
+    const db = SqliteDatabase.getInstance().rawDb;
+    if (db) {
+      db.withTransactionSync(() => {
+        db.runSync('DELETE FROM products WHERE id = ?', [productId]);
+        db.runSync('DELETE FROM cart_items WHERE product_id = ?', [productId]);
+        db.runSync('DELETE FROM monthly_sales_history WHERE product_id = ?', [productId]);
+      });
+      const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
+      repo.hydrateFromSqlite?.();
+    } else {
+      await this.productRepo.deleteById(productId);
+    }
+    const nextCart = new Map(this.cartMap);
+    nextCart.delete(productId);
+    this.cartMap = nextCart;
     this.monthlyHistoryMap.delete(productId);
-    this.persistCartToSqlite();
+    this.cartRevision++;
     this.notify();
   }
 
@@ -467,47 +558,48 @@ export class TindahanStoreService {
     this.notify();
   }
 
+  /**
+   * Updates a product's name, price, stock, or threshold in SQLite and refreshes all screens.
+   */
+  public async updateProductDetails(
+    productId: string,
+    updates: {
+      name?: string;
+      category?: string;
+      pricePhp?: number;
+      baseStockCount?: number;
+      lowStockThreshold?: number;
+    }
+  ): Promise<void> {
+    const all = await this.productRepo.getAll();
+    const prod = all.find((p) => p.id === productId);
+    if (!prod) return;
+    const updated = prod.updateDetails(updates);
+    await this.productRepo.save(updated);
+    this.notify();
+  }
+
   public getProductsSnapshot(): ProductDTO[] {
-    const raw = (this.productRepo as { getInitialDTOs?: () => ProductDTO[] }).getInitialDTOs
+    return [...this.snapshot.products];
+  }
+
+  private readProducts(): ProductDTO[] {
+    return (this.productRepo as { getInitialDTOs?: () => ProductDTO[] }).getInitialDTOs
       ? (this.productRepo as unknown as { getInitialDTOs: () => ProductDTO[] }).getInitialDTOs()
       : [];
-    return raw;
   }
 
   public getCartItems(): CartItemDTO[] {
-    let products = this.getProductsSnapshot();
-    if (products.length === 0 && this.cartMap.size > 0) {
-      const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
-      if (typeof repo.hydrateFromSqlite === 'function') {
-        repo.hydrateFromSqlite();
-      }
-      products = this.getProductsSnapshot();
-    }
+    return [...this.snapshot.cartSummary.items];
+  }
 
+  private calculateCartItems(products: ProductDTO[] = this.readProducts()): CartItemDTO[] {
     const items: CartItemDTO[] = [];
-    const db = SqliteDatabase.getInstance().rawDb;
-
     for (const [productId, qty] of this.cartMap.entries()) {
       if (qty <= 0) {
         continue;
       }
-      let p = products.find((prod) => prod.id === productId);
-      if (!p && db) {
-        try {
-          const row = db.getFirstSync<{
-            id: string;
-            name: string;
-            default_price_php: number | null;
-          }>('SELECT id, name, default_price_php FROM products WHERE id = ?', [productId]);
-          if (row) {
-            p = {
-              id: row.id,
-              name: row.name,
-              defaultPricePhp: Number(row.default_price_php) || 1.0,
-            } as ProductDTO;
-          }
-        } catch {}
-      }
+      const p = products.find((prod) => prod.id === productId);
       if (!p) {
         continue;
       }
@@ -528,7 +620,11 @@ export class TindahanStoreService {
   }
 
   public getCartSummary(): CartSummaryDTO {
-    const items = this.getCartItems();
+    return this.snapshot.cartSummary;
+  }
+
+  private calculateCartSummary(products: ProductDTO[] = this.readProducts()): CartSummaryDTO {
+    const items = this.calculateCartItems(products);
     const totalCount = items.reduce((sum, i) => sum + i.quantity, 0);
     const subtotalPhp = items.reduce((sum, i) => sum + i.lineTotalPhp, 0);
     const netTotalPhp = Math.max(0, subtotalPhp - this.discountPhp - this.exchangeCreditPhp);
@@ -551,27 +647,39 @@ export class TindahanStoreService {
   }
 
   public addToCart(productId: string, deltaQty = 1): void {
+    if (this.isCompletingSale) {
+      throw new Error('Sale is currently being completed. Please wait.');
+    }
+    const nextCart = new Map(this.cartMap);
     const current = this.cartMap.get(productId) ?? 0;
     const next = Math.max(0, current + deltaQty);
+    let nextLastRemoved = this.lastRemovedItem;
     if (next === 0) {
-      const prod = this.getProductsSnapshot().find((p) => p.id === productId);
+      const prod = this.snapshot.products.find((p) => p.id === productId);
       if (prod && current > 0) {
-        this.lastRemovedItem = { productId, name: prod.name, qty: current };
+        nextLastRemoved = { productId, name: prod.name, qty: current };
       }
-      this.cartMap.delete(productId);
+      nextCart.delete(productId);
     } else {
-      this.cartMap.set(productId, next);
-      this.lastRemovedItem = null;
+      nextCart.set(productId, next);
+      nextLastRemoved = null;
     }
-    this.persistCartToSqlite();
+    this.persistCartToSqlite(nextCart);
+    this.cartMap = nextCart;
+    this.lastRemovedItem = nextLastRemoved;
+    this.cartRevision++;
     this.notify();
   }
 
   public undoRemoveCartItem(): void {
     if (!this.lastRemovedItem) return;
-    this.cartMap.set(this.lastRemovedItem.productId, this.lastRemovedItem.qty);
+    if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');
+    const nextCart = new Map(this.cartMap);
+    nextCart.set(this.lastRemovedItem.productId, this.lastRemovedItem.qty);
+    this.persistCartToSqlite(nextCart);
+    this.cartMap = nextCart;
     this.lastRemovedItem = null;
-    this.persistCartToSqlite();
+    this.cartRevision++;
     this.notify();
   }
 
@@ -581,85 +689,57 @@ export class TindahanStoreService {
   }
 
   public clearCart(): void {
-    this.cartMap.clear();
+    if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');
+    const nextCart = new Map<string, number>();
+    this.persistCartToSqlite(nextCart);
+    this.cartMap = nextCart;
     this.discountPhp = 0;
     this.exchangeCreditPhp = 0;
     this.exchangeSourceReceiptId = null;
     this.lastRemovedItem = null;
-    this.persistCartToSqlite();
+    this.cartRevision++;
     this.notify();
   }
 
   public parkCurrentCart(): void {
     if (this.cartMap.size === 0) return;
-    this.parkedCartMap = new Map(this.cartMap);
+    if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');
+    const nextParkedCart = new Map(this.cartMap);
+    this.persistCartToSqlite(new Map());
+    this.parkedCartMap = nextParkedCart;
     this.cartMap.clear();
     this.discountPhp = 0;
-    this.persistCartToSqlite();
+    this.cartRevision++;
     this.notify();
   }
 
   public restoreParkedCart(): void {
     if (!this.parkedCartMap) return;
-    this.cartMap = new Map(this.parkedCartMap);
+    if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');
+    const nextCart = new Map(this.parkedCartMap);
+    this.persistCartToSqlite(nextCart);
+    this.cartMap = nextCart;
     this.parkedCartMap = null;
-    this.persistCartToSqlite();
+    this.cartRevision++;
     this.notify();
   }
 
   public async completeSale(options: {
     tenderType: PaymentTenderType;
     amountTenderedPhp: number;
+    expectedCartRevision: number;
     gcashRef?: string;
     customerName?: string;
     chargeShortfallToUtang?: boolean;
     isOneTimeBulkOrder?: boolean;
-    items?: CartItemDTO[];
   }): Promise<SaleTransactionRecord> {
-    // Failsafe 1: If cartMap was reset in memory, restore from passed items
-    if (this.cartMap.size === 0 && options.items && options.items.length > 0) {
-      for (const it of options.items) {
-        if (it.quantity > 0) {
-          this.cartMap.set(it.productId, it.quantity);
-        }
-      }
+    if (this.isCompletingSale) throw new Error('This sale is already being completed.');
+    if (options.expectedCartRevision !== this.cartRevision) {
+      throw new Error('The cart changed before payment was saved. Please review the current cart and try again.');
     }
-
-    let summary = this.getCartSummary();
-
-    // Failsafe 2: If products were not hydrated, rehydrate from SQLite
-    if (summary.items.length === 0 && this.cartMap.size > 0) {
-      const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
-      if (typeof repo.hydrateFromSqlite === 'function') {
-        repo.hydrateFromSqlite();
-      }
-      summary = this.getCartSummary();
-    }
-
-    // Failsafe 3: If still empty, use passed items from active screen
-    if (summary.items.length === 0 && options.items && options.items.length > 0) {
-      const totalCount = options.items.reduce((sum, i) => sum + i.quantity, 0);
-      const subtotalPhp = options.items.reduce((sum, i) => sum + i.lineTotalPhp, 0);
-      const netTotalPhp = Math.max(0, subtotalPhp - this.discountPhp - this.exchangeCreditPhp);
-      summary = {
-        items: options.items,
-        totalCount,
-        subtotalPhp,
-        formattedSubtotal: Money.fromPhp(subtotalPhp).format(),
-        discountPhp: this.discountPhp,
-        formattedDiscount: Money.fromPhp(this.discountPhp).format(),
-        exchangeCreditPhp: this.exchangeCreditPhp,
-        formattedExchangeCredit: Money.fromPhp(this.exchangeCreditPhp).format(),
-        exchangeSourceReceiptId: this.exchangeSourceReceiptId,
-        totalPhp: netTotalPhp,
-        formattedTotal: Money.fromPhp(netTotalPhp).format(),
-        hasParkedCart: false,
-        lastRemovedItem: null,
-      };
-    }
-
+    const summary = this.snapshot.cartSummary;
     if (summary.items.length === 0) {
-      throw new Error('Cannot complete sale with an empty cart.');
+      throw new Error('This sale was already cleared. Add an item before completing payment.');
     }
 
     const { tenderType, amountTenderedPhp } = options;
@@ -680,23 +760,10 @@ export class TindahanStoreService {
       );
     }
 
-    const allProducts = await this.productRepo.getAll();
     const now = new Date();
     const curYear = now.getFullYear();
     const curMonth = now.getMonth() + 1;
 
-    // Deduct stock atomically and persist each product + monthly history in SQLite
-    for (const item of summary.items) {
-      const prod = allProducts.find((p) => p.id === item.productId);
-      if (prod) {
-        await this.productRepo.save(prod.adjustStock(-item.quantity));
-      }
-      if (!options.isOneTimeBulkOrder) {
-        this.recordMonthlySaleIncrement(item.productId, curYear, curMonth, item.quantity);
-      }
-    }
-
-    // Handle Utang or Split Shortfall to Utang
     const shortfallPhp = Math.max(0, summary.totalPhp - amountTenderedPhp);
     const utangAmountToRecord =
       tenderType === 'UTANG'
@@ -704,28 +771,6 @@ export class TindahanStoreService {
         : options.chargeShortfallToUtang
         ? shortfallPhp
         : 0;
-
-    if (utangAmountToRecord > 0 && options.customerName?.trim()) {
-      const cleanName = options.customerName.trim();
-      const existing = this.utangCustomers.find(
-        (c) => c.name.toLowerCase() === cleanName.toLowerCase()
-      );
-      if (existing) {
-        existing.balancePhp += utangAmountToRecord;
-        existing.lastUpdated = 'Just now';
-        this.persistCustomerToSqlite(existing);
-      } else {
-        const newCust: UtangCustomerRecord = {
-          id: `cust_${Date.now()}`,
-          name: cleanName,
-          balancePhp: utangAmountToRecord,
-          creditLimitPhp: 500,
-          lastUpdated: 'Just now',
-        };
-        this.utangCustomers.unshift(newCust);
-        this.persistCustomerToSqlite(newCust);
-      }
-    }
 
     const changeDuePhp =
       tenderType === 'CASH' && amountTenderedPhp > summary.totalPhp
@@ -759,6 +804,7 @@ export class TindahanStoreService {
       customerName: options.customerName?.trim() || undefined,
       isOneTimeBulkOrder: options.isOneTimeBulkOrder,
       status: 'COMPLETED',
+      transactionType: 'SALE',
       voidOrReturnNote: this.exchangeSourceReceiptId
         ? `Exchange applied from ${this.exchangeSourceReceiptId}`
         : undefined,
@@ -772,21 +818,120 @@ export class TindahanStoreService {
       })),
     };
 
-    this.transactions.unshift(newTx);
-    this.persistTransactionToSqlite(newTx, txTime);
-    // Clear cart without triggering premature intermediate notification
-    this.cartMap.clear();
-    this.discountPhp = 0;
-    this.exchangeCreditPhp = 0;
-    this.exchangeSourceReceiptId = null;
-    this.lastRemovedItem = null;
-    this.persistCartToSqlite();
-    this.notify();
-    return newTx;
+    const db = SqliteDatabase.getInstance().rawDb;
+    this.isCompletingSale = true;
+    this.trace('complete sale started', { expectedCartRevision: options.expectedCartRevision });
+    try {
+      if (db) {
+        db.withTransactionSync(() => {
+          for (const item of summary.items) {
+            const row = db.getFirstSync<{ base_stock_count: number }>(
+              'SELECT base_stock_count FROM products WHERE id = ?',
+              [item.productId]
+            );
+            if (!row) throw new Error(`${item.name} is no longer in inventory.`);
+            if (row.base_stock_count < item.quantity) {
+              throw new Error(`Not enough stock for ${item.name}.`);
+            }
+            db.runSync(
+              'UPDATE products SET base_stock_count = base_stock_count - ? WHERE id = ?',
+              [item.quantity, item.productId]
+            );
+            if (!options.isOneTimeBulkOrder) {
+              const historyId = `msh_${item.productId}_${curYear}_${curMonth}`;
+              db.runSync(
+                `INSERT INTO monthly_sales_history (
+                  id, product_id, year, month, gross_units_sold,
+                  voided_units, returned_changed_mind_units, out_of_stock_days, total_days_in_month
+                ) VALUES (?, ?, ?, ?, ?, 0, 0, 0, 30)
+                ON CONFLICT(id) DO UPDATE SET
+                  gross_units_sold = gross_units_sold + excluded.gross_units_sold`,
+                [historyId, item.productId, curYear, curMonth, item.quantity]
+              );
+            }
+          }
+
+          if (utangAmountToRecord > 0 && options.customerName?.trim()) {
+            const cleanName = options.customerName.trim();
+            const existing = this.utangCustomers.find(
+              (customer) => customer.name.toLowerCase() === cleanName.toLowerCase()
+            );
+            const customer: UtangCustomerRecord = existing
+              ? { ...existing, balancePhp: existing.balancePhp + utangAmountToRecord, lastUpdated: 'Just now' }
+              : {
+                  id: `cust_${txTime}`,
+                  name: cleanName,
+                  balancePhp: utangAmountToRecord,
+                  creditLimitPhp: 500,
+                  lastUpdated: 'Just now',
+                };
+            db.runSync(
+              `INSERT OR REPLACE INTO utang_customers
+                (id, name, balance_php, credit_limit_php, last_updated)
+               VALUES (?, ?, ?, ?, ?)`,
+              [customer.id, customer.name, customer.balancePhp, customer.creditLimitPhp, customer.lastUpdated]
+            );
+          }
+
+          this.persistTransactionToSqlite(newTx, txTime);
+          db.runSync('DELETE FROM cart_items');
+        });
+
+        const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
+        repo.hydrateFromSqlite?.();
+        this.hydrateAllFromSqlite(true);
+      } else {
+        const allProducts = await this.productRepo.getAll();
+        for (const item of summary.items) {
+          const product = allProducts.find((candidate) => candidate.id === item.productId);
+          if (!product) throw new Error(`${item.name} is no longer in inventory.`);
+          await this.productRepo.save(product.adjustStock(-item.quantity));
+          if (!options.isOneTimeBulkOrder) {
+            this.recordMonthlySaleIncrement(item.productId, curYear, curMonth, item.quantity);
+          }
+        }
+        if (utangAmountToRecord > 0 && options.customerName?.trim()) {
+          const cleanName = options.customerName.trim();
+          const existing = this.utangCustomers.find(
+            (customer) => customer.name.toLowerCase() === cleanName.toLowerCase()
+          );
+          if (existing) {
+            existing.balancePhp += utangAmountToRecord;
+            existing.lastUpdated = 'Just now';
+          } else {
+            this.utangCustomers.unshift({
+              id: `cust_${txTime}`,
+              name: cleanName,
+              balancePhp: utangAmountToRecord,
+              creditLimitPhp: 500,
+              lastUpdated: 'Just now',
+            });
+          }
+        }
+        this.transactions.unshift(newTx);
+      }
+
+      this.cartMap.clear();
+      this.discountPhp = 0;
+      this.exchangeCreditPhp = 0;
+      this.exchangeSourceReceiptId = null;
+      this.lastRemovedItem = null;
+      this.cartRevision++;
+      this.notify();
+      this.trace('complete sale committed', { transactionId: newTx.id });
+      return newTx;
+    } catch (error) {
+      this.trace('complete sale failed', {
+        message: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    } finally {
+      this.isCompletingSale = false;
+    }
   }
 
   public getTransactionsSnapshot(): SaleTransactionRecord[] {
-    return [...this.transactions];
+    return [...this.snapshot.transactions];
   }
 
   public getSalesSummary(period: 'Daily' | 'Weekly' | 'Monthly' = 'Daily') {
@@ -820,19 +965,66 @@ export class TindahanStoreService {
 
     const periodTxs = this.transactions.filter(matchesPeriod);
     const activePeriodTxs = periodTxs.filter((t) => t.status !== 'VOIDED');
-    const totalSalesPhp = activePeriodTxs.reduce(
+
+    // Separate Sales vs Utang Collections
+    const activeSales = activePeriodTxs.filter((t) => t.transactionType !== 'UTANG_PAYMENT');
+    const activePayments = activePeriodTxs.filter((t) => t.transactionType === 'UTANG_PAYMENT');
+
+    // 1. Gross Sales: Merchandise sold in this period, net of refunds.
+    // Excludes debt collections so we never double-count revenue!
+    const totalSalesPhp = activeSales.reduce(
       (sum, t) => sum + Math.max(0, t.totalPhp - t.refundedPhp),
       0
     );
-    const totalItems = activePeriodTxs.reduce((sum, t) => sum + t.itemCount, 0);
-    const totalTransactions = activePeriodTxs.length;
+    const totalItems = activeSales.reduce((sum, t) => sum + t.itemCount, 0);
+
+    // 2. Utang collections (Koleksyon)
+    const utangCollectedPhp = activePayments.reduce((sum, t) => sum + t.totalPhp, 0);
+    const utangCashCollectedPhp = activePayments
+      .filter((t) => t.tenderType === 'CASH')
+      .reduce((sum, t) => sum + t.totalPhp, 0);
+    const utangGcashCollectedPhp = activePayments
+      .filter((t) => t.tenderType === 'GCASH')
+      .reduce((sum, t) => sum + t.totalPhp, 0);
+
+    // 3. Cash Sales (Cash received for merchandise sold)
+    const cashSalesPhp = activeSales
+      .filter((t) => t.tenderType === 'CASH')
+      .reduce((sum, t) => sum + Math.max(0, t.totalPhp - t.refundedPhp), 0);
+
+    // 4. GCash Sales
+    const gcashSalesPhp = activeSales
+      .filter((t) => t.tenderType === 'GCASH')
+      .reduce((sum, t) => sum + Math.max(0, t.totalPhp - t.refundedPhp), 0);
+
+    // 5. Utang Credit Issued in period (Ipina-utang na paninda)
+    const utangCreditIssuedPhp = activeSales
+      .filter((t) => t.tenderType === 'UTANG')
+      .reduce((sum, t) => sum + Math.max(0, t.totalPhp - t.refundedPhp), 0);
+
+    // 6. Cash in Drawer (Pera sa Kahon / Cash on Hand)
+    // Cash Sales + Cash collected from Utang
+    const cashInDrawerPhp = Number((cashSalesPhp + utangCashCollectedPhp).toFixed(2));
+
+    // 7. GCash Total
+    const gcashTotalPhp = Number((gcashSalesPhp + utangGcashCollectedPhp).toFixed(2));
 
     return {
       period,
       totalSalesPhp,
       formattedTotalSales: Money.fromPhp(totalSalesPhp).format(),
+      utangCollectedPhp,
+      formattedUtangCollected: Money.fromPhp(utangCollectedPhp).format(),
+      cashInDrawerPhp,
+      formattedCashInDrawer: Money.fromPhp(cashInDrawerPhp).format(),
+      gcashTotalPhp,
+      formattedGcashTotal: Money.fromPhp(gcashTotalPhp).format(),
+      utangCreditIssuedPhp,
+      formattedUtangCreditIssued: Money.fromPhp(utangCreditIssuedPhp).format(),
       totalItems,
-      totalTransactions,
+      totalTransactions: activePeriodTxs.length,
+      totalSaleTransactions: activeSales.length,
+      totalPaymentTransactions: activePayments.length,
       transactions: periodTxs,
       allTransactions: [...this.transactions],
       shrinkageLog: [...this.shrinkageLog],
@@ -843,6 +1035,28 @@ export class TindahanStoreService {
     const tx = this.transactions.find((t) => t.id === txId);
     if (!tx || tx.status === 'VOIDED') return;
 
+    if (tx.transactionType === 'UTANG_PAYMENT') {
+      if (tx.customerName) {
+        const cust = this.utangCustomers.find(
+          (c) => c.name.toLowerCase() === tx.customerName!.toLowerCase()
+        );
+        if (cust) {
+          cust.balancePhp += tx.totalPhp;
+          cust.lastUpdated = 'Voided payment';
+          this.persistCustomerToSqlite(cust);
+        }
+      }
+      tx.status = 'VOIDED';
+      tx.voidOrReturnNote = `Voided Bayad Utang (${reason})`;
+      this.persistTransactionToSqlite(tx);
+      this.notify();
+      return;
+    }
+
+    const now = new Date();
+    const curYear = now.getFullYear();
+    const curMonth = now.getMonth() + 1;
+
     const allProducts = await this.productRepo.getAll();
     for (const item of tx.items) {
       const remainingQty = item.quantity - item.returnedQty;
@@ -851,6 +1065,27 @@ export class TindahanStoreService {
         if (prod) {
           await this.productRepo.save(prod.adjustStock(remainingQty));
         }
+        if (!tx.isOneTimeBulkOrder) {
+          this.recordMonthlyReturnIncrement(
+            item.productId,
+            curYear,
+            curMonth,
+            remainingQty,
+            true
+          );
+        }
+      }
+    }
+
+    if (tx.tenderType === 'UTANG' && tx.customerName) {
+      const cust = this.utangCustomers.find(
+        (c) => c.name.toLowerCase() === tx.customerName!.toLowerCase()
+      );
+      if (cust) {
+        const unrefundedNet = Math.max(0, tx.totalPhp - tx.refundedPhp);
+        cust.balancePhp = Math.max(0, cust.balancePhp - unrefundedNet);
+        cust.lastUpdated = 'Voided utang sale';
+        this.persistCustomerToSqlite(cust);
       }
     }
 
@@ -871,6 +1106,16 @@ export class TindahanStoreService {
     const tx = this.transactions.find((t) => t.id === params.txId);
     if (!tx || tx.status === 'VOIDED') {
       throw new Error('Transaction not available for return.');
+    }
+    if (tx.transactionType === 'UTANG_PAYMENT') {
+      throw new Error('Hindi maaaring mag-return sa tala ng bayad-utang.');
+    }
+
+    // Safety guard: Restrict returns on Utang sales from cash refunds
+    if (tx.tenderType === 'UTANG' && params.resolution === 'CASH_REFUND') {
+      throw new Error(
+        'Bawal mag-cash refund sa item na binili sa utang. Piliin ang Bawas Utang (UTANG_DEDUCTION) o Exchange Credit.'
+      );
     }
 
     const line = tx.items.find((i) => i.productId === params.productId);
@@ -895,10 +1140,10 @@ export class TindahanStoreService {
       params.disposition === 'SELLABLE' ? 'Restocked Sellable' : 'Quarantined Damaged'
     } • ${params.reason})`;
 
-    this.persistTransactionToSqlite(tx);
-
     const allProducts = await this.productRepo.getAll();
     const prod = allProducts.find((p) => p.id === params.productId);
+    const db = SqliteDatabase.getInstance().rawDb;
+
     if (prod) {
       if (params.disposition === 'SELLABLE') {
         await this.productRepo.save(prod.adjustStock(qty));
@@ -912,7 +1157,6 @@ export class TindahanStoreService {
           timestamp: 'Just now',
         };
         this.shrinkageLog.unshift(shk);
-        const db = SqliteDatabase.getInstance().rawDb;
         if (db) {
           db.runSync(
             'INSERT INTO shrinkage_logs (id, product_name, qty, reason, timestamp) VALUES (?, ?, ?, ?, ?)',
@@ -921,6 +1165,16 @@ export class TindahanStoreService {
         }
       }
     }
+
+    // Seasonal Forecast Engine tracking
+    const now = new Date();
+    this.recordMonthlyReturnIncrement(
+      params.productId,
+      now.getFullYear(),
+      now.getMonth() + 1,
+      qty,
+      params.disposition === 'DAMAGED_QUARANTINE'
+    );
 
     if (params.resolution === 'EXCHANGE_CREDIT') {
       this.exchangeCreditPhp += refundAmountPhp;
@@ -931,10 +1185,12 @@ export class TindahanStoreService {
       );
       if (cust) {
         cust.balancePhp = Math.max(0, cust.balancePhp - refundAmountPhp);
+        cust.lastUpdated = 'Bawas Utang (Return)';
         this.persistCustomerToSqlite(cust);
       }
     }
 
+    this.persistTransactionToSqlite(tx);
     this.notify();
     return { creditPhp: refundAmountPhp };
   }
@@ -992,7 +1248,7 @@ export class TindahanStoreService {
   }
 
   public getUtangCustomers(): UtangCustomerRecord[] {
-    return [...this.utangCustomers];
+    return [...this.snapshot.utangCustomers];
   }
 
   public addUtangCustomer(
@@ -1035,13 +1291,125 @@ export class TindahanStoreService {
     this.notify();
   }
 
-  public recordUtangPayment(customerId: string, amountPhp: number): void {
+  public recordUtangPayment(
+    customerId: string,
+    amountPhp: number,
+    paymentMethod: PaymentTenderType = 'CASH'
+  ): void {
     const cust = this.utangCustomers.find((c) => c.id === customerId);
-    if (!cust) return;
-    cust.balancePhp = Math.max(0, cust.balancePhp - amountPhp);
-    cust.lastUpdated = 'Paid just now';
-    this.persistCustomerToSqlite(cust);
+    if (!cust || amountPhp <= 0) return;
+
+    const actualPayment = Math.min(amountPhp, cust.balancePhp > 0 ? cust.balancePhp : amountPhp);
+    cust.balancePhp = Math.max(0, cust.balancePhp - actualPayment);
+    cust.lastUpdated = 'Bayad just now';
+
+    const now = new Date();
+    const curYear = now.getFullYear();
+    const curMonth = String(now.getMonth() + 1).padStart(2, '0');
+    const curDay = String(now.getDate()).padStart(2, '0');
+    const hours = now.getHours();
+    const mins = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const hr12 = hours % 12 || 12;
+    const timeLabel = `${hr12}:${mins} ${ampm}`;
+    const dateLabel = now.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+    const txTime = now.getTime();
+
+    const payTx: SaleTransactionRecord = {
+      id: `PAY-${curYear}${curMonth}${curDay}-${String(1 + this.transactions.length).padStart(4, '0')}`,
+      timeLabel,
+      dateLabel,
+      timestampMs: txTime,
+      totalPhp: actualPayment,
+      formattedTotal: Money.fromPhp(actualPayment).format(),
+      amountTenderedPhp: actualPayment,
+      changeDuePhp: 0,
+      refundedPhp: 0,
+      itemCount: 0,
+      tenderType: paymentMethod,
+      customerName: cust.name,
+      status: 'COMPLETED',
+      transactionType: 'UTANG_PAYMENT',
+      items: [],
+      voidOrReturnNote: `Bayad sa Utang (${cust.name})`,
+    };
+
+    const db = SqliteDatabase.getInstance().rawDb;
+    if (db) {
+      db.withTransactionSync(() => {
+        db.runSync(
+          `INSERT OR REPLACE INTO utang_customers (id, name, balance_php, credit_limit_php, last_updated)
+           VALUES (?, ?, ?, ?, ?)`,
+          [cust.id, cust.name, cust.balancePhp, cust.creditLimitPhp, cust.lastUpdated]
+        );
+        this.persistTransactionToSqlite(payTx, txTime);
+      });
+    } else {
+      this.persistCustomerToSqlite(cust);
+    }
+
+    this.transactions.unshift(payTx);
     this.notify();
+    this.trace('recorded utang payment', { customerId, amount: actualPayment });
+  }
+
+  private recordMonthlyReturnIncrement(
+    productId: string,
+    year: number,
+    month: number,
+    unitsReturned: number,
+    isDamagedOrVoid: boolean
+  ): void {
+    const db = SqliteDatabase.getInstance().rawDb;
+    const historyId = `msh_${productId}_${year}_${month}`;
+    if (db) {
+      if (isDamagedOrVoid) {
+        db.runSync(
+          `INSERT INTO monthly_sales_history (
+            id, product_id, year, month, gross_units_sold,
+            voided_units, returned_changed_mind_units, out_of_stock_days, total_days_in_month
+          ) VALUES (?, ?, ?, ?, 0, ?, 0, 0, 30)
+          ON CONFLICT(id) DO UPDATE SET
+            voided_units = voided_units + excluded.voided_units`,
+          [historyId, productId, year, month, unitsReturned]
+        );
+      } else {
+        db.runSync(
+          `INSERT INTO monthly_sales_history (
+            id, product_id, year, month, gross_units_sold,
+            voided_units, returned_changed_mind_units, out_of_stock_days, total_days_in_month
+          ) VALUES (?, ?, ?, ?, 0, 0, ?, 0, 30)
+          ON CONFLICT(id) DO UPDATE SET
+            returned_changed_mind_units = returned_changed_mind_units + excluded.returned_changed_mind_units`,
+          [historyId, productId, year, month, unitsReturned]
+        );
+      }
+    }
+
+    const list = this.monthlyHistoryMap.get(productId) ?? [];
+    let existing = list.find((r) => r.year === year && r.month === month);
+    if (!existing) {
+      existing = {
+        year,
+        month,
+        grossUnitsSold: 0,
+        voidedUnits: 0,
+        returnedChangedMindUnits: 0,
+        outOfStockDays: 0,
+        totalDaysInMonth: 30,
+      };
+      list.push(existing);
+      this.monthlyHistoryMap.set(productId, list);
+    }
+    if (isDamagedOrVoid) {
+      existing.voidedUnits += unitsReturned;
+    } else {
+      existing.returnedChangedMindUnits += unitsReturned;
+    }
   }
 
   private recordMonthlySaleIncrement(
@@ -1121,7 +1489,7 @@ export class TindahanStoreService {
   }
 
   public getSettings(): StoreSettingsState {
-    return { ...this.settings };
+    return { ...this.snapshot.settings };
   }
 
   public updateSettings(partial: Partial<StoreSettingsState>): void {

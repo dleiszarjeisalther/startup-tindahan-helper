@@ -142,6 +142,45 @@ export class Product {
     );
   }
 
+  public updateDetails(updates: {
+    name?: string;
+    category?: string;
+    pricePhp?: number;
+    baseStockCount?: number;
+    lowStockThreshold?: number;
+  }): Product {
+    const nextName = updates.name !== undefined && updates.name.trim() ? updates.name.trim() : this._name;
+    const nextCategory = updates.category !== undefined && updates.category.trim() ? updates.category.trim() : this._category;
+    const nextStock = updates.baseStockCount !== undefined ? Math.max(0, updates.baseStockCount) : this._baseStockCount;
+    const nextThreshold = updates.lowStockThreshold !== undefined ? Math.max(1, updates.lowStockThreshold) : this._ordinaryLowStockThreshold;
+    const nextOosDays = nextStock === 0 ? Math.max(1, this._outOfStockDays) : (this._baseStockCount === 0 && nextStock > 0 ? 0 : this._outOfStockDays);
+    let nextTiers = this._sellingTiers;
+    if (updates.pricePhp !== undefined && updates.pricePhp >= 0) {
+      const pieceIdx = this._sellingTiers.findIndex((t) => t.unitName === 'piece');
+      if (pieceIdx >= 0) {
+        nextTiers = this._sellingTiers.map((t, idx) =>
+          idx === pieceIdx ? { ...t, unitPricePhp: updates.pricePhp! } : t
+        );
+      } else if (this._sellingTiers.length > 0) {
+        nextTiers = [{ ...this._sellingTiers[0], unitPricePhp: updates.pricePhp! }, ...this._sellingTiers.slice(1)];
+      }
+    }
+    return new Product(
+      this.id,
+      nextName,
+      nextCategory,
+      this._barcode,
+      nextStock,
+      nextThreshold,
+      this._unitCostPhp,
+      nextTiers,
+      this._quarantineStockCount,
+      nextOosDays,
+      this._visual,
+      this._imageUri
+    );
+  }
+
   public withImage(imageUri: string | undefined): Product {
     return new Product(
       this.id,

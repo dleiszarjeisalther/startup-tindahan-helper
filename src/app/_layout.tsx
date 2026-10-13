@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
 import AppTabs from '@/components/app-tabs';
+import { TindahanStoreProvider } from '@/presentation/providers/TindahanStoreProvider';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -22,7 +23,9 @@ export default function TabLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AppTabs />
+      <TindahanStoreProvider>
+        <AppTabs />
+      </TindahanStoreProvider>
     </ThemeProvider>
   );
 }

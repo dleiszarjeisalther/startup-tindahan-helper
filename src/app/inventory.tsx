@@ -6,6 +6,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
@@ -19,6 +20,7 @@ import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScann
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 import { getTranslations } from '@/presentation/localization/i18n';
+import { ProductDTO } from '@/domain/entities/Product';
 
 const STOCK_FILTERS = ['All', 'In Stock', 'Low Stock', 'Out of Stock'] as const;
 const PRODUCT_CATEGORIES = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
@@ -31,12 +33,17 @@ export default function InventoryManagementScreen() {
     addProductToDatabase,
     deleteProductFromDatabase,
     updateProductImage,
+    updateProductDetails,
     adjustInventoryStock,
     lookupOnlineCatalog,
     settings,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
+
+  // Stock count computations for filter badges
+  const lowStockCount = products.filter((p) => p.stockStatus === 'LOW_STOCK').length;
+  const outOfStockCount = products.filter((p) => p.stockStatus === 'OUT_OF_STOCK').length;
 
   const [selectedFilter, setSelectedFilter] =
     useState<(typeof STOCK_FILTERS)[number]>('All');
@@ -45,6 +52,68 @@ export default function InventoryManagementScreen() {
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
   const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
   const [customRestockQty, setCustomRestockQty] = useState<string>('10');
+
+  // Edit Product Modal State
+  const [editingProduct, setEditingProduct] = useState<ProductDTO | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editPricePhp, setEditPricePhp] = useState('');
+  const [editStock, setEditStock] = useState('');
+  const [editLowThreshold, setEditLowThreshold] = useState('');
+  const [editCategory, setEditCategory] = useState('Snacks');
+  const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+
+  const handleOpenEditModal = (item: ProductDTO) => {
+    setEditingProduct(item);
+    setEditName(item.name);
+    setEditPricePhp(item.defaultPricePhp.toString());
+    setEditStock(item.stockCount.toString());
+    setEditLowThreshold(item.ordinaryLowStockThreshold.toString());
+    setEditCategory(item.category || 'Snacks');
+    setEditError(null);
+  };
+
+  const handleSaveEditProduct = async () => {
+    if (!editingProduct) return;
+    if (!editName.trim()) {
+      setEditError('Product name is required.');
+      return;
+    }
+    const price = parseFloat(editPricePhp);
+    if (isNaN(price) || price < 0) {
+      setEditError('Valid price is required.');
+      return;
+    }
+    const stock = parseInt(editStock, 10);
+    if (isNaN(stock) || stock < 0) {
+      setEditError('Valid stock count is required.');
+      return;
+    }
+    const threshold = parseInt(editLowThreshold, 10);
+    if (isNaN(threshold) || threshold < 1) {
+      setEditError('Low stock threshold must be at least 1.');
+      return;
+    }
+
+    setIsSubmittingEdit(true);
+    setEditError(null);
+    try {
+      await updateProductDetails(editingProduct.id, {
+        name: editName.trim(),
+        category: editCategory,
+        pricePhp: price,
+        baseStockCount: stock,
+        lowStockThreshold: threshold,
+      });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      setFeedbackMsg(`✓ Updated "${editName.trim()}" in SQLite Database`);
+      setEditingProduct(null);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : 'Could not update product.');
+    } finally {
+      setIsSubmittingEdit(false);
+    }
+  };
 
   // Add Product Form State (Saved directly to SQLite)
   const [newImageUri, setNewImageUri] = useState<string | null>(null);
@@ -449,6 +518,13 @@ export default function InventoryManagementScreen() {
                 : filter === 'Low Stock'
                 ? t.lowStock
                 : t.outOfStock;
+            const badgeCount =
+              filter === 'Low Stock'
+                ? lowStockCount
+                : filter === 'Out of Stock'
+                ? outOfStockCount
+                : null;
+
             return (
               <Pressable
                 key={filter}
@@ -463,6 +539,18 @@ export default function InventoryManagementScreen() {
                 >
                   {filterLabel}
                 </Text>
+                {badgeCount !== null && badgeCount > 0 ? (
+                  <View
+                    style={[
+                      styles.filterBadgePill,
+                      filter === 'Out of Stock'
+                        ? styles.filterBadgeRed
+                        : styles.filterBadgeAmber,
+                    ]}
+                  >
+                    <Text style={styles.filterBadgeText}>{badgeCount}</Text>
+                  </View>
+                ) : null}
               </Pressable>
             );
           })}
@@ -842,15 +930,24 @@ export default function InventoryManagementScreen() {
               {isExpanded ? (
                 <View style={styles.ownerAdjustDrawer}>
                   <View style={styles.drawerTopRow}>
-                    <Text style={styles.adjustTitle}>
-                      Manage Product • Barcode: {item.barcode}
+                    <Text style={styles.adjustTitle} numberOfLines={1}>
+                      Manage • Barcode: {item.barcode}
                     </Text>
-                    <Pressable
-                      style={styles.photoChangeBtn}
-                      onPress={() => handleChangeExistingPhoto(item.id)}
-                    >
-                      <Text style={styles.photoChangeText}>📷 Change Photo</Text>
-                    </Pressable>
+                    <View style={styles.topDrawerActions}>
+                      <Pressable
+                        style={styles.editProductBtn}
+                        onPress={() => handleOpenEditModal(item)}
+                      >
+                        <Ionicons name="pencil" size={13} color="#0D7A52" style={{ marginRight: 3 }} />
+                        <Text style={styles.editProductBtnText}>Edit</Text>
+                      </Pressable>
+                      <Pressable
+                        style={styles.photoChangeBtn}
+                        onPress={() => handleChangeExistingPhoto(item.id)}
+                      >
+                        <Text style={styles.photoChangeText}>📷 Photo</Text>
+                      </Pressable>
+                    </View>
                   </View>
 
                   {/* Custom Restock Input Row */}
@@ -932,9 +1029,18 @@ export default function InventoryManagementScreen() {
                     <Pressable
                       style={styles.deleteBtn}
                       onPress={async () => {
-                        await deleteProductFromDatabase(item.id);
-                        setExpandedProductId(null);
-                        setFeedbackMsg(`🗑 Deleted "${item.name}" from SQLite Database`);
+                        try {
+                          await deleteProductFromDatabase(item.id);
+                          setExpandedProductId(null);
+                          setFeedbackMsg(`🗑 Deleted "${item.name}" from SQLite Database`);
+                          setErrorMsg(null);
+                        } catch (error) {
+                          setErrorMsg(
+                            error instanceof Error
+                              ? error.message
+                              : 'Could not delete the product. Please try again.'
+                          );
+                        }
                       }}
                     >
                       <Text style={styles.deleteBtnText}>🗑 Delete</Text>
@@ -961,6 +1067,131 @@ export default function InventoryManagementScreen() {
           </View>
         </Pressable>
       </ScrollView>
+
+      {/* Edit Product Modal */}
+      <Modal
+        visible={!!editingProduct}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setEditingProduct(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Ionicons name="pencil" size={18} color="#0D7A52" />
+                <Text style={styles.modalTitle}>Edit Product</Text>
+              </View>
+              <Pressable
+                onPress={() => setEditingProduct(null)}
+                hitSlop={10}
+              >
+                <Text style={styles.modalCloseText}>✕</Text>
+              </Pressable>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+              <Text style={styles.modalFieldLabel}>Product Name *</Text>
+              <TextInput
+                style={styles.modalTextInput}
+                value={editName}
+                onChangeText={setEditName}
+                placeholder="Product Name"
+                placeholderTextColor="#9CA3AF"
+              />
+
+              <View style={styles.modalTwoColRow}>
+                <View style={styles.modalHalfCol}>
+                  <Text style={styles.modalFieldLabel}>Price (₱) *</Text>
+                  <TextInput
+                    style={styles.modalTextInput}
+                    value={editPricePhp}
+                    onChangeText={setEditPricePhp}
+                    placeholder="0.00"
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="decimal-pad"
+                  />
+                </View>
+                <View style={styles.modalHalfCol}>
+                  <Text style={styles.modalFieldLabel}>Stock Count (pcs) *</Text>
+                  <TextInput
+                    style={styles.modalTextInput}
+                    value={editStock}
+                    onChangeText={setEditStock}
+                    placeholder="0"
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="number-pad"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.modalTwoColRow}>
+                <View style={styles.modalHalfCol}>
+                  <Text style={styles.modalFieldLabel}>Low Stock Alert</Text>
+                  <TextInput
+                    style={styles.modalTextInput}
+                    value={editLowThreshold}
+                    onChangeText={setEditLowThreshold}
+                    placeholder="5"
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="number-pad"
+                  />
+                </View>
+                <View style={styles.modalHalfCol}>
+                  <Text style={styles.modalFieldLabel}>Category</Text>
+                  <View style={styles.categoryPillsMini}>
+                    {PRODUCT_CATEGORIES.map((cat) => (
+                      <Pressable
+                        key={cat}
+                        style={[
+                          styles.catMiniPill,
+                          editCategory === cat ? styles.catMiniPillActive : null,
+                        ]}
+                        onPress={() => setEditCategory(cat)}
+                      >
+                        <Text
+                          style={[
+                            styles.catMiniPillText,
+                            editCategory === cat ? styles.catMiniPillTextActive : null,
+                          ]}
+                        >
+                          {cat}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
+              </View>
+
+              {editError ? (
+                <View style={styles.modalErrorBox}>
+                  <Text style={styles.modalErrorText}>⚠️ {editError}</Text>
+                </View>
+              ) : null}
+
+              <View style={styles.modalActionRow}>
+                <Pressable
+                  style={styles.modalCancelBtn}
+                  onPress={() => setEditingProduct(null)}
+                >
+                  <Text style={styles.modalCancelBtnText}>Cancel</Text>
+                </Pressable>
+
+                <Pressable
+                  style={[styles.modalSaveBtn, isSubmittingEdit ? styles.btnDisabled : null]}
+                  disabled={isSubmittingEdit}
+                  onPress={handleSaveEditProduct}
+                >
+                  <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
+                  <Text style={styles.modalSaveBtnText}>
+                    {isSubmittingEdit ? 'Saving...' : 'Save Changes'}
+                  </Text>
+                </Pressable>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -1558,5 +1789,175 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '800',
+  },
+  filterBadgePill: {
+    marginLeft: 6,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  filterBadgeRed: {
+    backgroundColor: '#EF4444',
+  },
+  filterBadgeAmber: {
+    backgroundColor: '#F59E0B',
+  },
+  filterBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '900',
+    fontVariant: ['tabular-nums'],
+  },
+  topDrawerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  editProductBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  editProductBtnText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#065F46',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 32,
+    maxHeight: '85%',
+    gap: 8,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  modalTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  modalCloseText: {
+    fontSize: 18,
+    color: '#94A3B8',
+    fontWeight: '700',
+    padding: 4,
+  },
+  modalFieldLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#334155',
+    marginBottom: 4,
+    marginTop: 8,
+  },
+  modalTextInput: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
+    color: '#0F172A',
+  },
+  modalTwoColRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  modalHalfCol: {
+    flex: 1,
+  },
+  categoryPillsMini: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4,
+    marginTop: 2,
+  },
+  catMiniPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 6,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  catMiniPillActive: {
+    backgroundColor: '#0D7A52',
+    borderColor: '#0D7A52',
+  },
+  catMiniPillText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#475569',
+  },
+  catMiniPillTextActive: {
+    color: '#FFFFFF',
+  },
+  modalErrorBox: {
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 8,
+  },
+  modalErrorText: {
+    fontSize: 12,
+    color: '#B91C1C',
+    fontWeight: '600',
+  },
+  modalActionRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 18,
+  },
+  modalCancelBtn: {
+    flex: 1,
+    backgroundColor: '#F1F5F9',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalCancelBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  modalSaveBtn: {
+    flex: 2,
+    flexDirection: 'row',
+    backgroundColor: '#0D7A52',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalSaveBtnText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
 });

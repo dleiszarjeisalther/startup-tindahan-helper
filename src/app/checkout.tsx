@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
@@ -32,6 +32,8 @@ export default function CheckoutNewSaleScreen() {
     parkCurrentCart,
     restoreParkedCart,
     completeSale,
+    cartRevision,
+    version,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
@@ -52,6 +54,10 @@ export default function CheckoutNewSaleScreen() {
   const [completedTx, setCompletedTx] = useState<SaleTransactionRecord | null>(null);
   const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (__DEV__) console.debug('[StoreRender]', { surface: 'Checkout', version, cartCount: cartSummary.totalCount });
+  }, [version, cartSummary.totalCount]);
+
   const resetSaleForm = useCallback(() => {
     setCompletedTx(null);
     setPaymentInputText('');
@@ -64,18 +70,20 @@ export default function CheckoutNewSaleScreen() {
 
 
 
-  useFocusEffect(
-    useCallback(() => {
-      // Whenever New Sale tab comes into focus, ensure clean input state if cart was empty
-      if (cartSummary.totalCount === 0) {
-        setPaymentInputText('');
-        setDiscountInputText('');
-        setSelectedCustomer('');
-        setGcashRefInput('');
-        setPaymentErrorMsg(null);
-      }
-    }, [cartSummary.totalCount])
-  );
+  const visibleCompletedTx = cartSummary.totalCount === 0 ? completedTx : null;
+
+  const runCartAction = useCallback((action: () => void, afterCommit?: () => void) => {
+    try {
+      action();
+      setPaymentErrorMsg(null);
+      afterCommit?.();
+    } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      setPaymentErrorMsg(
+        error instanceof Error ? error.message : 'Could not save the cart. Please try again.'
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (
@@ -90,11 +98,6 @@ export default function CheckoutNewSaleScreen() {
       return () => clearTimeout(timer);
     }
   }, [cartSummary.discountPhp, discountInputText]);
-
-  const displayPaymentErrorMsg =
-    cartSummary.totalCount > 0 && paymentErrorMsg?.includes('empty cart')
-      ? null
-      : paymentErrorMsg;
 
   const hasUserTypedPayment = paymentInputText.trim() !== '';
   const parsedPaymentPhp = parseFloat(paymentInputText.replace(/[^0-9.]/g, '')) || 0;
@@ -148,10 +151,10 @@ export default function CheckoutNewSaleScreen() {
     }
 
     try {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       const tx = await completeSale({
         tenderType,
         amountTenderedPhp: tenderType === 'UTANG' ? 0 : effectivePaymentPhp,
+        expectedCartRevision: cartRevision,
         gcashRef: tenderType === 'GCASH' ? gcashRefInput.trim() || undefined : undefined,
         customerName:
           tenderType === 'UTANG' || chargeShortfallToUtang
@@ -159,9 +162,9 @@ export default function CheckoutNewSaleScreen() {
             : undefined,
         chargeShortfallToUtang,
         isOneTimeBulkOrder: false,
-        items: cartSummary.items,
       });
 
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       setCompletedTx(tx);
       setPaymentInputText('');
       setDiscountInputText('0.00');
@@ -195,7 +198,7 @@ export default function CheckoutNewSaleScreen() {
           {cartSummary.hasParkedCart ? (
             <Pressable
               style={styles.restoreParkedBtn}
-              onPress={restoreParkedCart}
+              onPress={() => runCartAction(restoreParkedCart)}
             >
               <Text style={styles.restoreParkedText}>Restore Held Cart</Text>
             </Pressable>
@@ -224,8 +227,7 @@ export default function CheckoutNewSaleScreen() {
             <Pressable
               style={styles.parkBtn}
               onPress={() => {
-                parkCurrentCart();
-                setShowClearConfirm(false);
+                runCartAction(parkCurrentCart, () => setShowClearConfirm(false));
               }}
             >
               <Ionicons name="pause-circle-outline" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
@@ -234,9 +236,10 @@ export default function CheckoutNewSaleScreen() {
             <Pressable
               style={styles.clearConfirmBtn}
               onPress={() => {
-                clearCart();
-                resetSaleForm();
-                setShowClearConfirm(false);
+                runCartAction(clearCart, () => {
+                  resetSaleForm();
+                  setShowClearConfirm(false);
+                });
               }}
             >
               <Ionicons name="trash-outline" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
@@ -258,7 +261,7 @@ export default function CheckoutNewSaleScreen() {
           <Text style={styles.undoText}>
             Removed {cartSummary.lastRemovedItem.name}
           </Text>
-          <Pressable style={styles.undoBtn} onPress={undoRemoveCartItem}>
+          <Pressable style={styles.undoBtn} onPress={() => runCartAction(undoRemoveCartItem)}>
             <Text style={styles.undoBtnText}>UNDO</Text>
           </Pressable>
         </View>
@@ -326,7 +329,7 @@ export default function CheckoutNewSaleScreen() {
                           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
                             () => {}
                           );
-                          addToCart(item.productId, -1);
+                          runCartAction(() => addToCart(item.productId, -1));
                         }}
                       >
                         <Text style={styles.stepperSymbol}>−</Text>
@@ -341,7 +344,7 @@ export default function CheckoutNewSaleScreen() {
                           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
                             () => {}
                           );
-                          addToCart(item.productId, 1);
+                          runCartAction(() => addToCart(item.productId, 1));
                         }}
                       >
                         <Text style={styles.stepperSymbol}>+</Text>
@@ -606,9 +609,9 @@ export default function CheckoutNewSaleScreen() {
 
         </View>
 
-        {displayPaymentErrorMsg ? (
+        {paymentErrorMsg ? (
           <View style={styles.errorBox}>
-            <Text style={styles.errorBoxText}>{displayPaymentErrorMsg}</Text>
+            <Text style={styles.errorBoxText}>{paymentErrorMsg}</Text>
           </View>
         ) : null}
 
@@ -645,7 +648,7 @@ export default function CheckoutNewSaleScreen() {
       </ScrollView>
 
       {/* Official Transaction Receipt Modal on Completion */}
-      {completedTx ? (
+      {visibleCompletedTx ? (
         <View style={styles.receiptOverlay}>
           <View style={styles.receiptCard}>
             <View style={styles.receiptHeader}>
@@ -659,40 +662,40 @@ export default function CheckoutNewSaleScreen() {
             <View style={styles.receiptBody}>
               <View style={styles.receiptRow}>
                 <Text style={styles.receiptLabel}>Receipt ID:</Text>
-                <Text style={styles.receiptValueBold}>{completedTx.id}</Text>
+                <Text style={styles.receiptValueBold}>{visibleCompletedTx.id}</Text>
               </View>
               <View style={styles.receiptRow}>
                 <Text style={styles.receiptLabel}>Date & Time:</Text>
                 <Text style={styles.receiptValue}>
-                  {completedTx.dateLabel} • {completedTx.timeLabel}
+                  {visibleCompletedTx.dateLabel} • {visibleCompletedTx.timeLabel}
                 </Text>
               </View>
               <View style={styles.receiptRow}>
                 <Text style={styles.receiptLabel}>Payment Method:</Text>
-                <Text style={styles.receiptValueBold}>{completedTx.tenderType}</Text>
+                <Text style={styles.receiptValueBold}>{visibleCompletedTx.tenderType}</Text>
               </View>
-              {completedTx.customerName ? (
+              {visibleCompletedTx.customerName ? (
                 <View style={styles.receiptRow}>
                   <Text style={styles.receiptLabel}>Customer:</Text>
-                  <Text style={styles.receiptValue}>{completedTx.customerName}</Text>
+                  <Text style={styles.receiptValue}>{visibleCompletedTx.customerName}</Text>
                 </View>
               ) : null}
               <View style={styles.receiptDivider} />
               <View style={styles.receiptRow}>
                 <Text style={styles.receiptTotalLabel}>Total Amount:</Text>
-                <Text style={styles.receiptTotalValue}>{completedTx.formattedTotal}</Text>
+                <Text style={styles.receiptTotalValue}>{visibleCompletedTx.formattedTotal}</Text>
               </View>
               <View style={styles.receiptRow}>
                 <Text style={styles.receiptLabel}>Amount Tendered:</Text>
                 <Text style={styles.receiptValue}>
-                  ₱{completedTx.amountTenderedPhp.toFixed(2)}
+                  ₱{visibleCompletedTx.amountTenderedPhp.toFixed(2)}
                 </Text>
               </View>
-              {completedTx.changeDuePhp > 0 ? (
+              {visibleCompletedTx.changeDuePhp > 0 ? (
                 <View style={[styles.receiptRow, styles.receiptChangeRow]}>
                   <Text style={styles.receiptChangeLabel}>{t.changeGiven}</Text>
                   <Text style={styles.receiptChangeValue}>
-                    ₱{completedTx.changeDuePhp.toFixed(2)}
+                    ₱{visibleCompletedTx.changeDuePhp.toFixed(2)}
                   </Text>
                 </View>
               ) : null}
@@ -702,7 +705,6 @@ export default function CheckoutNewSaleScreen() {
               <Pressable
                 style={styles.receiptPrimaryBtn}
                 onPress={() => {
-                  clearCart();
                   resetSaleForm();
                   router.navigate('/');
                 }}
@@ -713,7 +715,6 @@ export default function CheckoutNewSaleScreen() {
               <Pressable
                 style={styles.receiptSecondaryBtn}
                 onPress={() => {
-                  clearCart();
                   resetSaleForm();
                   router.navigate('/sales');
                 }}

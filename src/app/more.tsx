@@ -1,5 +1,5 @@
 // src/app/more.tsx — Screen 6: Menu / Profile ("Juan's Store — Owner")
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { getTranslations } from '@/presentation/localization/i18n';
@@ -22,14 +22,7 @@ export default function MenuProfileScreen() {
     addUtangCustomer,
     deleteUtangCustomer,
     recordUtangPayment,
-    refreshFromSqlite,
   } = useTindahanStore();
-
-  useFocusEffect(
-    useCallback(() => {
-      refreshFromSqlite();
-    }, [refreshFromSqlite])
-  );
 
   const t = getTranslations(settings?.language);
 

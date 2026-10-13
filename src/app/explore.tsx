@@ -1,5 +1,5 @@
 // src/app/explore.tsx — Feature C: Seasonal Product Forecast Dashboard (SQLite Backed)
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { seasonalForecastEngine } from '@/infrastructure/container';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
@@ -24,14 +24,7 @@ export default function SeasonalForecastScreen() {
     getMonthlySalesHistory,
     addOrUpdateMonthlySalesRecord,
     updateSettings,
-    refreshFromSqlite,
   } = useTindahanStore();
-
-  useFocusEffect(
-    useCallback(() => {
-      refreshFromSqlite();
-    }, [refreshFromSqlite])
-  );
 
   const [restockToast, setRestockToast] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string>(

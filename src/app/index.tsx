@@ -1,5 +1,5 @@
 // src/app/index.tsx — Screen 1: POS / Scan Product (OOP Barcode Scanner Viewfinder + SQLite Backed)
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -19,7 +19,7 @@ import { getTranslations } from '@/presentation/localization/i18n';
 
 export default function PosScanProductScreen() {
   const router = useRouter();
-  const { products, addToCart, cartSummary, settings } = useTindahanStore();
+  const { products, addToCart, cartSummary, settings, version } = useTindahanStore();
   const t = getTranslations(settings?.language);
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyTingi, setOnlyTingi] = useState(false);
@@ -27,11 +27,28 @@ export default function PosScanProductScreen() {
   const [scanToast, setScanToast] = useState<string | null>(null);
   const [unknownBarcode, setUnknownBarcode] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (__DEV__) console.debug('[StoreRender]', { surface: 'Scan', version, cartCount: cartSummary.totalCount });
+  }, [version, cartSummary.totalCount]);
+
   const triggerScanToast = (msg: string) => {
     setScanToast(msg);
     setTimeout(() => {
       setScanToast((prev) => (prev === msg ? null : prev));
     }, 2400);
+  };
+
+  const tryAddToCart = (productId: string, successMessage: string) => {
+    try {
+      addToCart(productId, 1);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      triggerScanToast(successMessage);
+      return true;
+    } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      triggerScanToast(error instanceof Error ? error.message : 'Could not update the cart. Try again.');
+      return false;
+    }
   };
 
   const handleBarcodeDetected = (rawCode: string) => {
@@ -48,10 +65,9 @@ export default function PosScanProductScreen() {
         triggerScanToast(`⚠️ ${matched.name} is Out of Stock!`);
         return;
       }
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      addToCart(matched.id, 1);
-      setUnknownBarcode(null);
-      triggerScanToast(`✓ Scanned +1 ${matched.name} (${matched.formattedPrice})`);
+      if (tryAddToCart(matched.id, `✓ Scanned +1 ${matched.name} (${matched.formattedPrice})`)) {
+        setUnknownBarcode(null);
+      }
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       setUnknownBarcode(clean);
@@ -219,11 +235,7 @@ export default function PosScanProductScreen() {
                         triggerScanToast(`⚠️ ${item.name} ${t.outOfStockAlert}`);
                         return;
                       }
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
-                        () => {}
-                      );
-                      addToCart(item.id, 1);
-                      triggerScanToast(`+1 ${item.name} added to New Sale`);
+                      tryAddToCart(item.id, `+1 ${item.name} added to New Sale`);
                     }}
                   >
                     <View style={styles.cardThumbArea}>

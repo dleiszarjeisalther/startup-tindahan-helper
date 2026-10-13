@@ -1,6 +1,6 @@
 {
   "0": "Product",
-  "1": "useTindahanStore",
+  "1": "useTindahanStore.ts",
   "2": "TindahanStoreService",
   "3": "app-tabs.web.tsx",
   "4": "expo",
@@ -17,10 +17,10 @@
   "15": "use-color-scheme.web.ts",
   "16": "expo-constants",
   "17": "SynchronousKeyValueStorage",
-  "18": "Part 2: Common POS System Problems & Comprehensive Solutions",
-  "19": "expo-glass-effect",
+  "18": "SoundFeedbackService",
+  "19": "expo-asset",
   "20": "expo-device",
-  "21": "expo-haptics",
+  "21": "expo-image",
   "22": "expo-linking",
   "23": "expo-router",
   "24": "expo-splash-screen",
@@ -53,7 +53,13 @@
   "51": "expo-file-system",
   "52": "react-dom",
   "53": "CLAUDE.md",
-  "54": "@expo/ui",
+  "54": "expo-image-picker",
   "55": "@expo/vector-icons",
-  "56": "expo-web-browser"
+  "56": "expo-web-browser",
+  "57": "react-native-web",
+  "58": "Barcode",
+  "59": "container.ts",
+  "60": "ProductOnboardingService.ts",
+  "61": "ProductDTO",
+  "62": "InMemoryProductRepository"
 }

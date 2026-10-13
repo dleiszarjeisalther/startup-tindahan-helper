@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
@@ -25,14 +25,9 @@ const ADD_CATEGORIES = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
 
 export default function ProductListScreen() {
   const router = useRouter();
-  const { products, addToCart, addProductToDatabase, settings, refreshFromSqlite } = useTindahanStore();
+  const { products, addToCart, addProductToDatabase, settings } = useTindahanStore();
   const t = getTranslations(settings?.language);
 
-  useFocusEffect(
-    useCallback(() => {
-      refreshFromSqlite();
-    }, [refreshFromSqlite])
-  );
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
@@ -402,9 +397,16 @@ export default function ProductListScreen() {
                 setAddedBanner(`⚠️ ${item.name} is Out of Stock — restock in Inventory`);
                 return;
               }
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-              addToCart(item.id, 1);
-              setAddedBanner(`✓ Added 1× ${item.name} to New Sale`);
+              try {
+                addToCart(item.id, 1);
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                setAddedBanner(`✓ Added 1× ${item.name} to New Sale`);
+              } catch (error) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+                setAddedBanner(
+                  error instanceof Error ? error.message : 'Could not update the cart. Try again.'
+                );
+              }
               setTimeout(() => setAddedBanner(null), 2000);
             }}
           >

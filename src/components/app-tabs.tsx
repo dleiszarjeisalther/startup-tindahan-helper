@@ -4,24 +4,22 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
-import { tindahanStoreService } from '@/infrastructure/container';
 import { getTranslations } from '@/presentation/localization/i18n';
 
 // Safe custom tab bar receiving standard React Navigation BottomTabBarProps
 function CustomTindahanTabBar(props: any) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { cartSummary, settings } = useTindahanStore();
-  const [, setTick] = React.useState(0);
+  const { cartSummary, settings, version, products } = useTindahanStore();
+  const outOfStockCount = products.filter((p) => p.stockStatus === 'OUT_OF_STOCK').length;
+  const lowStockCount = products.filter((p) => p.stockStatus === 'LOW_STOCK').length;
 
   // React 19 & Expo SDK 57 Safe Render Rule: Use useState initializer instead of useRef.current
   const heartbeatAnim = React.useState(() => new Animated.Value(1))[0];
 
   React.useEffect(() => {
-    return tindahanStoreService.subscribe(() => {
-      setTick((t) => t + 1);
-    });
-  }, []);
+    if (__DEV__) console.debug('[StoreRender]', { surface: 'TabBadge', version, cartCount: cartSummary.totalCount });
+  }, [version, cartSummary.totalCount]);
 
   // Heartbeat pulse animation whenever there are active items in the sale
   React.useEffect(() => {
@@ -159,11 +157,27 @@ function CustomTindahanTabBar(props: any) {
           onPress={() => handleTabPress('inventory')}
           hitSlop={8}
         >
-          <Ionicons
-            name={isInventory ? 'cube' : 'cube-outline'}
-            size={22}
-            color={isInventory ? '#0D7A52' : '#6B7280'}
-          />
+          <View style={styles.iconBadgeWrapper}>
+            <Ionicons
+              name={isInventory ? 'file-tray-stacked' : 'file-tray-stacked-outline'}
+              size={22}
+              color={isInventory ? '#0D7A52' : '#6B7280'}
+            />
+            {outOfStockCount > 0 || lowStockCount > 0 ? (
+              <View style={styles.inventoryBadgesCluster} pointerEvents="none">
+                {outOfStockCount > 0 ? (
+                  <View style={styles.invBadgeRed}>
+                    <Text style={styles.invBadgeText}>{outOfStockCount}</Text>
+                  </View>
+                ) : null}
+                {lowStockCount > 0 ? (
+                  <View style={styles.invBadgeAmber}>
+                    <Text style={styles.invBadgeText}>{lowStockCount}</Text>
+                  </View>
+                ) : null}
+              </View>
+            ) : null}
+          </View>
           <Text style={[styles.tabLabel, isInventory ? styles.tabActiveText : null]}>
             {t.tabInventory}
           </Text>
@@ -324,5 +338,48 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '900',
     fontVariant: ['tabular-nums'],
+  },
+  iconBadgeWrapper: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inventoryBadgesCluster: {
+    position: 'absolute',
+    top: -5,
+    right: -14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  invBadgeRed: {
+    backgroundColor: '#EF4444',
+    minWidth: 15,
+    height: 15,
+    borderRadius: 7.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  invBadgeAmber: {
+    backgroundColor: '#F59E0B',
+    minWidth: 15,
+    height: 15,
+    borderRadius: 7.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  invBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '900',
+    fontVariant: ['tabular-nums'],
+    lineHeight: 11,
+    textAlign: 'center',
   },
 });

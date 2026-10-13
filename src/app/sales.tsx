@@ -1,5 +1,5 @@
 // src/app/sales.tsx — Screen 5: Sales History (+ Owner Return / Void / Exchange Wizard)
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ReturnDisposition } from '@/application/TindahanStoreService';
@@ -25,7 +25,6 @@ export default function SalesHistoryScreen() {
     voidEntireTransaction,
     processReturnOrExchange,
     settings,
-    refreshFromSqlite,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
@@ -36,13 +35,6 @@ export default function SalesHistoryScreen() {
   const [disposition, setDisposition] = useState<ReturnDisposition>('SELLABLE');
   const [returnReason, setReturnReason] = useState<string>('Defective / Wrong Item');
   const [actionMsg, setActionMsg] = useState<string | null>(null);
-
-  // Re-hydrate from SQLite every time this tab comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      refreshFromSqlite();
-    }, [refreshFromSqlite])
-  );
 
   const summary = getSalesSummary(selectedPeriod);
 
@@ -103,23 +95,45 @@ export default function SalesHistoryScreen() {
           <Text style={styles.dateChevron}>›</Text>
         </View>
 
-        {/* 3 KPI Summary Cards (From SQLite Transactions) */}
+        {/* 3 KPI Summary Cards: Benta, Koleksyon, Pera sa Kahon */}
         <View style={styles.kpiRow}>
           <View style={styles.kpiCard}>
             <Text style={styles.kpiLabel}>
-              {selectedPeriod === 'Daily' ? 'Sales Today' : `${selectedPeriod} Sales`}
+              {selectedPeriod === 'Daily' ? 'Benta Today' : `${selectedPeriod} Benta`}
             </Text>
             <Text style={styles.kpiValue}>{summary.formattedTotalSales}</Text>
           </View>
 
           <View style={styles.kpiCard}>
-            <Text style={styles.kpiLabel}>Total Items</Text>
-            <Text style={styles.kpiValue}>{summary.totalItems}</Text>
+            <Text style={styles.kpiLabel}>Koleksyon (Utang)</Text>
+            <Text style={[styles.kpiValue, { color: '#0D7A52' }]}>
+              {summary.formattedUtangCollected}
+            </Text>
           </View>
 
           <View style={styles.kpiCard}>
-            <Text style={styles.kpiLabel}>Transactions</Text>
-            <Text style={styles.kpiValue}>{summary.totalTransactions}</Text>
+            <Text style={styles.kpiLabel}>Pera sa Kahon</Text>
+            <Text style={styles.kpiValue}>{summary.formattedCashInDrawer}</Text>
+          </View>
+        </View>
+
+        {/* Secondary Financial & Inventory Breakdown */}
+        <View style={styles.secondaryKpiRow}>
+          <View style={styles.secondaryKpiItem}>
+            <Text style={styles.secondaryKpiLabel}>GCash Total</Text>
+            <Text style={styles.secondaryKpiVal}>{summary.formattedGcashTotal}</Text>
+          </View>
+          <View style={styles.secondaryKpiItem}>
+            <Text style={styles.secondaryKpiLabel}>Bagong Utang</Text>
+            <Text style={styles.secondaryKpiVal}>{summary.formattedUtangCreditIssued}</Text>
+          </View>
+          <View style={styles.secondaryKpiItem}>
+            <Text style={styles.secondaryKpiLabel}>Items Sold</Text>
+            <Text style={styles.secondaryKpiVal}>{summary.totalItems}</Text>
+          </View>
+          <View style={styles.secondaryKpiItem}>
+            <Text style={styles.secondaryKpiLabel}>Receipts</Text>
+            <Text style={styles.secondaryKpiVal}>{summary.totalTransactions}</Text>
           </View>
         </View>
 
@@ -152,7 +166,93 @@ export default function SalesHistoryScreen() {
           ) : null}
           {summary.transactions.map((tx, idx) => {
             const isExpanded = selectedTxId === tx.id;
+            const isPayment = tx.transactionType === 'UTANG_PAYMENT';
             const netPhp = Math.max(0, tx.totalPhp - tx.refundedPhp);
+
+            if (isPayment) {
+              return (
+                <View
+                  key={tx.id}
+                  style={[
+                    styles.txContainer,
+                    idx < summary.transactions.length - 1 ? styles.txBorder : null,
+                  ]}
+                >
+                  <Pressable
+                    style={styles.txRow}
+                    onPress={() =>
+                      setSelectedTxId((prev) => (prev === tx.id ? null : tx.id))
+                    }
+                  >
+                    <View style={styles.txTimeCol}>
+                      <Text style={styles.txTime}>{tx.timeLabel}</Text>
+                      <Text
+                        style={[
+                          styles.txStatusTag,
+                          tx.status === 'VOIDED' ? styles.tagVoid : styles.tagPayment,
+                        ]}
+                      >
+                        {tx.status === 'VOIDED' ? 'VOIDED' : 'BAYAD UTANG'}
+                      </Text>
+                    </View>
+
+                    <Text
+                      style={[
+                        styles.txAmount,
+                        styles.txAmountGreen,
+                        tx.status === 'VOIDED' ? styles.txAmountVoided : null,
+                      ]}
+                    >
+                      +{Money.fromPhp(tx.totalPhp).format()}
+                    </Text>
+
+                    <Text style={styles.txItemsCount} numberOfLines={1}>
+                      {tx.customerName || 'Customer'}
+                    </Text>
+                  </Pressable>
+
+                  {isExpanded ? (
+                    <View style={styles.wizardBox}>
+                      <View style={styles.wizardHeader}>
+                        <Text style={styles.wizardTitle}>
+                          Koleksyon #{tx.id} • Bayad via {tx.tenderType}
+                        </Text>
+                      </View>
+
+                      <Text style={styles.paymentDetailText}>
+                        Customer: <Text style={{ fontWeight: '800' }}>{tx.customerName || 'Customer'}</Text>
+                      </Text>
+                      <Text style={styles.paymentDetailText}>
+                        Halaga: <Text style={{ fontWeight: '800', color: '#15803D' }}>{Money.fromPhp(tx.totalPhp).format()}</Text>
+                      </Text>
+
+                      {tx.voidOrReturnNote ? (
+                        <Text style={styles.auditNoteText}>{tx.voidOrReturnNote}</Text>
+                      ) : null}
+
+                      {tx.status !== 'VOIDED' ? (
+                        <Pressable
+                          style={styles.voidSaleBtn}
+                          onPress={async () => {
+                            Haptics.notificationAsync(
+                              Haptics.NotificationFeedbackType.Warning
+                            ).catch(() => {});
+                            await voidEntireTransaction(tx.id, 'Pambawi ng Bayad Utang');
+                            setActionMsg(
+                              `✓ Na-void ang bayad utang ni ${tx.customerName || 'Customer'} at naibalik ang balanse`
+                            );
+                          }}
+                        >
+                          <Text style={styles.voidSaleBtnText}>
+                            🚫 Void Payment (Ibalik ang Balanse sa Utang)
+                          </Text>
+                        </Pressable>
+                      ) : null}
+                    </View>
+                  ) : null}
+                </View>
+              );
+            }
 
             return (
               <View
@@ -181,6 +281,8 @@ export default function SalesHistoryScreen() {
                       >
                         {tx.status}
                       </Text>
+                    ) : tx.tenderType === 'UTANG' ? (
+                      <Text style={[styles.txStatusTag, styles.tagUtang]}>UTANG</Text>
                     ) : null}
                   </View>
 
@@ -291,6 +393,8 @@ export default function SalesHistoryScreen() {
                         </Text>
                         {tx.items.map((item) => {
                           const remaining = item.quantity - item.returnedQty;
+                          const isUtangSale = tx.tenderType === 'UTANG';
+
                           return (
                             <View key={item.productId} style={styles.lineItemRow}>
                               <View style={styles.lineItemLeft}>
@@ -305,7 +409,10 @@ export default function SalesHistoryScreen() {
                               {remaining > 0 ? (
                                 <View style={styles.lineActionBtns}>
                                   <Pressable
-                                    style={styles.refundBtn}
+                                    style={[
+                                      styles.refundBtn,
+                                      isUtangSale ? styles.utangDeductBtn : null,
+                                    ]}
                                     onPress={async () => {
                                       Haptics.notificationAsync(
                                         Haptics.NotificationFeedbackType.Success
@@ -316,23 +423,33 @@ export default function SalesHistoryScreen() {
                                         returnQty: 1,
                                         reason: returnReason,
                                         disposition,
-                                        resolution:
-                                          tx.tenderType === 'UTANG'
-                                            ? 'UTANG_DEDUCTION'
-                                            : 'CASH_REFUND',
+                                        resolution: isUtangSale
+                                          ? 'UTANG_DEDUCTION'
+                                          : 'CASH_REFUND',
                                       });
                                       setActionMsg(
-                                        `✓ Refunded ₱${res.creditPhp.toFixed(2)} for 1× ${
-                                          item.name
-                                        } (${
-                                          disposition === 'SELLABLE'
-                                            ? 'Restocked to Inventory'
-                                            : 'Quarantined as Damaged'
-                                        })`
+                                        isUtangSale
+                                          ? `✓ Nabawas ang ₱${res.creditPhp.toFixed(2)} sa utang ni ${
+                                              tx.customerName || 'Customer'
+                                            } para sa 1× ${item.name}`
+                                          : `✓ Refunded ₱${res.creditPhp.toFixed(2)} for 1× ${
+                                              item.name
+                                            } (${
+                                              disposition === 'SELLABLE'
+                                                ? 'Restocked to Inventory'
+                                                : 'Quarantined as Damaged'
+                                            })`
                                       );
                                     }}
                                   >
-                                    <Text style={styles.refundBtnText}>Refund 1×</Text>
+                                    <Text
+                                      style={[
+                                        styles.refundBtnText,
+                                        isUtangSale ? styles.utangDeductBtnText : null,
+                                      ]}
+                                    >
+                                      {isUtangSale ? 'Bawas Utang 1×' : 'Refund 1×'}
+                                    </Text>
                                   </Pressable>
 
                                   <Pressable
@@ -756,5 +873,52 @@ const styles = StyleSheet.create({
     color: '#991B1B',
     fontSize: 11,
     fontWeight: '800',
+  },
+  tagPayment: {
+    backgroundColor: '#DCFCE7',
+    color: '#15803D',
+  },
+  tagUtang: {
+    backgroundColor: '#EFF6FF',
+    color: '#1D4ED8',
+  },
+  txAmountGreen: {
+    color: '#15803D',
+  },
+  secondaryKpiRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  secondaryKpiItem: {
+    alignItems: 'center',
+    gap: 2,
+  },
+  secondaryKpiLabel: {
+    fontSize: 10,
+    color: '#6B7280',
+    fontWeight: '600',
+  },
+  secondaryKpiVal: {
+    fontSize: 12,
+    color: '#111827',
+    fontWeight: '800',
+    fontVariant: ['tabular-nums'],
+  },
+  utangDeductBtn: {
+    backgroundColor: '#DBEAFE',
+  },
+  utangDeductBtnText: {
+    color: '#1D4ED8',
+  },
+  paymentDetailText: {
+    fontSize: 12,
+    color: '#334155',
+    lineHeight: 18,
   },
 });

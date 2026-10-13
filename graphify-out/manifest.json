@@ -42,9 +42,9 @@
     "semantic_hash": "6b9302c1f72c315e90233c7539c48c9f"
   },
   "app.json": {
-    "mtime": 1791884953.5576136,
-    "seen": 1791886366.2366467,
-    "ast_hash": "2efaeb0ac9ced609121a0d3a6566448a",
+    "mtime": 1791909453.6804433,
+    "seen": 1791911566.3166149,
+    "ast_hash": "72f296201df4c060613692a8a1b6d9fe",
     "semantic_hash": ""
   },
   "assets/expo.icon/icon.json": {
@@ -60,9 +60,9 @@
     "semantic_hash": "b713dd66aa3ad59ed5098d7b9f8dc202"
   },
   "package.json": {
-    "mtime": 1791899193.9949055,
-    "seen": 1791899418.1786811,
-    "ast_hash": "566bf059ae35c1c3ca4b5b67010bf526",
+    "mtime": 1791909405.883576,
+    "seen": 1791911566.3166356,
+    "ast_hash": "80ce42c167cc5162c25958ceb8353b96",
     "semantic_hash": ""
   },
   "scripts/reset-project.js": {
@@ -72,51 +72,51 @@
     "semantic_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275"
   },
   "src/app/_layout.tsx": {
-    "mtime": 1791878295.8954842,
-    "seen": 1791879498.7479906,
-    "ast_hash": "c15562f17b6a52e590eb9f36f9942b9c",
+    "mtime": 1791908635.0940404,
+    "seen": 1791911566.3166492,
+    "ast_hash": "fb0689e4d320ac1c2f3d9939fd1ea4ac",
     "semantic_hash": ""
   },
   "src/app/checkout.tsx": {
-    "mtime": 1791897214.440918,
-    "seen": 1791897556.8126123,
-    "ast_hash": "1a81a55be0f071bf73bf306c5c1b0810",
+    "mtime": 1791908919.702255,
+    "seen": 1791911566.3166559,
+    "ast_hash": "b59626f32011bb47c33ceeaa66d70743",
     "semantic_hash": ""
   },
   "src/app/explore.tsx": {
-    "mtime": 1791894073.6419284,
-    "seen": 1791894194.5210364,
-    "ast_hash": "b0af13ac5ad14e1110a68a6ba3f07e90",
+    "mtime": 1791908780.9770164,
+    "seen": 1791911566.3166623,
+    "ast_hash": "e5914146516ba93d4a5a5980318ea670",
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1791888058.5453057,
-    "seen": 1791888310.0511975,
-    "ast_hash": "4b349d730bdc4ccf27724af5ddf974f1",
+    "mtime": 1791908919.6922555,
+    "seen": 1791911566.3166685,
+    "ast_hash": "74e559a48da506a6c37995121eac0006",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1791893613.7922673,
-    "seen": 1791893758.3233328,
-    "ast_hash": "681c82cdd10ab8f5d1cea06b5f32e173",
+    "mtime": 1791912449.3808796,
+    "seen": 1791912525.5692365,
+    "ast_hash": "90d2e6e0258e194d56bba530deea0804",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
-    "mtime": 1791893661.1706645,
-    "seen": 1791893758.3233385,
-    "ast_hash": "c504d3a7d1cc014a8ace4889ff2eb70f",
+    "mtime": 1791908780.9520333,
+    "seen": 1791911566.3166811,
+    "ast_hash": "e35aa22389997a6b84e221de049c4d1c",
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
-    "mtime": 1791894081.3242135,
-    "seen": 1791894194.5210574,
-    "ast_hash": "37caf10061d7915990fcd1be8bf5afe1",
+    "mtime": 1791908759.4681745,
+    "seen": 1791911566.3166876,
+    "ast_hash": "b2d259fad2ed37c38d32ee986af0a88b",
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {
-    "mtime": 1791893631.5211625,
-    "seen": 1791893758.3233507,
-    "ast_hash": "354e136d316b33dbb9fa32923b1a875c",
+    "mtime": 1791910945.2238357,
+    "seen": 1791911566.3166938,
+    "ast_hash": "4c1912c5783b76545eb2745ce9ca8687",
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "src/application/TindahanStoreService.ts": {
-    "mtime": 1791897029.299204,
-    "seen": 1791897556.8126488,
-    "ast_hash": "3b28027fa38df526e21b30a6a34cdee4",
+    "mtime": 1791912040.9079125,
+    "seen": 1791912525.569278,
+    "ast_hash": "3ece41e8133ba9743d0cccefd42944f6",
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": "2defa175163e104a6e2232436fa77e30"
   },
   "src/components/app-tabs.tsx": {
-    "mtime": 1791897071.578764,
-    "seen": 1791897556.8126607,
-    "ast_hash": "de71fab3df84bb515e9a5d3f0feb53cc",
+    "mtime": 1791912129.187256,
+    "seen": 1791912525.5692987,
+    "ast_hash": "620add5c3c192a5dde4b6aefc77dff2d",
     "semantic_hash": ""
   },
   "src/components/app-tabs.web.tsx": {
@@ -204,9 +204,9 @@
     "semantic_hash": "9507bd7aa3ee042af2ad8a99ebbaa8b6"
   },
   "src/domain/entities/Product.ts": {
-    "mtime": 1791893377.6293094,
-    "seen": 1791893758.3234513,
-    "ast_hash": "d2f48f5deed8009459d0954ca4ae25be",
+    "mtime": 1791912015.3292685,
+    "seen": 1791912525.5693667,
+    "ast_hash": "ed7be7778c42e3f58ddfc144c1d9d85f",
     "semantic_hash": ""
   },
   "src/domain/repositories/IProductRepository.ts": {
@@ -258,15 +258,15 @@
     "semantic_hash": ""
   },
   "src/infrastructure/database/SqliteDatabase.ts": {
-    "mtime": 1791887968.5956757,
-    "seen": 1791888310.0514276,
-    "ast_hash": "6f6d6c35ac001b8adaa18735faced0e1",
+    "mtime": 1791910284.3403566,
+    "seen": 1791911566.31685,
+    "ast_hash": "cd3a032ab6be0d18b9d176b59bccae88",
     "semantic_hash": ""
   },
   "src/infrastructure/repositories/InMemoryProductRepository.ts": {
-    "mtime": 1791888003.736635,
-    "seen": 1791888310.0514405,
-    "ast_hash": "e5d29311611b7af9acb5204f73b3e62e",
+    "mtime": 1791908914.5056221,
+    "seen": 1791911566.3168557,
+    "ast_hash": "303bbd5e853797ee5f214e6a17515c18",
     "semantic_hash": ""
   },
   "src/presentation/components/BarcodeInputField.tsx": {
@@ -288,9 +288,9 @@
     "semantic_hash": "370d505d4eca4ae08bde70346f96bad6"
   },
   "src/presentation/hooks/useTindahanStore.ts": {
-    "mtime": 1791893265.9938917,
-    "seen": 1791893758.3235688,
-    "ast_hash": "f3098272838a2a26d68ccd2f14e5a1a1",
+    "mtime": 1791912072.6023843,
+    "seen": 1791912525.5694904,
+    "ast_hash": "6f69a4f3593224a5f194ebd35eba1039",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -300,10 +300,10 @@
     "semantic_hash": "6794be22dd9dd00003515895d3b4ff06"
   },
   "AGENTS.md": {
-    "mtime": 1791869015.7809105,
-    "seen": 1791873707.941341,
-    "ast_hash": "233d1484702a528f5dcb4333cd01bb43",
-    "semantic_hash": "233d1484702a528f5dcb4333cd01bb43"
+    "mtime": 1791909317.8266847,
+    "seen": 1791911566.3169394,
+    "ast_hash": "248f8eaa8178598347b09c1939e589e5",
+    "semantic_hash": ""
   },
   "CLAUDE.md": {
     "mtime": 1791869015.7879066,
@@ -483,6 +483,12 @@
     "mtime": 1791899245.4145257,
     "seen": 1791899418.1788247,
     "ast_hash": "f32bd14b6e5e0ac0078586886c56f3cc",
+    "semantic_hash": ""
+  },
+  "src/presentation/providers/TindahanStoreProvider.tsx": {
+    "mtime": 1791908635.0920427,
+    "seen": 1791911566.3169258,
+    "ast_hash": "678901a6113d41ffe1b71e64dc6bc93c",
     "semantic_hash": ""
   }
 }

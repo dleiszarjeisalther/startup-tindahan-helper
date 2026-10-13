@@ -98,39 +98,34 @@ export class InMemoryProductRepository implements IProductRepository {
   private persistProductToSqlite(product: Product): void {
     const db = SqliteDatabase.getInstance().rawDb;
     if (!db) return;
+    const dto = product.toDTO();
+    const tiers: SellingUnitTier[] = [
+      { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: dto.defaultPricePhp },
+    ];
 
-    try {
-      const dto = product.toDTO();
-      const tiers: SellingUnitTier[] = [
-        { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: dto.defaultPricePhp },
-      ];
-
-      db.runSync(
-        `INSERT OR REPLACE INTO products (
-          id, name, category, barcode, barcode_source,
-          base_stock_count, ordinary_low_stock_threshold, unit_cost_php,
-          selling_tiers_json, quarantine_stock_count, out_of_stock_days, visual_json, image_uri, default_price_php
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          dto.id,
-          dto.name,
-          dto.category,
-          dto.barcode,
-          dto.barcodeSource,
-          dto.stockCount,
-          dto.ordinaryLowStockThreshold,
-          dto.unitCostPhp,
-          JSON.stringify(tiers),
-          dto.quarantineStockCount,
-          dto.outOfStockDays,
-          JSON.stringify(dto.visual),
-          dto.imageUri ?? null,
-          dto.defaultPricePhp,
-        ]
-      );
-    } catch (err) {
-      console.error('persistProductToSqlite error:', err);
-    }
+    db.runSync(
+      `INSERT OR REPLACE INTO products (
+        id, name, category, barcode, barcode_source,
+        base_stock_count, ordinary_low_stock_threshold, unit_cost_php,
+        selling_tiers_json, quarantine_stock_count, out_of_stock_days, visual_json, image_uri, default_price_php
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        dto.id,
+        dto.name,
+        dto.category,
+        dto.barcode,
+        dto.barcodeSource,
+        dto.stockCount,
+        dto.ordinaryLowStockThreshold,
+        dto.unitCostPhp,
+        JSON.stringify(tiers),
+        dto.quarantineStockCount,
+        dto.outOfStockDays,
+        JSON.stringify(dto.visual),
+        dto.imageUri ?? null,
+        dto.defaultPricePhp,
+      ]
+    );
   }
 
   public getInitialDTOs(): ProductDTO[] {
@@ -146,13 +141,13 @@ export class InMemoryProductRepository implements IProductRepository {
   }
 
   public async save(product: Product): Promise<void> {
+    this.persistProductToSqlite(product);
     const idx = this.products.findIndex((p) => p.id === product.id);
     if (idx >= 0) {
       this.products[idx] = product;
     } else {
       this.products.unshift(product);
     }
-    this.persistProductToSqlite(product);
   }
 
   public async deleteById(id: string): Promise<void> {

@@ -1,10 +1,9 @@
-import { useState, useEffect, useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 import { tindahanStoreService } from '../../infrastructure/container';
+import { useTindahanStoreService } from '../providers/TindahanStoreProvider';
 import { AddProductCommand } from '../../application/ProductOnboardingService';
 import { MonthlySalesRecord } from '../../domain/strategies/SeasonalForecastEngine';
-
-const subscribeToStore = (callback: () => void) => tindahanStoreService.subscribe(callback);
-const getStoreVersion = () => tindahanStoreService.getVersion();
+import { PaymentTenderType } from '../../application/TindahanStoreService';
 
 // Stable dispatchers with fixed function identities across renders
 const refreshFromSqlite = () => tindahanStoreService.refreshFromSqlite();
@@ -18,6 +17,10 @@ const deleteProductFromDatabase = (productId: string) =>
   tindahanStoreService.deleteProductFromDatabase(productId);
 const updateProductImage = (productId: string, imageUri: string) =>
   tindahanStoreService.updateProductImage(productId, imageUri);
+const updateProductDetails = (
+  productId: string,
+  updates: Parameters<typeof tindahanStoreService.updateProductDetails>[1]
+) => tindahanStoreService.updateProductDetails(productId, updates);
 const addToCart = (productId: string, deltaQty = 1) =>
   tindahanStoreService.addToCart(productId, deltaQty);
 const undoRemoveCartItem = () => tindahanStoreService.undoRemoveCartItem();
@@ -42,8 +45,11 @@ const addUtangCustomer = (
 ) => tindahanStoreService.addUtangCustomer(name, creditLimitPhp, initialBalancePhp);
 const deleteUtangCustomer = (customerId: string) =>
   tindahanStoreService.deleteUtangCustomer(customerId);
-const recordUtangPayment = (customerId: string, amountPhp: number) =>
-  tindahanStoreService.recordUtangPayment(customerId, amountPhp);
+const recordUtangPayment = (
+  customerId: string,
+  amountPhp: number,
+  paymentMethod: PaymentTenderType = 'CASH'
+) => tindahanStoreService.recordUtangPayment(customerId, amountPhp, paymentMethod);
 const getMonthlySalesHistory = (productId: string) =>
   tindahanStoreService.getMonthlySalesHistory(productId);
 const addOrUpdateMonthlySalesRecord = (productId: string, rec: MonthlySalesRecord) =>
@@ -54,30 +60,31 @@ const clearAllDatabaseData = () => tindahanStoreService.clearAllDatabaseData();
 const notifyCatalogChanged = () => tindahanStoreService.notifyCatalogChanged();
 
 export function useTindahanStore() {
-  const version = useSyncExternalStore(subscribeToStore, getStoreVersion);
-  const [, setTick] = useState(0);
-
-  // Dual-channel realtime synchronization to guarantee instant UI re-render on any mutation
-  useEffect(() => {
-    return tindahanStoreService.subscribe(() => {
-      setTick((t) => t + 1);
-    });
-  }, []);
+  const store = useTindahanStoreService();
+  const subscribe = useCallback((callback: () => void) => store.subscribe(callback), [store]);
+  const getSnapshot = useCallback(() => store.getSnapshot(), [store]);
+  const snapshot = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getSnapshot
+  );
 
   return {
-    version,
-    isSqliteActive: tindahanStoreService.isSqliteActive,
-    products: tindahanStoreService.getProductsSnapshot(),
-    cartSummary: tindahanStoreService.getCartSummary(),
-    transactions: tindahanStoreService.getTransactionsSnapshot(),
-    settings: tindahanStoreService.getSettings(),
-    utangCustomers: tindahanStoreService.getUtangCustomers(),
+    version: snapshot.revision,
+    cartRevision: snapshot.cartRevision,
+    isSqliteActive: snapshot.isSqliteActive,
+    products: snapshot.products,
+    cartSummary: snapshot.cartSummary,
+    transactions: snapshot.transactions,
+    settings: snapshot.settings,
+    utangCustomers: snapshot.utangCustomers,
     refreshFromSqlite,
     getSalesSummary,
     addProductToDatabase,
     lookupOnlineCatalog,
     deleteProductFromDatabase,
     updateProductImage,
+    updateProductDetails,
     addToCart,
     undoRemoveCartItem,
     setDiscountPhp,
