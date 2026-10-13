@@ -15,6 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { BarcodeInputField } from '@/presentation/components/BarcodeInputField';
+import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScannerViewfinder';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 
@@ -35,6 +36,7 @@ export default function InventoryManagementScreen() {
   const [selectedFilter, setSelectedFilter] =
     useState<(typeof STOCK_FILTERS)[number]>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchScanning, setIsSearchScanning] = useState(false);
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
   const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
   const [customRestockQty, setCustomRestockQty] = useState<string>('10');
@@ -70,8 +72,23 @@ export default function InventoryManagementScreen() {
 
       setNewBarcode(code);
 
-      // Automated Open Food Facts lookup when barcode is scanned or has at least 8 digits
       const clean = code.trim();
+      if (!clean) return;
+
+      // 1. If barcode already exists in database, act like it was searched using barcode search!
+      const existing = products.find((p) => p.barcode === clean);
+      if (existing) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setSearchQuery(clean);
+        setExpandedProductId(existing.id);
+        setShowAddForm(false);
+        setFeedbackMsg(
+          `ℹ️ Product "${existing.name}" (${existing.barcode}) already exists in inventory! Switched to product restock & details.`
+        );
+        return;
+      }
+
+      // 2. Automated Open Food Facts lookup when barcode is scanned or has at least 8 digits
       if (clean.length >= 8) {
         setIsLookingUpOnline(true);
         try {
@@ -102,7 +119,35 @@ export default function InventoryManagementScreen() {
         }
       }
     },
-    [lookupOnlineCatalog]
+    [products, lookupOnlineCatalog]
+  );
+
+  const handleSearchBarcodeScanned = useCallback(
+    async (code: string) => {
+      const clean = code.trim();
+      if (!clean) return;
+      setIsSearchScanning(false);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+
+      const matched = products.find((p) => p.barcode === clean);
+      if (matched) {
+        // Exists: act as barcode search
+        setSearchQuery(clean);
+        setExpandedProductId(matched.id);
+        setShowAddForm(false);
+        setFeedbackMsg(`✓ Found existing product: "${matched.name}" (Stock: ${matched.stockCount})`);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      } else {
+        // Did not exist: take it as an add product!
+        setSearchQuery('');
+        setShowAddForm(true);
+        setErrorMsg(null);
+        setFeedbackMsg(`ℹ️ Barcode "${clean}" not found in inventory. Opened Add Product to register it!`);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        handleBarcodeChange(clean, 'SCAN');
+      }
+    },
+    [products, handleBarcodeChange]
   );
 
   const handleTakePhoto = async () => {
@@ -168,8 +213,56 @@ export default function InventoryManagementScreen() {
     setErrorMsg(null);
     setFeedbackMsg(null);
     try {
-      const parsedPrice = parseFloat(newPricePhp.replace(/[^0-9.]/g, ''));
-      const parsedCost = parseFloat(newCostPhp.replace(/[^0-9.]/g, ''));
+      if (!newName.trim()) {
+        setErrorMsg('Please enter a product name.');
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+        return;
+      }
+
+      if (barcodeMode !== 'GENERATE_TINGI' && !newBarcode.trim()) {
+        setErrorMsg('Please scan, type, or generate a barcode.');
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+        return;
+      }
+
+      const cleanBarcode = newBarcode.trim();
+      const existingByBarcode =
+        barcodeMode !== 'GENERATE_TINGI'
+          ? products.find((p) => p.barcode === cleanBarcode)
+          : null;
+
+      if (existingByBarcode) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setSearchQuery(cleanBarcode);
+        setExpandedProductId(existingByBarcode.id);
+        setShowAddForm(false);
+        setFeedbackMsg(
+          `⚠️ Product "${existingByBarcode.name}" (${existingByBarcode.barcode}) already exists in inventory! Switched to restock & details.`
+        );
+        return;
+      }
+
+      const cleanName = newName.trim().toLowerCase();
+      const existingByName = products.find((p) => p.name.trim().toLowerCase() === cleanName);
+      if (existingByName) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setSearchQuery(existingByName.name);
+        setExpandedProductId(existingByName.id);
+        setShowAddForm(false);
+        setFeedbackMsg(
+          `⚠️ Product "${existingByName.name}" is already in inventory (Barcode: ${existingByName.barcode})! Switched to product view.`
+        );
+        return;
+      }
+
+      const parsedPrice = parseFloat(newPricePhp.replace(/[^0-9.]/g, '') || '0');
+      if (isNaN(parsedPrice) || parsedPrice <= 0) {
+        setErrorMsg('Please enter a valid selling price greater than ₱0.');
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+        return;
+      }
+
+      const parsedCost = parseFloat(newCostPhp.replace(/[^0-9.]/g, '') || '0');
       const parsedStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
       const parsedLow = parseInt(newLowThreshold.replace(/[^0-9]/g, '') || '5', 10);
 
@@ -189,10 +282,13 @@ export default function InventoryManagementScreen() {
       });
 
       if (result.status === 'DUPLICATE_BARCODE_FOUND') {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(
-          () => {}
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setSearchQuery(result.existingProduct.barcode);
+        setExpandedProductId(result.existingProduct.id);
+        setShowAddForm(false);
+        setFeedbackMsg(
+          `⚠️ Product "${result.existingProduct.name}" (${result.existingProduct.barcode}) already exists in database!`
         );
-        setErrorMsg(result.message);
         return;
       }
 
@@ -252,7 +348,7 @@ export default function InventoryManagementScreen() {
         </Pressable>
       </View>
 
-      {/* Search Bar */}
+      {/* Search Bar with Live Barcode Scanner */}
       <View style={styles.searchWrapper}>
         <View style={styles.searchBox}>
           <Text style={styles.searchIcon}>🔍</Text>
@@ -260,7 +356,7 @@ export default function InventoryManagementScreen() {
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder="Search product or barcode in database..."
+            placeholder="Search product name or barcode..."
             placeholderTextColor="#9CA3AF"
             autoCorrect={false}
           />
@@ -269,7 +365,45 @@ export default function InventoryManagementScreen() {
               <Text style={styles.clearIcon}>✕</Text>
             </Pressable>
           ) : null}
+          <Pressable
+            style={[styles.searchScanBtn, isSearchScanning && styles.searchScanBtnActive]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              setIsSearchScanning((prev) => !prev);
+            }}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Scan barcode to search"
+          >
+            <Text style={[styles.searchScanIcon, isSearchScanning && styles.searchScanIconActive]}>
+              {isSearchScanning ? '✕ Stop' : '📷 Scan'}
+            </Text>
+          </Pressable>
         </View>
+
+        {/* Live Camera Barcode Scanner for Inventory Search */}
+        {isSearchScanning ? (
+          <View style={styles.searchScannerContainer}>
+            <BarcodeScannerViewfinder
+              isActive={true}
+              onToggleActive={setIsSearchScanning}
+              onBarcodeScanned={handleSearchBarcodeScanned}
+              reticleWidth={240}
+              reticleHeight={120}
+              containerHeight={210}
+              hintText="Scan barcode to search or add product"
+              topRightAction={
+                <Pressable
+                  style={styles.closeSearchScanBtn}
+                  onPress={() => setIsSearchScanning(false)}
+                  hitSlop={8}
+                >
+                  <Text style={styles.closeSearchScanText}>✕ Close</Text>
+                </Pressable>
+              }
+            />
+          </View>
+        ) : null}
       </View>
 
       {/* Stock Filter Pills */}
@@ -580,7 +714,26 @@ export default function InventoryManagementScreen() {
                 ? 'Your SQLite database starts completely clean with zero hardcoded items. Tap "+ Add Product" to add your products with photos.'
                 : 'Try clearing your search or switching the stock filter.'}
             </Text>
-            {!showAddForm ? (
+            {searchQuery.trim().length > 0 ? (
+              <Pressable
+                style={styles.emptyAddBtn}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  const query = searchQuery.trim();
+                  setShowAddForm(true);
+                  if (/^[0-9A-Za-z_-]{6,}$/.test(query)) {
+                    handleBarcodeChange(query, 'MANUAL');
+                  } else {
+                    setNewName(query);
+                  }
+                  setSearchQuery('');
+                }}
+              >
+                <Text style={styles.emptyAddBtnText}>
+                  + Register &quot;{searchQuery.trim()}&quot; as New Product
+                </Text>
+              </Pressable>
+            ) : !showAddForm ? (
               <Pressable
                 style={styles.emptyAddBtn}
                 onPress={() => setShowAddForm(true)}
@@ -880,6 +1033,43 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontWeight: '700',
     paddingHorizontal: 4,
+  },
+  searchScanBtn: {
+    marginLeft: 6,
+    backgroundColor: '#0D7A52',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchScanBtnActive: {
+    backgroundColor: '#EF4444',
+  },
+  searchScanIcon: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  searchScanIconActive: {
+    color: '#FFFFFF',
+  },
+  searchScannerContainer: {
+    marginTop: 8,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: '#000000',
+  },
+  closeSearchScanBtn: {
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  closeSearchScanText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
   },
   pillsWrapper: {
     marginTop: 12,

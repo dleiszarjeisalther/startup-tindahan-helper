@@ -1,16 +1,16 @@
 # Graph Report - startupTindahanHelper  (2026-10-13)
 
 ## Corpus Check
-- 54 files · ~173,244 words
+- 54 files · ~173,744 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 494 nodes · 766 edges · 54 communities (19 shown, 34 thin omitted)
+- 494 nodes · 768 edges · 55 communities (20 shown, 34 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `25b404a4`
+- Built from commit: `33e690b5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -68,6 +68,7 @@
 - expo-camera
 - expo-image-picker
 - react-dom
+- ProductOnboardingService
 
 ## God Nodes (most connected - your core abstractions)
 1. `TindahanStoreService` - 41 edges
@@ -96,11 +97,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (54 total, 34 thin omitted)
+## Communities (55 total, 34 thin omitted)
 
 ### Community 0 - "Product"
-Cohesion: 0.06
-Nodes (16): ProductOnboardingService, Product, ProductDTO, ProductVisual, SellingUnitTier, StockStatus, IProductRepository, Barcode (+8 more)
+Cohesion: 0.07
+Nodes (12): Product, ProductDTO, ProductVisual, SellingUnitTier, StockStatus, IProductRepository, Barcode, BarcodeSource (+4 more)
 
 ### Community 1 - "useTindahanStore"
 Cohesion: 0.08
@@ -174,6 +175,10 @@ Nodes (6): Get a fresh project, Get started, Join the community, Learn more, Oth
 Cohesion: 0.33
 Nodes (5): Building with EAS, Commands, Expo has changed — do not trust your training data, Navigation & Routing, Rules
 
+### Community 54 - "ProductOnboardingService"
+Cohesion: 0.23
+Nodes (4): ProductOnboardingService, ExternalProductCatalogResult, IExternalCatalogLookupService, OpenFoodFactsApiClient
+
 ## Knowledge Gaps
 - **197 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+192 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 250 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
@@ -191,8 +196,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `name`, `slug`, `version` to the rest of the system?**
   _197 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Product` be split into smaller, more focused modules?**
-  _Cohesion score 0.05662862159789289 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07012987012987013 - nodes in this community are weakly interconnected._
 - **Should `useTindahanStore` be split into smaller, more focused modules?**
-  _Cohesion score 0.07535460992907801 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07712765957446809 - nodes in this community are weakly interconnected._
 - **Should `TindahanStoreService` be split into smaller, more focused modules?**
   _Cohesion score 0.11100832562442182 - nodes in this community are weakly interconnected._

@@ -2466,7 +2466,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L709"
+      "source_location": "L777"
     },
     {
       "id": "src_app_layout",
@@ -12085,7 +12085,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L709",
+      "source_location": "L777",
       "weight": 1.0
     },
     {
@@ -14605,5 +14605,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "00f15e7e5e2917e3b4760784924b3143e1aebbd7"
+  "built_at_commit": "25b404a4d5ea4a23f1e12ebb87c392037d0abba1"
 }

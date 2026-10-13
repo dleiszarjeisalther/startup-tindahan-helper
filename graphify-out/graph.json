@@ -4,19 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "id": "src_application_productonboardingservice_productonboardingservice",
-      "label": "ProductOnboardingService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "productonboardingservice",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L33"
-    },
-    {
       "id": "src_domain_entities_product_product",
       "label": "Product",
       "_callable": true,
@@ -145,45 +132,6 @@
       "norm_label": "productrow",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
       "source_location": "L7"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
-      "label": "ExternalProductCatalogResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "externalproductcatalogresult",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
-      "label": "IExternalCatalogLookupService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "iexternalcataloglookupservice",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
-      "label": "OpenFoodFactsApiClient",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L27"
     },
     {
       "id": "src_presentation_components_productthumbnail_productthumbnailprops",
@@ -327,6 +275,58 @@
       "norm_label": "sqlitedatabase",
       "source_file": "src/infrastructure/database/SqliteDatabase.ts",
       "source_location": "L5"
+    },
+    {
+      "id": "src_application_productonboardingservice_productonboardingservice",
+      "label": "ProductOnboardingService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": "productonboardingservice",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
+      "label": "ExternalProductCatalogResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": "externalproductcatalogresult",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "label": "IExternalCatalogLookupService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": "iexternalcataloglookupservice",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "label": "OpenFoodFactsApiClient",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L27"
     },
     {
       "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy",
@@ -587,30 +587,6 @@
       "norm_label": "money",
       "source_file": "src/domain/value-objects/Money.ts",
       "source_location": "L14"
-    },
-    {
-      "id": "src_application_productonboardingservice_productonboardingservice_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L34"
-    },
-    {
-      "id": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
-      "label": ".lookupOnlineCatalog()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".lookuponlinecatalog()",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L39"
     },
     {
       "id": "src_application_productonboardingservice_productonboardingservice_registernewproduct",
@@ -1069,66 +1045,6 @@
       "source_location": "L141"
     },
     {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_downloadimagelocally",
-      "label": ".downloadImageLocally()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".downloadimagelocally()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
-      "label": ".lookupBarcode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".lookupbarcode()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_downloadimagelocally",
-      "label": ".downloadImageLocally()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".downloadimagelocally()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L115"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
-      "label": ".inferCategory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".infercategory()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L137"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
-      "label": ".lookupBarcode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".lookupbarcode()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L32"
-    },
-    {
       "id": "src_app_explore_seasonalforecastscreen",
       "label": "SeasonalForecastScreen()",
       "_callable": true,
@@ -1162,7 +1078,7 @@
       "file_type": "code",
       "norm_label": "inventorymanagementscreen()",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L24"
+      "source_location": "L25"
     },
     {
       "id": "src_app_layout_tablayout",
@@ -2089,6 +2005,90 @@
       "source_location": "L28"
     },
     {
+      "id": "src_application_productonboardingservice_productonboardingservice_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L34"
+    },
+    {
+      "id": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
+      "label": ".lookupOnlineCatalog()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": ".lookuponlinecatalog()",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_downloadimagelocally",
+      "label": ".downloadImageLocally()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": ".downloadimagelocally()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
+      "label": ".lookupBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": ".lookupbarcode()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_downloadimagelocally",
+      "label": ".downloadImageLocally()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": ".downloadimagelocally()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L115"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
+      "label": ".inferCategory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": ".infercategory()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L137"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
+      "label": ".lookupBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": ".lookupbarcode()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L32"
+    },
+    {
       "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy_computeuncensorednetdemand",
       "label": ".computeUncensoredNetDemand()",
       "_callable": true,
@@ -2348,17 +2348,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_infrastructure_services_openfoodfactsapiclient",
-      "label": "OpenFoodFactsApiClient.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient.ts",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_presentation_components_productthumbnail",
       "label": "ProductThumbnail.tsx",
       "_origin": "ast",
@@ -2444,7 +2433,7 @@
       "file_type": "code",
       "norm_label": "product_categories",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L22"
+      "source_location": "L23"
     },
     {
       "id": "src_app_inventory_stock_filters",
@@ -2455,7 +2444,7 @@
       "file_type": "code",
       "norm_label": "stock_filters",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
       "id": "src_app_inventory_styles",
@@ -2466,7 +2455,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L777"
+      "source_location": "L930"
     },
     {
       "id": "src_app_layout",
@@ -5342,6 +5331,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_infrastructure_services_openfoodfactsapiclient",
+      "label": "OpenFoodFactsApiClient.ts",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "ProductOnboardingService",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient.ts",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_domain_strategies_seasonalforecastengine",
       "label": "SeasonalForecastEngine.ts",
       "_origin": "ast",
@@ -5922,7 +5922,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L167",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -5934,7 +5934,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L33",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -8003,7 +8003,7 @@
     },
     {
       "source": "src_app_inventory",
-      "target": "src_presentation_components_productthumbnail_productthumbnail",
+      "target": "src_presentation_components_barcodescannerviewfinder_barcodescannerviewfinder",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8015,7 +8015,7 @@
     },
     {
       "source": "src_app_inventory",
-      "target": "src_presentation_hooks_useidempotentsubmit_useidempotentsubmit",
+      "target": "src_presentation_components_productthumbnail_productthumbnail",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8023,6 +8023,18 @@
       "context": "import",
       "source_file": "src/app/inventory.tsx",
       "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory",
+      "target": "src_presentation_hooks_useidempotentsubmit_useidempotentsubmit",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -9059,7 +9071,7 @@
     },
     {
       "source": "src_app_inventory",
-      "target": "src_presentation_components_productthumbnail",
+      "target": "src_presentation_components_barcodescannerviewfinder",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9071,7 +9083,7 @@
     },
     {
       "source": "src_app_inventory",
-      "target": "src_presentation_hooks_useidempotentsubmit",
+      "target": "src_presentation_components_productthumbnail",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9079,6 +9091,18 @@
       "context": "import",
       "source_file": "src/app/inventory.tsx",
       "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory",
+      "target": "src_presentation_hooks_useidempotentsubmit",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -12052,7 +12076,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -12063,7 +12087,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -12074,7 +12098,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -12085,7 +12109,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L777",
+      "source_location": "L930",
       "weight": 1.0
     },
     {
@@ -14605,5 +14629,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "25b404a4d5ea4a23f1e12ebb87c392037d0abba1"
+  "built_at_commit": "33e690b52fe63af9a785a41f6ffa5ce37d5f0fe8"
 }
