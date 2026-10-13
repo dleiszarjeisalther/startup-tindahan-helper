@@ -10,9 +10,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ReturnDisposition } from '@/application/TindahanStoreService';
 import { Money } from '@/domain/value-objects/Money';
+import { getTranslations } from '@/presentation/localization/i18n';
 
 const PERIODS = ['Daily', 'Weekly', 'Monthly'] as const;
 
@@ -22,7 +24,10 @@ export default function SalesHistoryScreen() {
     getSalesSummary,
     voidEntireTransaction,
     processReturnOrExchange,
+    settings,
   } = useTindahanStore();
+
+  const t = getTranslations(settings?.language);
 
   const [selectedPeriod, setSelectedPeriod] =
     useState<(typeof PERIODS)[number]>('Daily');
@@ -37,12 +42,13 @@ export default function SalesHistoryScreen() {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       {/* Header: Sales | Seasonal Forecast Quick Button */}
       <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>Sales</Text>
+        <Text style={styles.headerTitle}>{t.salesTitle}</Text>
         <Pressable
           style={styles.forecastBtn}
           onPress={() => router.push('/explore')}
         >
-          <Text style={styles.forecastBtnText}>📈 Seasonal Forecast</Text>
+          <Ionicons name="trending-up" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
+          <Text style={styles.forecastBtnText}>Seasonal Forecast</Text>
         </Pressable>
       </View>
 
@@ -76,7 +82,7 @@ export default function SalesHistoryScreen() {
         {/* Date Selector Card: Dynamic Current Date */}
         <View style={styles.dateCard}>
           <View style={styles.dateLeft}>
-            <Text style={styles.calendarIcon}>📅</Text>
+            <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginRight: 6 }} />
             <Text style={styles.dateText}>
               {new Date().toLocaleDateString('en-US', {
                 month: 'short',

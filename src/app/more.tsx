@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
+import { getTranslations } from '@/presentation/localization/i18n';
 
 export default function MenuProfileScreen() {
   const router = useRouter();
@@ -21,6 +23,8 @@ export default function MenuProfileScreen() {
     deleteUtangCustomer,
     recordUtangPayment,
   } = useTindahanStore();
+
+  const t = getTranslations(settings?.language);
 
   const [activeSection, setActiveSection] = useState<
     'NONE' | 'UTANG_ONLINE' | 'SUBSCRIPTION' | 'HELP'
@@ -66,8 +70,8 @@ export default function MenuProfileScreen() {
             onPress={() => router.push('/settings')}
           >
             <View style={styles.menuLeft}>
-              <Text style={styles.menuIcon}>⚙️</Text>
-              <Text style={styles.menuLabel}>Store Settings</Text>
+              <Ionicons name="settings-outline" size={22} color="#0D7A52" />
+              <Text style={styles.menuLabel}>{t.storeSettingsTitle}</Text>
             </View>
             <Text style={styles.menuChevron}>›</Text>
           </Pressable>
@@ -78,7 +82,7 @@ export default function MenuProfileScreen() {
             onPress={() => router.push('/products')}
           >
             <View style={styles.menuLeft}>
-              <Text style={styles.menuIcon}>🏪</Text>
+              <Ionicons name="pricetags-outline" size={22} color="#0D7A52" />
               <Text style={styles.menuLabel}>Products</Text>
             </View>
             <Text style={styles.menuChevron}>›</Text>
@@ -90,7 +94,7 @@ export default function MenuProfileScreen() {
             onPress={() => router.push('/explore')}
           >
             <View style={styles.menuLeft}>
-              <Text style={styles.menuIcon}>📊</Text>
+              <Ionicons name="bar-chart-outline" size={22} color="#0D7A52" />
               <Text style={styles.menuLabel}>Sales Reports</Text>
             </View>
             <View style={styles.menuRightGroup}>
@@ -107,8 +111,8 @@ export default function MenuProfileScreen() {
             onPress={() => router.push('/inventory')}
           >
             <View style={styles.menuLeft}>
-              <Text style={styles.menuIcon}>📦</Text>
-              <Text style={styles.menuLabel}>Inventory</Text>
+              <Ionicons name="cube-outline" size={22} color="#0D7A52" />
+              <Text style={styles.menuLabel}>{t.inventoryTitle}</Text>
             </View>
             <Text style={styles.menuChevron}>›</Text>
           </Pressable>
@@ -123,8 +127,8 @@ export default function MenuProfileScreen() {
             }
           >
             <View style={styles.menuLeft}>
-              <Text style={styles.menuIcon}>🌐</Text>
-              <Text style={styles.menuLabel}>Online Store &amp; Utang Ledger</Text>
+              <Ionicons name="people-outline" size={22} color="#0D7A52" />
+              <Text style={styles.menuLabel}>Suki Utang Ledger</Text>
             </View>
             <View style={styles.menuRightGroup}>
               <Text style={styles.subHintText}>
@@ -253,7 +257,7 @@ export default function MenuProfileScreen() {
             }
           >
             <View style={styles.menuLeft}>
-              <Text style={styles.menuIcon}>🛡️</Text>
+              <Ionicons name="shield-checkmark-outline" size={22} color="#0D7A52" />
               <Text style={styles.menuLabel}>Subscription</Text>
             </View>
             <View style={styles.menuRightGroup}>
@@ -283,7 +287,7 @@ export default function MenuProfileScreen() {
             }
           >
             <View style={styles.menuLeft}>
-              <Text style={styles.menuIcon}>❓</Text>
+              <Ionicons name="help-circle-outline" size={22} color="#0D7A52" />
               <Text style={styles.menuLabel}>Help &amp; Support</Text>
             </View>
             <Text style={styles.menuChevron}>›</Text>

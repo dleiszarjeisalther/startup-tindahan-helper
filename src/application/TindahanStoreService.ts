@@ -126,6 +126,12 @@ export class TindahanStoreService {
     }
 
     try {
+      // 0. Hydrate Products from SQLite
+      const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
+      if (typeof repo.hydrateFromSqlite === 'function') {
+        repo.hydrateFromSqlite();
+      }
+
       // 1. Hydrate Cart (No hardcoded seed items)
       const cartRows = db.getAllSync<{ product_id: string; quantity: number }>(
         'SELECT * FROM cart_items'

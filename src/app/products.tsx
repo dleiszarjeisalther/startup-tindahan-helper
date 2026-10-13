@@ -13,17 +13,20 @@ import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { BarcodeInputField } from '@/presentation/components/BarcodeInputField';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
+import { getTranslations } from '@/presentation/localization/i18n';
 
 const CATEGORIES = ['All', 'Beverages', 'Snacks', 'Groceries', 'School Supplies'];
 const ADD_CATEGORIES = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
 
 export default function ProductListScreen() {
   const router = useRouter();
-  const { products, addToCart, addProductToDatabase } = useTindahanStore();
+  const { products, addToCart, addProductToDatabase, settings } = useTindahanStore();
+  const t = getTranslations(settings?.language);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
@@ -153,7 +156,7 @@ export default function ProductListScreen() {
           onPress={() => router.back()}
           hitSlop={10}
         >
-          <Text style={styles.backArrow}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </Pressable>
         <Text style={styles.headerTitle}>Products ({products.length})</Text>
         <Pressable
@@ -170,12 +173,12 @@ export default function ProductListScreen() {
       {/* Search Bar */}
       <View style={styles.searchRow}>
         <View style={styles.searchBox}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Ionicons name="search" size={18} color="#9CA3AF" style={{ marginRight: 6 }} />
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder="Search product or barcode..."
+            placeholder={t.searchPlaceholder}
             placeholderTextColor="#9CA3AF"
             autoCorrect={false}
           />
@@ -208,7 +211,7 @@ export default function ProductListScreen() {
                     active ? styles.categoryPillTextActive : null,
                   ]}
                 >
-                  {cat}
+                  {cat === 'All' ? t.filterAll : cat}
                 </Text>
               </Pressable>
             );

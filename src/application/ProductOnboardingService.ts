@@ -88,6 +88,22 @@ export class ProductOnboardingService {
       ? cmd.unitCostPhp
       : Math.max(0.5, safePrice * 0.75);
 
+    let finalImageUri = cmd.imageUri;
+    if (
+      finalImageUri &&
+      (finalImageUri.startsWith('http://') || finalImageUri.startsWith('https://')) &&
+      this.catalogLookupService
+    ) {
+      try {
+        finalImageUri = await this.catalogLookupService.downloadImageLocally(
+          finalImageUri,
+          barcode.value
+        );
+      } catch {
+        // Fallback to existing imageUri
+      }
+    }
+
     const product = new Product(
       `prod_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
       cmd.name.trim(),
@@ -100,7 +116,7 @@ export class ProductOnboardingService {
       0,
       0,
       undefined,
-      cmd.imageUri
+      finalImageUri
     );
 
     await this.productRepo.save(product);

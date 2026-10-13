@@ -11,12 +11,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
+import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
+import { getTranslations } from '@/presentation/localization/i18n';
 
 export default function StoreSettingsScreen() {
   const router = useRouter();
   const { settings, updateSettings, clearAllDatabaseData } =
     useTindahanStore();
+  const t = getTranslations(settings.language);
   const [editingField, setEditingField] = useState<'NONE' | 'NAME' | 'ADDRESS'>('NONE');
   const [draftName, setDraftName] = useState(settings.storeName);
   const [draftAddress, setDraftAddress] = useState(settings.address);
@@ -29,24 +33,24 @@ export default function StoreSettingsScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* Top Bar: <- Store Settings (Matches Screen 7 Prototype) */}
+      {/* Top Bar: <- Store Settings */}
       <View style={styles.headerRow}>
         <Pressable
           style={styles.backBtn}
           onPress={() => router.back()}
           hitSlop={10}
         >
-          <Text style={styles.backArrow}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </Pressable>
-        <Text style={styles.headerTitle}>Store Settings</Text>
+        <Text style={styles.headerTitle}>{t.storeSettingsTitle}</Text>
       </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Section 1: Store Information (Matches Screen 7 Prototype) */}
-        <Text style={styles.sectionHeader}>Store Information</Text>
+        {/* Section 1: Store Information */}
+        <Text style={styles.sectionHeader}>{t.storeInfo}</Text>
         <View style={styles.cardGroup}>
           {/* Store Name */}
           <Pressable
@@ -135,31 +139,71 @@ export default function StoreSettingsScreen() {
           ) : null}
         </View>
 
-        {/* Section 2: App Settings (Matches Screen 7 Prototype) */}
-        <Text style={styles.sectionHeader}>App Settings</Text>
+        {/* Section 2: App Settings */}
+        <Text style={styles.sectionHeader}>{t.appSettings}</Text>
         <View style={styles.cardGroup}>
-          {/* Language */}
-          <Pressable
-            style={[styles.settingRow, styles.rowBorder]}
-            onPress={() =>
-              updateSettings({
-                language: settings.language === 'English' ? 'Taglish' : 'English',
-              })
-            }
-          >
+          {/* Language Header Row */}
+          <View style={[styles.settingRow, styles.rowBorder]}>
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Language</Text>
-              <Text style={styles.rowValue}>{settings.language}</Text>
+              <Text style={styles.rowTitle}>{t.language}</Text>
+              <Text style={styles.rowValue}>
+                {settings.language === 'Taglish'
+                  ? '🇵🇭 Taglish / Filipino (Aktibo)'
+                  : '🇺🇸 English (Active)'}
+              </Text>
             </View>
-            <Text style={styles.chevron}>›</Text>
-          </Pressable>
+            <Ionicons name="language-outline" size={20} color="#0D7A52" />
+          </View>
+
+          {/* Functional Language Selection Chips */}
+          <View style={[styles.langButtonGroup, styles.rowBorder]}>
+            <Pressable
+              style={[
+                styles.langChip,
+                settings.language === 'English' ? styles.langChipActive : null,
+              ]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                updateSettings({ language: 'English' });
+              }}
+            >
+              <Text
+                style={[
+                  styles.langChipText,
+                  settings.language === 'English' ? styles.langChipTextActive : null,
+                ]}
+              >
+                English {settings.language === 'English' ? '✓' : ''}
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={[
+                styles.langChip,
+                settings.language === 'Taglish' ? styles.langChipActive : null,
+              ]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                updateSettings({ language: 'Taglish' });
+              }}
+            >
+              <Text
+                style={[
+                  styles.langChipText,
+                  settings.language === 'Taglish' ? styles.langChipTextActive : null,
+                ]}
+              >
+                Taglish / Filipino {settings.language === 'Taglish' ? '✓' : ''}
+              </Text>
+            </Pressable>
+          </View>
 
           {/* Notifications Switch */}
           <View style={styles.settingRow}>
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Notifications</Text>
+              <Text style={styles.rowTitle}>{t.notifications}</Text>
               <Text style={styles.rowValue}>
-                Pre-season restock alerts (14–21 days before peak)
+                {t.notificationsSub}
               </Text>
             </View>
             <Switch
@@ -353,6 +397,35 @@ const styles = StyleSheet.create({
   saveMiniText: {
     color: '#FFFFFF',
     fontSize: 12,
+    fontWeight: '800',
+  },
+  langButtonGroup: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingVertical: 10,
+  },
+  langChip: {
+    flex: 1,
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  langChipActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#0D7A52',
+  },
+  langChipText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#4B5563',
+  },
+  langChipTextActive: {
+    color: '#0D7A52',
     fontWeight: '800',
   },
 });

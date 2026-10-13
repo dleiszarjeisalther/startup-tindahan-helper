@@ -11,13 +11,16 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScannerViewfinder';
+import { getTranslations } from '@/presentation/localization/i18n';
 
 export default function PosScanProductScreen() {
   const router = useRouter();
-  const { products, addToCart, cartSummary } = useTindahanStore();
+  const { products, addToCart, cartSummary, settings } = useTindahanStore();
+  const t = getTranslations(settings?.language);
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyTingi, setOnlyTingi] = useState(false);
   const [liveCameraActive, setLiveCameraActive] = useState(false);
@@ -81,7 +84,7 @@ export default function PosScanProductScreen() {
             style={styles.addDbQuickBtn}
             onPress={() => router.push('/inventory')}
           >
-            <Text style={styles.addDbQuickText}>+ Add Product to DB</Text>
+            <Text style={styles.addDbQuickText}>{t.addProductToDb}</Text>
           </Pressable>
         }
         bottomBanner={
@@ -93,11 +96,15 @@ export default function PosScanProductScreen() {
               <Pressable
                 style={styles.unknownAddBtn}
                 onPress={() => {
+                  const codeToRegister = unknownBarcode;
                   setUnknownBarcode(null);
-                  router.push('/inventory');
+                  router.push({
+                    pathname: '/inventory',
+                    params: { autoBarcode: codeToRegister },
+                  });
                 }}
               >
-                <Text style={styles.unknownAddBtnText}>+ Register in DB</Text>
+                <Text style={styles.unknownAddBtnText}>{t.quickRegisterPrompt}</Text>
               </Pressable>
             </View>
           ) : null
@@ -109,12 +116,12 @@ export default function PosScanProductScreen() {
         {/* Search Bar + Barcode Icon Button */}
         <View style={styles.searchRow}>
           <View style={styles.searchInputContainer}>
-            <Text style={styles.searchIcon}>🔍</Text>
+            <Ionicons name="search" size={18} color="#9CA3AF" style={{ marginRight: 6 }} />
             <TextInput
               style={styles.searchInput}
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholder="Search product or barcode in database..."
+              placeholder={t.searchPlaceholder}
               placeholderTextColor="#9CA3AF"
               autoCorrect={false}
             />
@@ -130,7 +137,7 @@ export default function PosScanProductScreen() {
             onPress={() => router.push('/products')}
             hitSlop={6}
           >
-            <Text style={styles.barcodeQuickIcon}>[||||]</Text>
+            <Ionicons name="barcode-outline" size={20} color="#0D7A52" />
           </Pressable>
         </View>
 
@@ -144,7 +151,7 @@ export default function PosScanProductScreen() {
               <Text
                 style={[styles.miniPillText, !onlyTingi ? styles.miniPillTextActive : null]}
               >
-                All Items ({products.length})
+                {t.filterAll} ({products.length})
               </Text>
             </Pressable>
             <Pressable
@@ -187,7 +194,7 @@ export default function PosScanProductScreen() {
                 onPress={() => router.push('/inventory')}
               >
                 <Text style={styles.emptyCatalogBtnText}>
-                  + Add Product to Database
+                  {t.addProductToDb}
                 </Text>
               </Pressable>
             </View>
@@ -209,7 +216,7 @@ export default function PosScanProductScreen() {
                         Haptics.notificationAsync(
                           Haptics.NotificationFeedbackType.Warning
                         ).catch(() => {});
-                        triggerScanToast(`⚠️ ${item.name} is Out of Stock`);
+                        triggerScanToast(`⚠️ ${item.name} ${t.outOfStockAlert}`);
                         return;
                       }
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
@@ -232,7 +239,7 @@ export default function PosScanProductScreen() {
                       ) : null}
                       {item.stockCount <= 0 ? (
                         <View style={styles.oosOverlayPill}>
-                          <Text style={styles.oosOverlayText}>Out of Stock</Text>
+                          <Text style={styles.oosOverlayText}>{t.outOfStock}</Text>
                         </View>
                       ) : null}
                     </View>

@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { seasonalForecastEngine } from '@/infrastructure/container';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 
@@ -59,7 +60,7 @@ export default function SeasonalForecastScreen() {
           onPress={() => router.back()}
           hitSlop={10}
         >
-          <Text style={styles.backArrow}>←</Text>
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </Pressable>
         <View style={styles.headerTextCol}>
           <Text style={styles.headerTitle}>Seasonal Product Forecast</Text>

@@ -40,7 +40,8 @@
           "cameraPermission": "Allow Startup Tindahan Helper to access your camera to scan product barcodes.",
           "barcodeScannerEnabled": true
         }
-      ]
+      ],
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,

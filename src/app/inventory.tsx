@@ -1,5 +1,4 @@
-// src/app/inventory.tsx — Screen 4: Inventory Management (SQLite Database CRUD + Image Capture)
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,18 +11,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { BarcodeInputField } from '@/presentation/components/BarcodeInputField';
 import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScannerViewfinder';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
+import { getTranslations } from '@/presentation/localization/i18n';
 
 const STOCK_FILTERS = ['All', 'In Stock', 'Low Stock', 'Out of Stock'] as const;
 const PRODUCT_CATEGORIES = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
 
 export default function InventoryManagementScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ autoBarcode?: string }>();
   const {
     products,
     addProductToDatabase,
@@ -31,7 +33,10 @@ export default function InventoryManagementScreen() {
     updateProductImage,
     adjustInventoryStock,
     lookupOnlineCatalog,
+    settings,
   } = useTindahanStore();
+
+  const t = getTranslations(settings?.language);
 
   const [selectedFilter, setSelectedFilter] =
     useState<(typeof STOCK_FILTERS)[number]>('All');
@@ -121,6 +126,16 @@ export default function InventoryManagementScreen() {
     },
     [products, lookupOnlineCatalog]
   );
+
+  useEffect(() => {
+    if (params.autoBarcode) {
+      const code = String(params.autoBarcode).trim();
+      if (code) {
+        setShowAddForm(true);
+        handleBarcodeChange(code, 'SCAN');
+      }
+    }
+  }, [params.autoBarcode, handleBarcodeChange]);
 
   const handleSearchBarcodeScanned = useCallback(
     async (code: string) => {
@@ -331,7 +346,7 @@ export default function InventoryManagementScreen() {
       {/* Header: Inventory | Circular Green '+' Button */}
       <View style={styles.headerRow}>
         <View>
-          <Text style={styles.headerTitle}>Inventory</Text>
+          <Text style={styles.headerTitle}>{t.inventoryTitle}</Text>
           <Text style={styles.headerSub}>
             {products.length} {products.length === 1 ? 'product' : 'products'} in SQLite DB
           </Text>
@@ -351,12 +366,12 @@ export default function InventoryManagementScreen() {
       {/* Search Bar with Live Barcode Scanner */}
       <View style={styles.searchWrapper}>
         <View style={styles.searchBox}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Ionicons name="search" size={18} color="#9CA3AF" style={{ marginRight: 6 }} />
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder="Search product name or barcode..."
+            placeholder={t.searchPlaceholder}
             placeholderTextColor="#9CA3AF"
             autoCorrect={false}
           />
@@ -375,8 +390,14 @@ export default function InventoryManagementScreen() {
             accessibilityRole="button"
             accessibilityLabel="Scan barcode to search"
           >
+            <Ionicons
+              name={isSearchScanning ? 'close-circle' : 'barcode-outline'}
+              size={15}
+              color="#FFFFFF"
+              style={{ marginRight: 4 }}
+            />
             <Text style={[styles.searchScanIcon, isSearchScanning && styles.searchScanIconActive]}>
-              {isSearchScanning ? '✕ Stop' : '📷 Scan'}
+              {isSearchScanning ? t.stopScanBtn : t.scanBarcodeBtn}
             </Text>
           </Pressable>
         </View>
@@ -415,6 +436,14 @@ export default function InventoryManagementScreen() {
         >
           {STOCK_FILTERS.map((filter) => {
             const active = selectedFilter === filter;
+            const filterLabel =
+              filter === 'All'
+                ? t.filterAll
+                : filter === 'In Stock'
+                ? t.inStock
+                : filter === 'Low Stock'
+                ? t.lowStock
+                : t.outOfStock;
             return (
               <Pressable
                 key={filter}
@@ -427,7 +456,7 @@ export default function InventoryManagementScreen() {
                     active ? styles.filterPillTextActive : null,
                   ]}
                 >
-                  {filter}
+                  {filterLabel}
                 </Text>
               </Pressable>
             );
@@ -451,11 +480,11 @@ export default function InventoryManagementScreen() {
           <View style={styles.addCard}>
             <View style={styles.addCardHeader}>
               <Text style={styles.addCardTitle}>
-                + Add Product &amp; Photo to SQLite Database
+                {t.addProductTitle}
               </Text>
               {products.length > 0 ? (
                 <Pressable onPress={() => setShowAddForm(false)} hitSlop={8}>
-                  <Text style={styles.closeFormLink}>Close</Text>
+                  <Text style={styles.closeFormLink}>{t.closeBtn}</Text>
                 </Pressable>
               ) : null}
             </View>
@@ -527,7 +556,8 @@ export default function InventoryManagementScreen() {
                   }}
                   hitSlop={8}
                 >
-                  <Text style={styles.photoPlaceholderText}>📷 No Photo</Text>
+                  <Ionicons name="camera-outline" size={22} color="#94A3B8" />
+                  <Text style={styles.photoPlaceholderText}>No Photo</Text>
                 </Pressable>
               )}
 
@@ -539,8 +569,9 @@ export default function InventoryManagementScreen() {
                     handleTakePhoto();
                   }}
                 >
+                  <Ionicons name="camera" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
                   <Text style={styles.cameraBtnText}>
-                    {newImageUri ? '📸 Retake Photo' : '📸 Take Photo'}
+                    {newImageUri ? 'Retake Photo' : 'Take Photo'}
                   </Text>
                 </Pressable>
                 <Pressable
@@ -550,8 +581,9 @@ export default function InventoryManagementScreen() {
                     handlePickImage();
                   }}
                 >
+                  <Ionicons name="images" size={16} color="#374151" style={{ marginRight: 6 }} />
                   <Text style={styles.galleryBtnText}>
-                    {newImageUri ? '🖼️ Change Photo' : '🖼️ Choose from Gallery'}
+                    {newImageUri ? 'Change Photo' : 'Choose Gallery'}
                   </Text>
                 </Pressable>
               </View>
@@ -694,8 +726,9 @@ export default function InventoryManagementScreen() {
               disabled={isSubmitting}
               onPress={() => handleSaveProduct()}
             >
+              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
               <Text style={styles.saveProductBtnText}>
-                {isSubmitting ? 'Saving to Database...' : '✓ Save Product with Photo to Database'}
+                {isSubmitting ? t.savingToDb : t.saveProductBtn}
               </Text>
             </Pressable>
           </View>
@@ -1037,6 +1070,7 @@ const styles = StyleSheet.create({
   searchScanBtn: {
     marginLeft: 6,
     backgroundColor: '#0D7A52',
+    flexDirection: 'row',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 14,
@@ -1198,10 +1232,12 @@ const styles = StyleSheet.create({
   },
   cameraBtn: {
     backgroundColor: '#0D7A52',
+    flexDirection: 'row',
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   cameraBtnText: {
     color: '#FFFFFF',
@@ -1210,10 +1246,12 @@ const styles = StyleSheet.create({
   },
   galleryBtn: {
     backgroundColor: '#E2E8F0',
+    flexDirection: 'row',
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   galleryBtnText: {
     color: '#334155',
@@ -1274,9 +1312,11 @@ const styles = StyleSheet.create({
   saveProductBtn: {
     marginTop: 8,
     backgroundColor: '#0D7A52',
+    flexDirection: 'row',
     paddingVertical: 13,
     borderRadius: 12,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   btnDisabled: {
     opacity: 0.5,

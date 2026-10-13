@@ -2,17 +2,20 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
+import { getTranslations } from '@/presentation/localization/i18n';
 
 // Safe custom tab bar receiving standard React Navigation BottomTabBarProps
 function CustomTindahanTabBar(props: any) {
   const insets = useSafeAreaInsets();
-  const { cartSummary } = useTindahanStore();
+  const { cartSummary, settings } = useTindahanStore();
+  const t = getTranslations(settings?.language);
 
   const activeIndex = props?.state?.index ?? 0;
   const currentRouteName = props?.state?.routes?.[activeIndex]?.name ?? 'index';
 
-  const isHome = currentRouteName === 'index' || currentRouteName === 'products';
+  const isScan = currentRouteName === 'index' || currentRouteName === 'products';
   const isSales = currentRouteName === 'sales' || currentRouteName === 'explore';
   const isCheckout = currentRouteName === 'checkout';
   const isInventory = currentRouteName === 'inventory';
@@ -37,28 +40,38 @@ function CustomTindahanTabBar(props: any) {
       style={[styles.floatingWrapper, { bottom: bottomOffset }]}
     >
       <View style={styles.floatingPillBar}>
-        {/* 1. Home (Screen 1: POS / Scan Product) */}
+        {/* 1. Scan (Screen 1: POS / Barcode Scanner) */}
         <Pressable
-          style={styles.tabItem}
+          style={[styles.tabItem, isScan ? styles.tabItemActive : null]}
           onPress={() => handleTabPress('index')}
           hitSlop={8}
         >
-          <Text style={[styles.tabIcon, isHome ? styles.tabActiveText : null]}>🏠</Text>
-          <Text style={[styles.tabLabel, isHome ? styles.tabActiveText : null]}>
-            Home
+          <Ionicons
+            name={isScan ? 'barcode' : 'barcode-outline'}
+            size={22}
+            color={isScan ? '#0D7A52' : '#6B7280'}
+          />
+          <Text style={[styles.tabLabel, isScan ? styles.tabActiveText : null]}>
+            {t.tabScan}
           </Text>
+          {isScan ? <View style={styles.activeDot} /> : null}
         </Pressable>
 
         {/* 2. Sales (Screen 5: Sales History) */}
         <Pressable
-          style={styles.tabItem}
+          style={[styles.tabItem, isSales ? styles.tabItemActive : null]}
           onPress={() => handleTabPress('sales')}
           hitSlop={8}
         >
-          <Text style={[styles.tabIcon, isSales ? styles.tabActiveText : null]}>📊</Text>
+          <Ionicons
+            name={isSales ? 'receipt' : 'receipt-outline'}
+            size={22}
+            color={isSales ? '#0D7A52' : '#6B7280'}
+          />
           <Text style={[styles.tabLabel, isSales ? styles.tabActiveText : null]}>
-            Sales
+            {t.tabSales}
           </Text>
+          {isSales ? <View style={styles.activeDot} /> : null}
         </Pressable>
 
         {/* 3. Center Floating Green Cart FAB (Screen 3: New Sale / Checkout) */}
@@ -68,7 +81,7 @@ function CustomTindahanTabBar(props: any) {
             onPress={() => handleTabPress('checkout')}
             hitSlop={10}
           >
-            <Text style={styles.centerFabIcon}>🛒</Text>
+            <Ionicons name="cart" size={24} color="#FFFFFF" />
             {cartSummary.totalCount > 0 ? (
               <View style={styles.cartBadge}>
                 <Text style={styles.cartBadgeText}>{cartSummary.totalCount}</Text>
@@ -79,28 +92,36 @@ function CustomTindahanTabBar(props: any) {
 
         {/* 4. Inventory (Screen 4: Inventory Management) */}
         <Pressable
-          style={styles.tabItem}
+          style={[styles.tabItem, isInventory ? styles.tabItemActive : null]}
           onPress={() => handleTabPress('inventory')}
           hitSlop={8}
         >
-          <Text style={[styles.tabIcon, isInventory ? styles.tabActiveText : null]}>
-            📦
-          </Text>
+          <Ionicons
+            name={isInventory ? 'cube' : 'cube-outline'}
+            size={22}
+            color={isInventory ? '#0D7A52' : '#6B7280'}
+          />
           <Text style={[styles.tabLabel, isInventory ? styles.tabActiveText : null]}>
-            Inventory
+            {t.tabInventory}
           </Text>
+          {isInventory ? <View style={styles.activeDot} /> : null}
         </Pressable>
 
         {/* 5. More (Screen 6: Menu / Profile - Juan's Store Owner) */}
         <Pressable
-          style={styles.tabItem}
+          style={[styles.tabItem, isMore ? styles.tabItemActive : null]}
           onPress={() => handleTabPress('more')}
           hitSlop={8}
         >
-          <Text style={[styles.tabIcon, isMore ? styles.tabActiveText : null]}>•••</Text>
+          <Ionicons
+            name={isMore ? 'ellipsis-horizontal-circle' : 'ellipsis-horizontal-circle-outline'}
+            size={22}
+            color={isMore ? '#0D7A52' : '#6B7280'}
+          />
           <Text style={[styles.tabLabel, isMore ? styles.tabActiveText : null]}>
-            More
+            {t.tabMore}
           </Text>
+          {isMore ? <View style={styles.activeDot} /> : null}
         </Pressable>
       </View>
     </View>
@@ -115,7 +136,7 @@ export default function AppTabs() {
         headerShown: false,
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Home' }} />
+      <Tabs.Screen name="index" options={{ title: 'Scan' }} />
       <Tabs.Screen name="products" options={{ title: 'Products', href: null }} />
       <Tabs.Screen name="checkout" options={{ title: 'New Sale' }} />
       <Tabs.Screen name="inventory" options={{ title: 'Inventory' }} />
@@ -155,7 +176,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 48,
-    gap: 2,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+    borderRadius: 18,
+    gap: 1,
+  },
+  tabItemActive: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  activeDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#0D7A52',
+    marginTop: 1,
   },
   tabIcon: {
     fontSize: 18,
@@ -193,6 +229,11 @@ const styles = StyleSheet.create({
   },
   centerFabActive: {
     backgroundColor: '#065F46',
+    borderColor: '#34D399',
+    borderWidth: 3.5,
+    shadowColor: '#059669',
+    shadowOpacity: 0.5,
+    elevation: 12,
   },
   centerFabIcon: {
     fontSize: 23,

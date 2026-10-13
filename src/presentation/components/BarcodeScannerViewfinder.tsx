@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
+import { soundFeedbackService } from '@/infrastructure/services/SoundFeedbackService';
 
 export interface BarcodeScannerViewfinderProps {
   /** Callback when a valid barcode string is detected */
@@ -119,6 +120,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
     if (!clean || scanLockRef.current) return;
     scanLockRef.current = true;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    soundFeedbackService.playBarcodeBeep().catch(() => {});
     onBarcodeScanned(clean);
     setTimeout(() => {
       scanLockRef.current = false;

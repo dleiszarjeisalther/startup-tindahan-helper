@@ -18,15 +18,20 @@ export class Money {
     this._centavos = Math.round(centavos);
   }
 
-  public static fromCentavos(centavos: number): Money {
-    return new Money(centavos);
+  public static fromCentavos(centavos: number | null | undefined): Money {
+    const numeric = typeof centavos === 'number' ? centavos : Number(centavos ?? 0);
+    if (!Number.isFinite(numeric) || numeric < 0) {
+      return new Money(0);
+    }
+    return new Money(numeric);
   }
 
-  public static fromPhp(phpAmount: number): Money {
-    if (!Number.isFinite(phpAmount) || phpAmount < 0) {
-      throw new Error('Money amount must be a valid non-negative number.');
+  public static fromPhp(phpAmount: number | null | undefined): Money {
+    const numeric = typeof phpAmount === 'number' ? phpAmount : Number(phpAmount ?? 0);
+    if (!Number.isFinite(numeric) || numeric < 0) {
+      return new Money(0);
     }
-    return new Money(Math.round(phpAmount * 100));
+    return new Money(Math.round(numeric * 100));
   }
 
   public static zero(): Money {

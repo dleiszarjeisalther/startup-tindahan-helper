@@ -221,10 +221,11 @@ export class Product {
     const pieceTier =
       this._sellingTiers.find((t) => t.unitName === 'piece') ?? this._sellingTiers[0];
     const bundleTier = this._sellingTiers.find((t) => t.unitName === 'bundle');
-    const defaultPrice = pieceTier.unitPricePhp;
-    const catalogDisplayPrice = bundleTier
-      ? bundleTier.unitPricePhp / bundleTier.baseUnitMultiplier
-      : defaultPrice;
+    const defaultPrice = Number(pieceTier?.unitPricePhp) || 0;
+    const catalogDisplayPrice =
+      bundleTier && bundleTier.baseUnitMultiplier > 0
+        ? (Number(bundleTier.unitPricePhp) || 0) / bundleTier.baseUnitMultiplier
+        : defaultPrice;
 
     return {
       id: this.id,

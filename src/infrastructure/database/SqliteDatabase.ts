@@ -57,7 +57,8 @@ export class SqliteDatabase {
         quarantine_stock_count INTEGER NOT NULL DEFAULT 0,
         out_of_stock_days INTEGER NOT NULL DEFAULT 0,
         visual_json TEXT,
-        image_uri TEXT
+        image_uri TEXT,
+        default_price_php REAL DEFAULT 0
       );
 
       CREATE TABLE IF NOT EXISTS cart_items (
@@ -130,6 +131,12 @@ export class SqliteDatabase {
 
     try {
       this.db.execSync('ALTER TABLE products ADD COLUMN image_uri TEXT;');
+    } catch {
+      // Column already exists
+    }
+
+    try {
+      this.db.execSync('ALTER TABLE products ADD COLUMN default_price_php REAL DEFAULT 0;');
     } catch {
       // Column already exists
     }

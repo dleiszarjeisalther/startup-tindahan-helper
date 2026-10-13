@@ -11,11 +11,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { PaymentTenderType, SaleTransactionRecord } from '@/application/TindahanStoreService';
 import { Money } from '@/domain/value-objects/Money';
+import { getTranslations } from '@/presentation/localization/i18n';
 
 export default function CheckoutNewSaleScreen() {
   const router = useRouter();
@@ -23,6 +25,7 @@ export default function CheckoutNewSaleScreen() {
     products,
     cartSummary,
     utangCustomers,
+    settings,
     addToCart,
     undoRemoveCartItem,
     setDiscountPhp,
@@ -31,6 +34,8 @@ export default function CheckoutNewSaleScreen() {
     restoreParkedCart,
     completeSale,
   } = useTindahanStore();
+
+  const t = getTranslations(settings?.language);
 
   const [tenderType, setTenderType] = useState<PaymentTenderType>('CASH');
   // User-input Payment Amount Received (TextInput) — starts empty so user can optionally type cash bill handed
@@ -44,7 +49,6 @@ export default function CheckoutNewSaleScreen() {
   // Utang customer selection or custom input
   const [selectedCustomer, setSelectedCustomer] = useState<string>('');
   const [chargeShortfallToUtang, setChargeShortfallToUtang] = useState(false);
-  const [isOneTimeBulk, setIsOneTimeBulk] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [completedTx, setCompletedTx] = useState<SaleTransactionRecord | null>(null);
   const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
@@ -111,7 +115,7 @@ export default function CheckoutNewSaleScreen() {
             ? selectedCustomer.trim()
             : undefined,
         chargeShortfallToUtang,
-        isOneTimeBulkOrder: isOneTimeBulk,
+        isOneTimeBulkOrder: false,
       });
 
       setCompletedTx(tx);
@@ -119,7 +123,6 @@ export default function CheckoutNewSaleScreen() {
       setDiscountInputText('0.00');
       setGcashRefInput('');
       setChargeShortfallToUtang(false);
-      setIsOneTimeBulk(false);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       setPaymentErrorMsg(err instanceof Error ? err.message : 'Payment error');
@@ -136,9 +139,9 @@ export default function CheckoutNewSaleScreen() {
             onPress={() => router.back()}
             hitSlop={10}
           >
-            <Text style={styles.backArrow}>←</Text>
+            <Ionicons name="arrow-back" size={22} color="#111827" />
           </Pressable>
-          <Text style={styles.headerTitle}>New Sale</Text>
+          <Text style={styles.headerTitle}>{t.newSaleTitle}</Text>
         </View>
 
         <View style={styles.headerRight}>
@@ -159,7 +162,7 @@ export default function CheckoutNewSaleScreen() {
             }}
             hitSlop={10}
           >
-            <Text style={styles.trashIcon}>🗑️</Text>
+            <Ionicons name="trash-outline" size={20} color="#DC2626" />
           </Pressable>
         </View>
       </View>
@@ -178,7 +181,8 @@ export default function CheckoutNewSaleScreen() {
                 setShowClearConfirm(false);
               }}
             >
-              <Text style={styles.parkBtnText}>⏸ Hold / Park Cart</Text>
+              <Ionicons name="pause-circle-outline" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
+              <Text style={styles.parkBtnText}>Hold / Park Cart</Text>
             </Pressable>
             <Pressable
               style={styles.clearConfirmBtn}
@@ -187,7 +191,8 @@ export default function CheckoutNewSaleScreen() {
                 setShowClearConfirm(false);
               }}
             >
-              <Text style={styles.clearConfirmText}>🗑️ Clear Sale</Text>
+              <Ionicons name="trash-outline" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
+              <Text style={styles.clearConfirmText}>Clear Sale</Text>
             </Pressable>
             <Pressable
               style={styles.cancelConfirmBtn}
@@ -221,9 +226,9 @@ export default function CheckoutNewSaleScreen() {
         <View style={styles.cartCard}>
           {cartSummary.items.length === 0 ? (
             <View style={styles.emptyCartBox}>
-              <Text style={styles.emptyCartTitle}>No items in current sale</Text>
+              <Text style={styles.emptyCartTitle}>{t.emptyCartTitle}</Text>
               <Text style={styles.emptyCartSub}>
-                Tap &quot;+ Add More Items&quot; below to scan or select products.
+                {t.emptyCartSub}
               </Text>
             </View>
           ) : (
@@ -362,7 +367,11 @@ export default function CheckoutNewSaleScreen() {
                       active ? styles.tenderTabTextActive : null,
                     ]}
                   >
-                    {mode === 'UTANG' ? '📒 Utang (Lista)' : mode}
+                    {mode === 'UTANG'
+                      ? t.tenderUtang
+                      : mode === 'CASH'
+                      ? t.tenderCash
+                      : t.tenderGcash}
                   </Text>
                 </Pressable>
               );
@@ -480,9 +489,12 @@ export default function CheckoutNewSaleScreen() {
                     style={styles.shortfallUtangToggle}
                     onPress={() => setChargeShortfallToUtang((prev) => !prev)}
                   >
-                    <Text style={styles.bulkCheckbox}>
-                      {chargeShortfallToUtang ? '☑️' : '⬜'}
-                    </Text>
+                    <Ionicons
+                      name={chargeShortfallToUtang ? 'checkbox' : 'square-outline'}
+                      size={20}
+                      color={chargeShortfallToUtang ? '#0D7A52' : '#6B7280'}
+                      style={{ marginRight: 6 }}
+                    />
                     <Text style={styles.shortfallUtangLabel}>
                       Charge remaining {Money.fromPhp(shortfallPhp).format()} deficit to
                       Customer Utang (Split Cash + Utang)
@@ -529,16 +541,6 @@ export default function CheckoutNewSaleScreen() {
             </View>
           ) : null}
 
-          {/* FC-04 Mitigation: One-Time Bulk Event Flag */}
-          <Pressable
-            style={styles.bulkToggleRow}
-            onPress={() => setIsOneTimeBulk((prev) => !prev)}
-          >
-            <Text style={styles.bulkCheckbox}>{isOneTimeBulk ? '☑️' : '⬜'}</Text>
-            <Text style={styles.bulkToggleText}>
-              One-Time Bulk / Party Order (Exclude spike from Seasonal Forecast)
-            </Text>
-          </Pressable>
         </View>
 
         {paymentErrorMsg ? (
@@ -559,20 +561,22 @@ export default function CheckoutNewSaleScreen() {
             disabled={cartSummary.items.length === 0 || isSubmitting || isUnderpaid}
             onPress={() => handleCompleteSale()}
           >
+            <Ionicons name="cart" size={20} color="#FFFFFF" style={{ marginRight: 6 }} />
             <Text style={styles.completeSaleText}>
               {isSubmitting
-                ? 'Saving to SQLite...'
+                ? t.savingToDb
                 : changeDuePhp > 0
-                ? `🛒 Complete Sale (Change: ₱${changeDuePhp.toFixed(2)})`
-                : `🛒 Complete Sale (${cartSummary.formattedTotal})`}
+                ? `${t.completeSaleBtn} (${t.changeGiven} ₱${changeDuePhp.toFixed(2)})`
+                : `${t.completeSaleBtn} (${cartSummary.formattedTotal})`}
             </Text>
           </Pressable>
 
           <Pressable
             style={styles.addMoreBtn}
-            onPress={() => router.push('/products')}
+            onPress={() => router.push('/')}
           >
-            <Text style={styles.addMoreText}>+  Add More Items</Text>
+            <Ionicons name="add" size={20} color="#0D7A52" style={{ marginRight: 4 }} />
+            <Text style={styles.addMoreText}>{t.addMoreItemsBtn}</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -583,7 +587,7 @@ export default function CheckoutNewSaleScreen() {
           <View style={styles.receiptCard}>
             <View style={styles.receiptHeader}>
               <View style={styles.receiptIconCircle}>
-                <Text style={styles.receiptCheckMark}>✓</Text>
+                <Ionicons name="checkmark" size={26} color="#15803D" />
               </View>
               <Text style={styles.receiptTitle}>Sale Recorded</Text>
               <Text style={styles.receiptSub}>Successfully saved to SQLite Database</Text>
@@ -623,7 +627,7 @@ export default function CheckoutNewSaleScreen() {
               </View>
               {completedTx.changeDuePhp > 0 ? (
                 <View style={[styles.receiptRow, styles.receiptChangeRow]}>
-                  <Text style={styles.receiptChangeLabel}>Change Given (Sukli):</Text>
+                  <Text style={styles.receiptChangeLabel}>{t.changeGiven}</Text>
                   <Text style={styles.receiptChangeValue}>
                     ₱{completedTx.changeDuePhp.toFixed(2)}
                   </Text>
@@ -639,7 +643,8 @@ export default function CheckoutNewSaleScreen() {
                   router.push('/');
                 }}
               >
-                <Text style={styles.receiptPrimaryBtnText}>🛒 Next Sale (POS)</Text>
+                <Ionicons name="barcode-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                <Text style={styles.receiptPrimaryBtnText}>{t.nextSaleBtn}</Text>
               </Pressable>
               <Pressable
                 style={styles.receiptSecondaryBtn}
@@ -648,7 +653,8 @@ export default function CheckoutNewSaleScreen() {
                   router.push('/sales');
                 }}
               >
-                <Text style={styles.receiptSecondaryBtnText}>📊 Sales History</Text>
+                <Ionicons name="receipt-outline" size={18} color="#334155" style={{ marginRight: 6 }} />
+                <Text style={styles.receiptSecondaryBtnText}>{t.viewSalesHistoryBtn}</Text>
               </Pressable>
             </View>
           </View>
@@ -1222,21 +1228,6 @@ const styles = StyleSheet.create({
   utangChipTextActive: {
     color: '#92400E',
   },
-  bulkToggleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingTop: 4,
-  },
-  bulkCheckbox: {
-    fontSize: 14,
-  },
-  bulkToggleText: {
-    fontSize: 11,
-    color: '#6B7280',
-    fontWeight: '600',
-    flex: 1,
-  },
   errorBox: {
     backgroundColor: '#FEE2E2',
     borderWidth: 1,
@@ -1257,6 +1248,7 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 26,
     backgroundColor: '#0D7A52',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 2,
@@ -1279,6 +1271,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderWidth: 1.5,
     borderColor: '#0D7A52',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1427,6 +1420,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     backgroundColor: '#0D7A52',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1440,6 +1434,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     backgroundColor: '#F1F5F9',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },

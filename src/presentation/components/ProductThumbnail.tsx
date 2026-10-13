@@ -42,7 +42,7 @@ export const ProductThumbnail: React.FC<ProductThumbnailProps> = ({
       <View
         style={[
           styles.placeholderBox,
-          { backgroundColor: visual.bgColor || '#0D7A52' },
+          { backgroundColor: visual?.bgColor || '#0D7A52' },
         ]}
       >
         <Text
@@ -52,10 +52,10 @@ export const ProductThumbnail: React.FC<ProductThumbnailProps> = ({
           ]}
           numberOfLines={1}
         >
-          {visual.shortLabel}
+          {visual?.shortLabel || 'PROD'}
         </Text>
         <Text style={styles.placeholderSub} numberOfLines={1}>
-          {visual.subLabel}
+          {visual?.subLabel || 'ITEM'}
         </Text>
       </View>
     </View>

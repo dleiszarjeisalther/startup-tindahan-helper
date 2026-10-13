@@ -18,6 +18,7 @@ interface ProductRow {
   out_of_stock_days: number;
   visual_json: string | null;
   image_uri: string | null;
+  default_price_php?: number | null;
 }
 
 /**
@@ -48,14 +49,19 @@ export class InMemoryProductRepository implements IProductRepository {
   }
 
   private mapRowToProduct(row: ProductRow): Product {
+    const fallbackPrice = Number(row.default_price_php) || 1.0;
     let tiers: SellingUnitTier[] = [
-      { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: 1.0 },
+      { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: fallbackPrice },
     ];
     try {
       if (row.selling_tiers_json) {
         const parsed = JSON.parse(row.selling_tiers_json);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          tiers = parsed;
+          tiers = parsed.map((t: SellingUnitTier) => ({
+            unitName: t.unitName || 'piece',
+            baseUnitMultiplier: Number(t.baseUnitMultiplier) || 1,
+            unitPricePhp: Number(t.unitPricePhp) || fallbackPrice,
+          }));
         }
       }
     } catch {
@@ -103,8 +109,8 @@ export class InMemoryProductRepository implements IProductRepository {
         `INSERT OR REPLACE INTO products (
           id, name, category, barcode, barcode_source,
           base_stock_count, ordinary_low_stock_threshold, unit_cost_php,
-          selling_tiers_json, quarantine_stock_count, out_of_stock_days, visual_json, image_uri
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          selling_tiers_json, quarantine_stock_count, out_of_stock_days, visual_json, image_uri, default_price_php
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           dto.id,
           dto.name,
@@ -119,6 +125,7 @@ export class InMemoryProductRepository implements IProductRepository {
           dto.outOfStockDays,
           JSON.stringify(dto.visual),
           dto.imageUri ?? null,
+          dto.defaultPricePhp,
         ]
       );
     } catch (err) {
