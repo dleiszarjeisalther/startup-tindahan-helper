@@ -124,7 +124,7 @@ export default function ProductListScreen() {
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      setAddedBanner(`✓ Added "${res.product.name}" [${res.product.barcode}] to Database`);
+      setAddedBanner(`✓ Naidagdag ang "${res.product.name}" [${res.product.barcode}] sa tindahan`);
       setNewName('');
       setNewBarcode('');
       setBarcodeMode('MANUAL');
@@ -240,7 +240,7 @@ export default function ProductListScreen() {
       >
         {showAddForm ? (
           <View style={styles.addCard}>
-            <Text style={styles.addCardTitle}>+ Add Product &amp; Photo to SQLite Database</Text>
+            <Text style={styles.addCardTitle}>+ Magdagdag ng Paninda at Litrato</Text>
 
             <Text style={styles.fieldLabel}>Product Image (Camera / Gallery):</Text>
             <View style={styles.photoPickerRow}>
@@ -356,7 +356,7 @@ export default function ProductListScreen() {
               onPress={() => handleSaveProduct()}
             >
               <Text style={styles.saveBtnText}>
-                {isSubmitting ? 'Saving...' : '✓ Save Product to Database'}
+                {isSubmitting ? 'Saving...' : '✓ I-save ang Paninda'}
               </Text>
             </Pressable>
           </View>
@@ -366,8 +366,8 @@ export default function ProductListScreen() {
           <View style={styles.emptyCard}>
             <Text style={styles.emptyTitle}>
               {products.length === 0
-                ? 'No Products in Database Yet'
-                : 'No Matching Products'}
+                ? 'Wala Pang Paninda sa Tindahan'
+                : 'Walang Tugmang Paninda'}
             </Text>
             <Text style={styles.emptySub}>
               {products.length === 0

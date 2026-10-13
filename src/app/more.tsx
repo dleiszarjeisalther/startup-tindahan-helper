@@ -132,7 +132,7 @@ export default function MenuProfileScreen() {
             </View>
             <View style={styles.menuRightGroup}>
               <Text style={styles.subHintText}>
-                {utangCustomers.length} in DB
+                {utangCustomers.length} suki
               </Text>
               <Text style={styles.menuChevron}>›</Text>
             </View>
@@ -141,7 +141,7 @@ export default function MenuProfileScreen() {
           {activeSection === 'UTANG_ONLINE' ? (
             <View style={styles.inlinePanel}>
               <Text style={styles.inlinePanelTitle}>
-                📒 Suki Utang (Credit) Ledger — Add Customer to Database
+                📒 Talaan ng Utang ng mga Suki — Maglista ng Kostumer
               </Text>
 
               <View style={styles.addCustForm}>
@@ -182,14 +182,14 @@ export default function MenuProfileScreen() {
                   }}
                 >
                   <Text style={styles.addCustBtnText}>
-                    + Save Customer to SQLite Database
+                    + I-lista ang Kostumer sa Tindahan
                   </Text>
                 </Pressable>
               </View>
 
               {utangCustomers.length === 0 ? (
                 <Text style={styles.emptyUtangText}>
-                  No Utang customers in database yet. Add one above or record an Utang sale in &quot;New Sale&quot;.
+                  Wala pang listahan ng may utang. Maglista sa itaas o pumili ng &quot;Utang&quot; sa Bagong Benta.
                 </Text>
               ) : (
                 utangCustomers.map((c) => {
@@ -271,10 +271,10 @@ export default function MenuProfileScreen() {
           {activeSection === 'SUBSCRIPTION' ? (
             <View style={styles.inlinePanel}>
               <Text style={styles.inlinePanelTitle}>
-                ✓ Owner Single-Operator Plan (Free • SQLite Offline-First)
+                ✓ Ligtas na Offline Mode (Nakatago sa Telepono)
               </Text>
               <Text style={styles.inlinePanelBody}>
-                All catalog items, stock movements, utang customers, and sales receipts are persisted locally in SQLite (tindahan_pos_v2.db).
+                Lahat ng paninda, benta, resibo, at talaan ng utang ay ligtas na nakatago sa iyong telepono kahit walang internet.
               </Text>
             </View>
           ) : null}

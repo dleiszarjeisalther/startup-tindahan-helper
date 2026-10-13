@@ -8,6 +8,7 @@ import {
   Switch,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -251,21 +252,37 @@ export default function StoreSettingsScreen() {
 
           <View style={[styles.settingRow, styles.rowBorder]}>
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Local SQLite Database (expo-sqlite)</Text>
+              <Text style={styles.rowTitle}>Pansariling Talaan sa Telepono (Offline Data)</Text>
               <Text style={styles.rowValue}>
-                ✓ Active (tindahan_pos_v2.db • Zero hardcoded data • Full SQLite CRUD)
+                ✓ Aktibo at Ligtas (Nakatago sa iyong telepono nang offline)
               </Text>
             </View>
           </View>
 
           <Pressable
             style={styles.settingRow}
-            onPress={() => clearAllDatabaseData()}
+            onPress={() => {
+              Alert.alert(
+                'Burahin ang Lahat ng Talaan?',
+                'Sigurado ka bang nais mong burahin ang lahat ng paninda, benta, at talaan ng utang sa iyong tindahan? Hindi na ito maibabalik.',
+                [
+                  { text: 'Huwag', style: 'cancel' },
+                  {
+                    text: 'Oo, Burahin Lahat',
+                    style: 'destructive',
+                    onPress: () => {
+                      clearAllDatabaseData();
+                      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                    },
+                  },
+                ]
+              );
+            }}
           >
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Clear All SQLite Database Data</Text>
+              <Text style={styles.rowTitle}>Burahin ang Lahat ng Talaan sa Tindahan</Text>
               <Text style={styles.rowValue}>
-                Wipe all products, sales, cart, utang customers &amp; monthly history
+                Burahin ang lahat ng paninda, benta, cart, at talaan ng utang
               </Text>
             </View>
             <Text style={styles.chevron}>🗑️</Text>

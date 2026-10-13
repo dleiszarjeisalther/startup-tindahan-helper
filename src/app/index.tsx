@@ -23,7 +23,7 @@ export default function PosScanProductScreen() {
   const t = getTranslations(settings?.language);
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyTingi, setOnlyTingi] = useState(false);
-  const [liveCameraActive, setLiveCameraActive] = useState(false);
+  const [liveCameraActive, setLiveCameraActive] = useState(true);
   const [scanToast, setScanToast] = useState<string | null>(null);
   const [unknownBarcode, setUnknownBarcode] = useState<string | null>(null);
 
@@ -107,7 +107,7 @@ export default function PosScanProductScreen() {
           unknownBarcode ? (
             <View style={styles.unknownBanner}>
               <Text style={styles.unknownText}>
-                Barcode &quot;{unknownBarcode}&quot; not in database
+                Hindi pa nakalista ang barcode &quot;{unknownBarcode}&quot;
               </Text>
               <Pressable
                 style={styles.unknownAddBtn}
@@ -197,13 +197,13 @@ export default function PosScanProductScreen() {
             <View style={styles.emptyCatalogCard}>
               <Text style={styles.emptyCatalogTitle}>
                 {products.length === 0
-                  ? 'No Products in Database Yet'
-                  : 'No Matching Products'}
+                  ? 'Wala Pang Paninda sa Tindahan'
+                  : 'Walang Tugmang Paninda'}
               </Text>
               <Text style={styles.emptyCatalogSub}>
                 {products.length === 0
-                  ? 'Your SQLite database starts completely clean with zero hardcoded items. Tap below to add your first product with photo.'
-                  : 'Try another search term or view all items.'}
+                  ? 'Malinis ang iyong talaan ng paninda. Pindutin sa ibaba para magdagdag ng unang paninda na may litrato.'
+                  : 'Subukan ang ibang pangalan o barcode ng paninda.'}
               </Text>
               <Pressable
                 style={styles.emptyCatalogBtn}

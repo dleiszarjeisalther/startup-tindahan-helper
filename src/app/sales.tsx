@@ -154,13 +154,13 @@ export default function SalesHistoryScreen() {
             <View style={{ padding: 20, alignItems: 'center', gap: 6 }}>
               <Text style={{ fontSize: 14, fontWeight: '700', color: '#475569' }}>
                 {summary.allTransactions && summary.allTransactions.length > 0
-                  ? `No sales recorded for ${selectedPeriod}`
-                  : 'No sales recorded in database yet'}
+                  ? `Walang naitalang benta para sa ${selectedPeriod}`
+                  : 'Wala pang naitatalang benta sa tindahan'}
               </Text>
               <Text style={{ fontSize: 12, color: '#94A3B8', textAlign: 'center' }}>
                 {summary.allTransactions && summary.allTransactions.length > 0
-                  ? 'Switch period above to Weekly or Monthly to view earlier receipts, or record a new sale in "New Sale".'
-                  : 'Add products to your cart and complete a sale in "New Sale" to record receipts in SQLite.'}
+                  ? 'Pumili ng Lingguhan o Buwanan sa itaas para makita ang mga nakaraang resibo.'
+                  : 'Maglagay ng paninda sa Bagong Benta para magtala ng resibo.'}
               </Text>
             </View>
           ) : null}

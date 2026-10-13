@@ -656,7 +656,7 @@ export default function CheckoutNewSaleScreen() {
                 <Ionicons name="checkmark" size={26} color="#15803D" />
               </View>
               <Text style={styles.receiptTitle}>Sale Recorded</Text>
-              <Text style={styles.receiptSub}>Successfully saved to SQLite Database</Text>
+              <Text style={styles.receiptSub}>Matagumpay na naitala ang benta sa tindahan</Text>
             </View>
 
             <View style={styles.receiptBody}>

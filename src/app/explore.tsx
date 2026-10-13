@@ -71,7 +71,7 @@ export default function SeasonalForecastScreen() {
         <View style={styles.headerTextCol}>
           <Text style={styles.headerTitle}>Seasonal Product Forecast</Text>
           <Text style={styles.headerSubtitle}>
-            Feature C • SQLite Monthly History &amp; YoY Comparison
+            Buwanang Kasaysayan &amp; Paghahambing ng Benta
           </Text>
         </View>
       </View>
@@ -123,9 +123,9 @@ export default function SeasonalForecastScreen() {
 
         {products.length === 0 ? (
           <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>No Products in Database Yet</Text>
+            <Text style={styles.emptyTitle}>Wala Pang Paninda sa Tindahan</Text>
             <Text style={styles.emptySub}>
-              Add products in Inventory or Products first, then complete sales or log monthly sales records here to compute Seasonal Product Forecasts.
+              Magdagdag muna ng mga paninda sa Imbentaryo, pagkatapos ay kumpletuhin ang mga benta o itala ang buwanang benta rito para makita ang pagtataya.
             </Text>
             <Pressable
               style={styles.emptyBtn}
@@ -139,7 +139,7 @@ export default function SeasonalForecastScreen() {
             {/* Add Monthly Sales History Record to SQLite */}
             <View style={styles.logCard}>
               <Text style={styles.logTitle}>
-                + Log Monthly Sales Record to SQLite Database
+                + Itala ang Buwanang Benta sa Tindahan
               </Text>
               <Text style={styles.logSub}>
                 Select a product and record monthly sales to build 12m / 24m+ seasonal history:
@@ -237,12 +237,12 @@ export default function SeasonalForecastScreen() {
                   ).catch(() => {});
                   setHistUnitsSold('');
                   setRestockToast(
-                    `✓ Saved ${yr}-${String(mo).padStart(2, '0')} (${sold} units) to SQLite`
+                    `✓ Naitala ang benta para sa ${yr}-${String(mo).padStart(2, '0')} (${sold} piraso)`
                   );
                 }}
               >
                 <Text style={styles.saveHistBtnText}>
-                  ✓ Save Monthly Record to Database
+                  ✓ I-save ang Buwanang Talaan
                 </Text>
               </Pressable>
             </View>
@@ -284,7 +284,7 @@ export default function SeasonalForecastScreen() {
                           is24m ? styles.confTextGreen : styles.confTextBlue,
                         ]}
                       >
-                        {historyCount} mo in DB ({fc.confidenceTier})
+                        {historyCount} buwan na tala
                       </Text>
                     </View>
                   </View>
@@ -349,7 +349,7 @@ export default function SeasonalForecastScreen() {
                           quantity: fc.recommendedRestockQty,
                         });
                         setRestockToast(
-                          `✓ Restocked +${fc.recommendedRestockQty} ${fc.productName} in Database`
+                          `✓ Na-restock +${fc.recommendedRestockQty} ${fc.productName} sa tindahan`
                         );
                       }}
                     >

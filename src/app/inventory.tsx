@@ -7,6 +7,9 @@ import {
   ScrollView,
   StyleSheet,
   Modal,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
@@ -76,43 +79,55 @@ export default function InventoryManagementScreen() {
   const handleSaveEditProduct = async () => {
     if (!editingProduct) return;
     if (!editName.trim()) {
-      setEditError('Product name is required.');
+      setEditError('Pangalan ng paninda ay kailangan.');
       return;
     }
     const price = parseFloat(editPricePhp);
     if (isNaN(price) || price < 0) {
-      setEditError('Valid price is required.');
+      setEditError('Maglagay ng wastong presyo.');
       return;
     }
     const stock = parseInt(editStock, 10);
     if (isNaN(stock) || stock < 0) {
-      setEditError('Valid stock count is required.');
+      setEditError('Maglagay ng wastong bilang ng stock.');
       return;
     }
     const threshold = parseInt(editLowThreshold, 10);
     if (isNaN(threshold) || threshold < 1) {
-      setEditError('Low stock threshold must be at least 1.');
+      setEditError('Ang paalala sa mababang stock ay dapat hindi bababa sa 1.');
       return;
     }
 
-    setIsSubmittingEdit(true);
-    setEditError(null);
-    try {
-      await updateProductDetails(editingProduct.id, {
-        name: editName.trim(),
-        category: editCategory,
-        pricePhp: price,
-        baseStockCount: stock,
-        lowStockThreshold: threshold,
-      });
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      setFeedbackMsg(`✓ Updated "${editName.trim()}" in SQLite Database`);
-      setEditingProduct(null);
-    } catch (err) {
-      setEditError(err instanceof Error ? err.message : 'Could not update product.');
-    } finally {
-      setIsSubmittingEdit(false);
-    }
+    Alert.alert(
+      'Kumpirmahin ang Pagbabago',
+      `Paninda: ${editName.trim()}\nPresyo: ₱${price.toFixed(2)}\nStock: ${stock} piraso\nLow Stock Alert: ${threshold} piraso\nKategorya: ${editCategory}\n\nNais mo bang i-save ang mga pagbabagong ito?`,
+      [
+        { text: 'Bumalik', style: 'cancel' },
+        {
+          text: '✓ I-save',
+          onPress: async () => {
+            setIsSubmittingEdit(true);
+            setEditError(null);
+            try {
+              await updateProductDetails(editingProduct.id, {
+                name: editName.trim(),
+                category: editCategory,
+                pricePhp: price,
+                baseStockCount: stock,
+                lowStockThreshold: threshold,
+              });
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+              setFeedbackMsg(`✓ Na-save ang pagbabago sa "${editName.trim()}"`);
+              setEditingProduct(null);
+            } catch (err) {
+              setEditError(err instanceof Error ? err.message : 'Hindi ma-update ang paninda.');
+            } finally {
+              setIsSubmittingEdit(false);
+            }
+          },
+        },
+      ]
+    );
   };
 
   // Add Product Form State (Saved directly to SQLite)
@@ -289,7 +304,7 @@ export default function InventoryManagementScreen() {
       if (!result.canceled && result.assets[0]?.uri) {
         await updateProductImage(productId, result.assets[0].uri);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-        setFeedbackMsg('✓ Updated product photo in SQLite Database');
+        setFeedbackMsg('✓ Na-update ang litrato ng paninda');
       }
     } catch {
       setErrorMsg('Could not update photo.');
@@ -374,14 +389,14 @@ export default function InventoryManagementScreen() {
         setExpandedProductId(result.existingProduct.id);
         setShowAddForm(false);
         setFeedbackMsg(
-          `⚠️ Product "${result.existingProduct.name}" (${result.existingProduct.barcode}) already exists in database!`
+          `⚠️ Mayroon nang paninda na "${result.existingProduct.name}" (${result.existingProduct.barcode}) sa tindahan!`
         );
         return;
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       setFeedbackMsg(
-        `✓ Saved "${result.product.name}" with photo to SQLite Database`
+        `✓ Na-save ang "${result.product.name}" na may litrato`
       );
       setNewName('');
       setNewBarcode('');
@@ -422,7 +437,7 @@ export default function InventoryManagementScreen() {
         <View>
           <Text style={styles.headerTitle}>{t.inventoryTitle}</Text>
           <Text style={styles.headerSub}>
-            {products.length} {products.length === 1 ? 'product' : 'products'} in SQLite DB
+            {products.length} {products.length === 1 ? 'paninda' : 'mga paninda'} sa tindahan
           </Text>
         </View>
         <Pressable
@@ -692,7 +707,7 @@ export default function InventoryManagementScreen() {
             {isLookingUpOnline ? (
               <View style={styles.onlineBadgeLoading}>
                 <Text style={styles.onlineBadgeTextLoading}>
-                  🔍 Searching Open Food Facts database...
+                  🔍 Naghahanap ng litrato at pangalan sa Open Food Facts...
                 </Text>
               </View>
             ) : onlineNotice ? (
@@ -832,13 +847,13 @@ export default function InventoryManagementScreen() {
           <View style={styles.emptyCard}>
             <Text style={styles.emptyTitle}>
               {products.length === 0
-                ? 'No Products in Database Yet'
-                : 'No Matching Products'}
+                ? 'Wala Pang Paninda sa Tindahan'
+                : 'Walang Tugmang Paninda'}
             </Text>
             <Text style={styles.emptySub}>
               {products.length === 0
-                ? 'Your SQLite database starts completely clean with zero hardcoded items. Tap "+ Add Product" to add your products with photos.'
-                : 'Try clearing your search or switching the stock filter.'}
+                ? 'Malinis ang iyong talaan ng paninda. Pindutin ang "+ Add Product" para ilista ang iyong mga paninda na may litrato.'
+                : 'Subukang baguhin ang filter o i-clear ang paghahanap.'}
             </Text>
             {searchQuery.trim().length > 0 ? (
               <Pressable
@@ -968,7 +983,7 @@ export default function InventoryManagementScreen() {
                           mode: 'RESTOCK',
                           quantity: qty,
                         });
-                        setFeedbackMsg(`✓ Restocked +${qty} ${item.name} in Database`);
+                        setFeedbackMsg(`✓ Naidagdag +${qty} ${item.name} sa stock`);
                       }}
                     >
                       <Text style={styles.adjBtnGreenText}>
@@ -985,7 +1000,7 @@ export default function InventoryManagementScreen() {
                           quantity: 1,
                         });
                         setFeedbackMsg(
-                          `✓ Unpacked 1 Bulk Pack into +10 Tingi pcs of ${item.name}`
+                          `✓ Na-unpack ang 1 bulk pack sa +10 tingi piraso ng ${item.name}`
                         );
                       }}
                     >
@@ -1003,11 +1018,11 @@ export default function InventoryManagementScreen() {
                           quantity: 1,
                         });
                         setFeedbackMsg(
-                          `Logged -1 ${item.name} as Owner/Home Use`
+                          `Naitala ang -1 ${item.name} bilang Gamit sa Bahay`
                         );
                       }}
                     >
-                      <Text style={styles.adjBtnAmberText}>−1 Home Use</Text>
+                      <Text style={styles.adjBtnAmberText}>−1 Gamit sa Bahay</Text>
                     </Pressable>
 
                     <Pressable
@@ -1019,28 +1034,42 @@ export default function InventoryManagementScreen() {
                           quantity: 1,
                         });
                         setFeedbackMsg(
-                          `Moved 1 ${item.name} to Quarantine/Damaged`
+                          `Inilipat ang 1 ${item.name} sa Sira/Expired`
                         );
                       }}
                     >
-                      <Text style={styles.adjBtnRedText}>⚠ −1 Damaged</Text>
+                      <Text style={styles.adjBtnRedText}>⚠ −1 Sira/Expired</Text>
                     </Pressable>
 
                     <Pressable
                       style={styles.deleteBtn}
-                      onPress={async () => {
-                        try {
-                          await deleteProductFromDatabase(item.id);
-                          setExpandedProductId(null);
-                          setFeedbackMsg(`🗑 Deleted "${item.name}" from SQLite Database`);
-                          setErrorMsg(null);
-                        } catch (error) {
-                          setErrorMsg(
-                            error instanceof Error
-                              ? error.message
-                              : 'Could not delete the product. Please try again.'
-                          );
-                        }
+                      onPress={() => {
+                        Alert.alert(
+                          'Alisin ang Paninda?',
+                          `Sigurado ka bang nais mong tanggalin ang "${item.name}" sa iyong paninda?`,
+                          [
+                            { text: 'Huwag', style: 'cancel' },
+                            {
+                              text: 'Oo, Alisin',
+                              style: 'destructive',
+                              onPress: async () => {
+                                try {
+                                  await deleteProductFromDatabase(item.id);
+                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                                  setExpandedProductId(null);
+                                  setFeedbackMsg(`🗑 Naalis ang "${item.name}" sa imbentaryo`);
+                                  setErrorMsg(null);
+                                } catch (error) {
+                                  setErrorMsg(
+                                    error instanceof Error
+                                      ? error.message
+                                      : 'Hindi maalis ang paninda. Subukang muli.'
+                                  );
+                                }
+                              },
+                            },
+                          ]
+                        );
                       }}
                     >
                       <Text style={styles.deleteBtnText}>🗑 Delete</Text>
@@ -1059,52 +1088,76 @@ export default function InventoryManagementScreen() {
         >
           <View style={styles.seasonalAlertLeft}>
             <Text style={styles.seasonalAlertTitle}>
-              📈 Feature C: Seasonal Product Forecast
+              📈 Pagtataya ng Benta Kada Panahon
             </Text>
             <Text style={styles.seasonalAlertSub}>
-              View Year-over-Year monthly sales comparisons &amp; log monthly history in SQLite ›
+              Tingnan ang buwanang benta at kasaysayan ng paninda ›
             </Text>
           </View>
         </Pressable>
       </ScrollView>
 
-      {/* Edit Product Modal */}
+      {/* Edit Product Modal (Bottom Sheet with Opaque Backdrop & Confirmation Review) */}
       <Modal
         visible={!!editingProduct}
         animationType="slide"
         transparent={true}
+        statusBarTranslucent={true}
         onRequestClose={() => setEditingProduct(null)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Ionicons name="pencil" size={18} color="#0D7A52" />
-                <Text style={styles.modalTitle}>Edit Product</Text>
+        <KeyboardAvoidingView
+          style={styles.modalBackdropContainer}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <Pressable
+            style={styles.modalBackdropPressable}
+            onPress={() => setEditingProduct(null)}
+          />
+          <View style={styles.modalContentCard}>
+            <View style={styles.modalDragHandle} />
+
+            <View style={styles.modalHeaderRow}>
+              <View style={styles.modalHeaderTitleGroup}>
+                <View style={styles.modalHeaderIconBadge}>
+                  <Ionicons name="pencil" size={16} color="#0D7A52" />
+                </View>
+                <View>
+                  <Text style={styles.modalTitleText}>I-edit ang Paninda</Text>
+                  {editingProduct ? (
+                    <Text style={styles.modalSubtitleBarcode}>
+                      Barcode: {editingProduct.barcode}
+                    </Text>
+                  ) : null}
+                </View>
               </View>
               <Pressable
                 onPress={() => setEditingProduct(null)}
                 hitSlop={10}
+                style={styles.modalCloseCircle}
               >
-                <Text style={styles.modalCloseText}>✕</Text>
+                <Ionicons name="close" size={20} color="#64748B" />
               </Pressable>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-              <Text style={styles.modalFieldLabel}>Product Name *</Text>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.modalScrollContent}
+            >
+              <Text style={styles.modalInputLabel}>Pangalan ng Paninda *</Text>
               <TextInput
-                style={styles.modalTextInput}
+                style={styles.modalInputField}
                 value={editName}
                 onChangeText={setEditName}
-                placeholder="Product Name"
+                placeholder="hal. Alaska Evap 370ml"
                 placeholderTextColor="#9CA3AF"
               />
 
-              <View style={styles.modalTwoColRow}>
-                <View style={styles.modalHalfCol}>
-                  <Text style={styles.modalFieldLabel}>Price (₱) *</Text>
+              <View style={styles.modalTwoColGrid}>
+                <View style={styles.modalCol}>
+                  <Text style={styles.modalInputLabel}>Presyo (₱) *</Text>
                   <TextInput
-                    style={styles.modalTextInput}
+                    style={styles.modalInputField}
                     value={editPricePhp}
                     onChangeText={setEditPricePhp}
                     placeholder="0.00"
@@ -1112,10 +1165,10 @@ export default function InventoryManagementScreen() {
                     keyboardType="decimal-pad"
                   />
                 </View>
-                <View style={styles.modalHalfCol}>
-                  <Text style={styles.modalFieldLabel}>Stock Count (pcs) *</Text>
+                <View style={styles.modalCol}>
+                  <Text style={styles.modalInputLabel}>Stock (piraso) *</Text>
                   <TextInput
-                    style={styles.modalTextInput}
+                    style={styles.modalInputField}
                     value={editStock}
                     onChangeText={setEditStock}
                     placeholder="0"
@@ -1125,11 +1178,11 @@ export default function InventoryManagementScreen() {
                 </View>
               </View>
 
-              <View style={styles.modalTwoColRow}>
-                <View style={styles.modalHalfCol}>
-                  <Text style={styles.modalFieldLabel}>Low Stock Alert</Text>
+              <View style={styles.modalTwoColGrid}>
+                <View style={styles.modalCol}>
+                  <Text style={styles.modalInputLabel}>Paalala (Mababang Stock)</Text>
                   <TextInput
-                    style={styles.modalTextInput}
+                    style={styles.modalInputField}
                     value={editLowThreshold}
                     onChangeText={setEditLowThreshold}
                     placeholder="5"
@@ -1137,60 +1190,67 @@ export default function InventoryManagementScreen() {
                     keyboardType="number-pad"
                   />
                 </View>
-                <View style={styles.modalHalfCol}>
-                  <Text style={styles.modalFieldLabel}>Category</Text>
-                  <View style={styles.categoryPillsMini}>
-                    {PRODUCT_CATEGORIES.map((cat) => (
-                      <Pressable
-                        key={cat}
-                        style={[
-                          styles.catMiniPill,
-                          editCategory === cat ? styles.catMiniPillActive : null,
-                        ]}
-                        onPress={() => setEditCategory(cat)}
-                      >
-                        <Text
-                          style={[
-                            styles.catMiniPillText,
-                            editCategory === cat ? styles.catMiniPillTextActive : null,
-                          ]}
-                        >
-                          {cat}
-                        </Text>
-                      </Pressable>
-                    ))}
-                  </View>
+                <View style={styles.modalCol}>
+                  <Text style={styles.modalInputLabel}>Kasalukuyang Kategorya</Text>
+                  <Text style={styles.modalSelectedCatBadge}>{editCategory}</Text>
                 </View>
               </View>
 
+              <Text style={[styles.modalInputLabel, { marginTop: 10 }]}>Pumili ng Kategorya:</Text>
+              <View style={styles.modalCategoryWrap}>
+                {PRODUCT_CATEGORIES.map((cat) => {
+                  const isSelected = editCategory === cat;
+                  return (
+                    <Pressable
+                      key={cat}
+                      style={[
+                        styles.modalCatChip,
+                        isSelected ? styles.modalCatChipActive : null,
+                      ]}
+                      onPress={() => setEditCategory(cat)}
+                    >
+                      <Text
+                        style={[
+                          styles.modalCatChipText,
+                          isSelected ? styles.modalCatChipTextActive : null,
+                        ]}
+                      >
+                        {isSelected ? '✓ ' : ''}{cat}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
               {editError ? (
-                <View style={styles.modalErrorBox}>
-                  <Text style={styles.modalErrorText}>⚠️ {editError}</Text>
+                <View style={styles.modalErrorContainer}>
+                  <Ionicons name="alert-circle" size={16} color="#DC2626" />
+                  <Text style={styles.modalErrorLabel}>{editError}</Text>
                 </View>
               ) : null}
 
-              <View style={styles.modalActionRow}>
+              <View style={styles.modalActionsRow}>
                 <Pressable
-                  style={styles.modalCancelBtn}
+                  style={styles.modalDismissBtn}
                   onPress={() => setEditingProduct(null)}
                 >
-                  <Text style={styles.modalCancelBtnText}>Cancel</Text>
+                  <Text style={styles.modalDismissBtnText}>Kanselahin</Text>
                 </Pressable>
 
                 <Pressable
-                  style={[styles.modalSaveBtn, isSubmittingEdit ? styles.btnDisabled : null]}
+                  style={[styles.modalCommitBtn, isSubmittingEdit ? styles.btnDisabled : null]}
                   disabled={isSubmittingEdit}
                   onPress={handleSaveEditProduct}
                 >
-                  <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
-                  <Text style={styles.modalSaveBtnText}>
-                    {isSubmittingEdit ? 'Saving...' : 'Save Changes'}
+                  <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                  <Text style={styles.modalCommitBtnText}>
+                    {isSubmittingEdit ? 'Sinusuri...' : 'I-save ang Pagbabago'}
                   </Text>
                 </Pressable>
               </View>
             </ScrollView>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
@@ -1831,132 +1891,210 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#065F46',
   },
-  modalOverlay: {
+  modalBackdropContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
     justifyContent: 'flex-end',
+    width: '100%',
+    height: '100%',
   },
-  modalContent: {
+  modalBackdropPressable: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  modalContentCard: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 32,
+    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 36 : 24,
+    width: '100%',
     maxHeight: '85%',
-    gap: 8,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 25,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
-  modalHeader: {
+  modalDragHandle: {
+    width: 44,
+    height: 5,
+    backgroundColor: '#CBD5E1',
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginBottom: 12,
+  },
+  modalHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 10,
+    paddingBottom: 14,
     borderBottomWidth: 1,
     borderBottomColor: '#F1F5F9',
+    marginBottom: 12,
   },
-  modalTitle: {
+  modalHeaderTitleGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  modalHeaderIconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#ECFDF5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  modalTitleText: {
     fontSize: 17,
     fontWeight: '800',
     color: '#0F172A',
   },
-  modalCloseText: {
-    fontSize: 18,
-    color: '#94A3B8',
-    fontWeight: '700',
-    padding: 4,
+  modalSubtitleBarcode: {
+    fontSize: 11,
+    color: '#64748B',
+    fontWeight: '600',
+    marginTop: 1,
   },
-  modalFieldLabel: {
+  modalCloseCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalScrollContent: {
+    paddingBottom: 20,
+  },
+  modalInputLabel: {
     fontSize: 12,
     fontWeight: '700',
     color: '#334155',
-    marginBottom: 4,
+    marginBottom: 6,
     marginTop: 8,
   },
-  modalTextInput: {
+  modalInputField: {
     backgroundColor: '#F8FAFC',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#CBD5E1',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    fontSize: 15,
     color: '#0F172A',
+    fontWeight: '600',
   },
-  modalTwoColRow: {
+  modalTwoColGrid: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 12,
+    marginTop: 4,
   },
-  modalHalfCol: {
+  modalCol: {
     flex: 1,
   },
-  categoryPillsMini: {
+  modalSelectedCatBadge: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#065F46',
+    textAlign: 'center',
+  },
+  modalCategoryWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 4,
-    marginTop: 2,
+    gap: 8,
+    marginTop: 4,
   },
-  catMiniPill: {
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 6,
+  modalCatChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
     backgroundColor: '#F1F5F9',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#E2E8F0',
   },
-  catMiniPillActive: {
+  modalCatChipActive: {
     backgroundColor: '#0D7A52',
     borderColor: '#0D7A52',
   },
-  catMiniPillText: {
-    fontSize: 10,
+  modalCatChipText: {
+    fontSize: 12,
     fontWeight: '700',
     color: '#475569',
   },
-  catMiniPillTextActive: {
+  modalCatChipTextActive: {
     color: '#FFFFFF',
+    fontWeight: '800',
   },
-  modalErrorBox: {
+  modalErrorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: '#FEF2F2',
     borderWidth: 1,
     borderColor: '#FECACA',
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 10,
-    marginTop: 8,
+    marginTop: 12,
   },
-  modalErrorText: {
+  modalErrorLabel: {
     fontSize: 12,
     color: '#B91C1C',
-    fontWeight: '600',
+    fontWeight: '700',
+    flex: 1,
   },
-  modalActionRow: {
+  modalActionsRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginTop: 18,
+    gap: 12,
+    marginTop: 20,
+    paddingTop: 10,
   },
-  modalCancelBtn: {
+  modalDismissBtn: {
     flex: 1,
     backgroundColor: '#F1F5F9',
-    paddingVertical: 12,
-    borderRadius: 10,
+    paddingVertical: 14,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
-  modalCancelBtnText: {
-    fontSize: 13,
+  modalDismissBtnText: {
+    fontSize: 14,
     fontWeight: '700',
     color: '#64748B',
   },
-  modalSaveBtn: {
+  modalCommitBtn: {
     flex: 2,
     flexDirection: 'row',
     backgroundColor: '#0D7A52',
-    paddingVertical: 12,
-    borderRadius: 10,
+    paddingVertical: 14,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#0D7A52',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  modalSaveBtnText: {
-    fontSize: 13,
+  modalCommitBtnText: {
+    fontSize: 14,
     fontWeight: '800',
     color: '#FFFFFF',
   },
