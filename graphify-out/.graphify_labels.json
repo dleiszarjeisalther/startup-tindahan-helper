@@ -16,11 +16,11 @@
   "14": "eslint.config.js",
   "15": "use-color-scheme.web.ts",
   "16": "expo-constants",
-  "17": "MmkvKeyValueStorage",
+  "17": "SynchronousKeyValueStorage",
   "18": "Part 2: Common POS System Problems & Comprehensive Solutions",
   "19": "expo-glass-effect",
-  "20": "SqliteDatabase",
-  "21": "container.ts",
+  "20": "expo-device",
+  "21": "expo-haptics",
   "22": "expo-linking",
   "23": "expo-router",
   "24": "expo-splash-screen",
@@ -53,10 +53,7 @@
   "51": "expo-file-system",
   "52": "react-dom",
   "53": "CLAUDE.md",
-  "54": "expo-image",
+  "54": "@expo/ui",
   "55": "@expo/vector-icons",
-  "56": "expo-web-browser",
-  "57": "expo-image-picker",
-  "58": "react-native-mmkv",
-  "59": "react-native-web"
+  "56": "expo-web-browser"
 }

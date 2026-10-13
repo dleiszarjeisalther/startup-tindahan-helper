@@ -60,9 +60,9 @@
     "semantic_hash": "b713dd66aa3ad59ed5098d7b9f8dc202"
   },
   "package.json": {
-    "mtime": 1791896808.115912,
-    "seen": 1791897556.812599,
-    "ast_hash": "4c2c77da43ba16faa2e219f3a5c30b03",
+    "mtime": 1791899193.9949055,
+    "seen": 1791899418.1786811,
+    "ast_hash": "566bf059ae35c1c3ca4b5b67010bf526",
     "semantic_hash": ""
   },
   "scripts/reset-project.js": {
@@ -480,9 +480,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/storage/KeyValueStorage.ts": {
-    "mtime": 1791897378.7874565,
-    "seen": 1791897556.8127534,
-    "ast_hash": "ef700ce85fb6ccca17ad7bfd7f5c2db7",
+    "mtime": 1791899245.4145257,
+    "seen": 1791899418.1788247,
+    "ast_hash": "f32bd14b6e5e0ac0078586886c56f3cc",
     "semantic_hash": ""
   }
 }

@@ -4,6 +4,19 @@
   "graph": {},
   "nodes": [
     {
+      "id": "src_application_productonboardingservice_productonboardingservice",
+      "label": "ProductOnboardingService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "productonboardingservice",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L33"
+    },
+    {
       "id": "src_domain_entities_product_product",
       "label": "Product",
       "_callable": true,
@@ -28,19 +41,6 @@
       "norm_label": "productdto",
       "source_file": "src/domain/entities/Product.ts",
       "source_location": "L24"
-    },
-    {
-      "id": "src_domain_entities_product_productvisual",
-      "label": "ProductVisual",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "productvisual",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L14"
     },
     {
       "id": "src_domain_entities_product_sellingunittier",
@@ -134,17 +134,56 @@
       "source_location": "L7"
     },
     {
-      "id": "src_presentation_components_productthumbnail_productthumbnailprops",
-      "label": "ProductThumbnailProps",
+      "id": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
+      "label": "ExternalProductCatalogResult",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
       "community_name": "Product",
       "file_type": "code",
-      "norm_label": "productthumbnailprops",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L7"
+      "norm_label": "externalproductcatalogresult",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "label": "IExternalCatalogLookupService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "iexternalcataloglookupservice",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "label": "OpenFoodFactsApiClient",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L27"
+    },
+    {
+      "id": "src_domain_entities_product_productvisual",
+      "label": "ProductVisual",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "productvisual",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L14"
     },
     {
       "id": "src_presentation_components_barcodeinputfield_barcodeinputfieldprops",
@@ -171,6 +210,19 @@
       "norm_label": "barcodescannerviewfinderprops",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L18"
+    },
+    {
+      "id": "src_presentation_components_productthumbnail_productthumbnailprops",
+      "label": "ProductThumbnailProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "productthumbnailprops",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L7"
     },
     {
       "id": "src_presentation_localization_i18n_supportedlanguage",
@@ -205,7 +257,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": "storesettingsstate",
       "source_file": "src/application/TindahanStoreService.ts",
@@ -218,24 +270,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": "ikeyvaluestorage",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L5"
     },
     {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "label": "MmkvKeyValueStorage",
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "label": "SynchronousKeyValueStorage",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
-      "norm_label": "mmkvkeyvaluestorage",
+      "norm_label": "synchronouskeyvaluestorage",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L23"
+      "source_location": "L27"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice",
@@ -262,84 +314,6 @@
       "norm_label": "monthlysalesrecord",
       "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
       "source_location": "L3"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
-      "label": "SqliteDatabase",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "sqlitedatabase",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice",
-      "label": "SoundFeedbackService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "soundfeedbackservice",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_application_productonboardingservice_productonboardingservice",
-      "label": "ProductOnboardingService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "productonboardingservice",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L33"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
-      "label": "ExternalProductCatalogResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "externalproductcatalogresult",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
-      "label": "IExternalCatalogLookupService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "iexternalcataloglookupservice",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
-      "label": "OpenFoodFactsApiClient",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L27"
     },
     {
       "id": "src_components_external_link_props",
@@ -405,6 +379,19 @@
       "norm_label": "themecolor",
       "source_file": "src/constants/theme.ts",
       "source_location": "L27"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice",
+      "label": "SoundFeedbackService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "expo",
+      "file_type": "code",
+      "norm_label": "soundfeedbackservice",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L10"
     },
     {
       "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy",
@@ -665,6 +652,43 @@
       "norm_label": "money",
       "source_file": "src/domain/value-objects/Money.ts",
       "source_location": "L14"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
+      "label": "SqliteDatabase",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "sqlitedatabase",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_application_productonboardingservice_productonboardingservice_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L34"
+    },
+    {
+      "id": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
+      "label": ".lookupOnlineCatalog()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".lookuponlinecatalog()",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L39"
     },
     {
       "id": "src_application_productonboardingservice_productonboardingservice_registernewproduct",
@@ -1123,6 +1147,78 @@
       "source_location": "L148"
     },
     {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_downloadimagelocally",
+      "label": ".downloadImageLocally()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".downloadimagelocally()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
+      "label": ".lookupBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".lookupbarcode()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_downloadimagelocally",
+      "label": ".downloadImageLocally()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".downloadimagelocally()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L115"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
+      "label": ".inferCategory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".infercategory()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L137"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
+      "label": ".lookupBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".lookupbarcode()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_app_explore_seasonalforecastscreen",
+      "label": "SeasonalForecastScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "seasonalforecastscreen()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L18"
+    },
+    {
       "id": "src_app_index_posscanproductscreen",
       "label": "PosScanProductScreen()",
       "_callable": true,
@@ -1181,18 +1277,6 @@
       "norm_label": "productlistscreen()",
       "source_file": "src/app/products.tsx",
       "source_location": "L26"
-    },
-    {
-      "id": "src_app_sales_saleshistoryscreen",
-      "label": "SalesHistoryScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "saleshistoryscreen()",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L21"
     },
     {
       "id": "src_app_settings_storesettingsscreen",
@@ -1404,7 +1488,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".clearall()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
@@ -1416,7 +1500,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".delete()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
@@ -1428,7 +1512,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".getboolean()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
@@ -1440,7 +1524,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".getnumber()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
@@ -1452,11 +1536,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".getstring()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L6"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_loadsettings",
+      "label": ".loadSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".loadsettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savesettings",
+      "label": ".saveSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".savesettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L15"
     },
     {
       "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_setboolean",
@@ -1464,7 +1572,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".setboolean()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
@@ -1476,7 +1584,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".setnumber()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
@@ -1488,143 +1596,143 @@
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".setstring()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L7"
     },
     {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_clearall",
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_clearall",
       "label": ".clearAll()",
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".clearall()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L122"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "MmkvKeyValueStorage",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L27"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_delete",
-      "label": ".delete()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "MmkvKeyValueStorage",
-      "file_type": "code",
-      "norm_label": ".delete()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L111"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_getboolean",
-      "label": ".getBoolean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "MmkvKeyValueStorage",
-      "file_type": "code",
-      "norm_label": ".getboolean()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L87"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_getnumber",
-      "label": ".getNumber()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "MmkvKeyValueStorage",
-      "file_type": "code",
-      "norm_label": ".getnumber()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L63"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_getstring",
-      "label": ".getString()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "MmkvKeyValueStorage",
-      "file_type": "code",
-      "norm_label": ".getstring()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L39"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_loadsettings",
-      "label": ".loadSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "MmkvKeyValueStorage",
-      "file_type": "code",
-      "norm_label": ".loadsettings()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L136"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_savesettings",
-      "label": ".saveSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "MmkvKeyValueStorage",
-      "file_type": "code",
-      "norm_label": ".savesettings()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L154"
     },
     {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_setboolean",
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_delete",
+      "label": ".delete()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".delete()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L140"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "label": ".ensureInitialized()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".ensureinitialized()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L31"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getboolean",
+      "label": ".getBoolean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".getboolean()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L117"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getnumber",
+      "label": ".getNumber()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".getnumber()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L94"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getstring",
+      "label": ".getString()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".getstring()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L71"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadsettings",
+      "label": ".loadSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".loadsettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L168"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savesettings",
+      "label": ".saveSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".savesettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L184"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setboolean",
       "label": ".setBoolean()",
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".setboolean()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L100"
+      "source_location": "L123"
     },
     {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_setnumber",
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setnumber",
       "label": ".setNumber()",
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".setnumber()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L76"
+      "source_location": "L100"
     },
     {
-      "id": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_setstring",
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setstring",
       "label": ".setString()",
       "_callable": true,
       "_origin": "ast",
       "community": 17,
-      "community_name": "MmkvKeyValueStorage",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
       "norm_label": ".setstring()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L52"
+      "source_location": "L77"
     },
     {
       "id": "src_app_checkout_checkoutnewsalescreen",
@@ -1636,6 +1744,18 @@
       "file_type": "code",
       "norm_label": "checkoutnewsalescreen()",
       "source_file": "src/app/checkout.tsx",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_app_sales_saleshistoryscreen",
+      "label": "SalesHistoryScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": "saleshistoryscreen()",
+      "source_file": "src/app/sales.tsx",
       "source_location": "L21"
     },
     {
@@ -2191,198 +2311,6 @@
       "source_location": "L21"
     },
     {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_clearalltablesforreset",
-      "label": ".clearAllTablesForReset()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".clearalltablesforreset()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L145"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_initializetables",
-      "label": ".initializeTables()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".initializetables()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L36"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_ispersistentsqliteactive",
-      "label": ".isPersistentSqliteActive()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".ispersistentsqliteactive()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L32"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_rawdb",
-      "label": ".rawDb()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".rawdb()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L28"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_initplayer",
-      "label": ".initPlayer()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".initplayer()",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_playbarcodebeep",
-      "label": ".playBarcodeBeep()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".playbarcodebeep()",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L31"
-    },
-    {
-      "id": "src_app_explore_seasonalforecastscreen",
-      "label": "SeasonalForecastScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "seasonalforecastscreen()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_application_productonboardingservice_productonboardingservice_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L34"
-    },
-    {
-      "id": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
-      "label": ".lookupOnlineCatalog()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": ".lookuponlinecatalog()",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L39"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_downloadimagelocally",
-      "label": ".downloadImageLocally()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": ".downloadimagelocally()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
-      "label": ".lookupBarcode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": ".lookupbarcode()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_downloadimagelocally",
-      "label": ".downloadImageLocally()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": ".downloadimagelocally()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L115"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
-      "label": ".inferCategory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": ".infercategory()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L137"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
-      "label": ".lookupBarcode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": ".lookupbarcode()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L32"
-    },
-    {
       "id": "src_components_app_tabs_web_apptabs",
       "label": "AppTabs()",
       "_callable": true,
@@ -2501,6 +2429,42 @@
       "norm_label": "usetheme()",
       "source_file": "src/hooks/use-theme.ts",
       "source_location": "L9"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "expo",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_initplayer",
+      "label": ".initPlayer()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "expo",
+      "file_type": "code",
+      "norm_label": ".initplayer()",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_playbarcodebeep",
+      "label": ".playBarcodeBeep()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "expo",
+      "file_type": "code",
+      "norm_label": ".playbarcodebeep()",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L31"
     },
     {
       "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy_computeuncensorednetdemand",
@@ -2695,6 +2659,66 @@
       "source_location": "L37"
     },
     {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_clearalltablesforreset",
+      "label": ".clearAllTablesForReset()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": ".clearalltablesforreset()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L145"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_initializetables",
+      "label": ".initializeTables()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": ".initializetables()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L36"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_ispersistentsqliteactive",
+      "label": ".isPersistentSqliteActive()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": ".ispersistentsqliteactive()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_rawdb",
+      "label": ".rawDb()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": ".rawdb()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L28"
+    },
+    {
       "id": "scripts_reset_project_movedirectories",
       "label": "moveDirectories()",
       "_callable": true,
@@ -2751,6 +2775,50 @@
       "source_location": "L1"
     },
     {
+      "id": "src_infrastructure_container",
+      "label": "container.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "container.ts",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_container_openfoodfactsapiclient",
+      "label": "openFoodFactsApiClient",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_infrastructure_container_productonboardingservice",
+      "label": "productOnboardingService",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "productonboardingservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_infrastructure_container_productrepository",
+      "label": "productRepository",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "productrepository",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L9"
+    },
+    {
       "id": "src_infrastructure_repositories_inmemoryproductrepository",
       "label": "InMemoryProductRepository.ts",
       "_origin": "ast",
@@ -2762,26 +2830,37 @@
       "source_location": "L1"
     },
     {
-      "id": "src_app_checkout",
-      "label": "checkout.tsx",
+      "id": "src_infrastructure_services_openfoodfactsapiclient",
+      "label": "OpenFoodFactsApiClient.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient.ts",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_explore",
+      "label": "explore.tsx",
       "_origin": "ast",
       "community": 1,
       "community_name": "useTindahanStore",
       "file_type": "code",
-      "norm_label": "checkout.tsx",
-      "source_file": "src/app/checkout.tsx",
+      "norm_label": "explore.tsx",
+      "source_file": "src/app/explore.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_app_checkout_styles",
+      "id": "src_app_explore_styles",
       "label": "styles",
       "_origin": "ast",
       "community": 1,
       "community_name": "useTindahanStore",
       "file_type": "code",
       "norm_label": "styles",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L727"
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L378"
     },
     {
       "id": "src_app_index",
@@ -2927,39 +3006,6 @@
       "source_location": "L465"
     },
     {
-      "id": "src_app_sales",
-      "label": "sales.tsx",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "sales.tsx",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_sales_periods",
-      "label": "PERIODS",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "periods",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L19"
-    },
-    {
-      "id": "src_app_sales_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L402"
-    },
-    {
       "id": "src_app_settings",
       "label": "settings.tsx",
       "_origin": "ast",
@@ -3002,6 +3048,17 @@
       "norm_label": "styles",
       "source_file": "src/components/app-tabs.tsx",
       "source_location": "L160"
+    },
+    {
+      "id": "src_infrastructure_container_seasonalforecastengine",
+      "label": "seasonalForecastEngine",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "seasonalforecastengine",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L18"
     },
     {
       "id": "src_infrastructure_container_tindahanstoreservice",
@@ -3180,37 +3237,37 @@
       "source_location": "L8"
     },
     {
-      "id": "package_dependencies_expo_device",
-      "label": "expo-device",
+      "id": "package_dependencies_expo_image",
+      "label": "expo-image",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "code",
-      "norm_label": "expo-device",
+      "norm_label": "expo-image",
       "source_file": "package.json",
-      "source_location": "L12"
+      "source_location": "L17"
     },
     {
-      "id": "package_dependencies_expo_haptics",
-      "label": "expo-haptics",
+      "id": "package_dependencies_expo_image_picker",
+      "label": "expo-image-picker",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "code",
-      "norm_label": "expo-haptics",
+      "norm_label": "expo-image-picker",
       "source_file": "package.json",
-      "source_location": "L16"
+      "source_location": "L18"
     },
     {
-      "id": "package_dependencies_expo_ui",
-      "label": "@expo/ui",
+      "id": "package_dependencies_react_native_web",
+      "label": "react-native-web",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "code",
-      "norm_label": "@expo/ui",
+      "norm_label": "react-native-web",
       "source_file": "package.json",
-      "source_location": "L6"
+      "source_location": "L34"
     },
     {
       "id": "expo",
@@ -3224,37 +3281,37 @@
       "source_location": "L8"
     },
     {
-      "id": "expo_device",
-      "label": "expo-device",
+      "id": "expo_image",
+      "label": "expo-image",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "concept",
-      "norm_label": "expo-device",
+      "norm_label": "expo-image",
       "source_file": "package.json",
-      "source_location": "L12"
+      "source_location": "L17"
     },
     {
-      "id": "expo_haptics",
-      "label": "expo-haptics",
+      "id": "expo_image_picker",
+      "label": "expo-image-picker",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "concept",
-      "norm_label": "expo-haptics",
+      "norm_label": "expo-image-picker",
       "source_file": "package.json",
-      "source_location": "L16"
+      "source_location": "L18"
     },
     {
-      "id": "expo_ui",
-      "label": "@expo/ui",
+      "id": "react_native_web",
+      "label": "react-native-web",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "concept",
-      "norm_label": "@expo/ui",
+      "norm_label": "react-native-web",
       "source_file": "package.json",
-      "source_location": "L6"
+      "source_location": "L34"
     },
     {
       "id": "src_components_animated_icon",
@@ -3721,28 +3778,6 @@
       "source_location": "L11"
     },
     {
-      "id": "src_infrastructure_storage_keyvaluestorage",
-      "label": "KeyValueStorage.ts",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "MmkvKeyValueStorage",
-      "file_type": "code",
-      "norm_label": "keyvaluestorage.ts",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_appkeyvaluestorage",
-      "label": "appKeyValueStorage",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "MmkvKeyValueStorage",
-      "file_type": "code",
-      "norm_label": "appkeyvaluestorage",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L164"
-    },
-    {
       "id": "pos_problems_and_seasonal_forecast_complete_solution_architecture_single_user_owner_model",
       "label": "Complete Solution Architecture (Single-User Owner Model)",
       "_origin": "ast",
@@ -4005,147 +4040,48 @@
       "source_location": "L15"
     },
     {
-      "id": "app_expo_plugins",
-      "label": "plugins",
+      "id": "package_dependencies_expo_device",
+      "label": "expo-device",
       "_origin": "ast",
       "community": 20,
-      "community_name": "SqliteDatabase",
+      "community_name": "expo-device",
       "file_type": "code",
-      "norm_label": "plugins",
-      "source_file": "app.json",
-      "source_location": "L26"
+      "norm_label": "expo-device",
+      "source_file": "package.json",
+      "source_location": "L12"
     },
     {
-      "id": "src_infrastructure_database_sqlitedatabase",
-      "label": "SqliteDatabase.ts",
+      "id": "expo_device",
+      "label": "expo-device",
       "_origin": "ast",
       "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "sqlitedatabase.ts",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice",
-      "label": "SoundFeedbackService.ts",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "soundfeedbackservice.ts",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "ref_expo_audio",
-      "label": "expo-audio",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
+      "community_name": "expo-device",
       "file_type": "concept",
-      "norm_label": "expo-audio",
-      "source_file": "app.json",
-      "source_location": "L26"
+      "norm_label": "expo-device",
+      "source_file": "package.json",
+      "source_location": "L12"
     },
     {
-      "id": "ref_expo_sqlite",
-      "label": "expo-sqlite",
+      "id": "package_dependencies_expo_haptics",
+      "label": "expo-haptics",
       "_origin": "ast",
-      "community": 20,
-      "community_name": "SqliteDatabase",
+      "community": 21,
+      "community_name": "expo-haptics",
+      "file_type": "code",
+      "norm_label": "expo-haptics",
+      "source_file": "package.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "expo_haptics",
+      "label": "expo-haptics",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "expo-haptics",
       "file_type": "concept",
-      "norm_label": "expo-sqlite",
-      "source_file": "app.json",
-      "source_location": "L26"
-    },
-    {
-      "id": "src_app_explore",
-      "label": "explore.tsx",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "explore.tsx",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_explore_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L378"
-    },
-    {
-      "id": "src_infrastructure_container",
-      "label": "container.ts",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "container.ts",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_container_openfoodfactsapiclient",
-      "label": "openFoodFactsApiClient",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_infrastructure_container_productonboardingservice",
-      "label": "productOnboardingService",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "productonboardingservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_infrastructure_container_productrepository",
-      "label": "productRepository",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "productrepository",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_infrastructure_container_seasonalforecastengine",
-      "label": "seasonalForecastEngine",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "seasonalforecastengine",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient",
-      "label": "OpenFoodFactsApiClient.ts",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient.ts",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L1"
+      "norm_label": "expo-haptics",
+      "source_file": "package.json",
+      "source_location": "L16"
     },
     {
       "id": "package_dependencies_expo_linking",
@@ -4846,7 +4782,7 @@
       "file_type": "code",
       "norm_label": "react-native-reanimated",
       "source_file": "package.json",
-      "source_location": "L32"
+      "source_location": "L31"
     },
     {
       "id": "react_native_reanimated",
@@ -4857,7 +4793,7 @@
       "file_type": "concept",
       "norm_label": "react-native-reanimated",
       "source_file": "package.json",
-      "source_location": "L32"
+      "source_location": "L31"
     },
     {
       "id": "package_dependencies_react_native_safe_area_context",
@@ -4868,7 +4804,7 @@
       "file_type": "code",
       "norm_label": "react-native-safe-area-context",
       "source_file": "package.json",
-      "source_location": "L33"
+      "source_location": "L32"
     },
     {
       "id": "react_native_safe_area_context",
@@ -4879,7 +4815,7 @@
       "file_type": "concept",
       "norm_label": "react-native-safe-area-context",
       "source_file": "package.json",
-      "source_location": "L33"
+      "source_location": "L32"
     },
     {
       "id": "package_dependencies_react_native_screens",
@@ -4890,7 +4826,7 @@
       "file_type": "code",
       "norm_label": "react-native-screens",
       "source_file": "package.json",
-      "source_location": "L34"
+      "source_location": "L33"
     },
     {
       "id": "react_native_screens",
@@ -4901,7 +4837,7 @@
       "file_type": "concept",
       "norm_label": "react-native-screens",
       "source_file": "package.json",
-      "source_location": "L34"
+      "source_location": "L33"
     },
     {
       "id": "package_dependencies_expo_audio",
@@ -4934,7 +4870,7 @@
       "file_type": "code",
       "norm_label": "react-native-worklets",
       "source_file": "package.json",
-      "source_location": "L36"
+      "source_location": "L35"
     },
     {
       "id": "react_native_worklets",
@@ -4945,7 +4881,7 @@
       "file_type": "concept",
       "norm_label": "react-native-worklets",
       "source_file": "package.json",
-      "source_location": "L36"
+      "source_location": "L35"
     },
     {
       "id": "react_expo_oop_best_practices",
@@ -5280,6 +5216,17 @@
       "source_location": "L6"
     },
     {
+      "id": "app_expo_plugins",
+      "label": "plugins",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "expo",
+      "file_type": "code",
+      "norm_label": "plugins",
+      "source_file": "app.json",
+      "source_location": "L26"
+    },
+    {
       "id": "app_expo_scheme",
       "label": "scheme",
       "_origin": "ast",
@@ -5366,6 +5313,28 @@
       "norm_label": "output",
       "source_file": "app.json",
       "source_location": "L23"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice",
+      "label": "SoundFeedbackService.ts",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "expo",
+      "file_type": "code",
+      "norm_label": "soundfeedbackservice.ts",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "ref_expo_audio",
+      "label": "expo-audio",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "expo",
+      "file_type": "concept",
+      "norm_label": "expo-audio",
+      "source_file": "app.json",
+      "source_location": "L26"
     },
     {
       "id": "readme",
@@ -5543,7 +5512,7 @@
       "file_type": "code",
       "norm_label": "devdependencies",
       "source_file": "package.json",
-      "source_location": "L38"
+      "source_location": "L37"
     },
     {
       "id": "package_devdependencies_eslint",
@@ -5554,7 +5523,7 @@
       "file_type": "code",
       "norm_label": "eslint",
       "source_file": "package.json",
-      "source_location": "L40"
+      "source_location": "L39"
     },
     {
       "id": "package_devdependencies_eslint_config_expo",
@@ -5565,7 +5534,7 @@
       "file_type": "code",
       "norm_label": "eslint-config-expo",
       "source_file": "package.json",
-      "source_location": "L41"
+      "source_location": "L40"
     },
     {
       "id": "package_devdependencies_types_react",
@@ -5576,7 +5545,7 @@
       "file_type": "code",
       "norm_label": "@types/react",
       "source_file": "package.json",
-      "source_location": "L39"
+      "source_location": "L38"
     },
     {
       "id": "package_devdependencies_typescript",
@@ -5587,7 +5556,7 @@
       "file_type": "code",
       "norm_label": "typescript",
       "source_file": "package.json",
-      "source_location": "L42"
+      "source_location": "L41"
     },
     {
       "id": "package_main",
@@ -5620,7 +5589,7 @@
       "file_type": "code",
       "norm_label": "private",
       "source_file": "package.json",
-      "source_location": "L52"
+      "source_location": "L51"
     },
     {
       "id": "package_scripts",
@@ -5631,7 +5600,7 @@
       "file_type": "code",
       "norm_label": "scripts",
       "source_file": "package.json",
-      "source_location": "L44"
+      "source_location": "L43"
     },
     {
       "id": "package_scripts_android",
@@ -5642,7 +5611,7 @@
       "file_type": "code",
       "norm_label": "android",
       "source_file": "package.json",
-      "source_location": "L47"
+      "source_location": "L46"
     },
     {
       "id": "package_scripts_ios",
@@ -5653,7 +5622,7 @@
       "file_type": "code",
       "norm_label": "ios",
       "source_file": "package.json",
-      "source_location": "L48"
+      "source_location": "L47"
     },
     {
       "id": "package_scripts_lint",
@@ -5664,7 +5633,7 @@
       "file_type": "code",
       "norm_label": "lint",
       "source_file": "package.json",
-      "source_location": "L50"
+      "source_location": "L49"
     },
     {
       "id": "package_scripts_reset_project",
@@ -5675,7 +5644,7 @@
       "file_type": "code",
       "norm_label": "reset-project",
       "source_file": "package.json",
-      "source_location": "L46"
+      "source_location": "L45"
     },
     {
       "id": "package_scripts_start",
@@ -5686,7 +5655,7 @@
       "file_type": "code",
       "norm_label": "start",
       "source_file": "package.json",
-      "source_location": "L45"
+      "source_location": "L44"
     },
     {
       "id": "package_scripts_web",
@@ -5697,7 +5666,7 @@
       "file_type": "code",
       "norm_label": "web",
       "source_file": "package.json",
-      "source_location": "L49"
+      "source_location": "L48"
     },
     {
       "id": "package_version",
@@ -5719,7 +5688,7 @@
       "file_type": "concept",
       "norm_label": "eslint",
       "source_file": "package.json",
-      "source_location": "L40"
+      "source_location": "L39"
     },
     {
       "id": "eslint_config_expo",
@@ -5730,7 +5699,7 @@
       "file_type": "concept",
       "norm_label": "eslint-config-expo",
       "source_file": "package.json",
-      "source_location": "L41"
+      "source_location": "L40"
     },
     {
       "id": "types_react",
@@ -5741,7 +5710,7 @@
       "file_type": "concept",
       "norm_label": "@types/react",
       "source_file": "package.json",
-      "source_location": "L39"
+      "source_location": "L38"
     },
     {
       "id": "typescript",
@@ -5752,7 +5721,7 @@
       "file_type": "concept",
       "norm_label": "typescript",
       "source_file": "package.json",
-      "source_location": "L42"
+      "source_location": "L41"
     },
     {
       "id": "package_dependencies_expo_camera",
@@ -5833,26 +5802,26 @@
       "source_location": "L1"
     },
     {
-      "id": "package_dependencies_expo_image",
-      "label": "expo-image",
+      "id": "package_dependencies_expo_ui",
+      "label": "@expo/ui",
       "_origin": "ast",
       "community": 54,
-      "community_name": "expo-image",
+      "community_name": "@expo/ui",
       "file_type": "code",
-      "norm_label": "expo-image",
+      "norm_label": "@expo/ui",
       "source_file": "package.json",
-      "source_location": "L17"
+      "source_location": "L6"
     },
     {
-      "id": "expo_image",
-      "label": "expo-image",
+      "id": "expo_ui",
+      "label": "@expo/ui",
       "_origin": "ast",
       "community": 54,
-      "community_name": "expo-image",
+      "community_name": "@expo/ui",
       "file_type": "concept",
-      "norm_label": "expo-image",
+      "norm_label": "@expo/ui",
       "source_file": "package.json",
-      "source_location": "L17"
+      "source_location": "L6"
     },
     {
       "id": "package_dependencies_expo_vector_icons",
@@ -5897,72 +5866,6 @@
       "norm_label": "expo-web-browser",
       "source_file": "package.json",
       "source_location": "L26"
-    },
-    {
-      "id": "package_dependencies_expo_image_picker",
-      "label": "expo-image-picker",
-      "_origin": "ast",
-      "community": 57,
-      "community_name": "expo-image-picker",
-      "file_type": "code",
-      "norm_label": "expo-image-picker",
-      "source_file": "package.json",
-      "source_location": "L18"
-    },
-    {
-      "id": "expo_image_picker",
-      "label": "expo-image-picker",
-      "_origin": "ast",
-      "community": 57,
-      "community_name": "expo-image-picker",
-      "file_type": "concept",
-      "norm_label": "expo-image-picker",
-      "source_file": "package.json",
-      "source_location": "L18"
-    },
-    {
-      "id": "package_dependencies_react_native_mmkv",
-      "label": "react-native-mmkv",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "react-native-mmkv",
-      "file_type": "code",
-      "norm_label": "react-native-mmkv",
-      "source_file": "package.json",
-      "source_location": "L31"
-    },
-    {
-      "id": "react_native_mmkv",
-      "label": "react-native-mmkv",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "react-native-mmkv",
-      "file_type": "concept",
-      "norm_label": "react-native-mmkv",
-      "source_file": "package.json",
-      "source_location": "L31"
-    },
-    {
-      "id": "package_dependencies_react_native_web",
-      "label": "react-native-web",
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "react-native-web",
-      "file_type": "code",
-      "norm_label": "react-native-web",
-      "source_file": "package.json",
-      "source_location": "L35"
-    },
-    {
-      "id": "react_native_web",
-      "label": "react-native-web",
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "react-native-web",
-      "file_type": "concept",
-      "norm_label": "react-native-web",
-      "source_file": "package.json",
-      "source_location": "L35"
     },
     {
       "id": "src_domain_strategies_seasonalforecastengine",
@@ -6119,6 +6022,61 @@
       "source_location": "L14"
     },
     {
+      "id": "src_app_checkout",
+      "label": "checkout.tsx",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "checkout.tsx",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_checkout_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L727"
+    },
+    {
+      "id": "src_app_sales",
+      "label": "sales.tsx",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "sales.tsx",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_sales_periods",
+      "label": "PERIODS",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "periods",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_app_sales_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L402"
+    },
+    {
       "id": "src_application_tindahanstoreservice",
       "label": "TindahanStoreService.ts",
       "_origin": "ast",
@@ -6150,6 +6108,50 @@
       "norm_label": "phpcurrencyformatter",
       "source_file": "src/domain/value-objects/Money.ts",
       "source_location": "L3"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase",
+      "label": "SqliteDatabase.ts",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "sqlitedatabase.ts",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage",
+      "label": "KeyValueStorage.ts",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "keyvaluestorage.ts",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_appkeyvaluestorage",
+      "label": "appKeyValueStorage",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "appkeyvaluestorage",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L194"
+    },
+    {
+      "id": "ref_expo_sqlite",
+      "label": "expo-sqlite",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "concept",
+      "norm_label": "expo-sqlite",
+      "source_file": "app.json",
+      "source_location": "L26"
     },
     {
       "id": "scripts_reset_project",
@@ -7994,44 +7996,8 @@
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_loadsettings",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_getstring",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L137",
-      "weight": 1.0
-    },
-    {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_loadsettings",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_getboolean",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L145",
-      "weight": 1.0
-    },
-    {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_loadsettings",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_getnumber",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L146",
-      "weight": 1.0
-    },
-    {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_savesettings",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_setstring",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_clearall",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8042,8 +8008,8 @@
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_savesettings",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_setboolean",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_clearall",
+      "target": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_getinstance",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8054,15 +8020,231 @@
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_savesettings",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_setnumber",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_delete",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L159",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_delete",
+      "target": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_getinstance",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "target": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_getinstance",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getboolean",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getnumber",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getstring",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadsettings",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadsettings",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getstring",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L170",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadsettings",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getboolean",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L178",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadsettings",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getnumber",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L179",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savesettings",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setstring",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L185",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savesettings",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setboolean",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L188",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savesettings",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setnumber",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setboolean",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setboolean",
+      "target": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_getinstance",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setnumber",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setnumber",
+      "target": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_getinstance",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setstring",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setstring",
+      "target": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_getinstance",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -8618,18 +8800,6 @@
       "weight": 1.0
     },
     {
-      "source": "package_dependencies_react_native_mmkv",
-      "target": "react_native_mmkv",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "package.json",
-      "source_location": "L31",
-      "weight": 1.0
-    },
-    {
       "source": "package_dependencies_react_native_reanimated",
       "target": "react_native_reanimated",
       "relation": "imports",
@@ -8638,7 +8808,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L32",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -8650,7 +8820,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L33",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -8662,7 +8832,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L34",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -8674,7 +8844,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L35",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -8686,7 +8856,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L36",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -8698,7 +8868,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -8710,7 +8880,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L41",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -8722,7 +8892,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L39",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -8734,7 +8904,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L42",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -9827,6 +9997,18 @@
       "context": "import",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
       "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage",
+      "target": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -11006,6 +11188,18 @@
       "weight": 1.0
     },
     {
+      "source": "src_infrastructure_storage_keyvaluestorage",
+      "target": "src_infrastructure_database_sqlitedatabase",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
       "source": "src_presentation_components_barcodeinputfield",
       "target": "src_presentation_components_barcodescannerviewfinder",
       "relation": "imports_from",
@@ -11234,7 +11428,7 @@
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_savesettings",
+      "source": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savesettings",
       "target": "src_application_tindahanstoreservice_storesettingsstate",
       "relation": "references",
       "_origin": "ast",
@@ -11242,7 +11436,19 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L154",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savesettings",
+      "target": "src_application_tindahanstoreservice_storesettingsstate",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "parameter_type",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -11330,7 +11536,7 @@
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_loadsettings",
+      "source": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_loadsettings",
       "target": "src_application_tindahanstoreservice_storesettingsstate",
       "relation": "references",
       "_origin": "ast",
@@ -11338,7 +11544,19 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L136",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadsettings",
+      "target": "src_application_tindahanstoreservice_storesettingsstate",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "return_type",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -11378,7 +11596,7 @@
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
       "target": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage",
       "relation": "implements",
       "_origin": "ast",
@@ -11386,7 +11604,7 @@
       "confidence_score": 1.0,
       "context": "type",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L23",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -11994,7 +12212,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -12016,7 +12234,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L44",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -12038,7 +12256,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L52",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -12274,7 +12492,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_mmkv",
+      "target": "package_dependencies_react_native_reanimated",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12285,7 +12503,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_reanimated",
+      "target": "package_dependencies_react_native_safe_area_context",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12296,7 +12514,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_safe_area_context",
+      "target": "package_dependencies_react_native_screens",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12307,7 +12525,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_screens",
+      "target": "package_dependencies_react_native_web",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12318,24 +12536,13 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_web",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "package.json",
-      "source_location": "L35",
-      "weight": 1.0
-    },
-    {
-      "source": "package_dependencies",
       "target": "package_dependencies_react_native_worklets",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L36",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -12390,7 +12597,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L39",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -12401,7 +12608,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -12412,7 +12619,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L41",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -12423,7 +12630,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L42",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -12434,7 +12641,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L45",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -12445,7 +12652,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L46",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -12456,7 +12663,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L47",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -12467,7 +12674,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L48",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -12478,7 +12685,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L49",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -12489,7 +12696,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L50",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -14458,18 +14665,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L164",
+      "source_location": "L194",
       "weight": 1.0
     },
     {
       "source": "src_infrastructure_storage_keyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L23",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -15915,6 +16122,28 @@
     },
     {
       "source": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_loadsettings",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savesettings",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage",
       "target": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_getstring",
       "relation": "method",
       "_origin": "ast",
@@ -15958,8 +16187,8 @@
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_setboolean",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setnumber",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -15969,41 +16198,41 @@
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_delete",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getboolean",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L111",
+      "source_location": "L117",
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_clearall",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setboolean",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L122",
+      "source_location": "L123",
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_loadsettings",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_delete",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L136",
+      "source_location": "L140",
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_savesettings",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_clearall",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16013,69 +16242,69 @@
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_constructor",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadsettings",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L27",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_getstring",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savesettings",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L39",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_setstring",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L52",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_getnumber",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getstring",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L63",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_setnumber",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setstring",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L76",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
-      "source": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage",
-      "target": "src_infrastructure_storage_keyvaluestorage_mmkvkeyvaluestorage_getboolean",
+      "source": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "target": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getnumber",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L87",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -16332,5 +16561,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "02ee9e44d7b0bc5e6a6315380b20dfe9c8c7ec33"
+  "built_at_commit": "74f51472ad0309f9d97792cbc5c61e537ef03c93"
 }
