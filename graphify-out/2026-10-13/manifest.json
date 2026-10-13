@@ -60,9 +60,9 @@
     "semantic_hash": "b713dd66aa3ad59ed5098d7b9f8dc202"
   },
   "package.json": {
-    "mtime": 1791875354.8007221,
-    "seen": 1791876596.5122762,
-    "ast_hash": "4687e5593aa0dbc5072df45591739fcf",
+    "mtime": 1791880720.5273898,
+    "seen": 1791881424.7534175,
+    "ast_hash": "33479efd8463fdf53637ef7e8da8efa6",
     "semantic_hash": ""
   },
   "scripts/reset-project.js": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1791875609.128845,
-    "seen": 1791876596.512299,
-    "ast_hash": "982df2506848bbd47a2b7713cbaf3bfb",
+    "mtime": 1791881056.1198723,
+    "seen": 1791881424.753459,
+    "ast_hash": "95012131bf4d661978b2f455acb3903c",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
@@ -126,15 +126,15 @@
     "semantic_hash": ""
   },
   "src/application/ProductOnboardingService.ts": {
-    "mtime": 1791876365.826656,
-    "seen": 1791876596.512314,
-    "ast_hash": "c4615696e860ee5ca74db6dc73966868",
+    "mtime": 1791881342.3223524,
+    "seen": 1791881424.7534997,
+    "ast_hash": "dd0d1b386527529f9b26de5732752d0a",
     "semantic_hash": ""
   },
   "src/application/TindahanStoreService.ts": {
-    "mtime": 1791875535.5650325,
-    "seen": 1791876596.5123172,
-    "ast_hash": "409fcb71e1066a657a5708a0cedab71a",
+    "mtime": 1791880916.8995764,
+    "seen": 1791881424.7535055,
+    "ast_hash": "e16adc1a43f7298393e422e768f1933a",
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
@@ -252,9 +252,9 @@
     "semantic_hash": "e058af4f5801bcaa97dad62f12085a27"
   },
   "src/infrastructure/container.ts": {
-    "mtime": 1791874395.380754,
-    "seen": 1791876596.5123868,
-    "ast_hash": "ac05ac23a04101c90ada136f52191ded",
+    "mtime": 1791880843.3069837,
+    "seen": 1791881424.753699,
+    "ast_hash": "7e9628b847b0d517d948a6d238d419ac",
     "semantic_hash": ""
   },
   "src/infrastructure/database/SqliteDatabase.ts": {
@@ -288,9 +288,9 @@
     "semantic_hash": "370d505d4eca4ae08bde70346f96bad6"
   },
   "src/presentation/hooks/useTindahanStore.ts": {
-    "mtime": 1791875544.8156316,
-    "seen": 1791876596.5124066,
-    "ast_hash": "b4c96956e2d8306793646ab7fbbc2ff2",
+    "mtime": 1791880875.7997718,
+    "seen": 1791881424.7537677,
+    "ast_hash": "0320a916e1dd0a49caf2897989b2dda0",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -453,6 +453,12 @@
     "mtime": 1791879317.8412428,
     "seen": 1791879498.7481484,
     "ast_hash": "4403f6836f418360d92301e0c67106eb",
+    "semantic_hash": ""
+  },
+  "src/infrastructure/services/OpenFoodFactsApiClient.ts": {
+    "mtime": 1791881197.8002622,
+    "seen": 1791881424.7537265,
+    "ast_hash": "790db631fa2393cf938d8e6ab79164c8",
     "semantic_hash": ""
   }
 }

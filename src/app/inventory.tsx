@@ -330,27 +330,95 @@ export default function InventoryManagementScreen() {
             <Text style={styles.fieldLabel}>Product Image (Camera / Gallery):</Text>
             <View style={styles.photoPickerRow}>
               {newImageUri ? (
-                <View style={styles.previewBox}>
-                  <Image source={{ uri: newImageUri }} style={styles.previewImage} contentFit="cover" />
+                <View style={{ position: 'relative', width: 80, height: 80 }}>
                   <Pressable
-                    style={styles.removePhotoBtn}
-                    onPress={() => setNewImageUri(null)}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      handlePickImage();
+                    }}
+                    style={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: 14,
+                      backgroundColor: '#E2E8F0',
+                      borderWidth: 1.5,
+                      borderColor: '#10B981',
+                      overflow: 'hidden',
+                    }}
                   >
-                    <Text style={styles.removePhotoText}>✕ Remove</Text>
+                    <Image
+                      source={{ uri: newImageUri }}
+                      style={{ width: '100%', height: '100%' }}
+                      contentFit="cover"
+                      transition={150}
+                      cachePolicy="memory-disk"
+                    />
+                  </Pressable>
+                  <Pressable
+                    style={{
+                      position: 'absolute',
+                      top: -6,
+                      right: -6,
+                      backgroundColor: '#EF4444',
+                      borderRadius: 13,
+                      width: 26,
+                      height: 26,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#FFFFFF',
+                      elevation: 4,
+                      shadowColor: '#000000',
+                      shadowOffset: { width: 0, height: 1 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 2,
+                    }}
+                    hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      setNewImageUri(null);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Remove photo"
+                  >
+                    <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '800', lineHeight: 14 }}>✕</Text>
                   </Pressable>
                 </View>
               ) : (
-                <View style={styles.photoPlaceholder}>
+                <Pressable
+                  style={styles.photoPlaceholder}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    handlePickImage();
+                  }}
+                  hitSlop={8}
+                >
                   <Text style={styles.photoPlaceholderText}>📷 No Photo</Text>
-                </View>
+                </Pressable>
               )}
 
               <View style={styles.photoActionsCol}>
-                <Pressable style={styles.cameraBtn} onPress={handleTakePhoto}>
-                  <Text style={styles.cameraBtnText}>📸 Take Photo</Text>
+                <Pressable
+                  style={styles.cameraBtn}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    handleTakePhoto();
+                  }}
+                >
+                  <Text style={styles.cameraBtnText}>
+                    {newImageUri ? '📸 Retake Photo' : '📸 Take Photo'}
+                  </Text>
                 </Pressable>
-                <Pressable style={styles.galleryBtn} onPress={handlePickImage}>
-                  <Text style={styles.galleryBtnText}>🖼️ Choose from Gallery</Text>
+                <Pressable
+                  style={styles.galleryBtn}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    handlePickImage();
+                  }}
+                >
+                  <Text style={styles.galleryBtnText}>
+                    {newImageUri ? '🖼️ Change Photo' : '🖼️ Choose from Gallery'}
+                  </Text>
                 </Pressable>
               </View>
             </View>

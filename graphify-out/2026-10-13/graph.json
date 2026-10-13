@@ -14,7 +14,7 @@
       "file_type": "code",
       "norm_label": "productonboardingservice",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L29"
+      "source_location": "L33"
     },
     {
       "id": "src_domain_entities_product_product",
@@ -41,6 +41,19 @@
       "norm_label": "productdto",
       "source_file": "src/domain/entities/Product.ts",
       "source_location": "L24"
+    },
+    {
+      "id": "src_domain_entities_product_productvisual",
+      "label": "ProductVisual",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "productvisual",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L14"
     },
     {
       "id": "src_domain_entities_product_sellingunittier",
@@ -134,134 +147,56 @@
       "source_location": "L7"
     },
     {
-      "id": "src_domain_entities_product_productvisual",
-      "label": "ProductVisual",
+      "id": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
+      "label": "ExternalProductCatalogResult",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
+      "community": 0,
+      "community_name": "Product",
       "file_type": "code",
-      "norm_label": "productvisual",
-      "source_file": "src/domain/entities/Product.ts",
+      "norm_label": "externalproductcatalogresult",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "label": "IExternalCatalogLookupService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "iexternalcataloglookupservice",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
       "source_location": "L14"
     },
     {
-      "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy",
-      "label": "BaseSeasonalStrategy",
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "label": "OpenFoodFactsApiClient",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
+      "community": 0,
+      "community_name": "Product",
       "file_type": "code",
-      "norm_label": "baseseasonalstrategy",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L48"
+      "norm_label": "openfoodfactsapiclient",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L27"
     },
     {
-      "id": "src_domain_strategies_seasonalforecastengine_coldstartcategorystrategy",
-      "label": "ColdStartCategoryStrategy",
+      "id": "src_presentation_components_productthumbnail_productthumbnailprops",
+      "label": "ProductThumbnailProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
+      "community": 0,
+      "community_name": "Product",
       "file_type": "code",
-      "norm_label": "coldstartcategorystrategy",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L193"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_forecastconfidencetier",
-      "label": "ForecastConfidenceTier",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "forecastconfidencetier",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_initialcycle12monthstrategy",
-      "label": "InitialCycle12MonthStrategy",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "initialcycle12monthstrategy",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L138"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_iseasonalforecaststrategy",
-      "label": "ISeasonalForecastStrategy",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "iseasonalforecaststrategy",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L32"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_monthlysalesrecord",
-      "label": "MonthlySalesRecord",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "monthlysalesrecord",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_recurring24monthyoystrategy",
-      "label": "Recurring24MonthYoYStrategy",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "recurring24monthyoystrategy",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L72"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_seasonalforecastengine",
-      "label": "SeasonalForecastEngine",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "seasonalforecastengine",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L233"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_seasonalforecastresult",
-      "label": "SeasonalForecastResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "seasonalforecastresult",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L18"
+      "norm_label": "productthumbnailprops",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L7"
     },
     {
       "id": "src_presentation_components_barcodeinputfield_barcodeinputfieldprops",
@@ -290,19 +225,6 @@
       "source_location": "L17"
     },
     {
-      "id": "src_presentation_components_productthumbnail_productthumbnailprops",
-      "label": "ProductThumbnailProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "productthumbnailprops",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L7"
-    },
-    {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice",
       "label": "TindahanStoreService",
       "_callable": true,
@@ -314,6 +236,19 @@
       "norm_label": "tindahanstoreservice",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L76"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_monthlysalesrecord",
+      "label": "MonthlySalesRecord",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": "monthlysalesrecord",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L3"
     },
     {
       "id": "src_components_external_link_props",
@@ -394,6 +329,110 @@
       "source_location": "L5"
     },
     {
+      "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy",
+      "label": "BaseSeasonalStrategy",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "baseseasonalstrategy",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L48"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_coldstartcategorystrategy",
+      "label": "ColdStartCategoryStrategy",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "coldstartcategorystrategy",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L193"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_forecastconfidencetier",
+      "label": "ForecastConfidenceTier",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "forecastconfidencetier",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_initialcycle12monthstrategy",
+      "label": "InitialCycle12MonthStrategy",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "initialcycle12monthstrategy",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L138"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_iseasonalforecaststrategy",
+      "label": "ISeasonalForecastStrategy",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "iseasonalforecaststrategy",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_recurring24monthyoystrategy",
+      "label": "Recurring24MonthYoYStrategy",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "recurring24monthyoystrategy",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L72"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_seasonalforecastengine",
+      "label": "SeasonalForecastEngine",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "seasonalforecastengine",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L233"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_seasonalforecastresult",
+      "label": "SeasonalForecastResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "seasonalforecastresult",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L18"
+    },
+    {
       "id": "src_application_productonboardingservice_addproductcommand",
       "label": "AddProductCommand",
       "_callable": true,
@@ -404,7 +443,7 @@
       "file_type": "code",
       "norm_label": "addproductcommand",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L6"
+      "source_location": "L10"
     },
     {
       "id": "src_application_productonboardingservice_addproductresult",
@@ -417,7 +456,7 @@
       "file_type": "code",
       "norm_label": "addproductresult",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L18"
+      "source_location": "L22"
     },
     {
       "id": "src_application_tindahanstoreservice_cartitemdto",
@@ -559,7 +598,19 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L30"
+      "source_location": "L34"
+    },
+    {
+      "id": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
+      "label": ".lookupOnlineCatalog()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".lookuponlinecatalog()",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L39"
     },
     {
       "id": "src_application_productonboardingservice_productonboardingservice_registernewproduct",
@@ -571,7 +622,7 @@
       "file_type": "code",
       "norm_label": ".registernewproduct()",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L36"
+      "source_location": "L49"
     },
     {
       "id": "src_domain_entities_product_product_addquarantinestock",
@@ -1018,6 +1069,66 @@
       "source_location": "L141"
     },
     {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_downloadimagelocally",
+      "label": ".downloadImageLocally()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".downloadimagelocally()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
+      "label": ".lookupBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".lookupbarcode()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_downloadimagelocally",
+      "label": ".downloadImageLocally()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".downloadimagelocally()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L115"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
+      "label": ".inferCategory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".infercategory()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L137"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
+      "label": ".lookupBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".lookupbarcode()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L32"
+    },
+    {
       "id": "src_app_explore_seasonalforecastscreen",
       "label": "SeasonalForecastScreen()",
       "_callable": true,
@@ -1102,18 +1213,6 @@
       "source_location": "L16"
     },
     {
-      "id": "src_application_tindahanstoreservice_tindahanstoreservice_getmonthlysaleshistory",
-      "label": ".getMonthlySalesHistory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": ".getmonthlysaleshistory()",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L933"
-    },
-    {
       "id": "src_components_app_tabs_apptabs",
       "label": "AppTabs()",
       "_callable": true,
@@ -1136,78 +1235,6 @@
       "norm_label": "customtindahantabbar()",
       "source_file": "src/components/app-tabs.tsx",
       "source_location": "L8"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy_computeuncensorednetdemand",
-      "label": ".computeUncensoredNetDemand()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": ".computeuncensorednetdemand()",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L49"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_coldstartcategorystrategy_forecast",
-      "label": ".forecast()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": ".forecast()",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L194"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_initialcycle12monthstrategy_forecast",
-      "label": ".forecast()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": ".forecast()",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L139"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_iseasonalforecaststrategy_forecast",
-      "label": ".forecast()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": ".forecast()",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L33"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_recurring24monthyoystrategy_forecast",
-      "label": ".forecast()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": ".forecast()",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L73"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_seasonalforecastengine_evaluateproductseasonality",
-      "label": ".evaluateProductSeasonality()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": ".evaluateproductseasonality()",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L238"
     },
     {
       "id": "src_presentation_components_barcodeinputfield_barcodeinputfield",
@@ -1375,7 +1402,7 @@
       "file_type": "code",
       "norm_label": ".addorupdatemonthlysalesrecord()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L888"
+      "source_location": "L895"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addtocart",
@@ -1387,7 +1414,7 @@
       "file_type": "code",
       "norm_label": ".addtocart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L451"
+      "source_location": "L458"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addutangcustomer",
@@ -1399,7 +1426,7 @@
       "file_type": "code",
       "norm_label": ".addutangcustomer()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L812"
+      "source_location": "L819"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_adjustinventorystock",
@@ -1411,7 +1438,7 @@
       "file_type": "code",
       "norm_label": ".adjustinventorystock()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L756"
+      "source_location": "L763"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_clearalldatabasedata",
@@ -1435,7 +1462,7 @@
       "file_type": "code",
       "norm_label": ".clearcart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L481"
+      "source_location": "L488"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_completesale",
@@ -1447,7 +1474,7 @@
       "file_type": "code",
       "norm_label": ".completesale()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L508"
+      "source_location": "L515"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_constructor",
@@ -1471,7 +1498,7 @@
       "file_type": "code",
       "norm_label": ".deleteproductfromdatabase()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L380"
+      "source_location": "L387"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_deleteutangcustomer",
@@ -1483,7 +1510,7 @@
       "file_type": "code",
       "norm_label": ".deleteutangcustomer()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L843"
+      "source_location": "L850"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getcartitems",
@@ -1495,7 +1522,7 @@
       "file_type": "code",
       "norm_label": ".getcartitems()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L406"
+      "source_location": "L413"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getcartsummary",
@@ -1507,7 +1534,19 @@
       "file_type": "code",
       "norm_label": ".getcartsummary()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L428"
+      "source_location": "L435"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_tindahanstoreservice_getmonthlysaleshistory",
+      "label": ".getMonthlySalesHistory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".getmonthlysaleshistory()",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L940"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getproductssnapshot",
@@ -1519,7 +1558,7 @@
       "file_type": "code",
       "norm_label": ".getproductssnapshot()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L399"
+      "source_location": "L406"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getsalessummary",
@@ -1531,7 +1570,7 @@
       "file_type": "code",
       "norm_label": ".getsalessummary()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L636"
+      "source_location": "L643"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getsettings",
@@ -1543,7 +1582,7 @@
       "file_type": "code",
       "norm_label": ".getsettings()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L937"
+      "source_location": "L944"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getutangcustomers",
@@ -1555,7 +1594,7 @@
       "file_type": "code",
       "norm_label": ".getutangcustomers()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L808"
+      "source_location": "L815"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_hydrateallfromsqlite",
@@ -1582,6 +1621,18 @@
       "source_location": "L113"
     },
     {
+      "id": "src_application_tindahanstoreservice_tindahanstoreservice_lookuponlinecatalog",
+      "label": ".lookupOnlineCatalog()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".lookuponlinecatalog()",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L380"
+    },
+    {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_notify",
       "label": ".notify()",
       "_callable": true,
@@ -1603,7 +1654,7 @@
       "file_type": "code",
       "norm_label": ".notifycatalogchanged()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L947"
+      "source_location": "L954"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_parkcurrentcart",
@@ -1615,7 +1666,7 @@
       "file_type": "code",
       "norm_label": ".parkcurrentcart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L491"
+      "source_location": "L498"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_persistcarttosqlite",
@@ -1651,7 +1702,7 @@
       "file_type": "code",
       "norm_label": ".persistmonthlyhistoryrow()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L907"
+      "source_location": "L914"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_persistsettingstosqlite",
@@ -1687,7 +1738,7 @@
       "file_type": "code",
       "norm_label": ".processreturnorexchange()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L677"
+      "source_location": "L684"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_recordmonthlysaleincrement",
@@ -1699,7 +1750,7 @@
       "file_type": "code",
       "norm_label": ".recordmonthlysaleincrement()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L861"
+      "source_location": "L868"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_recordutangpayment",
@@ -1711,7 +1762,7 @@
       "file_type": "code",
       "norm_label": ".recordutangpayment()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L852"
+      "source_location": "L859"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_restoreparkedcart",
@@ -1723,7 +1774,7 @@
       "file_type": "code",
       "norm_label": ".restoreparkedcart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L500"
+      "source_location": "L507"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_setdiscountphp",
@@ -1735,7 +1786,7 @@
       "file_type": "code",
       "norm_label": ".setdiscountphp()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L476"
+      "source_location": "L483"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_subscribe",
@@ -1759,7 +1810,7 @@
       "file_type": "code",
       "norm_label": ".undoremovecartitem()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L468"
+      "source_location": "L475"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_updateproductimage",
@@ -1771,7 +1822,7 @@
       "file_type": "code",
       "norm_label": ".updateproductimage()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L391"
+      "source_location": "L398"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_updatesettings",
@@ -1783,7 +1834,7 @@
       "file_type": "code",
       "norm_label": ".updatesettings()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L941"
+      "source_location": "L948"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_voidentiretransaction",
@@ -1795,7 +1846,7 @@
       "file_type": "code",
       "norm_label": ".voidentiretransaction()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L656"
+      "source_location": "L663"
     },
     {
       "id": "src_domain_entities_product_product_calculatelinetotal",
@@ -2038,6 +2089,78 @@
       "source_location": "L28"
     },
     {
+      "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy_computeuncensorednetdemand",
+      "label": ".computeUncensoredNetDemand()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": ".computeuncensorednetdemand()",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L49"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_coldstartcategorystrategy_forecast",
+      "label": ".forecast()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": ".forecast()",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L194"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_initialcycle12monthstrategy_forecast",
+      "label": ".forecast()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": ".forecast()",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L139"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_iseasonalforecaststrategy_forecast",
+      "label": ".forecast()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": ".forecast()",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_recurring24monthyoystrategy_forecast",
+      "label": ".forecast()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": ".forecast()",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L73"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine_seasonalforecastengine_evaluateproductseasonality",
+      "label": ".evaluateProductSeasonality()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": ".evaluateproductseasonality()",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L238"
+    },
+    {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addproducttodatabase",
       "label": ".addProductToDatabase()",
       "_callable": true,
@@ -2225,6 +2348,39 @@
       "source_location": "L1"
     },
     {
+      "id": "src_infrastructure_services_openfoodfactsapiclient",
+      "label": "OpenFoodFactsApiClient.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient.ts",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_productthumbnail",
+      "label": "ProductThumbnail.tsx",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "productthumbnail.tsx",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_productthumbnail_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L65"
+    },
+    {
       "id": "src_app_explore",
       "label": "explore.tsx",
       "_origin": "ast",
@@ -2310,7 +2466,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L644"
+      "source_location": "L709"
     },
     {
       "id": "src_app_layout",
@@ -2434,17 +2590,6 @@
       "source_location": "L130"
     },
     {
-      "id": "src_domain_strategies_seasonalforecastengine",
-      "label": "SeasonalForecastEngine.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "seasonalforecastengine.ts",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_infrastructure_container",
       "label": "container.ts",
       "_origin": "ast",
@@ -2456,6 +2601,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_infrastructure_container_openfoodfactsapiclient",
+      "label": "openFoodFactsApiClient",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L8"
+    },
+    {
       "id": "src_infrastructure_container_productonboardingservice",
       "label": "productOnboardingService",
       "_origin": "ast",
@@ -2464,7 +2620,7 @@
       "file_type": "code",
       "norm_label": "productonboardingservice",
       "source_file": "src/infrastructure/container.ts",
-      "source_location": "L8"
+      "source_location": "L10"
     },
     {
       "id": "src_infrastructure_container_productrepository",
@@ -2475,7 +2631,7 @@
       "file_type": "code",
       "norm_label": "productrepository",
       "source_file": "src/infrastructure/container.ts",
-      "source_location": "L7"
+      "source_location": "L9"
     },
     {
       "id": "src_infrastructure_container_seasonalforecastengine",
@@ -2486,7 +2642,7 @@
       "file_type": "code",
       "norm_label": "seasonalforecastengine",
       "source_file": "src/infrastructure/container.ts",
-      "source_location": "L13"
+      "source_location": "L18"
     },
     {
       "id": "src_infrastructure_container_tindahanstoreservice",
@@ -2497,7 +2653,7 @@
       "file_type": "code",
       "norm_label": "tindahanstoreservice",
       "source_file": "src/infrastructure/container.ts",
-      "source_location": "L9"
+      "source_location": "L14"
     },
     {
       "id": "src_presentation_components_barcodeinputfield",
@@ -2542,28 +2698,6 @@
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L230"
-    },
-    {
-      "id": "src_presentation_components_productthumbnail",
-      "label": "ProductThumbnail.tsx",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "productthumbnail.tsx",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_productthumbnail_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L65"
     },
     {
       "id": "src_presentation_hooks_useidempotentsubmit",
@@ -2621,26 +2755,37 @@
       "source_location": "L7"
     },
     {
-      "id": "package_dependencies_expo_font",
-      "label": "expo-font",
+      "id": "package_dependencies_expo_file_system",
+      "label": "expo-file-system",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "code",
-      "norm_label": "expo-font",
+      "norm_label": "expo-file-system",
       "source_file": "package.json",
       "source_location": "L11"
     },
     {
-      "id": "package_dependencies_expo_sqlite",
-      "label": "expo-sqlite",
+      "id": "package_dependencies_expo_ui",
+      "label": "@expo/ui",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "code",
-      "norm_label": "expo-sqlite",
+      "norm_label": "@expo/ui",
       "source_file": "package.json",
-      "source_location": "L19"
+      "source_location": "L6"
+    },
+    {
+      "id": "package_dependencies_expo_web_browser",
+      "label": "expo-web-browser",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "expo-web-browser",
+      "source_file": "package.json",
+      "source_location": "L24"
     },
     {
       "id": "expo",
@@ -2654,26 +2799,37 @@
       "source_location": "L7"
     },
     {
-      "id": "expo_font",
-      "label": "expo-font",
+      "id": "expo_file_system",
+      "label": "expo-file-system",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "concept",
-      "norm_label": "expo-font",
+      "norm_label": "expo-file-system",
       "source_file": "package.json",
       "source_location": "L11"
     },
     {
-      "id": "expo_sqlite",
-      "label": "expo-sqlite",
+      "id": "expo_ui",
+      "label": "@expo/ui",
       "_origin": "ast",
       "community": 10,
       "community_name": "dependencies",
       "file_type": "concept",
-      "norm_label": "expo-sqlite",
+      "norm_label": "@expo/ui",
       "source_file": "package.json",
-      "source_location": "L19"
+      "source_location": "L6"
+    },
+    {
+      "id": "expo_web_browser",
+      "label": "expo-web-browser",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "dependencies",
+      "file_type": "concept",
+      "norm_label": "expo-web-browser",
+      "source_file": "package.json",
+      "source_location": "L24"
     },
     {
       "id": "src_components_animated_icon",
@@ -3410,7 +3566,7 @@
       "file_type": "code",
       "norm_label": "expo-glass-effect",
       "source_file": "package.json",
-      "source_location": "L12"
+      "source_location": "L13"
     },
     {
       "id": "expo_glass_effect",
@@ -3421,7 +3577,7 @@
       "file_type": "concept",
       "norm_label": "expo-glass-effect",
       "source_file": "package.json",
-      "source_location": "L12"
+      "source_location": "L13"
     },
     {
       "id": "package_dependencies_expo_haptics",
@@ -3432,7 +3588,7 @@
       "file_type": "code",
       "norm_label": "expo-haptics",
       "source_file": "package.json",
-      "source_location": "L13"
+      "source_location": "L14"
     },
     {
       "id": "expo_haptics",
@@ -3443,7 +3599,7 @@
       "file_type": "concept",
       "norm_label": "expo-haptics",
       "source_file": "package.json",
-      "source_location": "L13"
+      "source_location": "L14"
     },
     {
       "id": "package_dependencies_expo_image",
@@ -3454,7 +3610,7 @@
       "file_type": "code",
       "norm_label": "expo-image",
       "source_file": "package.json",
-      "source_location": "L14"
+      "source_location": "L15"
     },
     {
       "id": "expo_image",
@@ -3465,7 +3621,7 @@
       "file_type": "concept",
       "norm_label": "expo-image",
       "source_file": "package.json",
-      "source_location": "L14"
+      "source_location": "L15"
     },
     {
       "id": "package_dependencies_expo_linking",
@@ -3476,7 +3632,7 @@
       "file_type": "code",
       "norm_label": "expo-linking",
       "source_file": "package.json",
-      "source_location": "L16"
+      "source_location": "L17"
     },
     {
       "id": "expo_linking",
@@ -3487,7 +3643,7 @@
       "file_type": "concept",
       "norm_label": "expo-linking",
       "source_file": "package.json",
-      "source_location": "L16"
+      "source_location": "L17"
     },
     {
       "id": "package_dependencies_expo_router",
@@ -3498,7 +3654,7 @@
       "file_type": "code",
       "norm_label": "expo-router",
       "source_file": "package.json",
-      "source_location": "L17"
+      "source_location": "L18"
     },
     {
       "id": "expo_router",
@@ -3509,7 +3665,7 @@
       "file_type": "concept",
       "norm_label": "expo-router",
       "source_file": "package.json",
-      "source_location": "L17"
+      "source_location": "L18"
     },
     {
       "id": "package_dependencies_expo_splash_screen",
@@ -3520,7 +3676,7 @@
       "file_type": "code",
       "norm_label": "expo-splash-screen",
       "source_file": "package.json",
-      "source_location": "L18"
+      "source_location": "L19"
     },
     {
       "id": "expo_splash_screen",
@@ -3531,7 +3687,7 @@
       "file_type": "concept",
       "norm_label": "expo-splash-screen",
       "source_file": "package.json",
-      "source_location": "L18"
+      "source_location": "L19"
     },
     {
       "id": "data_input_output_ux_best_practices",
@@ -3770,7 +3926,7 @@
       "file_type": "code",
       "norm_label": "expo-status-bar",
       "source_file": "package.json",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "expo_status_bar",
@@ -3781,7 +3937,7 @@
       "file_type": "concept",
       "norm_label": "expo-status-bar",
       "source_file": "package.json",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "package_dependencies_expo_symbols",
@@ -3792,7 +3948,7 @@
       "file_type": "code",
       "norm_label": "expo-symbols",
       "source_file": "package.json",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
       "id": "expo_symbols",
@@ -3803,7 +3959,7 @@
       "file_type": "concept",
       "norm_label": "expo-symbols",
       "source_file": "package.json",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
       "id": "package_dependencies_expo_system_ui",
@@ -3814,7 +3970,7 @@
       "file_type": "code",
       "norm_label": "expo-system-ui",
       "source_file": "package.json",
-      "source_location": "L22"
+      "source_location": "L23"
     },
     {
       "id": "expo_system_ui",
@@ -3825,29 +3981,29 @@
       "file_type": "concept",
       "norm_label": "expo-system-ui",
       "source_file": "package.json",
-      "source_location": "L22"
+      "source_location": "L23"
     },
     {
-      "id": "package_dependencies_expo_ui",
-      "label": "@expo/ui",
+      "id": "package_dependencies_expo_font",
+      "label": "expo-font",
       "_origin": "ast",
       "community": 29,
-      "community_name": "@expo/ui",
+      "community_name": "expo-font",
       "file_type": "code",
-      "norm_label": "@expo/ui",
+      "norm_label": "expo-font",
       "source_file": "package.json",
-      "source_location": "L6"
+      "source_location": "L12"
     },
     {
-      "id": "expo_ui",
-      "label": "@expo/ui",
+      "id": "expo_font",
+      "label": "expo-font",
       "_origin": "ast",
       "community": 29,
-      "community_name": "@expo/ui",
+      "community_name": "expo-font",
       "file_type": "concept",
-      "norm_label": "@expo/ui",
+      "norm_label": "expo-font",
       "source_file": "package.json",
-      "source_location": "L6"
+      "source_location": "L12"
     },
     {
       "id": "src_components_app_tabs_web",
@@ -4070,26 +4226,26 @@
       "source_location": "L1"
     },
     {
-      "id": "package_dependencies_expo_web_browser",
-      "label": "expo-web-browser",
+      "id": "package_dependencies_expo_sqlite",
+      "label": "expo-sqlite",
       "_origin": "ast",
       "community": 30,
-      "community_name": "expo-web-browser",
+      "community_name": "expo-sqlite",
       "file_type": "code",
-      "norm_label": "expo-web-browser",
+      "norm_label": "expo-sqlite",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L20"
     },
     {
-      "id": "expo_web_browser",
-      "label": "expo-web-browser",
+      "id": "expo_sqlite",
+      "label": "expo-sqlite",
       "_origin": "ast",
       "community": 30,
-      "community_name": "expo-web-browser",
+      "community_name": "expo-sqlite",
       "file_type": "concept",
-      "norm_label": "expo-web-browser",
+      "norm_label": "expo-sqlite",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L20"
     },
     {
       "id": "package_dependencies_react",
@@ -4100,7 +4256,7 @@
       "file_type": "code",
       "norm_label": "react",
       "source_file": "package.json",
-      "source_location": "L24"
+      "source_location": "L25"
     },
     {
       "id": "react",
@@ -4111,7 +4267,7 @@
       "file_type": "concept",
       "norm_label": "react",
       "source_file": "package.json",
-      "source_location": "L24"
+      "source_location": "L25"
     },
     {
       "id": "package_dependencies_react_native",
@@ -4122,7 +4278,7 @@
       "file_type": "code",
       "norm_label": "react-native",
       "source_file": "package.json",
-      "source_location": "L26"
+      "source_location": "L27"
     },
     {
       "id": "react_native",
@@ -4133,7 +4289,7 @@
       "file_type": "concept",
       "norm_label": "react-native",
       "source_file": "package.json",
-      "source_location": "L26"
+      "source_location": "L27"
     },
     {
       "id": "package_dependencies_react_native_gesture_handler",
@@ -4144,7 +4300,7 @@
       "file_type": "code",
       "norm_label": "react-native-gesture-handler",
       "source_file": "package.json",
-      "source_location": "L27"
+      "source_location": "L28"
     },
     {
       "id": "react_native_gesture_handler",
@@ -4155,7 +4311,7 @@
       "file_type": "concept",
       "norm_label": "react-native-gesture-handler",
       "source_file": "package.json",
-      "source_location": "L27"
+      "source_location": "L28"
     },
     {
       "id": "package_dependencies_react_native_reanimated",
@@ -4166,7 +4322,7 @@
       "file_type": "code",
       "norm_label": "react-native-reanimated",
       "source_file": "package.json",
-      "source_location": "L28"
+      "source_location": "L29"
     },
     {
       "id": "react_native_reanimated",
@@ -4177,7 +4333,7 @@
       "file_type": "concept",
       "norm_label": "react-native-reanimated",
       "source_file": "package.json",
-      "source_location": "L28"
+      "source_location": "L29"
     },
     {
       "id": "package_dependencies_react_native_safe_area_context",
@@ -4188,7 +4344,7 @@
       "file_type": "code",
       "norm_label": "react-native-safe-area-context",
       "source_file": "package.json",
-      "source_location": "L29"
+      "source_location": "L30"
     },
     {
       "id": "react_native_safe_area_context",
@@ -4199,7 +4355,7 @@
       "file_type": "concept",
       "norm_label": "react-native-safe-area-context",
       "source_file": "package.json",
-      "source_location": "L29"
+      "source_location": "L30"
     },
     {
       "id": "package_dependencies_react_native_screens",
@@ -4210,7 +4366,7 @@
       "file_type": "code",
       "norm_label": "react-native-screens",
       "source_file": "package.json",
-      "source_location": "L30"
+      "source_location": "L31"
     },
     {
       "id": "react_native_screens",
@@ -4221,7 +4377,7 @@
       "file_type": "concept",
       "norm_label": "react-native-screens",
       "source_file": "package.json",
-      "source_location": "L30"
+      "source_location": "L31"
     },
     {
       "id": "package_dependencies_react_native_web",
@@ -4232,7 +4388,7 @@
       "file_type": "code",
       "norm_label": "react-native-web",
       "source_file": "package.json",
-      "source_location": "L31"
+      "source_location": "L32"
     },
     {
       "id": "react_native_web",
@@ -4243,7 +4399,7 @@
       "file_type": "concept",
       "norm_label": "react-native-web",
       "source_file": "package.json",
-      "source_location": "L31"
+      "source_location": "L32"
     },
     {
       "id": "package_dependencies_react_native_worklets",
@@ -4254,7 +4410,7 @@
       "file_type": "code",
       "norm_label": "react-native-worklets",
       "source_file": "package.json",
-      "source_location": "L32"
+      "source_location": "L33"
     },
     {
       "id": "react_native_worklets",
@@ -4265,7 +4421,7 @@
       "file_type": "concept",
       "norm_label": "react-native-worklets",
       "source_file": "package.json",
-      "source_location": "L32"
+      "source_location": "L33"
     },
     {
       "id": "react_expo_oop_best_practices",
@@ -4896,7 +5052,7 @@
       "file_type": "code",
       "norm_label": "devdependencies",
       "source_file": "package.json",
-      "source_location": "L34"
+      "source_location": "L35"
     },
     {
       "id": "package_devdependencies_eslint",
@@ -4907,7 +5063,7 @@
       "file_type": "code",
       "norm_label": "eslint",
       "source_file": "package.json",
-      "source_location": "L36"
+      "source_location": "L37"
     },
     {
       "id": "package_devdependencies_eslint_config_expo",
@@ -4918,7 +5074,7 @@
       "file_type": "code",
       "norm_label": "eslint-config-expo",
       "source_file": "package.json",
-      "source_location": "L37"
+      "source_location": "L38"
     },
     {
       "id": "package_devdependencies_types_react",
@@ -4929,7 +5085,7 @@
       "file_type": "code",
       "norm_label": "@types/react",
       "source_file": "package.json",
-      "source_location": "L35"
+      "source_location": "L36"
     },
     {
       "id": "package_devdependencies_typescript",
@@ -4940,7 +5096,7 @@
       "file_type": "code",
       "norm_label": "typescript",
       "source_file": "package.json",
-      "source_location": "L38"
+      "source_location": "L39"
     },
     {
       "id": "package_main",
@@ -4973,7 +5129,7 @@
       "file_type": "code",
       "norm_label": "private",
       "source_file": "package.json",
-      "source_location": "L48"
+      "source_location": "L49"
     },
     {
       "id": "package_scripts",
@@ -4984,7 +5140,7 @@
       "file_type": "code",
       "norm_label": "scripts",
       "source_file": "package.json",
-      "source_location": "L40"
+      "source_location": "L41"
     },
     {
       "id": "package_scripts_android",
@@ -4995,7 +5151,7 @@
       "file_type": "code",
       "norm_label": "android",
       "source_file": "package.json",
-      "source_location": "L43"
+      "source_location": "L44"
     },
     {
       "id": "package_scripts_ios",
@@ -5006,7 +5162,7 @@
       "file_type": "code",
       "norm_label": "ios",
       "source_file": "package.json",
-      "source_location": "L44"
+      "source_location": "L45"
     },
     {
       "id": "package_scripts_lint",
@@ -5017,7 +5173,7 @@
       "file_type": "code",
       "norm_label": "lint",
       "source_file": "package.json",
-      "source_location": "L46"
+      "source_location": "L47"
     },
     {
       "id": "package_scripts_reset_project",
@@ -5028,7 +5184,7 @@
       "file_type": "code",
       "norm_label": "reset-project",
       "source_file": "package.json",
-      "source_location": "L42"
+      "source_location": "L43"
     },
     {
       "id": "package_scripts_start",
@@ -5039,7 +5195,7 @@
       "file_type": "code",
       "norm_label": "start",
       "source_file": "package.json",
-      "source_location": "L41"
+      "source_location": "L42"
     },
     {
       "id": "package_scripts_web",
@@ -5050,7 +5206,7 @@
       "file_type": "code",
       "norm_label": "web",
       "source_file": "package.json",
-      "source_location": "L45"
+      "source_location": "L46"
     },
     {
       "id": "package_version",
@@ -5072,7 +5228,7 @@
       "file_type": "concept",
       "norm_label": "eslint",
       "source_file": "package.json",
-      "source_location": "L36"
+      "source_location": "L37"
     },
     {
       "id": "eslint_config_expo",
@@ -5083,7 +5239,7 @@
       "file_type": "concept",
       "norm_label": "eslint-config-expo",
       "source_file": "package.json",
-      "source_location": "L37"
+      "source_location": "L38"
     },
     {
       "id": "types_react",
@@ -5094,7 +5250,7 @@
       "file_type": "concept",
       "norm_label": "@types/react",
       "source_file": "package.json",
-      "source_location": "L35"
+      "source_location": "L36"
     },
     {
       "id": "typescript",
@@ -5105,7 +5261,7 @@
       "file_type": "concept",
       "norm_label": "typescript",
       "source_file": "package.json",
-      "source_location": "L38"
+      "source_location": "L39"
     },
     {
       "id": "package_dependencies_expo_camera",
@@ -5138,7 +5294,7 @@
       "file_type": "code",
       "norm_label": "expo-image-picker",
       "source_file": "package.json",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "expo_image_picker",
@@ -5149,7 +5305,7 @@
       "file_type": "concept",
       "norm_label": "expo-image-picker",
       "source_file": "package.json",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "package_dependencies_react_dom",
@@ -5160,7 +5316,7 @@
       "file_type": "code",
       "norm_label": "react-dom",
       "source_file": "package.json",
-      "source_location": "L25"
+      "source_location": "L26"
     },
     {
       "id": "react_dom",
@@ -5171,7 +5327,7 @@
       "file_type": "concept",
       "norm_label": "react-dom",
       "source_file": "package.json",
-      "source_location": "L25"
+      "source_location": "L26"
     },
     {
       "id": "claude",
@@ -5183,6 +5339,17 @@
       "node_kind": "page",
       "norm_label": "claude.md",
       "source_file": "CLAUDE.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_domain_strategies_seasonalforecastengine",
+      "label": "SeasonalForecastEngine.ts",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "seasonalforecastengine.ts",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
       "source_location": "L1"
     },
     {
@@ -5755,7 +5922,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L129",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -5767,7 +5934,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L32",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -5887,7 +6054,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L53",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -5899,7 +6066,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L55",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -5911,7 +6078,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L57",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -5923,7 +6090,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L78",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -5935,7 +6102,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L903",
+      "source_location": "L910",
       "weight": 1.0
     },
     {
@@ -5947,7 +6114,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L904",
+      "source_location": "L911",
       "weight": 1.0
     },
     {
@@ -5971,7 +6138,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L455",
+      "source_location": "L462",
       "weight": 1.0
     },
     {
@@ -5983,7 +6150,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L464",
+      "source_location": "L471",
       "weight": 1.0
     },
     {
@@ -5995,7 +6162,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L465",
+      "source_location": "L472",
       "weight": 1.0
     },
     {
@@ -6007,7 +6174,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L826",
+      "source_location": "L833",
       "weight": 1.0
     },
     {
@@ -6019,7 +6186,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L827",
+      "source_location": "L834",
       "weight": 1.0
     },
     {
@@ -6031,7 +6198,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L766",
+      "source_location": "L773",
       "weight": 1.0
     },
     {
@@ -6043,7 +6210,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L805",
+      "source_location": "L812",
       "weight": 1.0
     },
     {
@@ -6091,7 +6258,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L487",
+      "source_location": "L494",
       "weight": 1.0
     },
     {
@@ -6103,7 +6270,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L488",
+      "source_location": "L495",
       "weight": 1.0
     },
     {
@@ -6115,7 +6282,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L516",
+      "source_location": "L523",
       "weight": 1.0
     },
     {
@@ -6127,7 +6294,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L551",
+      "source_location": "L558",
       "weight": 1.0
     },
     {
@@ -6139,7 +6306,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L572",
+      "source_location": "L579",
       "weight": 1.0
     },
     {
@@ -6151,7 +6318,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L630",
+      "source_location": "L637",
       "weight": 1.0
     },
     {
@@ -6163,7 +6330,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L631",
+      "source_location": "L638",
       "weight": 1.0
     },
     {
@@ -6175,7 +6342,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L632",
+      "source_location": "L639",
       "weight": 1.0
     },
     {
@@ -6199,7 +6366,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L384",
+      "source_location": "L391",
       "weight": 1.0
     },
     {
@@ -6211,7 +6378,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L385",
+      "source_location": "L392",
       "weight": 1.0
     },
     {
@@ -6223,7 +6390,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L845",
+      "source_location": "L852",
       "weight": 1.0
     },
     {
@@ -6235,7 +6402,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L849",
+      "source_location": "L856",
       "weight": 1.0
     },
     {
@@ -6247,7 +6414,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L407",
+      "source_location": "L414",
       "weight": 1.0
     },
     {
@@ -6259,7 +6426,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L418",
+      "source_location": "L425",
       "weight": 1.0
     },
     {
@@ -6271,7 +6438,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L429",
+      "source_location": "L436",
       "weight": 1.0
     },
     {
@@ -6283,7 +6450,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L438",
+      "source_location": "L445",
       "weight": 1.0
     },
     {
@@ -6295,7 +6462,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L648",
+      "source_location": "L655",
       "weight": 1.0
     },
     {
@@ -6343,7 +6510,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L952",
+      "source_location": "L959",
       "weight": 1.0
     },
     {
@@ -6355,7 +6522,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L496",
+      "source_location": "L503",
       "weight": 1.0
     },
     {
@@ -6367,7 +6534,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L497",
+      "source_location": "L504",
       "weight": 1.0
     },
     {
@@ -6403,7 +6570,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L911",
+      "source_location": "L918",
       "weight": 1.0
     },
     {
@@ -6439,7 +6606,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L712",
+      "source_location": "L719",
       "weight": 1.0
     },
     {
@@ -6451,7 +6618,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L729",
+      "source_location": "L736",
       "weight": 1.0
     },
     {
@@ -6463,7 +6630,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L748",
+      "source_location": "L755",
       "weight": 1.0
     },
     {
@@ -6475,7 +6642,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L752",
+      "source_location": "L759",
       "weight": 1.0
     },
     {
@@ -6487,7 +6654,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L871",
+      "source_location": "L878",
       "weight": 1.0
     },
     {
@@ -6499,7 +6666,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L857",
+      "source_location": "L864",
       "weight": 1.0
     },
     {
@@ -6511,7 +6678,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L858",
+      "source_location": "L865",
       "weight": 1.0
     },
     {
@@ -6523,7 +6690,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L504",
+      "source_location": "L511",
       "weight": 1.0
     },
     {
@@ -6535,7 +6702,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L505",
+      "source_location": "L512",
       "weight": 1.0
     },
     {
@@ -6547,7 +6714,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L478",
+      "source_location": "L485",
       "weight": 1.0
     },
     {
@@ -6559,7 +6726,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L472",
+      "source_location": "L479",
       "weight": 1.0
     },
     {
@@ -6571,7 +6738,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L473",
+      "source_location": "L480",
       "weight": 1.0
     },
     {
@@ -6583,7 +6750,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L396",
+      "source_location": "L403",
       "weight": 1.0
     },
     {
@@ -6595,7 +6762,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L943",
+      "source_location": "L950",
       "weight": 1.0
     },
     {
@@ -6607,7 +6774,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L944",
+      "source_location": "L951",
       "weight": 1.0
     },
     {
@@ -6619,7 +6786,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L673",
+      "source_location": "L680",
       "weight": 1.0
     },
     {
@@ -6631,7 +6798,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L674",
+      "source_location": "L681",
       "weight": 1.0
     },
     {
@@ -7055,6 +7222,18 @@
       "weight": 1.0
     },
     {
+      "source": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
       "source": "src_domain_entities_product_productdto",
       "target": "src_domain_value_objects_barcode_barcodesource",
       "relation": "references",
@@ -7112,6 +7291,18 @@
       "context": "field",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
       "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "generic_arg",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -7319,6 +7510,18 @@
       "weight": 1.0
     },
     {
+      "source": "package_dependencies_expo_file_system",
+      "target": "expo_file_system",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "package.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
       "source": "package_dependencies_expo_font",
       "target": "expo_font",
       "relation": "imports",
@@ -7327,7 +7530,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -7339,7 +7542,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -7351,7 +7554,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -7363,7 +7566,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -7375,7 +7578,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -7387,7 +7590,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -7399,7 +7602,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -7411,7 +7614,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -7423,7 +7626,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -7435,7 +7638,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -7447,7 +7650,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -7459,7 +7662,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -7483,7 +7686,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -7495,7 +7698,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -7507,7 +7710,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -7519,7 +7722,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -7531,7 +7734,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -7543,7 +7746,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -7555,7 +7758,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -7567,7 +7770,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -7579,7 +7782,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -7591,7 +7794,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L32",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -7603,7 +7806,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -7615,7 +7818,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -7627,7 +7830,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -7639,7 +7842,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -7988,6 +8191,30 @@
       "context": "import",
       "source_file": "src/application/ProductOnboardingService.ts",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_productonboardingservice",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_productonboardingservice",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -8468,6 +8695,18 @@
       "context": "import",
       "source_file": "src/infrastructure/container.ts",
       "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_container",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -9047,6 +9286,18 @@
       "weight": 1.0
     },
     {
+      "source": "src_application_productonboardingservice",
+      "target": "src_infrastructure_services_openfoodfactsapiclient",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
       "source": "src_application_tindahanstoreservice",
       "target": "src_infrastructure_database_sqlitedatabase",
       "relation": "imports_from",
@@ -9491,6 +9742,18 @@
       "weight": 1.0
     },
     {
+      "source": "src_infrastructure_container",
+      "target": "src_infrastructure_services_openfoodfactsapiclient",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
       "source": "src_infrastructure_database_sqlitedatabase",
       "target": "ref_expo_sqlite",
       "relation": "imports_from",
@@ -9619,7 +9882,19 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L30",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_productonboardingservice_productonboardingservice_constructor",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "parameter_type",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -9631,7 +9906,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L888",
+      "source_location": "L895",
       "weight": 1.0
     },
     {
@@ -9679,7 +9954,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L907",
+      "source_location": "L914",
       "weight": 1.0
     },
     {
@@ -9775,7 +10050,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L933",
+      "source_location": "L940",
       "weight": 1.0
     },
     {
@@ -9787,7 +10062,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L399",
+      "source_location": "L406",
       "weight": 1.0
     },
     {
@@ -9859,6 +10134,18 @@
       "confidence_score": 1.0,
       "context": "type",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "relation": "implements",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "type",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
       "source_location": "L27",
       "weight": 1.0
     },
@@ -10467,7 +10754,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -10489,7 +10776,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -10500,7 +10787,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -10527,7 +10814,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_font",
+      "target": "package_dependencies_expo_file_system",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10538,7 +10825,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_glass_effect",
+      "target": "package_dependencies_expo_font",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10549,7 +10836,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_haptics",
+      "target": "package_dependencies_expo_glass_effect",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10560,7 +10847,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_image",
+      "target": "package_dependencies_expo_haptics",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10571,7 +10858,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_image_picker",
+      "target": "package_dependencies_expo_image",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10582,7 +10869,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_linking",
+      "target": "package_dependencies_expo_image_picker",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10593,7 +10880,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_router",
+      "target": "package_dependencies_expo_linking",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10604,7 +10891,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_splash_screen",
+      "target": "package_dependencies_expo_router",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10615,7 +10902,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_sqlite",
+      "target": "package_dependencies_expo_splash_screen",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10626,7 +10913,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_status_bar",
+      "target": "package_dependencies_expo_sqlite",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10637,7 +10924,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_symbols",
+      "target": "package_dependencies_expo_status_bar",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10648,7 +10935,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_system_ui",
+      "target": "package_dependencies_expo_symbols",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10659,7 +10946,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_expo_web_browser",
+      "target": "package_dependencies_expo_system_ui",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10670,7 +10957,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react",
+      "target": "package_dependencies_expo_web_browser",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10681,7 +10968,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_dom",
+      "target": "package_dependencies_react",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10692,7 +10979,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native",
+      "target": "package_dependencies_react_dom",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10703,7 +10990,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_gesture_handler",
+      "target": "package_dependencies_react_native",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10714,7 +11001,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_reanimated",
+      "target": "package_dependencies_react_native_gesture_handler",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10725,7 +11012,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_safe_area_context",
+      "target": "package_dependencies_react_native_reanimated",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10736,7 +11023,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_screens",
+      "target": "package_dependencies_react_native_safe_area_context",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10747,7 +11034,7 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_web",
+      "target": "package_dependencies_react_native_screens",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10758,13 +11045,24 @@
     },
     {
       "source": "package_dependencies",
-      "target": "package_dependencies_react_native_worklets",
+      "target": "package_dependencies_react_native_web",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
       "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "package_dependencies",
+      "target": "package_dependencies_react_native_worklets",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "package.json",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -10819,7 +11117,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -10830,7 +11128,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -10841,7 +11139,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -10852,7 +11150,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -10863,7 +11161,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
@@ -10874,7 +11172,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L42",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -10885,7 +11183,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -10896,7 +11194,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L44",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -10907,7 +11205,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -10918,7 +11216,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -11787,7 +12085,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L644",
+      "source_location": "L709",
       "weight": 1.0
     },
     {
@@ -11924,13 +12222,24 @@
     },
     {
       "source": "src_application_productonboardingservice",
+      "target": "src_application_productonboardingservice_addproductcommand",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_productonboardingservice",
       "target": "src_application_productonboardingservice_addproductresult",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L18",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -11941,18 +12250,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L29",
-      "weight": 1.0
-    },
-    {
-      "source": "src_application_productonboardingservice",
-      "target": "src_application_productonboardingservice_addproductcommand",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L6",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -12738,29 +13036,40 @@
     },
     {
       "source": "src_infrastructure_container",
+      "target": "src_infrastructure_container_productonboardingservice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_container",
+      "target": "src_infrastructure_container_tindahanstoreservice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_container",
       "target": "src_infrastructure_container_seasonalforecastengine",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/container.ts",
-      "source_location": "L13",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
       "source": "src_infrastructure_container",
-      "target": "src_infrastructure_container_productrepository",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "src_infrastructure_container",
-      "target": "src_infrastructure_container_productonboardingservice",
+      "target": "src_infrastructure_container_openfoodfactsapiclient",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12771,7 +13080,7 @@
     },
     {
       "source": "src_infrastructure_container",
-      "target": "src_infrastructure_container_tindahanstoreservice",
+      "target": "src_infrastructure_container_productrepository",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12811,6 +13120,39 @@
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
       "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -13008,7 +13350,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L30",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_productonboardingservice_productonboardingservice",
+      "target": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -13019,7 +13372,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L36",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -13145,7 +13498,7 @@
     },
     {
       "source": "src_application_tindahanstoreservice_tindahanstoreservice",
-      "target": "src_application_tindahanstoreservice_tindahanstoreservice_deleteproductfromdatabase",
+      "target": "src_application_tindahanstoreservice_tindahanstoreservice_lookuponlinecatalog",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -13156,13 +13509,24 @@
     },
     {
       "source": "src_application_tindahanstoreservice_tindahanstoreservice",
+      "target": "src_application_tindahanstoreservice_tindahanstoreservice_deleteproductfromdatabase",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L387",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_tindahanstoreservice_tindahanstoreservice",
       "target": "src_application_tindahanstoreservice_tindahanstoreservice_updateproductimage",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L391",
+      "source_location": "L398",
       "weight": 1.0
     },
     {
@@ -13173,7 +13537,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L399",
+      "source_location": "L406",
       "weight": 1.0
     },
     {
@@ -13184,7 +13548,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L406",
+      "source_location": "L413",
       "weight": 1.0
     },
     {
@@ -13195,7 +13559,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L428",
+      "source_location": "L435",
       "weight": 1.0
     },
     {
@@ -13206,7 +13570,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L451",
+      "source_location": "L458",
       "weight": 1.0
     },
     {
@@ -13217,7 +13581,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L468",
+      "source_location": "L475",
       "weight": 1.0
     },
     {
@@ -13228,7 +13592,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L476",
+      "source_location": "L483",
       "weight": 1.0
     },
     {
@@ -13239,7 +13603,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L481",
+      "source_location": "L488",
       "weight": 1.0
     },
     {
@@ -13250,7 +13614,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L491",
+      "source_location": "L498",
       "weight": 1.0
     },
     {
@@ -13261,7 +13625,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L500",
+      "source_location": "L507",
       "weight": 1.0
     },
     {
@@ -13272,7 +13636,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L508",
+      "source_location": "L515",
       "weight": 1.0
     },
     {
@@ -13283,7 +13647,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L636",
+      "source_location": "L643",
       "weight": 1.0
     },
     {
@@ -13294,7 +13658,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L656",
+      "source_location": "L663",
       "weight": 1.0
     },
     {
@@ -13305,7 +13669,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L677",
+      "source_location": "L684",
       "weight": 1.0
     },
     {
@@ -13316,7 +13680,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L756",
+      "source_location": "L763",
       "weight": 1.0
     },
     {
@@ -13327,7 +13691,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L808",
+      "source_location": "L815",
       "weight": 1.0
     },
     {
@@ -13338,7 +13702,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L812",
+      "source_location": "L819",
       "weight": 1.0
     },
     {
@@ -13349,7 +13713,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L843",
+      "source_location": "L850",
       "weight": 1.0
     },
     {
@@ -13360,7 +13724,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L852",
+      "source_location": "L859",
       "weight": 1.0
     },
     {
@@ -13371,7 +13735,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L861",
+      "source_location": "L868",
       "weight": 1.0
     },
     {
@@ -13382,7 +13746,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L888",
+      "source_location": "L895",
       "weight": 1.0
     },
     {
@@ -13393,7 +13757,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L907",
+      "source_location": "L914",
       "weight": 1.0
     },
     {
@@ -13404,7 +13768,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L933",
+      "source_location": "L940",
       "weight": 1.0
     },
     {
@@ -13415,7 +13779,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L937",
+      "source_location": "L944",
       "weight": 1.0
     },
     {
@@ -13426,7 +13790,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L941",
+      "source_location": "L948",
       "weight": 1.0
     },
     {
@@ -13437,7 +13801,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L947",
+      "source_location": "L954",
       "weight": 1.0
     },
     {
@@ -13969,27 +14333,70 @@
       "weight": 1.0
     },
     {
-      "source": "src_application_productonboardingservice_productonboardingservice_registernewproduct",
-      "target": "src_domain_repositories_iproductrepository_iproductrepository_getnexttingisequence",
-      "relation": "calls",
+      "source": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
+      "relation": "method",
       "_origin": "ast",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "context": "call",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L52",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
-      "source": "src_application_productonboardingservice_productonboardingservice_registernewproduct",
-      "target": "src_domain_repositories_iproductrepository_iproductrepository_findbybarcode",
+      "source": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_downloadimagelocally",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_downloadimagelocally",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L60",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -14001,7 +14408,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L93",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -14013,7 +14420,31 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L97",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_productonboardingservice_productonboardingservice_registernewproduct",
+      "target": "src_domain_repositories_iproductrepository_iproductrepository_getnexttingisequence",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "context": "call",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_productonboardingservice_productonboardingservice_registernewproduct",
+      "target": "src_domain_repositories_iproductrepository_iproductrepository_findbybarcode",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "context": "call",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -14025,7 +14456,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L761",
+      "source_location": "L768",
       "weight": 1.0
     },
     {
@@ -14037,7 +14468,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L769",
+      "source_location": "L776",
       "weight": 1.0
     },
     {
@@ -14049,7 +14480,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L539",
+      "source_location": "L546",
       "weight": 1.0
     },
     {
@@ -14061,7 +14492,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L548",
+      "source_location": "L555",
       "weight": 1.0
     },
     {
@@ -14073,7 +14504,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L381",
+      "source_location": "L388",
       "weight": 1.0
     },
     {
@@ -14085,7 +14516,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L714",
+      "source_location": "L721",
       "weight": 1.0
     },
     {
@@ -14097,7 +14528,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L718",
+      "source_location": "L725",
       "weight": 1.0
     },
     {
@@ -14109,7 +14540,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L392",
+      "source_location": "L399",
       "weight": 1.0
     },
     {
@@ -14121,7 +14552,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L395",
+      "source_location": "L402",
       "weight": 1.0
     },
     {
@@ -14133,7 +14564,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L660",
+      "source_location": "L667",
       "weight": 1.0
     },
     {
@@ -14145,7 +14576,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L666",
+      "source_location": "L673",
       "weight": 1.0
     },
     {
