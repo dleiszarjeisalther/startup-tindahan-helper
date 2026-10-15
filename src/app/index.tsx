@@ -16,11 +16,12 @@ import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScannerViewfinder';
 import { getTranslations } from '@/presentation/localization/i18n';
+import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/components/WeightQuantityModal';
 
 export default function PosScanProductScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
-  const { products, addToCart, cartSummary, settings, version } = useTindahanStore();
+  const { products, addToCart, setCartItemQuantity, cartSummary, settings, version } = useTindahanStore();
   const t = getTranslations(settings?.language);
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyTingi, setOnlyTingi] = useState(false);
@@ -28,6 +29,7 @@ export default function PosScanProductScreen() {
   const [scanToast, setScanToast] = useState<string | null>(null);
   const [unknownBarcode, setUnknownBarcode] = useState<string | null>(null);
   const [lastScannedProductId, setLastScannedProductId] = useState<string | null>(null);
+  const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
 
   useEffect(() => {
     if (__DEV__) console.debug('[StoreRender]', { surface: 'Scan', version, cartCount: cartSummary.totalCount });
@@ -77,6 +79,19 @@ export default function PosScanProductScreen() {
         console.log(`[POS Screen] ⚠️ Product "${matched.name}" is OUT OF STOCK.`);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
         triggerScanToast(`⚠️ ${matched.name} is Out of Stock!`);
+        return;
+      }
+      if (matched.unitOfMeasure === 'kg') {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+        setWeightModalProduct({
+          id: matched.id,
+          name: matched.name,
+          defaultPricePhp: matched.defaultPricePhp,
+          stockCount: matched.stockCount,
+          formattedPrice: matched.formattedPrice,
+          unitOfMeasure: matched.unitOfMeasure,
+        });
+        setUnknownBarcode(null);
         return;
       }
       if (tryAddToCart(matched.id, `✓ Scanned +1 ${matched.name} (${matched.formattedPrice})`)) {
@@ -259,6 +274,18 @@ export default function PosScanProductScreen() {
                         triggerScanToast(`⚠️ ${item.name} ${t.outOfStockAlert}`);
                         return;
                       }
+                      if (item.unitOfMeasure === 'kg') {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        setWeightModalProduct({
+                          id: item.id,
+                          name: item.name,
+                          defaultPricePhp: item.defaultPricePhp,
+                          stockCount: item.stockCount,
+                          formattedPrice: item.formattedPrice,
+                          unitOfMeasure: item.unitOfMeasure,
+                        });
+                        return;
+                      }
                       tryAddToCart(item.id, `+1 ${item.name} added to New Sale`);
                     }}
                   >
@@ -275,7 +302,9 @@ export default function PosScanProductScreen() {
                       ) : null}
                       {inCartQty > 0 ? (
                         <View style={styles.inCartBadge}>
-                          <Text style={styles.inCartBadgeText}>×{inCartQty}</Text>
+                          <Text style={styles.inCartBadgeText}>
+                            {item.unitOfMeasure === 'kg' ? `${inCartQty}kg` : `×${inCartQty}`}
+                          </Text>
                         </View>
                       ) : null}
                       {item.stockCount <= 0 ? (
@@ -291,9 +320,12 @@ export default function PosScanProductScreen() {
 
                     <View style={styles.cardFooterRow}>
                       <View>
-                        <Text style={styles.cardPrice}>{item.formattedPrice}</Text>
+                        <Text style={styles.cardPrice}>
+                          {item.formattedPrice}
+                          {item.unitOfMeasure === 'kg' ? '/kg' : ''}
+                        </Text>
                         <Text style={styles.cardStockLabel}>
-                          Stock: {item.stockCount} • [{item.barcode}]
+                          Stock: {item.formattedStock} • [{item.barcode}]
                         </Text>
                       </View>
                       <View
@@ -312,6 +344,27 @@ export default function PosScanProductScreen() {
           )}
         </ScrollView>
       </View>
+
+      <WeightQuantityModal
+        visible={weightModalProduct !== null}
+        onClose={() => setWeightModalProduct(null)}
+        product={weightModalProduct}
+        currentQuantity={
+          weightModalProduct
+            ? cartSummary.items.find((i) => i.productId === weightModalProduct.id)?.quantity ?? 0
+            : 0
+        }
+        onConfirm={(productId, qty) => {
+          try {
+            setCartItemQuantity(productId, qty);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+            triggerScanToast(`✓ ${qty} kg ${weightModalProduct?.name} added to New Sale`);
+          } catch (error) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+            triggerScanToast(error instanceof Error ? error.message : 'Could not update cart.');
+          }
+        }}
+      />
     </SafeAreaView>
   );
 }

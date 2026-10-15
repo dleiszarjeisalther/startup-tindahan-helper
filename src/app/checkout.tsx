@@ -22,20 +22,67 @@ import { PaymentTenderType, SaleTransactionRecord } from '@/application/Tindahan
 import { Money } from '@/domain/value-objects/Money';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
+import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/components/WeightQuantityModal';
 
 interface CartItemStepperProps {
   productId: string;
   quantity: number;
+  unitOfMeasure?: 'pc' | 'kg';
+  formattedQuantity?: string;
   onUpdateQty: (qty: number) => void;
   onDelta: (delta: number) => void;
+  onOpenWeightModal?: () => void;
 }
 
 function CartItemStepper({
   quantity,
+  unitOfMeasure,
+  formattedQuantity,
   onUpdateQty,
   onDelta,
+  onOpenWeightModal,
 }: CartItemStepperProps) {
   const [focusedText, setFocusedText] = useState<string | null>(null);
+
+  if (unitOfMeasure === 'kg') {
+    return (
+      <View style={styles.kgStepperContainer}>
+        <Pressable
+          style={styles.kgStepperBtn}
+          hitSlop={8}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+            onDelta(-0.25);
+          }}
+        >
+          <Text style={styles.kgStepperSymbol}>−</Text>
+        </Pressable>
+
+        <Pressable
+          style={styles.kgDisplayBtn}
+          onPress={onOpenWeightModal}
+          hitSlop={6}
+        >
+          <Ionicons name="scale-outline" size={13} color="#0D7A52" style={{ marginRight: 3 }} />
+          <Text style={styles.kgDisplayText}>
+            {formattedQuantity || `${quantity} kg`}
+          </Text>
+          <Ionicons name="pencil" size={11} color="#6B7280" style={{ marginLeft: 3 }} />
+        </Pressable>
+
+        <Pressable
+          style={styles.kgStepperBtn}
+          hitSlop={8}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+            onDelta(0.25);
+          }}
+        >
+          <Text style={styles.kgStepperSymbol}>+</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   const displayValue = focusedText !== null ? focusedText : String(quantity);
 
@@ -136,6 +183,7 @@ export default function CheckoutNewSaleScreen() {
   const [holdCustomerName, setHoldCustomerName] = useState('');
   const [heldCartsModalVisible, setHeldCartsModalVisible] = useState(false);
   const [completedTx, setCompletedTx] = useState<SaleTransactionRecord | null>(null);
+  const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
   const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
@@ -430,6 +478,20 @@ export default function CheckoutNewSaleScreen() {
                     <CartItemStepper
                       productId={item.productId}
                       quantity={item.quantity}
+                      unitOfMeasure={item.unitOfMeasure ?? prod?.unitOfMeasure}
+                      formattedQuantity={item.formattedQuantity}
+                      onOpenWeightModal={() => {
+                        if (prod) {
+                          setWeightModalProduct({
+                            id: prod.id,
+                            name: prod.name,
+                            defaultPricePhp: prod.defaultPricePhp,
+                            stockCount: prod.stockCount,
+                            formattedPrice: prod.formattedPrice,
+                            unitOfMeasure: prod.unitOfMeasure,
+                          });
+                        }
+                      }}
                       onUpdateQty={(qty) =>
                         runCartAction(() => setCartItemQuantity(item.productId, qty))
                       }
@@ -990,6 +1052,20 @@ export default function CheckoutNewSaleScreen() {
           </View>
         </View>
       </Modal>
+
+      <WeightQuantityModal
+        visible={weightModalProduct !== null}
+        onClose={() => setWeightModalProduct(null)}
+        product={weightModalProduct}
+        currentQuantity={
+          weightModalProduct
+            ? cartSummary.items.find((i) => i.productId === weightModalProduct.id)?.quantity ?? 0
+            : 0
+        }
+        onConfirm={(productId, qty) => {
+          runCartAction(() => setCartItemQuantity(productId, qty));
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -1243,6 +1319,44 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#0D7A52',
     fontWeight: '700',
+  },
+  kgStepperContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    borderRadius: 16,
+    alignSelf: 'flex-start',
+    marginTop: 2,
+    paddingHorizontal: 4,
+    height: 32,
+    gap: 6,
+  },
+  kgStepperBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#DCFCE7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  kgStepperSymbol: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#166534',
+  },
+  kgDisplayBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  kgDisplayText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0D7A52',
+    fontVariant: ['tabular-nums'],
   },
   stepperContainer: {
     flexDirection: 'row',

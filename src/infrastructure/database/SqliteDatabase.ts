@@ -58,7 +58,8 @@ export class SqliteDatabase {
         out_of_stock_days INTEGER NOT NULL DEFAULT 0,
         visual_json TEXT,
         image_uri TEXT,
-        default_price_php REAL DEFAULT 0
+        default_price_php REAL DEFAULT 0,
+        unit_of_measure TEXT DEFAULT 'pc'
       );
 
       CREATE TABLE IF NOT EXISTS cart_items (
@@ -165,6 +166,12 @@ export class SqliteDatabase {
 
     try {
       this.db.execSync("ALTER TABLE sales_transactions ADD COLUMN transaction_type TEXT NOT NULL DEFAULT 'SALE';");
+    } catch {
+      // Column already exists
+    }
+
+    try {
+      this.db.execSync("ALTER TABLE products ADD COLUMN unit_of_measure TEXT DEFAULT 'pc';");
     } catch {
       // Column already exists
     }

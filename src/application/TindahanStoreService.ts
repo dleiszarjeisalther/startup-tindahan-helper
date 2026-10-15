@@ -20,6 +20,8 @@ export interface CartItemDTO {
   lineTotalPhp: number;
   formattedLineTotal: string;
   bundleApplied: boolean;
+  unitOfMeasure?: 'pc' | 'kg';
+  formattedQuantity?: string;
 }
 
 export interface CartSummaryDTO {
@@ -50,6 +52,8 @@ export interface SaleLineItemRecord {
   unitPricePaidPhp: number;
   lineTotalPhp: number;
   unitCostPhp?: number;
+  unitOfMeasure?: 'pc' | 'kg';
+  formattedQuantity?: string;
 }
 
 export type CashAdjustmentType = 'PANUKLI' | 'GASTOS';
@@ -706,6 +710,7 @@ export class TindahanStoreService {
       unitCostPhp?: number;
       baseStockCount?: number;
       lowStockThreshold?: number;
+      unitOfMeasure?: 'pc' | 'kg';
     }
   ): Promise<void> {
     const all = await this.productRepo.getAll();
@@ -807,7 +812,13 @@ export class TindahanStoreService {
       if (!p) {
         continue;
       }
-      const lineTotalPhp = p.defaultPricePhp * qty;
+      const isKg = p.unitOfMeasure === 'kg';
+      const totalCentavos = Math.round(p.defaultPricePhp * 100 * qty);
+      const lineTotalPhp = totalCentavos / 100;
+      const formattedQuantity = isKg
+        ? `${Number(qty.toFixed(3))} kg`
+        : `${Math.floor(qty)}`;
+
       items.push({
         productId: p.id,
         name: p.name,
@@ -815,8 +826,10 @@ export class TindahanStoreService {
         formattedUnitPrice: Money.fromPhp(p.defaultPricePhp).format(),
         quantity: qty,
         lineTotalPhp,
-        formattedLineTotal: Money.fromPhp(lineTotalPhp).format(),
+        formattedLineTotal: Money.fromCentavos(totalCentavos).format(),
         bundleApplied: false,
+        unitOfMeasure: p.unitOfMeasure ?? 'pc',
+        formattedQuantity,
       });
     }
 
@@ -829,7 +842,10 @@ export class TindahanStoreService {
 
   private calculateCartSummary(products: ProductDTO[] = this.readProducts()): CartSummaryDTO {
     const items = this.calculateCartItems(products);
-    const totalCount = items.reduce((sum, i) => sum + i.quantity, 0);
+    const totalCount = items.reduce(
+      (sum, i) => sum + (i.unitOfMeasure === 'kg' ? (i.quantity > 0 ? 1 : 0) : i.quantity),
+      0
+    );
     const subtotalPhp = items.reduce((sum, i) => sum + i.lineTotalPhp, 0);
     const netTotalPhp = Math.max(0, subtotalPhp - this.discountPhp - this.exchangeCreditPhp);
 
@@ -854,12 +870,16 @@ export class TindahanStoreService {
     if (this.isCompletingSale) {
       throw new Error('Sale is currently being completed. Please wait.');
     }
+    const prod = this.snapshot?.products?.find((p) => p.id === productId);
+    const isKg = prod?.unitOfMeasure === 'kg';
     const nextCart = new Map(this.cartMap);
     const current = this.cartMap.get(productId) ?? 0;
-    const next = Math.max(0, current + deltaQty);
+    const rawNext = current + deltaQty;
+    const next = isKg
+      ? Math.max(0, Math.round(rawNext * 1000) / 1000)
+      : Math.max(0, Math.floor(rawNext));
     let nextLastRemoved = this.lastRemovedItem;
     if (next === 0) {
-      const prod = this.snapshot.products.find((p) => p.id === productId);
       if (prod && current > 0) {
         nextLastRemoved = { productId, name: prod.name, qty: current };
       }
@@ -882,13 +902,16 @@ export class TindahanStoreService {
     if (this.isCompletingSale) {
       throw new Error('Sale is currently being completed. Please wait.');
     }
-    const targetQty = Math.max(0, Math.floor(Number.isFinite(quantity) ? quantity : 0));
+    const prod = this.snapshot?.products?.find((p) => p.id === productId);
+    const isKg = prod?.unitOfMeasure === 'kg';
+    const targetQty = isKg
+      ? Math.max(0, Math.round((Number.isFinite(quantity) ? quantity : 0) * 1000) / 1000)
+      : Math.max(0, Math.floor(Number.isFinite(quantity) ? quantity : 0));
     const nextCart = new Map(this.cartMap);
     const current = this.cartMap.get(productId) ?? 0;
     let nextLastRemoved = this.lastRemovedItem;
 
     if (targetQty === 0) {
-      const prod = this.snapshot.products.find((p) => p.id === productId);
       if (prod && current > 0) {
         nextLastRemoved = { productId, name: prod.name, qty: current };
       }
@@ -1131,6 +1154,8 @@ export class TindahanStoreService {
         unitPricePaidPhp: unitPrice,
         lineTotalPhp: i.lineTotalPhp,
         unitCostPhp: unitCost,
+        unitOfMeasure: i.unitOfMeasure,
+        formattedQuantity: i.formattedQuantity,
       };
     });
     const txCostPhp = Number(txCostAccum.toFixed(2));
@@ -1185,7 +1210,7 @@ export class TindahanStoreService {
               throw new Error(`Not enough stock for ${item.name}.`);
             }
             db.runSync(
-              'UPDATE products SET base_stock_count = base_stock_count - ? WHERE id = ?',
+              'UPDATE products SET base_stock_count = ROUND(base_stock_count - ?, 3) WHERE id = ?',
               [item.quantity, item.productId]
             );
             if (!options.isOneTimeBulkOrder) {

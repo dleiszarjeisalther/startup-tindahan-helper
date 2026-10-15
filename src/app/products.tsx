@@ -20,10 +20,11 @@ import { BarcodeInputField } from '@/presentation/components/BarcodeInputField';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { FloatingToast } from '@/presentation/components/FloatingToast';
+import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/components/WeightQuantityModal';
 
 export default function ProductListScreen() {
   const router = useRouter();
-  const { products, categories, addToCart, addProductToDatabase, settings } = useTindahanStore();
+  const { products, categories, addToCart, setCartItemQuantity, addProductToDatabase, cartSummary, settings } = useTindahanStore();
   const t = getTranslations(settings?.language);
 
   const filterCategories = ['All', ...categories];
@@ -32,6 +33,7 @@ export default function ProductListScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
   const [addedBanner, setAddedBanner] = useState<string | null>(null);
+  const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
 
   // Pagination state (12 items per page)
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,6 +49,7 @@ export default function ProductListScreen() {
   );
   const [newPricePhp, setNewPricePhp] = useState('');
   const [newStock, setNewStock] = useState('');
+  const [newUnitOfMeasure, setNewUnitOfMeasure] = useState<'pc' | 'kg'>('pc');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleBarcodeChange = useCallback(
@@ -108,7 +111,9 @@ export default function ProductListScreen() {
     setErrorMsg(null);
     try {
       const parsedPrice = parseFloat(newPricePhp.replace(/[^0-9.]/g, ''));
-      const parsedStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+      const parsedStock = newUnitOfMeasure === 'kg'
+        ? parseFloat(newStock.replace(/[^0-9.]/g, '') || '0')
+        : parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
 
       const res = await addProductToDatabase({
         name: newName,
@@ -120,6 +125,7 @@ export default function ProductListScreen() {
         unitCostPhp: Math.max(0.5, (Number.isFinite(parsedPrice) ? parsedPrice : 1) * 0.75),
         unitPricePhp: Number.isFinite(parsedPrice) ? parsedPrice : 0,
         imageUri: newImageUri ?? undefined,
+        unitOfMeasure: newUnitOfMeasure,
       });
 
       if (res.status === 'DUPLICATE_BARCODE_FOUND') {
@@ -134,6 +140,7 @@ export default function ProductListScreen() {
       setBarcodeMode('MANUAL');
       setNewPricePhp('');
       setNewStock('');
+      setNewUnitOfMeasure('pc');
       setNewImageUri(null);
       setShowAddForm(false);
     } catch (err) {
@@ -331,9 +338,50 @@ export default function ProductListScreen() {
               })}
             </ScrollView>
 
+            {/* Unit of Measure Selector (Piraso vs. Kilo) */}
+            <Text style={styles.fieldLabel}>Uri ng Paninda (Unit) *</Text>
+            <View style={styles.unitSelectorRow}>
+              <Pressable
+                style={[styles.unitToggleBtn, newUnitOfMeasure === 'pc' && styles.unitToggleBtnActive]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setNewUnitOfMeasure('pc');
+                }}
+              >
+                <Ionicons
+                  name="cube-outline"
+                  size={15}
+                  color={newUnitOfMeasure === 'pc' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={[styles.unitToggleText, newUnitOfMeasure === 'pc' && styles.unitToggleTextActive]}>
+                  Piraso (pc)
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[styles.unitToggleBtn, newUnitOfMeasure === 'kg' && styles.unitToggleBtnActive]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setNewUnitOfMeasure('kg');
+                }}
+              >
+                <Ionicons
+                  name="scale"
+                  size={15}
+                  color={newUnitOfMeasure === 'kg' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={[styles.unitToggleText, newUnitOfMeasure === 'kg' && styles.unitToggleTextActive]}>
+                  Kilo (kg)
+                </Text>
+              </Pressable>
+            </View>
+
             <View style={styles.twoColRow}>
               <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>Selling Price (₱) *</Text>
+                <Text style={styles.fieldLabel}>
+                  {newUnitOfMeasure === 'kg' ? 'Presyo kada Kilo (₱/kg) *' : 'Selling Price (₱) *'}
+                </Text>
                 <TextInput
                   style={styles.textInput}
                   value={newPricePhp}
@@ -347,14 +395,16 @@ export default function ProductListScreen() {
                 />
               </View>
               <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>Initial Stock (pcs) *</Text>
+                <Text style={styles.fieldLabel}>
+                  {newUnitOfMeasure === 'kg' ? 'Stock (kg) *' : 'Initial Stock (pcs) *'}
+                </Text>
                 <TextInput
                   style={styles.textInput}
                   value={newStock}
                   onChangeText={setNewStock}
-                  placeholder="0"
+                  placeholder={newUnitOfMeasure === 'kg' ? '50.0' : '0'}
                   placeholderTextColor="#9CA3AF"
-                  keyboardType="number-pad"
+                  keyboardType={newUnitOfMeasure === 'kg' ? 'decimal-pad' : 'number-pad'}
                 />
               </View>
             </View>
@@ -412,6 +462,18 @@ export default function ProductListScreen() {
                 setAddedBanner(`⚠️ ${item.name} is Out of Stock — restock in Inventory`);
                 return;
               }
+              if (item.unitOfMeasure === 'kg') {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                setWeightModalProduct({
+                  id: item.id,
+                  name: item.name,
+                  defaultPricePhp: item.defaultPricePhp,
+                  stockCount: item.stockCount,
+                  formattedPrice: item.formattedPrice,
+                  unitOfMeasure: item.unitOfMeasure,
+                });
+                return;
+              }
               try {
                 addToCart(item.id, 1);
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
@@ -436,7 +498,10 @@ export default function ProductListScreen() {
             <View style={styles.infoCol}>
               <Text style={styles.productName}>{item.name}</Text>
               <View style={styles.priceLine}>
-                <Text style={styles.productPrice}>{item.formattedPrice}</Text>
+                <Text style={styles.productPrice}>
+                  {item.formattedPrice}
+                  {item.unitOfMeasure === 'kg' ? '/kg' : ''}
+                </Text>
                 <Text style={styles.barcodeNote}> • [{item.barcode}]</Text>
               </View>
 
@@ -462,9 +527,9 @@ export default function ProductListScreen() {
                     ]}
                   >
                     {item.stockStatus === 'IN_STOCK'
-                      ? `✓ In stock (${item.stockCount})`
+                      ? `✓ In stock (${item.formattedStock})`
                       : item.stockStatus === 'LOW_STOCK'
-                      ? `⚠ Low Stock (${item.stockCount})`
+                      ? `⚠ Low Stock (${item.formattedStock})`
                       : '⊗ Out of Stock (0)'}
                   </Text>
                 </View>
@@ -523,6 +588,28 @@ export default function ProductListScreen() {
           </View>
         ) : null}
       </ScrollView>
+
+      <WeightQuantityModal
+        visible={weightModalProduct !== null}
+        onClose={() => setWeightModalProduct(null)}
+        product={weightModalProduct}
+        currentQuantity={
+          weightModalProduct
+            ? cartSummary.items.find((i) => i.productId === weightModalProduct.id)?.quantity ?? 0
+            : 0
+        }
+        onConfirm={(productId, qty) => {
+          try {
+            setCartItemQuantity(productId, qty);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+            setAddedBanner(`✓ Added ${qty} kg ${weightModalProduct?.name} to New Sale`);
+          } catch (error) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+            setAddedBanner(error instanceof Error ? error.message : 'Could not update cart.');
+          }
+          setTimeout(() => setAddedBanner(null), 2000);
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -531,6 +618,37 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  unitSelectorRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  unitToggleBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+  },
+  unitToggleBtnActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#0D7A52',
+  },
+  unitToggleText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  unitToggleTextActive: {
+    color: '#0D7A52',
+    fontWeight: '800',
   },
   headerRow: {
     flexDirection: 'row',

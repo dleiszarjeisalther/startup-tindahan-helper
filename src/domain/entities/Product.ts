@@ -9,6 +9,8 @@ export interface SellingUnitTier {
   unitBarcode?: Barcode;
 }
 
+export type UnitOfMeasure = 'pc' | 'kg';
+
 export type StockStatus = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK';
 
 export interface ProductVisual {
@@ -42,6 +44,9 @@ export interface ProductDTO {
   seasonalPeakMultiplier?: number;
   imageUri?: string;
   visual: ProductVisual;
+  unitOfMeasure: UnitOfMeasure;
+  formattedUnit: string;
+  formattedStock: string;
 }
 
 export class Product {
@@ -57,7 +62,8 @@ export class Product {
     private _quarantineStockCount = 0,
     private _outOfStockDays = 0,
     private _visual?: ProductVisual,
-    private _imageUri?: string
+    private _imageUri?: string,
+    private _unitOfMeasure: UnitOfMeasure = 'pc'
   ) {
     if (!_name.trim()) {
       throw new Error('Product name is required.');
@@ -95,21 +101,33 @@ export class Product {
     return this._imageUri;
   }
 
-  public calculateLineTotal(quantityInPieces: number): Money {
+  public get unitOfMeasure(): UnitOfMeasure {
+    return this._unitOfMeasure;
+  }
+
+  public calculateLineTotal(quantity: number): Money {
+    if (this._unitOfMeasure === 'kg') {
+      const pieceTier =
+        this._sellingTiers.find((t) => t.unitName === 'piece') ?? this._sellingTiers[0];
+      const pricePerKg = Number(pieceTier?.unitPricePhp) || 0;
+      const totalCentavos = Math.round(pricePerKg * 100 * quantity);
+      return Money.fromCentavos(totalCentavos);
+    }
+
     const bundleTier = this._sellingTiers.find(
-      (t) => t.unitName === 'bundle' && quantityInPieces >= t.baseUnitMultiplier
+      (t) => t.unitName === 'bundle' && quantity >= t.baseUnitMultiplier
     );
     const pieceTier =
       this._sellingTiers.find((t) => t.unitName === 'piece') ?? this._sellingTiers[0];
 
-    if (bundleTier && quantityInPieces >= bundleTier.baseUnitMultiplier) {
-      const bundles = Math.floor(quantityInPieces / bundleTier.baseUnitMultiplier);
-      const remainder = quantityInPieces % bundleTier.baseUnitMultiplier;
+    if (bundleTier && quantity >= bundleTier.baseUnitMultiplier) {
+      const bundles = Math.floor(quantity / bundleTier.baseUnitMultiplier);
+      const remainder = quantity % bundleTier.baseUnitMultiplier;
       const bundleMoney = Money.fromPhp(bundleTier.unitPricePhp).multiply(bundles);
       const remainderMoney = Money.fromPhp(pieceTier.unitPricePhp).multiply(remainder);
       return bundleMoney.add(remainderMoney);
     }
-    return Money.fromPhp(pieceTier.unitPricePhp).multiply(quantityInPieces);
+    return Money.fromPhp(pieceTier.unitPricePhp).multiply(quantity);
   }
 
   public getEffectiveLowStockThreshold(activeSeasonalIndex = 1.0): number {
@@ -138,7 +156,8 @@ export class Product {
       this._quarantineStockCount,
       nextOosDays,
       this._visual,
-      this._imageUri
+      this._imageUri,
+      this._unitOfMeasure
     );
   }
 
@@ -149,6 +168,7 @@ export class Product {
     unitCostPhp?: number;
     baseStockCount?: number;
     lowStockThreshold?: number;
+    unitOfMeasure?: UnitOfMeasure;
   }): Product {
     const nextName = updates.name !== undefined && updates.name.trim() ? updates.name.trim() : this._name;
     const nextCategory = updates.category !== undefined && updates.category.trim() ? updates.category.trim() : this._category;
@@ -156,6 +176,7 @@ export class Product {
     const nextThreshold = updates.lowStockThreshold !== undefined ? Math.max(1, updates.lowStockThreshold) : this._ordinaryLowStockThreshold;
     const nextCost = updates.unitCostPhp !== undefined && updates.unitCostPhp >= 0 ? updates.unitCostPhp : this._unitCostPhp;
     const nextOosDays = nextStock === 0 ? Math.max(1, this._outOfStockDays) : (this._baseStockCount === 0 && nextStock > 0 ? 0 : this._outOfStockDays);
+    const nextUnitOfMeasure = updates.unitOfMeasure ?? this._unitOfMeasure;
     let nextTiers = this._sellingTiers;
     if (updates.pricePhp !== undefined && updates.pricePhp >= 0) {
       const pieceIdx = this._sellingTiers.findIndex((t) => t.unitName === 'piece');
@@ -179,7 +200,8 @@ export class Product {
       this._quarantineStockCount,
       nextOosDays,
       this._visual,
-      this._imageUri
+      this._imageUri,
+      nextUnitOfMeasure
     );
   }
 
@@ -196,7 +218,8 @@ export class Product {
       this._quarantineStockCount,
       this._outOfStockDays,
       this._visual,
-      imageUri
+      imageUri,
+      this._unitOfMeasure
     );
   }
 
@@ -216,7 +239,8 @@ export class Product {
       this._quarantineStockCount + Math.max(0, damagedUnits),
       this._outOfStockDays,
       this._visual,
-      this._imageUri
+      this._imageUri,
+      this._unitOfMeasure
     );
   }
 
@@ -291,6 +315,12 @@ export class Product {
       seasonalPeakMultiplier: activeSeasonalIndex > 1.25 ? activeSeasonalIndex : undefined,
       imageUri: this._imageUri,
       visual: this._visual ?? this.getDefaultVisual(),
+      unitOfMeasure: this._unitOfMeasure,
+      formattedUnit: this._unitOfMeasure === 'kg' ? 'kg' : 'pc',
+      formattedStock:
+        this._unitOfMeasure === 'kg'
+          ? `${Number(this._baseStockCount.toFixed(3))} kg`
+          : `${Math.floor(this._baseStockCount)} pcs`,
     };
   }
 }

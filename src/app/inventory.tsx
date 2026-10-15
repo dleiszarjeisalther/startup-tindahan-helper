@@ -157,6 +157,7 @@ export default function InventoryManagementScreen() {
   const [editStock, setEditStock] = useState('');
   const [editLowThreshold, setEditLowThreshold] = useState('');
   const [editCategory, setEditCategory] = useState(categories[0] ?? 'Snacks');
+  const [editUnitOfMeasure, setEditUnitOfMeasure] = useState<'pc' | 'kg'>('pc');
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
@@ -167,7 +168,9 @@ export default function InventoryManagementScreen() {
   const [editTuboMode, setEditTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
   const [editTuboValue, setEditTuboValue] = useState('');
 
-  const editParsedStock = parseInt(editStock.replace(/[^0-9]/g, '') || '0', 10);
+  const editParsedStock = editUnitOfMeasure === 'kg'
+    ? parseFloat(editStock.replace(/[^0-9.]/g, '') || '0')
+    : parseInt(editStock.replace(/[^0-9]/g, '') || '0', 10);
   const editBundleCostParsed = parseFloat(editBundleCostPhp.replace(/[^0-9.]/g, '') || '0');
   const editPieceCostParsed = parseFloat(editCostPhp.replace(/[^0-9.]/g, '') || '0');
 
@@ -265,6 +268,7 @@ export default function InventoryManagementScreen() {
     setEditStock(item.stockCount.toString());
     setEditLowThreshold(item.ordinaryLowStockThreshold.toString());
     setEditCategory(item.category || (categories[0] ?? 'Snacks'));
+    setEditUnitOfMeasure(item.unitOfMeasure ?? 'pc');
     setEditError(null);
 
     // Initialize Receipt-First fields for Edit
@@ -293,7 +297,9 @@ export default function InventoryManagementScreen() {
       setEditError('Maglagay ng wastong presyo.');
       return;
     }
-    const stock = parseInt(editStock, 10);
+    const stock = editUnitOfMeasure === 'kg'
+      ? parseFloat(editStock.replace(/[^0-9.]/g, '') || '0')
+      : parseInt(editStock.replace(/[^0-9]/g, '') || '0', 10);
     if (isNaN(stock) || stock < 0) {
       setEditError('Maglagay ng wastong bilang ng stock.');
       return;
@@ -323,7 +329,7 @@ export default function InventoryManagementScreen() {
 
     Alert.alert(
       'Kumpirmahin ang Pagbabago',
-      `Paninda: ${editName.trim()}\nPresyo: ₱${price.toFixed(2)}\nPuhunan: ₱${finalUnitCost.toFixed(2)} (Tubo: ₱${markupDiff.toFixed(2)})\nStock: ${stock} piraso\nLow Stock Alert: ${threshold} piraso\nKategorya: ${editCategory}\n\nNais mo bang i-save ang mga pagbabagong ito?`,
+      `Paninda: ${editName.trim()}\nPresyo: ₱${price.toFixed(2)}${editUnitOfMeasure === 'kg' ? '/kg' : ''}\nPuhunan: ₱${finalUnitCost.toFixed(2)} (Tubo: ₱${markupDiff.toFixed(2)})\nStock: ${stock} ${editUnitOfMeasure === 'kg' ? 'kg' : 'piraso'}\nLow Stock Alert: ${threshold} ${editUnitOfMeasure === 'kg' ? 'kg' : 'piraso'}\nKategorya: ${editCategory}\n\nNais mo bang i-save ang mga pagbabagong ito?`,
       [
         { text: 'Bumalik', style: 'cancel' },
         {
@@ -339,6 +345,7 @@ export default function InventoryManagementScreen() {
                 unitCostPhp: finalUnitCost,
                 baseStockCount: stock,
                 lowStockThreshold: threshold,
+                unitOfMeasure: editUnitOfMeasure,
               });
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
               showToast(`✓ Na-save ang pagbabago sa "${editName.trim()}"`, 'success');
@@ -366,6 +373,7 @@ export default function InventoryManagementScreen() {
   const [newCostPhp, setNewCostPhp] = useState('');
   const [newStock, setNewStock] = useState('');
   const [newLowThreshold, setNewLowThreshold] = useState('5');
+  const [newUnitOfMeasure, setNewUnitOfMeasure] = useState<'pc' | 'kg'>('pc');
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
@@ -385,7 +393,9 @@ export default function InventoryManagementScreen() {
   const [tuboMode, setTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
   const [tuboValue, setTuboValue] = useState('');
 
-  const parsedStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+  const parsedStock = newUnitOfMeasure === 'kg'
+    ? parseFloat(newStock.replace(/[^0-9.]/g, '') || '0')
+    : parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
   const bundleCostParsed = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
   const pieceCostParsed = parseFloat(newCostPhp.replace(/[^0-9.]/g, '') || '0');
 
@@ -718,7 +728,9 @@ export default function InventoryManagementScreen() {
         return;
       }
 
-      const parsedStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+      const parsedStock = newUnitOfMeasure === 'kg'
+        ? parseFloat(newStock.replace(/[^0-9.]/g, '') || '0')
+        : parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
       const parsedLow = parseInt(newLowThreshold.replace(/[^0-9]/g, '') || '5', 10);
 
       const result = await addProductToDatabase({
@@ -734,6 +746,7 @@ export default function InventoryManagementScreen() {
             : Math.max(0.5, (Number.isFinite(parsedPrice) ? parsedPrice : 1) * 0.75),
         unitPricePhp: Number.isFinite(parsedPrice) ? parsedPrice : 0,
         imageUri: newImageUri ?? undefined,
+        unitOfMeasure: newUnitOfMeasure,
       });
 
       if (result.status === 'DUPLICATE_BARCODE_FOUND') {
@@ -760,6 +773,7 @@ export default function InventoryManagementScreen() {
       setNewCostPhp('');
       setNewStock('');
       setNewLowThreshold('5');
+      setNewUnitOfMeasure('pc');
       setCostInputMode('PIECE');
       setBundleCostPhp('');
       setTuboValue('');
@@ -1161,10 +1175,51 @@ export default function InventoryManagementScreen() {
               </Pressable>
             </ScrollView>
 
+            {/* Unit of Measure Selector (Piraso vs. Kilo) */}
+            <Text style={styles.fieldLabel}>Uri ng Paninda (Unit) *</Text>
+            <View style={styles.unitSelectorRow}>
+              <Pressable
+                style={[styles.unitToggleBtn, newUnitOfMeasure === 'pc' && styles.unitToggleBtnActive]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setNewUnitOfMeasure('pc');
+                }}
+              >
+                <Ionicons
+                  name="cube-outline"
+                  size={16}
+                  color={newUnitOfMeasure === 'pc' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 6 }}
+                />
+                <Text style={[styles.unitToggleText, newUnitOfMeasure === 'pc' && styles.unitToggleTextActive]}>
+                  📦 Bawat Piraso (pc)
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[styles.unitToggleBtn, newUnitOfMeasure === 'kg' && styles.unitToggleBtnActive]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setNewUnitOfMeasure('kg');
+                }}
+              >
+                <Ionicons
+                  name="scale"
+                  size={16}
+                  color={newUnitOfMeasure === 'kg' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 6 }}
+                />
+                <Text style={[styles.unitToggleText, newUnitOfMeasure === 'kg' && styles.unitToggleTextActive]}>
+                  ⚖️ Bawat Kilo (kg / Bigas)
+                </Text>
+              </Pressable>
+            </View>
+
             {/* ROW 1: Stock & Alert Level First */}
             <View style={styles.twoColRow}>
               <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>{t.initialStockLabel}</Text>
+                <Text style={styles.fieldLabel}>
+                  {newUnitOfMeasure === 'kg' ? 'Kasalukuyang Stock (kg)' : t.initialStockLabel}
+                </Text>
                 <TextInput
                   style={styles.textInput}
                   value={newStock}
@@ -1172,20 +1227,22 @@ export default function InventoryManagementScreen() {
                     setErrorMsg(null);
                     setNewStock(val);
                   }}
-                  placeholder="0"
+                  placeholder={newUnitOfMeasure === 'kg' ? '50.0' : '0'}
                   placeholderTextColor="#9CA3AF"
-                  keyboardType="number-pad"
+                  keyboardType={newUnitOfMeasure === 'kg' ? 'decimal-pad' : 'number-pad'}
                 />
               </View>
               <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>{t.lowStockThresholdLabel}</Text>
+                <Text style={styles.fieldLabel}>
+                  {newUnitOfMeasure === 'kg' ? 'Mababang Stock Alert (kg)' : t.lowStockThresholdLabel}
+                </Text>
                 <TextInput
                   style={styles.textInput}
                   value={newLowThreshold}
                   onChangeText={setNewLowThreshold}
-                  placeholder="5"
+                  placeholder={newUnitOfMeasure === 'kg' ? '5.0' : '5'}
                   placeholderTextColor="#9CA3AF"
-                  keyboardType="number-pad"
+                  keyboardType={newUnitOfMeasure === 'kg' ? 'decimal-pad' : 'number-pad'}
                 />
               </View>
             </View>
@@ -1555,7 +1612,7 @@ export default function InventoryManagementScreen() {
                 <View style={styles.itemMidCol}>
                   <Text style={styles.itemName}>{item.name}</Text>
                   <Text style={styles.stockCountText}>
-                    Stock: {item.stockCount} • Price: {item.formattedPrice} • [{item.barcode}]
+                    Stock: {item.formattedStock} • Price: {item.formattedPrice}{item.unitOfMeasure === 'kg' ? '/kg' : ''} • [{item.barcode}]
                   </Text>
                   {item.quarantineStockCount > 0 ? (
                     <Text style={styles.quarantineNote}>
@@ -1860,10 +1917,51 @@ export default function InventoryManagementScreen() {
                 placeholderTextColor="#9CA3AF"
               />
 
-              {/* ROW 1: Stock (piraso) * & Paalala (Mababang Stock) */}
+              {/* Unit of Measure Selector (Piraso vs. Kilo) */}
+              <Text style={styles.modalInputLabel}>Uri ng Paninda (Unit) *</Text>
+              <View style={styles.unitSelectorRow}>
+                <Pressable
+                  style={[styles.unitToggleBtn, editUnitOfMeasure === 'pc' && styles.unitToggleBtnActive]}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setEditUnitOfMeasure('pc');
+                  }}
+                >
+                  <Ionicons
+                    name="cube-outline"
+                    size={15}
+                    color={editUnitOfMeasure === 'pc' ? '#0D7A52' : '#64748B'}
+                    style={{ marginRight: 4 }}
+                  />
+                  <Text style={[styles.unitToggleText, editUnitOfMeasure === 'pc' && styles.unitToggleTextActive]}>
+                    Piraso (pc)
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.unitToggleBtn, editUnitOfMeasure === 'kg' && styles.unitToggleBtnActive]}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setEditUnitOfMeasure('kg');
+                  }}
+                >
+                  <Ionicons
+                    name="scale"
+                    size={15}
+                    color={editUnitOfMeasure === 'kg' ? '#0D7A52' : '#64748B'}
+                    style={{ marginRight: 4 }}
+                  />
+                  <Text style={[styles.unitToggleText, editUnitOfMeasure === 'kg' && styles.unitToggleTextActive]}>
+                    Kilo (kg)
+                  </Text>
+                </Pressable>
+              </View>
+
+              {/* ROW 1: Stock & Paalala (Mababang Stock) */}
               <View style={[styles.modalTwoColGrid, { marginTop: 10 }]}>
                 <View style={styles.modalCol}>
-                  <Text style={styles.modalInputLabel}>{t.initialStockLabel}</Text>
+                  <Text style={styles.modalInputLabel}>
+                    {editUnitOfMeasure === 'kg' ? 'Kasalukuyang Stock (kg)' : t.initialStockLabel}
+                  </Text>
                   <TextInput
                     style={styles.modalInputField}
                     value={editStock}
@@ -1871,20 +1969,22 @@ export default function InventoryManagementScreen() {
                       setEditError(null);
                       setEditStock(val);
                     }}
-                    placeholder="0"
+                    placeholder={editUnitOfMeasure === 'kg' ? '50.0' : '0'}
                     placeholderTextColor="#9CA3AF"
-                    keyboardType="number-pad"
+                    keyboardType={editUnitOfMeasure === 'kg' ? 'decimal-pad' : 'number-pad'}
                   />
                 </View>
                 <View style={styles.modalCol}>
-                  <Text style={styles.modalInputLabel}>{t.lowStockThresholdLabel}</Text>
+                  <Text style={styles.modalInputLabel}>
+                    {editUnitOfMeasure === 'kg' ? 'Mababang Stock Alert (kg)' : t.lowStockThresholdLabel}
+                  </Text>
                   <TextInput
                     style={styles.modalInputField}
                     value={editLowThreshold}
                     onChangeText={setEditLowThreshold}
-                    placeholder="5"
+                    placeholder={editUnitOfMeasure === 'kg' ? '5.0' : '5'}
                     placeholderTextColor="#9CA3AF"
-                    keyboardType="number-pad"
+                    keyboardType={editUnitOfMeasure === 'kg' ? 'decimal-pad' : 'number-pad'}
                   />
                 </View>
               </View>
@@ -2721,6 +2821,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     fontSize: 14,
     color: '#111827',
+  },
+  unitSelectorRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  unitToggleBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+  },
+  unitToggleBtnActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#0D7A52',
+  },
+  unitToggleText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  unitToggleTextActive: {
+    color: '#0D7A52',
+    fontWeight: '800',
   },
   catRow: {
     gap: 8,

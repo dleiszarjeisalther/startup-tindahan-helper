@@ -17,6 +17,7 @@ export interface AddProductCommand {
   unitCostPhp: number;
   unitPricePhp: number;
   imageUri?: string;
+  unitOfMeasure?: 'pc' | 'kg';
 }
 
 export type AddProductResult =
@@ -116,7 +117,8 @@ export class ProductOnboardingService {
       0,
       0,
       undefined,
-      finalImageUri
+      finalImageUri,
+      cmd.unitOfMeasure ?? 'pc'
     );
 
     await this.productRepo.save(product);

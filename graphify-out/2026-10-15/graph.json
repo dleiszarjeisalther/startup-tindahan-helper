@@ -6607,7 +6607,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/sales.tsx",
-      "source_location": "L2393"
+      "source_location": "L2538"
     },
     {
       "id": "src_app_settings",
@@ -10704,7 +10704,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/sales.tsx",
-      "source_location": "L383",
+      "source_location": "L410",
       "weight": 1.0
     },
     {
@@ -10716,7 +10716,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/sales.tsx",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -10728,7 +10728,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/sales.tsx",
-      "source_location": "L59",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -21471,7 +21471,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/sales.tsx",
-      "source_location": "L2393",
+      "source_location": "L2538",
       "weight": 1.0
     },
     {
@@ -25727,5 +25727,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "9ed7069dd907fbb06651a7b00f7f710b597dab6f"
+  "built_at_commit": "39b4e0df9d8073d0e7fc0c4c958a78eb6dec1340"
 }

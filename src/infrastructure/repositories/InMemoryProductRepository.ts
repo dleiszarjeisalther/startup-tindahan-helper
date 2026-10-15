@@ -1,6 +1,6 @@
 // src/infrastructure/repositories/InMemoryProductRepository.ts
 import { IProductRepository } from '../../domain/repositories/IProductRepository';
-import { Product, ProductDTO, ProductVisual, SellingUnitTier } from '../../domain/entities/Product';
+import { Product, ProductDTO, ProductVisual, SellingUnitTier, UnitOfMeasure } from '../../domain/entities/Product';
 import { Barcode, BarcodeSource } from '../../domain/value-objects/Barcode';
 import { SqliteDatabase } from '../database/SqliteDatabase';
 
@@ -19,6 +19,7 @@ interface ProductRow {
   visual_json: string | null;
   image_uri: string | null;
   default_price_php?: number | null;
+  unit_of_measure?: 'pc' | 'kg' | null;
 }
 
 /**
@@ -78,6 +79,7 @@ export class InMemoryProductRepository implements IProductRepository {
     }
 
     const barcode = Barcode.fromPersisted(row.barcode, row.barcode_source);
+    const unitOfMeasure: UnitOfMeasure = row.unit_of_measure === 'kg' ? 'kg' : 'pc';
 
     return new Product(
       row.id,
@@ -91,7 +93,8 @@ export class InMemoryProductRepository implements IProductRepository {
       Number(row.quarantine_stock_count) || 0,
       Number(row.out_of_stock_days) || 0,
       visual,
-      row.image_uri ?? visual?.imageUri ?? undefined
+      row.image_uri ?? visual?.imageUri ?? undefined,
+      unitOfMeasure
     );
   }
 
@@ -107,8 +110,8 @@ export class InMemoryProductRepository implements IProductRepository {
       `INSERT OR REPLACE INTO products (
         id, name, category, barcode, barcode_source,
         base_stock_count, ordinary_low_stock_threshold, unit_cost_php,
-        selling_tiers_json, quarantine_stock_count, out_of_stock_days, visual_json, image_uri, default_price_php
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        selling_tiers_json, quarantine_stock_count, out_of_stock_days, visual_json, image_uri, default_price_php, unit_of_measure
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         dto.id,
         dto.name,
@@ -124,6 +127,7 @@ export class InMemoryProductRepository implements IProductRepository {
         JSON.stringify(dto.visual),
         dto.imageUri ?? null,
         dto.defaultPricePhp,
+        dto.unitOfMeasure ?? 'pc',
       ]
     );
   }
