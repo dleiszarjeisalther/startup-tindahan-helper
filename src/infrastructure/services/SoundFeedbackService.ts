@@ -6,7 +6,12 @@ const soundSource = require('../../../assets/sounds/barcode-beep.wav');
 
 // Preload the audio file into native memory at module scope before any React components mount
 if (Platform.OS !== 'web') {
-  void preload(soundSource, { preferredForwardBufferDuration: 2 });
+  void preload(soundSource, { preferredForwardBufferDuration: 2 }).catch((err) => {
+    console.log(
+      '[SoundFeedbackService] Audio preload notice (non-fatal, will load on demand):',
+      err?.message || err
+    );
+  });
 }
 
 /**

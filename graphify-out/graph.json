@@ -495,7 +495,7 @@
       "file_type": "code",
       "norm_label": "soundfeedbackservice",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L22"
+      "source_location": "L27"
     },
     {
       "id": "src_application_productonboardingservice_addproductcommand",
@@ -3199,7 +3199,7 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L28"
+      "source_location": "L33"
     },
     {
       "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_initplayer",
@@ -3211,7 +3211,7 @@
       "file_type": "code",
       "norm_label": ".initplayer()",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L32"
+      "source_location": "L37"
     },
     {
       "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_playbarcodebeep",
@@ -3223,7 +3223,7 @@
       "file_type": "code",
       "norm_label": ".playbarcodebeep()",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L83"
+      "source_location": "L88"
     },
     {
       "id": "src_application_productonboardingservice_productonboardingservice_constructor",
@@ -12780,7 +12780,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L29",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -12792,7 +12792,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L115",
+      "source_location": "L120",
       "weight": 1.0
     },
     {
@@ -22986,7 +22986,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L159",
+      "source_location": "L164",
       "weight": 1.0
     },
     {
@@ -25164,7 +25164,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L28",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -25175,7 +25175,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L32",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -25186,7 +25186,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L83",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -26197,5 +26197,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "2271a716bcc03d87fa87ed64d0f63866499e7934"
+  "built_at_commit": "c026d640673114ce5f24d3ca59eca34a0585659e"
 }
