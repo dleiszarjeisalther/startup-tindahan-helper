@@ -228,6 +228,105 @@ export class ColdStartCategoryStrategy extends BaseSeasonalStrategy {
 }
 
 /**
+ * Automatically calculates Philippine Sari-Sari Store Seasonal Benchmark Multiplier
+ * based on product name patterns and the target calendar month.
+ */
+export function getPhilippineCategorySeasonality(
+  productName: string,
+  targetMonth: number
+): number {
+  const lower = productName.toLowerCase();
+
+  // 1. Summer / Tag-init Refreshments (March - May)
+  const isBeverage =
+    lower.includes('coke') ||
+    lower.includes('cola') ||
+    lower.includes('royal') ||
+    lower.includes('sprite') ||
+    lower.includes('juice') ||
+    lower.includes('tubig') ||
+    lower.includes('water') ||
+    lower.includes('ice') ||
+    lower.includes('beverage') ||
+    lower.includes('gulaman') ||
+    lower.includes('sago') ||
+    lower.includes('halo');
+
+  if (isBeverage) {
+    if (targetMonth >= 3 && targetMonth <= 5) return 2.4; // Summer peak
+    if (targetMonth >= 11 || targetMonth <= 1) return 1.5; // Holiday gatherings
+    return 1.0;
+  }
+
+  // 2. Rainy Season / Bagyo Comfort Goods (July - October)
+  const isRainyComfort =
+    lower.includes('noodle') ||
+    lower.includes('lucky me') ||
+    lower.includes('canton') ||
+    lower.includes('sopas') ||
+    lower.includes('mami') ||
+    lower.includes('kape') ||
+    lower.includes('coffee') ||
+    lower.includes('nescafe') ||
+    lower.includes('kopiko') ||
+    lower.includes('sardines') ||
+    lower.includes('sardinas') ||
+    lower.includes('delata') ||
+    lower.includes('match') ||
+    lower.includes('posporo') ||
+    lower.includes('kandila');
+
+  if (isRainyComfort) {
+    if (targetMonth >= 7 && targetMonth <= 10) return 2.0; // Tag-ulan peak
+    return 1.0;
+  }
+
+  // 3. School Supplies / Balik-Eskwela (July - August)
+  const isSchoolSupply =
+    lower.includes('notebook') ||
+    lower.includes('ballpen') ||
+    lower.includes('pencil') ||
+    lower.includes('pad paper') ||
+    lower.includes('eraser') ||
+    lower.includes('crayon') ||
+    lower.includes('ruler');
+
+  if (isSchoolSupply) {
+    if (targetMonth === 7 || targetMonth === 8) return 3.2; // Back to school peak
+    if (targetMonth >= 3 && targetMonth <= 5) return 0.5; // Summer vacation lull
+    return 1.0;
+  }
+
+  // 4. Christmas & Holiday Cooking / Party Treats (November - December)
+  const isHolidayBakingOrTreat =
+    lower.includes('spaghetti') ||
+    lower.includes('sauce') ||
+    lower.includes('pasta') ||
+    lower.includes('condensada') ||
+    lower.includes('condensed') ||
+    lower.includes('evaporada') ||
+    lower.includes('evap') ||
+    lower.includes('cream') ||
+    lower.includes('cocktail') ||
+    lower.includes('cheese') ||
+    lower.includes('queso') ||
+    lower.includes('keso') ||
+    lower.includes('beer') ||
+    lower.includes('gin') ||
+    lower.includes('brandy') ||
+    lower.includes('alak');
+
+  if (isHolidayBakingOrTreat) {
+    if (targetMonth === 11 || targetMonth === 12) return 2.8; // Christmas / New Year rush
+    return 1.0;
+  }
+
+  // 5. General Staples (Bigas, Mantika, Asukal, Toyo, Suka, Dog Food)
+  if (targetMonth === 12) return 1.3; // Slight holiday general consumption bump
+  return 1.0;
+}
+
+/**
  * Context Orchestrator that selects the right OOP Strategy based on history depth
  */
 export class SeasonalForecastEngine {
@@ -241,8 +340,12 @@ export class SeasonalForecastEngine {
     history: MonthlySalesRecord[],
     targetMonth: number,
     currentStock: number,
-    categoryPriorIndex = 1.0
+    categoryPriorIndex?: number
   ): SeasonalForecastResult {
+    const prior =
+      categoryPriorIndex ??
+      getPhilippineCategorySeasonality(productName, targetMonth);
+
     if (history.length >= 24) {
       return this.recurring24m.forecast(
         productId,
@@ -259,7 +362,7 @@ export class SeasonalForecastEngine {
         history,
         targetMonth,
         currentStock,
-        categoryPriorIndex
+        prior
       );
     }
     return this.coldStart.forecast(
@@ -268,7 +371,7 @@ export class SeasonalForecastEngine {
       history,
       targetMonth,
       currentStock,
-      categoryPriorIndex
+      prior
     );
   }
 }

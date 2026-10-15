@@ -390,7 +390,7 @@ export class TindahanStoreService {
       }));
 
       // 6. Hydrate Monthly Sales History for Seasonal Product Forecast
-      const histRows = db.getAllSync<{
+      let histRows = db.getAllSync<{
         id: string;
         product_id: string;
         year: number;
@@ -401,6 +401,56 @@ export class TindahanStoreService {
         out_of_stock_days: number;
         total_days_in_month: number;
       }>('SELECT * FROM monthly_sales_history ORDER BY year ASC, month ASC');
+
+      // Auto-backfill monthly_sales_history from past POS sale_items if table is empty
+      if (histRows.length === 0) {
+        try {
+          const itemAggs = db.getAllSync<{
+            product_id: string;
+            year: number;
+            month: number;
+            total_qty: number;
+          }>(
+            `SELECT si.product_id,
+                    CAST(strftime('%Y', t.created_at) AS INTEGER) AS year,
+                    CAST(strftime('%m', t.created_at) AS INTEGER) AS month,
+                    ROUND(SUM(si.quantity), 3) AS total_qty
+             FROM sale_items si
+             JOIN transactions t ON si.transaction_id = t.id
+             WHERE t.is_voided = 0
+             GROUP BY si.product_id, year, month`
+          );
+
+          for (const agg of itemAggs) {
+            if (agg.year && agg.month && agg.total_qty > 0) {
+              const rowId = `msh_${agg.product_id}_${agg.year}_${agg.month}`;
+              db.runSync(
+                `INSERT OR REPLACE INTO monthly_sales_history (
+                  id, product_id, year, month, gross_units_sold,
+                  voided_units, returned_changed_mind_units, out_of_stock_days, total_days_in_month
+                ) VALUES (?, ?, ?, ?, ?, 0, 0, 0, 30)`,
+                [rowId, agg.product_id, agg.year, agg.month, agg.total_qty]
+              );
+            }
+          }
+
+          if (itemAggs.length > 0) {
+            histRows = db.getAllSync<{
+              id: string;
+              product_id: string;
+              year: number;
+              month: number;
+              gross_units_sold: number;
+              voided_units: number;
+              returned_changed_mind_units: number;
+              out_of_stock_days: number;
+              total_days_in_month: number;
+            }>('SELECT * FROM monthly_sales_history ORDER BY year ASC, month ASC');
+          }
+        } catch {
+          // Non-fatal if tables do not exist yet on fresh migration
+        }
+      }
 
       this.monthlyHistoryMap = new Map();
       for (const h of histRows) {

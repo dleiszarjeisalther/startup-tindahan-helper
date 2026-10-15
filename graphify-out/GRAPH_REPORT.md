@@ -1,16 +1,16 @@
 # Graph Report - startupTindahanHelper  (2026-10-15)
 
 ## Corpus Check
-- 71 files · ~242,495 words
+- 71 files · ~244,258 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 883 nodes · 1374 edges · 78 communities (35 shown, 41 thin omitted)
+- 886 nodes · 1384 edges · 73 communities (34 shown, 37 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 60 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c026d640`
+- Built from commit: `debc7074`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -32,8 +32,7 @@
 - eslint.config.js
 - use-color-scheme.web.ts
 - expo-constants
-- SynchronousKeyValueStorage
-- inventory.tsx
+- explore.tsx
 - expo-asset
 - expo-device
 - expo-image
@@ -73,23 +72,19 @@
 - expo-web-browser
 - react-native-web
 - sales.tsx
-- i18n.ts
-- expo-router
-- checkout.tsx
-- SoundFeedbackService.ts
+- getTranslations
+- TindahanStoreProvider.tsx
+- inventory.tsx
 - Functional Requirements Specification (FRS)
 - Functional Requirements Specification (FRS)
 - Non-Functional Requirements Specification (NFRS)
 - Non-Functional Requirements Specification (NFRS)
 - Business Requirements Document (BRD) & Stakeholder Needs Elicitation
 - Business Requirements Document (BRD) & Stakeholder Needs Elicitation
-- container.ts
-- Barcode
 - 3. Functional Requirements Traceability Matrix (`FR-xxx`)
 - 3. Functional Requirements Traceability Matrix (`FR-xxx`)
-- Product.ts
 - Money
-- utang.tsx
+- checkout.tsx
 - REQUIREMENTS_TRACEABILITY_MATRIX_3b7cd623.md
 
 ## God Nodes (most connected - your core abstractions)
@@ -105,25 +100,33 @@
 10. `expo` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `StoreSnapshot` --references--> `ProductDTO`  [EXTRACTED]
+  src/application/TindahanStoreService.ts → src/domain/entities/Product.ts
 - `CheckoutNewSaleScreen()` --calls--> `useTindahanStore()`  [EXTRACTED]
   src/app/checkout.tsx → src/presentation/hooks/useTindahanStore.ts
-- `PosScanProductScreen()` --calls--> `useTindahanStore()`  [EXTRACTED]
-  src/app/index.tsx → src/presentation/hooks/useTindahanStore.ts
-- `InventoryManagementScreen()` --calls--> `useIdempotentSubmit()`  [EXTRACTED]
-  src/app/inventory.tsx → src/presentation/hooks/useIdempotentSubmit.ts
-- `InventoryManagementScreen()` --calls--> `getTranslations()`  [EXTRACTED]
-  src/app/inventory.tsx → src/presentation/localization/i18n.ts
-- `MenuProfileScreen()` --calls--> `useTindahanStore()`  [EXTRACTED]
-  src/app/more.tsx → src/presentation/hooks/useTindahanStore.ts
+- `CheckoutNewSaleScreen()` --calls--> `getTranslations()`  [EXTRACTED]
+  src/app/checkout.tsx → src/presentation/localization/i18n.ts
+- `SeasonalForecastScreen()` --calls--> `updateSettings()`  [EXTRACTED]
+  src/app/explore.tsx → src/presentation/hooks/useTindahanStore.ts
+- `SeasonalForecastScreen()` --calls--> `useTindahanStore()`  [EXTRACTED]
+  src/app/explore.tsx → src/presentation/hooks/useTindahanStore.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (78 total, 41 thin omitted)
+## Communities (73 total, 37 thin omitted)
+
+### Community 0 - "Product"
+Cohesion: 0.06
+Nodes (17): ProductOnboardingService, Product, ProductDTO, SellingUnitTier, StockStatus, UnitOfMeasure, IProductRepository, Barcode (+9 more)
 
 ### Community 1 - "useTindahanStore.ts"
-Cohesion: 0.12
-Nodes (37): SeasonalForecastScreen(), InventoryManagementScreen(), StoreSettingsScreen(), addCashAdjustment(), addCategory(), addManualUtangEntry(), addOrUpdateMonthlySalesRecord(), addProductToDatabase() (+29 more)
+Cohesion: 0.11
+Nodes (39): PosScanProductScreen(), InventoryManagementScreen(), ProductListScreen(), StoreSettingsScreen(), addCashAdjustment(), addCategory(), addManualUtangEntry(), addOrUpdateMonthlySalesRecord() (+31 more)
+
+### Community 2 - "TindahanStoreService"
+Cohesion: 0.07
+Nodes (3): TindahanStoreService, MonthlySalesRecord, SynchronousKeyValueStorage
 
 ### Community 3 - "app-tabs.web.tsx"
 Cohesion: 0.12
@@ -138,16 +141,16 @@ Cohesion: 0.10
 Nodes (20): eslint, eslint-config-expo, devDependencies, eslint, eslint-config-expo, @types/react, typescript, main (+12 more)
 
 ### Community 6 - "SeasonalForecastEngine.ts"
-Cohesion: 0.20
-Nodes (8): BaseSeasonalStrategy, ColdStartCategoryStrategy, ForecastConfidenceTier, InitialCycle12MonthStrategy, ISeasonalForecastStrategy, Recurring24MonthYoYStrategy, SeasonalForecastEngine, SeasonalForecastResult
+Cohesion: 0.19
+Nodes (9): BaseSeasonalStrategy, ColdStartCategoryStrategy, ForecastConfidenceTier, getPhilippineCategorySeasonality(), InitialCycle12MonthStrategy, ISeasonalForecastStrategy, Recurring24MonthYoYStrategy, SeasonalForecastEngine (+1 more)
 
 ### Community 7 - "include"
 Cohesion: 0.15
 Nodes (12): ./assets/*, expo-env.d.ts, expo/tsconfig.base, .expo/types/**/*.ts, **/*.ts, **/*.tsx, compilerOptions, paths (+4 more)
 
 ### Community 8 - "TindahanStoreService.ts"
-Cohesion: 0.12
-Nodes (13): expo-sqlite, CartItemDTO, CartSummaryDTO, CashDrawerAdjustmentRecord, DaySalesBucket, DEFAULT_CATEGORIES, HeldCartRecord, Listener (+5 more)
+Cohesion: 0.05
+Nodes (23): plugins, expo-asset, expo-sqlite, AddProductCommand, AddProductResult, CartItemDTO, CartSummaryDTO, CashAdjustmentType (+15 more)
 
 ### Community 9 - "reset-project.js"
 Cohesion: 0.22
@@ -169,13 +172,9 @@ Nodes (4): glowKeyframe, keyframe, logoKeyframe, styles
 Cohesion: 0.05
 Nodes (43): 1. How Seasonal Product Forecasting Works, 2. Mathematical Model & Forecasting Formulas, 3. Worked Concrete Example: School Supplies Before School Year vs. Ordinary Months, 4. Common Problems in Seasonal Product Forecasting & Their Solutions, Complete Solution Architecture (Single-User Owner Model), Executive Summary, Part 1: Audit of the Current Juan's Store POS UI Prototype, Part 2: Common POS System Problems & Comprehensive Solutions (+35 more)
 
-### Community 17 - "SynchronousKeyValueStorage"
-Cohesion: 0.13
-Nodes (3): StoreSettingsState, IKeyValueStorage, SynchronousKeyValueStorage
-
-### Community 18 - "inventory.tsx"
-Cohesion: 0.25
-Nodes (8): STOCK_FILTERS, styles, BarcodeInputField(), BarcodeInputFieldProps, styles, BarcodeScannerViewfinder(), BarcodeScannerViewfinderProps, styles
+### Community 17 - "explore.tsx"
+Cohesion: 0.29
+Nodes (7): getPhilippineSeasonInfo(), PHILIPPINE_MONTHS, SeasonalForecastScreen(), styles, seasonalForecastEngine, adjustInventoryStock(), getMonthlySalesHistory()
 
 ### Community 25 - "Data Input, Data Output & Mobile POS UX Best Practices (React Native + Expo)"
 Cohesion: 0.11
@@ -194,24 +193,20 @@ Cohesion: 0.18
 Nodes (10): 1. Single Immutable Snapshot & `useSyncExternalStore`, 2. Never Hydrate on Screen Focus, 3. Atomic SQLite Commits, 4. Direct UI-to-Snapshot Binding, Building with EAS, Commands, Expo has changed — do not trust your training data, Navigation & Routing (+2 more)
 
 ### Community 58 - "sales.tsx"
-Cohesion: 0.13
-Nodes (15): styles, GASTOS_CATEGORIES, PANUKLI_CATEGORIES, PERIODS, SalesHistoryScreen(), styles, styles, CashAdjustmentType (+7 more)
+Cohesion: 0.23
+Nodes (9): GASTOS_CATEGORIES, PANUKLI_CATEGORIES, PERIODS, styles, styles, FloatingToast(), FloatingToastProps, styles (+1 more)
 
-### Community 59 - "i18n.ts"
-Cohesion: 0.22
-Nodes (7): MenuProfileScreen(), styles, dictionaries, en, SupportedLanguage, taglish, Translations
+### Community 59 - "getTranslations"
+Cohesion: 0.15
+Nodes (15): expo-router, MenuProfileScreen(), styles, FilterType, styles, SukiUtangLedgerScreen(), UtangCustomerRecord, CustomTindahanTabBar() (+7 more)
 
-### Community 60 - "expo-router"
+### Community 60 - "TindahanStoreProvider.tsx"
 Cohesion: 0.18
-Nodes (10): plugins, expo-asset, expo-router, AppTabs(), CustomTindahanTabBar(), styles, tindahanStoreService, TindahanStoreContext (+2 more)
+Nodes (7): expo-audio, AppTabs(), tindahanStoreService, SoundFeedbackService, soundSource, TindahanStoreContext, TindahanStoreProvider()
 
-### Community 61 - "checkout.tsx"
+### Community 61 - "inventory.tsx"
 Cohesion: 0.12
-Nodes (24): CartItemStepperProps, CheckoutNewSaleScreen(), styles, PosScanProductScreen(), styles, ProductListScreen(), styles, PaymentTenderType (+16 more)
-
-### Community 62 - "SoundFeedbackService.ts"
-Cohesion: 0.38
-Nodes (3): expo-audio, SoundFeedbackService, soundSource
+Nodes (21): styles, STOCK_FILTERS, styles, styles, ProductVisual, BarcodeInputField(), BarcodeInputFieldProps, styles (+13 more)
 
 ### Community 63 - "Functional Requirements Specification (FRS)"
 Cohesion: 0.05
@@ -237,10 +232,6 @@ Nodes (22): 1.1 Context & Problem Statement, 1.2 Proposed Solution Vision, 1. Pr
 Cohesion: 0.09
 Nodes (22): 1.1 Context & Problem Statement, 1.2 Proposed Solution Vision, 1. Project Vision & Executive Summary, 2.1 Elicitation Methodology, 2.2 Stakeholder Profiles & Personas, 2.3 Comprehensive Stakeholder Needs Matrix, 2. Stakeholder Needs Elicitation & Analysis, 3.1 Quantified Business Goals (BG) (+14 more)
 
-### Community 69 - "container.ts"
-Cohesion: 0.16
-Nodes (9): AddProductCommand, AddProductResult, ProductOnboardingService, openFoodFactsApiClient, productOnboardingService, productRepository, ExternalProductCatalogResult, IExternalCatalogLookupService (+1 more)
-
 ### Community 71 - "3. Functional Requirements Traceability Matrix (`FR-xxx`)"
 Cohesion: 0.12
 Nodes (15): 1. Traceability Architecture & Executive Dashboard, 2. Stakeholder Needs Traceability Matrix (`SN-xxx`), 3. Functional Requirements Traceability Matrix (`FR-xxx`), 4. Non-Functional Requirements Traceability Matrix (`NFR-xxx`), 5. Backward Traceability & Gap Analysis, 6. Primary Artifact Deliverable, Module 1: POS & Barcode Checkout (`FR-POS-xxx`), Module 2: Tender & Checkout Settlement (`FR-TND-xxx`) (+7 more)
@@ -249,13 +240,13 @@ Nodes (15): 1. Traceability Architecture & Executive Dashboard, 2. Stakeholder N
 Cohesion: 0.12
 Nodes (15): 1. Traceability Architecture & Executive Dashboard, 2. Stakeholder Needs Traceability Matrix (`SN-xxx`), 3. Functional Requirements Traceability Matrix (`FR-xxx`), 4. Non-Functional Requirements Traceability Matrix (`NFR-xxx`), 5. Backward Traceability & Gap Analysis, 6. Primary Artifact Deliverable, Module 1: POS & Barcode Checkout (`FR-POS-xxx`), Module 2: Tender & Checkout Settlement (`FR-TND-xxx`) (+7 more)
 
-### Community 73 - "Product.ts"
-Cohesion: 0.28
-Nodes (7): StoreSnapshot, ProductDTO, SellingUnitTier, StockStatus, UnitOfMeasure, BarcodeSource, ProductRow
+### Community 74 - "Money"
+Cohesion: 0.17
+Nodes (3): SalesHistoryScreen(), Money, WeightQuantitySheet()
 
-### Community 75 - "utang.tsx"
-Cohesion: 0.29
-Nodes (5): FilterType, styles, SukiUtangLedgerScreen(), UtangCustomerRecord, phpCurrencyFormatter
+### Community 75 - "checkout.tsx"
+Cohesion: 0.22
+Nodes (7): CartItemStepperProps, CheckoutNewSaleScreen(), styles, PaymentTenderType, SaleTransactionRecord, phpCurrencyFormatter, useIdempotentSubmit()
 
 ### Community 76 - "REQUIREMENTS_TRACEABILITY_MATRIX_3b7cd623.md"
 Cohesion: 0.40
@@ -263,23 +254,23 @@ Nodes (4): Sheet: Executive Summary, Sheet: Functional RTM, Sheet: Non-Functiona
 
 ## Knowledge Gaps
 - **403 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+398 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 481 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **41 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 480 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **37 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `expo-router` connect `expo-router` to `app-tabs.web.tsx`, `utang.tsx`, `inventory.tsx`, `sales.tsx`, `i18n.ts`, `checkout.tsx`?**
+- **Why does `expo-router` connect `getTranslations` to `app-tabs.web.tsx`, `TindahanStoreService.ts`, `checkout.tsx`, `explore.tsx`, `sales.tsx`, `TindahanStoreProvider.tsx`, `inventory.tsx`?**
   _High betweenness centrality (0.054) - this node is a cross-community bridge._
-- **Why does `TindahanStoreService` connect `TindahanStoreService` to `TindahanStoreService.ts`, `Product.ts`, `expo-router`, `container.ts`?**
+- **Why does `TindahanStoreService` connect `TindahanStoreService` to `TindahanStoreService.ts`, `Product`, `Money`, `TindahanStoreProvider.tsx`?**
   _High betweenness centrality (0.046) - this node is a cross-community bridge._
-- **Why does `plugins` connect `expo-router` to `TindahanStoreService.ts`, `expo`, `SoundFeedbackService.ts`?**
+- **Why does `plugins` connect `TindahanStoreService.ts` to `getTranslations`, `expo`, `TindahanStoreProvider.tsx`?**
   _High betweenness centrality (0.026) - this node is a cross-community bridge._
 - **Are the 35 inferred relationships involving `useTindahanStore()` (e.g. with `addCashAdjustment()` and `addCategory()`) actually correct?**
   _`useTindahanStore()` has 35 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `slug`, `version` to the rest of the system?**
   _403 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Product` be split into smaller, more focused modules?**
-  _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.055130784708249496 - nodes in this community are weakly interconnected._
 - **Should `useTindahanStore.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.12091038406827881 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11282051282051282 - nodes in this community are weakly interconnected._

@@ -1,12 +1,12 @@
-// src/app/explore.tsx — Feature C: Seasonal Product Forecast Dashboard (SQLite Backed)
+// src/app/explore.tsx — Feature C: 100% Automated Seasonal Product Forecast Dashboard
 import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   ScrollView,
   StyleSheet,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -15,6 +15,65 @@ import { Ionicons } from '@expo/vector-icons';
 import { seasonalForecastEngine } from '@/infrastructure/container';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { FloatingToast } from '@/presentation/components/FloatingToast';
+import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
+import { ProductDTO } from '@/domain/entities/Product';
+import { SeasonalForecastResult } from '@/domain/strategies/SeasonalForecastEngine';
+
+const PHILIPPINE_MONTHS = [
+  { month: 1, name: 'Enero', short: 'Ene' },
+  { month: 2, name: 'Pebrero', short: 'Peb' },
+  { month: 3, name: 'Marso', short: 'Mar' },
+  { month: 4, name: 'Abril', short: 'Abr' },
+  { month: 5, name: 'Mayo', short: 'May' },
+  { month: 6, name: 'Hunyo', short: 'Hun' },
+  { month: 7, name: 'Hulyo', short: 'Hul' },
+  { month: 8, name: 'Agosto', short: 'Ago' },
+  { month: 9, name: 'Setyembre', short: 'Set' },
+  { month: 10, name: 'Oktubre', short: 'Okt' },
+  { month: 11, name: 'Nobyembre', short: 'Nob' },
+  { month: 12, name: 'Disyembre', short: 'Dis' },
+];
+
+function getPhilippineSeasonInfo(targetMonth: number) {
+  if (targetMonth === 11 || targetMonth === 12) {
+    return {
+      title: '🎄 Pasko & Bagong Taon Peak Season',
+      sub: 'Panahon ng handaan, pasta, fruit cocktail, all-purpose cream, at party grocery.',
+      badgeColor: '#FEE2E2',
+      textColor: '#991B1B',
+    };
+  }
+  if (targetMonth >= 3 && targetMonth <= 5) {
+    return {
+      title: '☀️ Tag-init / Summer Peak Season',
+      sub: 'Malakas ang malamig na softdrinks, yelo, halo-halo ingredients, at tubig.',
+      badgeColor: '#FEF3C7',
+      textColor: '#92400E',
+    };
+  }
+  if (targetMonth === 6 || targetMonth === 7) {
+    return {
+      title: '🎒 Balik-Eskwela Peak Season',
+      sub: 'Dagsa ang school supplies, notebooks, ballpen, at baon/meryenda ng mga bata.',
+      badgeColor: '#E0E7FF',
+      textColor: '#3730A3',
+    };
+  }
+  if (targetMonth >= 8 && targetMonth <= 10) {
+    return {
+      title: '🌧️ Tag-ulan & Panahon ng Bagyo',
+      sub: 'Mabili ang kape, instant noodles, sabaw, delata, posporo, at kandila.',
+      badgeColor: '#E0F2FE',
+      textColor: '#075985',
+    };
+  }
+  return {
+    title: '✨ Bagong Taon & Karaniwang Araw',
+    sub: 'Matatag na benta ng bigas, mantika, asukal, toyo, at pang-araw-araw na grocery.',
+    badgeColor: '#F1F5F9',
+    textColor: '#334155',
+  };
+}
 
 export default function SeasonalForecastScreen() {
   const router = useRouter();
@@ -23,35 +82,99 @@ export default function SeasonalForecastScreen() {
     settings,
     adjustInventoryStock,
     getMonthlySalesHistory,
-    addOrUpdateMonthlySalesRecord,
     updateSettings,
   } = useTindahanStore();
 
+  const currentMonth = new Date().getMonth() + 1; // 1-12
+  const defaultTargetMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+
+  const [selectedTargetMonth, setSelectedTargetMonth] = useState<number>(defaultTargetMonth);
   const [restockToast, setRestockToast] = useState<string | null>(null);
-  const [selectedProductId, setSelectedProductId] = useState<string>(
-    products[0]?.id ?? ''
-  );
-  const [histYear, setHistYear] = useState<string>(String(new Date().getFullYear()));
-  const [histMonth, setHistMonth] = useState<string>(String(settings.schoolOpeningMonth));
-  const [histUnitsSold, setHistUnitsSold] = useState<string>('');
-  const [histOosDays, setHistOosDays] = useState<string>('0');
+  const [detailItem, setDetailItem] = useState<{
+    forecast: SeasonalForecastResult;
+    product: ProductDTO;
+  } | null>(null);
 
-  const activeProductId =
-    products.some((p) => p.id === selectedProductId)
-      ? selectedProductId
-      : products[0]?.id ?? '';
-
+  // Compute forecasts for all SQLite products automatically without manual user input
   const allForecasts = products.map((p) => {
     const history = getMonthlySalesHistory(p.id);
-    return seasonalForecastEngine.evaluateProductSeasonality(
+    const forecast = seasonalForecastEngine.evaluateProductSeasonality(
       p.id,
       p.name,
       history,
-      settings.schoolOpeningMonth,
-      p.stockCount,
-      3.0
+      selectedTargetMonth,
+      p.stockCount
     );
+    return { product: p, forecast };
   });
+
+  const seasonInfo = getPhilippineSeasonInfo(selectedTargetMonth);
+  const totalRecommendedRestockUnits = allForecasts.reduce(
+    (sum, item) => sum + item.forecast.recommendedRestockQty,
+    0
+  );
+
+  const seasonPresets = [
+    {
+      id: 'next',
+      month: defaultTargetMonth,
+      label: `⚡ Susunod (${PHILIPPINE_MONTHS[defaultTargetMonth - 1]?.short ?? ''})`,
+    },
+    { id: 'pasko', month: 12, label: '🎄 Pasko (Dis)' },
+    { id: 'summer', month: 4, label: '☀️ Tag-init (Abr)' },
+    { id: 'school', month: 7, label: '🎒 Eskwela (Hul)' },
+    { id: 'rainy', month: 9, label: '🌧️ Tag-ulan (Set)' },
+  ];
+
+  // Helper to render horizontal sales chart bars in modal
+  const renderHorizontalChartBars = () => {
+    if (!detailItem) return null;
+    const history = getMonthlySalesHistory(detailItem.product.id);
+
+    // Find highest units sold in any month for proportional scaling
+    const maxUnits = Math.max(
+      1,
+      ...PHILIPPINE_MONTHS.map((m) => {
+        const row = history.find((h) => h.month === m.month);
+        return row ? Math.max(0, row.grossUnitsSold - row.voidedUnits - row.returnedChangedMindUnits) : 0;
+      })
+    );
+
+    return PHILIPPINE_MONTHS.map((m) => {
+      const row = history.find((h) => h.month === m.month);
+      const units = row
+        ? Math.max(0, row.grossUnitsSold - row.voidedUnits - row.returnedChangedMindUnits)
+        : 0;
+
+      const isTarget = m.month === selectedTargetMonth;
+      const barPercent = Math.min(100, Math.max(units > 0 ? 12 : 3, Math.round((units / maxUnits) * 100)));
+
+      return (
+        <View key={m.month} style={styles.chartBarRow}>
+          <View style={styles.chartLabelCol}>
+            <Text style={[styles.chartMonthText, isTarget ? styles.chartMonthTextTarget : null]}>
+              {m.short}
+            </Text>
+            {isTarget ? <Text style={styles.chartTargetPill}>🔥 Target</Text> : null}
+          </View>
+          <View style={styles.chartTrackCol}>
+            <View style={styles.chartTrack}>
+              <View
+                style={[
+                  styles.chartFill,
+                  { width: `${barPercent}%` },
+                  isTarget ? styles.chartFillTarget : units > 0 ? styles.chartFillActive : styles.chartFillZero,
+                ]}
+              />
+            </View>
+          </View>
+          <Text style={[styles.chartUnitText, isTarget ? styles.chartUnitTextTarget : null]}>
+            {units} piraso
+          </Text>
+        </View>
+      );
+    });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -60,6 +183,8 @@ export default function SeasonalForecastScreen() {
         type="success"
         onDismiss={() => setRestockToast(null)}
       />
+
+      {/* Screen Header */}
       <View style={styles.headerRow}>
         <Pressable
           style={styles.backBtn}
@@ -72,38 +197,77 @@ export default function SeasonalForecastScreen() {
           }}
           hitSlop={10}
         >
-          <Ionicons name="arrow-back" size={22} color="#111827" />
+          <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
         </Pressable>
         <View style={styles.headerTextCol}>
           <Text style={styles.headerTitle}>Seasonal Product Forecast</Text>
           <Text style={styles.headerSubtitle}>
-            Buwanang Kasaysayan &amp; Paghahambing ng Benta
+            ⚡ 100% Awtomatikong Pagtataya mula sa POS Receipts
           </Text>
         </View>
       </View>
-
-      {restockToast ? (
-        <View style={styles.toastBanner}>
-          <Text style={styles.toastText}>{restockToast}</Text>
-        </View>
-      ) : null}
 
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Owner Wholesale Budget Prioritizer */}
+        {/* Automated Seasonal Intelligence Banner */}
+        <View style={[styles.seasonBannerCard, { backgroundColor: seasonInfo.badgeColor }]}>
+          <View style={styles.seasonBannerHeader}>
+            <Text style={[styles.seasonBannerTitle, { color: seasonInfo.textColor }]}>
+              {seasonInfo.title}
+            </Text>
+            <View style={styles.autoTag}>
+              <Text style={styles.autoTagText}>Kusa / Automated</Text>
+            </View>
+          </View>
+          <Text style={[styles.seasonBannerSub, { color: seasonInfo.textColor }]}>
+            {seasonInfo.sub}
+          </Text>
+        </View>
+
+        {/* 1-Tap Target Season Switcher Pills */}
+        <View style={styles.seasonSwitcherCard}>
+          <Text style={styles.switcherLabel}>
+            📅 Piliin ang Buwan / Panahon na Pinaghahandaan:
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.seasonPillsRow}
+          >
+            {seasonPresets.map((preset) => {
+              const active = selectedTargetMonth === preset.month;
+              return (
+                <Pressable
+                  key={preset.id}
+                  style={[styles.seasonPill, active ? styles.seasonPillActive : null]}
+                  onPress={() => {
+                    Haptics.selectionAsync().catch(() => {});
+                    setSelectedTargetMonth(preset.month);
+                  }}
+                >
+                  <Text style={[styles.seasonPillText, active ? styles.seasonPillTextActive : null]}>
+                    {preset.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+        </View>
+
+        {/* Wholesale Budget & Restock Summary */}
         <View style={styles.budgetCard}>
           <View style={styles.budgetHeader}>
-            <Text style={styles.budgetTitle}>
-              💰 Owner Wholesale Restock Budget
-            </Text>
+            <View>
+              <Text style={styles.budgetTitle}>💰 Owner Wholesale Restock Budget</Text>
+              <Text style={styles.budgetSub}>
+                Kabuuang kailangang bilhin: <Text style={styles.boldGreen}>+{totalRecommendedRestockUnits} piraso</Text>
+              </Text>
+            </View>
             <Text style={styles.budgetAmount}>₱{settings.wholesaleBudgetPhp}</Text>
           </View>
-          <Text style={styles.budgetSub}>
-            Target Peak Month: Month #{settings.schoolOpeningMonth}
-          </Text>
           <View style={styles.budgetPills}>
             {[1500, 3000, 5000].map((b) => {
               const active = settings.wholesaleBudgetPhp === b;
@@ -131,7 +295,7 @@ export default function SeasonalForecastScreen() {
           <View style={styles.emptyCard}>
             <Text style={styles.emptyTitle}>Wala Pang Paninda sa Tindahan</Text>
             <Text style={styles.emptySub}>
-              Magdagdag muna ng mga paninda sa Imbentaryo, pagkatapos ay kumpletuhin ang mga benta o itala ang buwanang benta rito para makita ang pagtataya.
+              Magdagdag muna ng mga paninda sa Imbentaryo. Kusa itong bubuo ng forecast habang nagbebenta ka sa POS.
             </Text>
             <Pressable
               style={styles.emptyBtn}
@@ -142,119 +306,17 @@ export default function SeasonalForecastScreen() {
           </View>
         ) : (
           <>
-            {/* Add Monthly Sales History Record to SQLite */}
-            <View style={styles.logCard}>
-              <Text style={styles.logTitle}>
-                + Itala ang Buwanang Benta sa Tindahan
+            <View style={styles.listHeaderRow}>
+              <Text style={styles.listSectionTitle}>
+                Mga Inirerekomendang I-restock ({allForecasts.length})
               </Text>
-              <Text style={styles.logSub}>
-                Select a product and record monthly sales to build 12m / 24m+ seasonal history:
+              <Text style={styles.listSectionSub}>
+                Pindutin ang produkto para makita ang 12-month chart
               </Text>
-
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.prodChipRow}
-              >
-                {products.map((p) => {
-                  const active = p.id === activeProductId;
-                  return (
-                    <Pressable
-                      key={p.id}
-                      style={[styles.prodChip, active ? styles.prodChipActive : null]}
-                      onPress={() => setSelectedProductId(p.id)}
-                    >
-                      <Text
-                        style={[
-                          styles.prodChipText,
-                          active ? styles.prodChipTextActive : null,
-                        ]}
-                      >
-                        {p.name}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </ScrollView>
-
-              <View style={styles.fourColRow}>
-                <View style={styles.colItem}>
-                  <Text style={styles.inputLabel}>Year</Text>
-                  <TextInput
-                    style={styles.inputBox}
-                    value={histYear}
-                    onChangeText={setHistYear}
-                    keyboardType="number-pad"
-                    placeholder="2025"
-                  />
-                </View>
-                <View style={styles.colItem}>
-                  <Text style={styles.inputLabel}>Month (1-12)</Text>
-                  <TextInput
-                    style={styles.inputBox}
-                    value={histMonth}
-                    onChangeText={setHistMonth}
-                    keyboardType="number-pad"
-                    placeholder="7"
-                  />
-                </View>
-                <View style={styles.colItem}>
-                  <Text style={styles.inputLabel}>Units Sold *</Text>
-                  <TextInput
-                    style={styles.inputBox}
-                    value={histUnitsSold}
-                    onChangeText={setHistUnitsSold}
-                    keyboardType="number-pad"
-                    placeholder="0"
-                  />
-                </View>
-                <View style={styles.colItem}>
-                  <Text style={styles.inputLabel}>OOS Days</Text>
-                  <TextInput
-                    style={styles.inputBox}
-                    value={histOosDays}
-                    onChangeText={setHistOosDays}
-                    keyboardType="number-pad"
-                    placeholder="0"
-                  />
-                </View>
-              </View>
-
-              <Pressable
-                style={styles.saveHistBtn}
-                onPress={() => {
-                  if (!activeProductId) return;
-                  const yr = parseInt(histYear, 10) || new Date().getFullYear();
-                  const mo = Math.min(12, Math.max(1, parseInt(histMonth, 10) || 1));
-                  const sold = Math.max(0, parseInt(histUnitsSold, 10) || 0);
-                  const oos = Math.min(29, Math.max(0, parseInt(histOosDays, 10) || 0));
-
-                  addOrUpdateMonthlySalesRecord(activeProductId, {
-                    year: yr,
-                    month: mo,
-                    grossUnitsSold: sold,
-                    voidedUnits: 0,
-                    returnedChangedMindUnits: 0,
-                    outOfStockDays: oos,
-                    totalDaysInMonth: 30,
-                  });
-                  Haptics.notificationAsync(
-                    Haptics.NotificationFeedbackType.Success
-                  ).catch(() => {});
-                  setHistUnitsSold('');
-                  setRestockToast(
-                    `✓ Naitala ang benta para sa ${yr}-${String(mo).padStart(2, '0')} (${sold} piraso)`
-                  );
-                }}
-              >
-                <Text style={styles.saveHistBtnText}>
-                  ✓ I-save ang Buwanang Talaan
-                </Text>
-              </Pressable>
             </View>
 
-            {/* Dynamic Forecast Cards for User's SQLite Products */}
-            {allForecasts.map((fc) => {
+            {/* Dynamic Forecast Cards with ProductThumbnail */}
+            {allForecasts.map(({ product: p, forecast: fc }) => {
               const historyCount = getMonthlySalesHistory(fc.productId).length;
               const is24m = fc.confidenceTier === 'VERIFIED_RECURRING_24M_PLUS';
               const ordinaryPct =
@@ -271,37 +333,60 @@ export default function SeasonalForecastScreen() {
                   : 20;
 
               return (
-                <View key={fc.productId} style={styles.card}>
-                  <View style={styles.badgeRow}>
-                    <View style={styles.peakBadge}>
-                      <Text style={styles.peakBadgeText}>
-                        🔥 {fc.peakVsOrdinaryMultiplier}× vs Ordinary Months
-                      </Text>
-                    </View>
-                    <View
-                      style={[
-                        styles.confidenceBadge,
-                        is24m ? styles.confGreen : styles.confBlue,
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.confidenceText,
-                          is24m ? styles.confTextGreen : styles.confTextBlue,
-                        ]}
-                      >
-                        {historyCount} buwan na tala
+                <Pressable
+                  key={fc.productId}
+                  style={styles.card}
+                  onPress={() => {
+                    Haptics.selectionAsync().catch(() => {});
+                    setDetailItem({ forecast: fc, product: p });
+                  }}
+                >
+                  {/* Top Row: Thumbnail + Title + Badges */}
+                  <View style={styles.cardHeaderRow}>
+                    <ProductThumbnail
+                      visual={p.visual}
+                      imageUri={p.imageUri}
+                      size="md"
+                    />
+                    <View style={styles.cardInfoCol}>
+                      <View style={styles.badgeRow}>
+                        <View style={styles.peakBadge}>
+                          <Text style={styles.peakBadgeText}>
+                            🔥 {fc.peakVsOrdinaryMultiplier}× vs Karaniwan
+                          </Text>
+                        </View>
+                        <View
+                          style={[
+                            styles.confidenceBadge,
+                            is24m ? styles.confGreen : styles.confBlue,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.confidenceText,
+                              is24m ? styles.confTextGreen : styles.confTextBlue,
+                            ]}
+                          >
+                            {historyCount > 0 ? `${historyCount} buwan na tala` : 'Category Prior'}
+                          </Text>
+                        </View>
+                      </View>
+
+                      <Text style={styles.productTitle} numberOfLines={2}>
+                        {fc.productName}
                       </Text>
                     </View>
                   </View>
 
-                  <Text style={styles.productTitle}>{fc.productName}</Text>
-                  <Text style={styles.explanation}>{fc.explanation}</Text>
+                  <Text style={styles.explanation} numberOfLines={2}>
+                    {fc.explanation}
+                  </Text>
 
+                  {/* Comparison Bar */}
                   <View style={styles.comparisonBox}>
                     <View style={styles.barGroup}>
                       <Text style={styles.barLabel}>
-                        Ordinary Months Avg ({fc.ordinaryMonthlyAverage} units/mo)
+                        Karaniwang Benta: {fc.ordinaryMonthlyAverage} piraso/buwan
                       </Text>
                       <View style={styles.barTrack}>
                         <View
@@ -312,7 +397,7 @@ export default function SeasonalForecastScreen() {
 
                     <View style={styles.barGroup}>
                       <Text style={styles.barLabelPeak}>
-                        Target Month #{fc.targetMonth} Forecast ({fc.forecastedUnits} units)
+                        Inaasahan sa {PHILIPPINE_MONTHS[fc.targetMonth - 1]?.short ?? `Month #${fc.targetMonth}`}: {fc.forecastedUnits} piraso
                       </Text>
                       <View style={styles.barTrack}>
                         <View
@@ -325,23 +410,25 @@ export default function SeasonalForecastScreen() {
                     </View>
                   </View>
 
+                  {/* Metrics Row */}
                   <View style={styles.metricsRow}>
                     <View style={styles.metricItem}>
-                      <Text style={styles.metricLabel}>Seasonal Index</Text>
+                      <Text style={styles.metricLabel}>Lakas ng Season</Text>
                       <Text style={styles.metricValue}>{fc.seasonalIndex}×</Text>
                     </View>
                     <View style={styles.metricItem}>
-                      <Text style={styles.metricLabel}>Current Stock</Text>
+                      <Text style={styles.metricLabel}>Kasalukuyang Stock</Text>
                       <Text style={styles.metricValue}>{fc.currentStock}</Text>
                     </View>
                     <View style={styles.metricItemHighlight}>
-                      <Text style={styles.metricLabelHighlight}>Recommended</Text>
+                      <Text style={styles.metricLabelHighlight}>Rekomendado</Text>
                       <Text style={styles.metricValueHighlight}>
                         +{fc.recommendedRestockQty}
                       </Text>
                     </View>
                   </View>
 
+                  {/* 1-Tap Restock Action on Card */}
                   {fc.recommendedRestockQty > 0 ? (
                     <Pressable
                       style={styles.restockActionBtn}
@@ -360,16 +447,156 @@ export default function SeasonalForecastScreen() {
                       }}
                     >
                       <Text style={styles.restockActionText}>
-                        + Restock Recommended ({fc.recommendedRestockQty} units) to Inventory
+                        + Restock Recommended (+{fc.recommendedRestockQty} piraso)
                       </Text>
                     </Pressable>
-                  ) : null}
-                </View>
+                  ) : (
+                    <View style={styles.inStockBadge}>
+                      <Text style={styles.inStockBadgeText}>
+                        ✓ Sapat ang stock ({fc.currentStock} piraso)
+                      </Text>
+                    </View>
+                  )}
+
+                  <View style={styles.tapToViewRow}>
+                    <Text style={styles.tapToViewText}>
+                      📊 Pindutin para makita ang 12-month sales chart ›
+                    </Text>
+                  </View>
+                </Pressable>
               );
             })}
           </>
         )}
       </ScrollView>
+
+      {/* Tap-to-View Modal with 12-Month Horizontal Sales Bar Chart */}
+      <Modal
+        visible={!!detailItem}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setDetailItem(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalSheet}>
+            {/* Modal Header */}
+            <View style={styles.modalHeader}>
+              <View style={styles.modalHeaderLeft}>
+                {detailItem ? (
+                  <ProductThumbnail
+                    visual={detailItem.product.visual}
+                    imageUri={detailItem.product.imageUri}
+                    size="lg"
+                  />
+                ) : null}
+                <View style={styles.modalHeaderTextCol}>
+                  <Text style={styles.modalTitle} numberOfLines={2}>
+                    {detailItem?.product.name}
+                  </Text>
+                  <Text style={styles.modalBarcode}>
+                    Barcode: {detailItem?.product.barcode}
+                  </Text>
+                  <Text style={styles.modalStockLabel}>
+                    Kasalukuyang Stock: <Text style={styles.boldDark}>{detailItem?.product.stockCount} piraso</Text>
+                  </Text>
+                </View>
+              </View>
+              <Pressable
+                style={styles.modalCloseBtn}
+                onPress={() => setDetailItem(null)}
+                hitSlop={12}
+              >
+                <Ionicons name="close" size={24} color="#475569" />
+              </Pressable>
+            </View>
+
+            <ScrollView
+              style={styles.modalBody}
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Season Explanation Card */}
+              <View style={styles.modalExplanationCard}>
+                <Text style={styles.modalExplTitle}>
+                  💡 Pagsusuri sa Benta ng Produkto
+                </Text>
+                <Text style={styles.modalExplText}>
+                  {detailItem?.forecast.explanation}
+                </Text>
+                <View style={styles.modalKpiRow}>
+                  <View style={styles.modalKpiItem}>
+                    <Text style={styles.modalKpiLabel}>Karaniwang Benta</Text>
+                    <Text style={styles.modalKpiVal}>
+                      {detailItem?.forecast.ordinaryMonthlyAverage} /buwan
+                    </Text>
+                  </View>
+                  <View style={styles.modalKpiItem}>
+                    <Text style={styles.modalKpiLabel}>Target Season</Text>
+                    <Text style={styles.modalKpiVal}>
+                      {detailItem ? PHILIPPINE_MONTHS[detailItem.forecast.targetMonth - 1]?.short : ''} ({detailItem?.forecast.seasonalIndex}×)
+                    </Text>
+                  </View>
+                  <View style={[styles.modalKpiItem, styles.modalKpiHighlight]}>
+                    <Text style={styles.modalKpiLabelHighlight}>Rekomendasyon</Text>
+                    <Text style={styles.modalKpiValHighlight}>
+                      +{detailItem?.forecast.recommendedRestockQty}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* 12-Month Horizontal Bar Chart */}
+              <View style={styles.chartCard}>
+                <Text style={styles.chartTitle}>
+                  📊 Kasaysayan ng Buwanang Benta sa Tindahan
+                </Text>
+                <Text style={styles.chartSubtitle}>
+                  Talaan ng benta mula Enero hanggang Disyembre (naka-highlight ang 🔥 Target Month):
+                </Text>
+
+                <View style={styles.chartBarsContainer}>
+                  {renderHorizontalChartBars()}
+                </View>
+              </View>
+            </ScrollView>
+
+            {/* Modal Bottom Action */}
+            <View style={styles.modalFooter}>
+              {detailItem && detailItem.forecast.recommendedRestockQty > 0 ? (
+                <Pressable
+                  style={styles.modalRestockBtn}
+                  onPress={async () => {
+                    Haptics.notificationAsync(
+                      Haptics.NotificationFeedbackType.Success
+                    ).catch(() => {});
+                    await adjustInventoryStock({
+                      productId: detailItem.product.id,
+                      mode: 'RESTOCK',
+                      quantity: detailItem.forecast.recommendedRestockQty,
+                    });
+                    setRestockToast(
+                      `✓ Na-restock +${detailItem.forecast.recommendedRestockQty} ${detailItem.product.name} sa tindahan`
+                    );
+                    setDetailItem(null);
+                  }}
+                >
+                  <Text style={styles.modalRestockBtnText}>
+                    + I-restock ang +{detailItem.forecast.recommendedRestockQty} Piraso sa Imbentaryo
+                  </Text>
+                </Pressable>
+              ) : (
+                <Pressable
+                  style={styles.modalCloseDoneBtn}
+                  onPress={() => setDetailItem(null)}
+                >
+                  <Text style={styles.modalCloseDoneBtnText}>
+                    ✓ Sapat ang Stock sa Ngayon (Isara)
+                  </Text>
+                </Pressable>
+              )}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -385,17 +612,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   backBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  backArrow: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '800',
   },
   headerTextCol: {
     flex: 1,
@@ -411,23 +633,76 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
   },
-  toastBanner: {
-    backgroundColor: '#DCFCE7',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#86EFAC',
-  },
-  toastText: {
-    color: '#166534',
-    fontSize: 12,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
   content: {
     padding: 16,
     gap: 14,
     paddingBottom: 130,
+  },
+  seasonBannerCard: {
+    borderRadius: 16,
+    padding: 14,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.06)',
+  },
+  seasonBannerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  seasonBannerTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    flex: 1,
+  },
+  autoTag: {
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  autoTagText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  seasonBannerSub: {
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 16,
+  },
+  seasonSwitcherCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 8,
+  },
+  switcherLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#475569',
+  },
+  seasonPillsRow: {
+    gap: 8,
+  },
+  seasonPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: '#F1F5F9',
+  },
+  seasonPillActive: {
+    backgroundColor: '#0D7A52',
+  },
+  seasonPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#475569',
+  },
+  seasonPillTextActive: {
+    color: '#FFFFFF',
   },
   budgetCard: {
     backgroundColor: '#FFFFFF',
@@ -455,6 +730,11 @@ const styles = StyleSheet.create({
   budgetSub: {
     fontSize: 12,
     color: '#64748B',
+    marginTop: 2,
+  },
+  boldGreen: {
+    color: '#0D7A52',
+    fontWeight: '800',
   },
   budgetPills: {
     flexDirection: 'row',
@@ -511,179 +791,118 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 13,
   },
-  logCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    gap: 8,
+  listHeaderRow: {
+    marginTop: 4,
+    gap: 2,
   },
-  logTitle: {
+  listSectionTitle: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#0D7A52',
+    color: '#1E293B',
   },
-  logSub: {
+  listSectionSub: {
     fontSize: 11,
     color: '#64748B',
-  },
-  prodChipRow: {
-    gap: 8,
-    paddingVertical: 4,
-  },
-  prodChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 14,
-    backgroundColor: '#E2E8F0',
-  },
-  prodChipActive: {
-    backgroundColor: '#0D7A52',
-  },
-  prodChipText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#334155',
-  },
-  prodChipTextActive: {
-    color: '#FFFFFF',
-  },
-  fourColRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  colItem: {
-    flex: 1,
-    gap: 4,
-  },
-  inputLabel: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#475569',
-  },
-  inputBox: {
-    height: 38,
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    backgroundColor: '#F8FAFC',
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  saveHistBtn: {
-    backgroundColor: '#0D7A52',
-    paddingVertical: 11,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  saveHistBtnText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '800',
   },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     gap: 10,
   },
+  cardHeaderRow: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'center',
+  },
+  cardInfoCol: {
+    flex: 1,
+    gap: 4,
+  },
   badgeRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'wrap',
     gap: 6,
   },
   peakBadge: {
     backgroundColor: '#FEF3C7',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 999,
   },
   peakBadgeText: {
     color: '#92400E',
     fontWeight: '800',
-    fontSize: 11,
+    fontSize: 10,
   },
   confidenceBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 999,
   },
-  confGreen: {
-    backgroundColor: '#DCFCE7',
-  },
-  confBlue: {
-    backgroundColor: '#DBEAFE',
-  },
+  confGreen: { backgroundColor: '#DCFCE7' },
+  confBlue: { backgroundColor: '#DBEAFE' },
   confidenceText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '800',
   },
-  confTextGreen: {
-    color: '#166534',
-  },
-  confTextBlue: {
-    color: '#1E40AF',
-  },
+  confTextGreen: { color: '#166534' },
+  confTextBlue: { color: '#1E40AF' },
   productTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '800',
     color: '#0F172A',
   },
   explanation: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#475569',
-    lineHeight: 18,
+    lineHeight: 16,
   },
   comparisonBox: {
     backgroundColor: '#F8FAFC',
     borderRadius: 12,
-    padding: 12,
-    gap: 10,
+    padding: 10,
+    gap: 8,
     borderWidth: 1,
     borderColor: '#F1F5F9',
   },
   barGroup: {
-    gap: 4,
+    gap: 3,
   },
   barLabel: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
     color: '#64748B',
   },
   barLabelPeak: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '800',
     color: '#0D7A52',
   },
   barTrack: {
-    height: 10,
+    height: 8,
     backgroundColor: '#E2E8F0',
-    borderRadius: 5,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   barFillOrdinary: {
     height: '100%',
     backgroundColor: '#94A3B8',
-    borderRadius: 5,
+    borderRadius: 4,
   },
   barFillPeak: {
     height: '100%',
     backgroundColor: '#0D7A52',
-    borderRadius: 5,
+    borderRadius: 4,
   },
   metricsRow: {
     flexDirection: 'row',
     backgroundColor: '#F8FAFC',
-    borderRadius: 12,
-    padding: 10,
+    borderRadius: 10,
+    padding: 8,
     justifyContent: 'space-between',
   },
   metricItem: {
@@ -698,36 +917,289 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   metricLabel: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#64748B',
     fontWeight: '600',
   },
   metricValue: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '800',
     color: '#0F172A',
-    marginTop: 2,
+    marginTop: 1,
   },
   metricLabelHighlight: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#065F46',
     fontWeight: '700',
   },
   metricValueHighlight: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#0D7A52',
+    marginTop: 1,
+  },
+  restockActionBtn: {
+    backgroundColor: '#0D7A52',
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  restockActionText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  inStockBadge: {
+    backgroundColor: '#F1F5F9',
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  inStockBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  tapToViewRow: {
+    alignItems: 'center',
+    paddingTop: 2,
+  },
+  tapToViewText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0284C7',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '85%',
+    paddingBottom: 20,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  modalHeaderLeft: {
+    flexDirection: 'row',
+    gap: 12,
+    flex: 1,
+    alignItems: 'center',
+  },
+  modalHeaderTextCol: {
+    flex: 1,
+    gap: 2,
+  },
+  modalTitle: {
     fontSize: 16,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  modalBarcode: {
+    fontSize: 11,
+    color: '#64748B',
+    fontWeight: '500',
+  },
+  modalStockLabel: {
+    fontSize: 11,
+    color: '#475569',
+    marginTop: 2,
+  },
+  boldDark: {
+    fontWeight: '800',
+    color: '#0D7A52',
+  },
+  modalCloseBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
+  modalBody: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  modalExplanationCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 8,
+    marginBottom: 14,
+  },
+  modalExplTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#0D7A52',
+  },
+  modalExplText: {
+    fontSize: 11,
+    color: '#475569',
+    lineHeight: 16,
+  },
+  modalKpiRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  modalKpiItem: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  modalKpiHighlight: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
+  },
+  modalKpiLabel: {
+    fontSize: 10,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  modalKpiVal: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginTop: 2,
+  },
+  modalKpiLabelHighlight: {
+    fontSize: 10,
+    color: '#065F46',
+    fontWeight: '700',
+  },
+  modalKpiValHighlight: {
+    fontSize: 14,
     fontWeight: '900',
     color: '#0D7A52',
     marginTop: 2,
   },
-  restockActionBtn: {
+  chartCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 8,
+    marginBottom: 20,
+  },
+  chartTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  chartSubtitle: {
+    fontSize: 11,
+    color: '#64748B',
+    marginBottom: 4,
+  },
+  chartBarsContainer: {
+    gap: 8,
+  },
+  chartBarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  chartLabelCol: {
+    width: 65,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  chartMonthText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#475569',
+  },
+  chartMonthTextTarget: {
+    color: '#C2410C',
+    fontWeight: '900',
+  },
+  chartTargetPill: {
+    fontSize: 8,
+    fontWeight: '800',
+    color: '#C2410C',
+    backgroundColor: '#FFEDD5',
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  chartTrackCol: {
+    flex: 1,
+  },
+  chartTrack: {
+    height: 12,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  chartFill: {
+    height: '100%',
+    borderRadius: 6,
+  },
+  chartFillTarget: {
+    backgroundColor: '#EA580C',
+  },
+  chartFillActive: {
+    backgroundColor: '#0D7A52',
+  },
+  chartFillZero: {
+    backgroundColor: '#E2E8F0',
+  },
+  chartUnitText: {
+    width: 65,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#475569',
+    textAlign: 'right',
+  },
+  chartUnitTextTarget: {
+    color: '#EA580C',
+    fontWeight: '900',
+  },
+  modalFooter: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  modalRestockBtn: {
     backgroundColor: '#0D7A52',
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
   },
-  restockActionText: {
+  modalRestockBtnText: {
     color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '800',
+  },
+  modalCloseDoneBtn: {
+    backgroundColor: '#F1F5F9',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalCloseDoneBtnText: {
+    color: '#475569',
+    fontSize: 13,
+    fontWeight: '700',
   },
 });
