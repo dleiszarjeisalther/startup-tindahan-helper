@@ -254,6 +254,64 @@ export interface Translations {
   digitalInflowLabel: string;
   grandTotalInflowLabel: string;
   salesOverviewBtnHint: string;
+
+  // Settings additions
+  manageCategoriesSub: string;
+  activeLangBadge: string;
+  notificationsOnToast: string;
+  notificationsOffToast: string;
+  schoolOpeningToast: (month: string) => string;
+  schoolMonthJune: string;
+  schoolMonthJuly: string;
+  schoolMonthAugust: string;
+
+  // Seasonal Forecast additions
+  seasonalForecastTitle: string;
+  seasonalForecastSub: string;
+  seasonAutoBadge: string;
+  seasonPromptLabel: string;
+  seasonPresetNext: (shortMonth: string) => string;
+  seasonPresetChristmas: string;
+  seasonPresetSummer: string;
+  seasonPresetSchool: string;
+  seasonPresetRainy: string;
+  seasonChristmasTitle: string;
+  seasonChristmasSub: string;
+  seasonSummerTitle: string;
+  seasonSummerSub: string;
+  seasonSchoolTitle: string;
+  seasonSchoolSub: string;
+  seasonRainyTitle: string;
+  seasonRainySub: string;
+  seasonDefaultTitle: string;
+  seasonDefaultSub: string;
+  wholesaleBudgetSectionTitle: string;
+  totalNeededToRestock: (qty: number) => string;
+  budgetPillLabel: (amount: number) => string;
+  emptyInventoryTitle: string;
+  emptyInventorySub: string;
+  addProductsInventoryBtn: string;
+  recommendedRestockHeader: (count: number) => string;
+  tapToViewChartHint: string;
+  vsOrdinaryMonths: string;
+  monthsHistoryCount: (count: number) => string;
+  categoryPriorTag: string;
+  ordinarySalesAvgLabel: (qty: number) => string;
+  expectedInMonthLabel: (month: string, qty: number) => string;
+  seasonMultiplierLabel: string;
+  currentStockLabel: string;
+  recommendedLabel: string;
+  restockActionBtnLabel: (qty: number) => string;
+  inStockSufficientBadge: (qty: number) => string;
+  restockSuccessToast: (qty: number, name: string) => string;
+  modalProductAnalysisTitle: string;
+  modalChartTitle: string;
+  modalChartSub: string;
+  modalRestockBtnLabel: (qty: number) => string;
+  modalStockSufficientCloseBtn: string;
+  chartTargetTag: string;
+  unitsSoldLabel: (units: number) => string;
+  perMonthLabel: string;
 }
 
 const en: Translations = {
@@ -497,6 +555,64 @@ const en: Translations = {
   digitalInflowLabel: 'GCash / Digital Inflow',
   grandTotalInflowLabel: 'Grand Total Inflow',
   salesOverviewBtnHint: 'Full Overview ›',
+
+  // Settings additions
+  manageCategoriesSub: 'Manage product categories in inventory',
+  activeLangBadge: '🇺🇸 English (Active)',
+  notificationsOnToast: '✓ Notifications turned on',
+  notificationsOffToast: 'ℹ️ Notifications turned off',
+  schoolOpeningToast: (month: string) => `✓ Target School Opening: ${month}`,
+  schoolMonthJune: 'June (Classic Opening)',
+  schoolMonthJuly: 'July (Current DepEd Calendar)',
+  schoolMonthAugust: 'August (Shifted Calendar)',
+
+  // Seasonal Forecast additions
+  seasonalForecastTitle: 'Seasonal Product Forecast',
+  seasonalForecastSub: '⚡ 100% Automated Forecast from POS Receipts',
+  seasonAutoBadge: 'Auto Forecast',
+  seasonPromptLabel: '📅 Choose Target Month / Upcoming Season:',
+  seasonPresetNext: (m: string) => `⚡ Next (${m})`,
+  seasonPresetChristmas: '🎄 Christmas (Dec)',
+  seasonPresetSummer: '☀️ Summer (Apr)',
+  seasonPresetSchool: '🎒 School (Jul)',
+  seasonPresetRainy: '🌧️ Rainy (Sep)',
+  seasonChristmasTitle: '🎄 Christmas & Holiday Rush',
+  seasonChristmasSub: 'High demand for holiday feasts, pasta, cream, condensed milk, canned meat, and party groceries.',
+  seasonSummerTitle: '☀️ Summer / Hot Season Peak',
+  seasonSummerSub: 'High surge for cold beverages, ice, water, halo-halo ingredients, and refreshments.',
+  seasonSchoolTitle: '🎒 Back-to-School Season Peak',
+  seasonSchoolSub: 'Surge in school supplies, notebooks, pens, pad paper, and student snack packs.',
+  seasonRainyTitle: '🌧️ Rainy & Storm Season Peak',
+  seasonRainySub: 'High demand for coffee, instant noodles, hot soups, canned sardines, and matches/candles.',
+  seasonDefaultTitle: '✨ New Year & Everyday Staples',
+  seasonDefaultSub: 'Consistent baseline demand for rice, cooking oil, sugar, and daily sari-sari store essentials.',
+  wholesaleBudgetSectionTitle: 'Owner Wholesale Restock Budget',
+  totalNeededToRestock: (qty: number) => `Total recommended restock: +${qty} units`,
+  budgetPillLabel: (b: number) => `₱${b} Budget`,
+  emptyInventoryTitle: 'No Products in Store Inventory',
+  emptyInventorySub: 'Add products to Inventory first. The system will build seasonal forecast automatically as you sell in POS.',
+  addProductsInventoryBtn: '+ Add Products in Inventory',
+  recommendedRestockHeader: (count: number) => `Recommended Restock Items (${count})`,
+  tapToViewChartHint: '📊 Tap to view 12-month sales chart ›',
+  vsOrdinaryMonths: 'vs Ordinary Months',
+  monthsHistoryCount: (count: number) => `${count} months history`,
+  categoryPriorTag: 'Category Benchmark',
+  ordinarySalesAvgLabel: (qty: number) => `Ordinary Sales Average: ${qty} units/mo`,
+  expectedInMonthLabel: (month: string, qty: number) => `Expected in ${month}: ${qty} units`,
+  seasonMultiplierLabel: 'Season Multiplier',
+  currentStockLabel: 'Current Stock',
+  recommendedLabel: 'Recommended',
+  restockActionBtnLabel: (qty: number) => `+ Restock Recommended (+${qty} units)`,
+  inStockSufficientBadge: (qty: number) => `✓ Stock is sufficient (${qty} units)`,
+  restockSuccessToast: (qty: number, name: string) => `✓ Restocked +${qty} ${name} in store inventory`,
+  modalProductAnalysisTitle: '💡 Product Sales & Season Analysis',
+  modalChartTitle: '📊 12-Month Store Sales History',
+  modalChartSub: 'Monthly sales record from January to December (🔥 Target Month highlighted):',
+  modalRestockBtnLabel: (qty: number) => `+ Restock Recommended (+${qty} Units) to Inventory`,
+  modalStockSufficientCloseBtn: '✓ Stock is Sufficient for Now (Close)',
+  chartTargetTag: '🔥 Target',
+  unitsSoldLabel: (units: number) => `${units} units`,
+  perMonthLabel: '/mo',
 };
 
 const taglish: Translations = {
@@ -740,6 +856,64 @@ const taglish: Translations = {
   digitalInflowLabel: 'GCash / Digital na Pumasok',
   grandTotalInflowLabel: 'Lahat ng Pumasok na Pera',
   salesOverviewBtnHint: 'Buong Buod ›',
+
+  // Settings additions
+  manageCategoriesSub: 'Pamahalaan ang mga kategorya sa imbentaryo',
+  activeLangBadge: '🇵🇭 Filipino / Taglish (Aktibo)',
+  notificationsOnToast: '✓ Naka-on ang notifications',
+  notificationsOffToast: 'ℹ️ Naka-off ang notifications',
+  schoolOpeningToast: (month: string) => `✓ Target School Opening: ${month}`,
+  schoolMonthJune: 'Hunyo (Classic Opening)',
+  schoolMonthJuly: 'Hulyo (Kasalukuyang DepEd Calendar)',
+  schoolMonthAugust: 'Agosto (Shifted Calendar)',
+
+  // Seasonal Forecast additions
+  seasonalForecastTitle: 'Seasonal Product Forecast',
+  seasonalForecastSub: '⚡ 100% Awtomatikong Pagtataya mula sa POS Receipts',
+  seasonAutoBadge: 'Kusa / Automated',
+  seasonPromptLabel: '📅 Piliin ang Buwan / Panahon na Pinaghahandaan:',
+  seasonPresetNext: (m: string) => `⚡ Susunod (${m})`,
+  seasonPresetChristmas: '🎄 Pasko (Dis)',
+  seasonPresetSummer: '☀️ Tag-init (Abr)',
+  seasonPresetSchool: '🎒 Eskwela (Hul)',
+  seasonPresetRainy: '🌧️ Tag-ulan (Set)',
+  seasonChristmasTitle: '🎄 Pasko & Bagong Taon Peak Season',
+  seasonChristmasSub: 'Panahon ng handaan, pasta, fruit cocktail, all-purpose cream, at party grocery.',
+  seasonSummerTitle: '☀️ Tag-init / Summer Peak Season',
+  seasonSummerSub: 'Malakas ang malamig na softdrinks, yelo, halo-halo ingredients, at tubig.',
+  seasonSchoolTitle: '🎒 Balik-Eskwela Peak Season',
+  seasonSchoolSub: 'Dagsa ang school supplies, notebooks, ballpen, at baon/meryenda ng mga bata.',
+  seasonRainyTitle: '🌧️ Tag-ulan & Panahon ng Bagyo',
+  seasonRainySub: 'Mabili ang kape, instant noodles, sabaw, delata, posporo, at kandila.',
+  seasonDefaultTitle: '✨ Bagong Taon & Karaniwang Araw',
+  seasonDefaultSub: 'Matatag na benta ng bigas, mantika, asukal, toyo, at pang-araw-araw na grocery.',
+  wholesaleBudgetSectionTitle: 'Owner Wholesale Restock Budget',
+  totalNeededToRestock: (qty: number) => `Kabuuang kailangang bilhin: +${qty} piraso`,
+  budgetPillLabel: (b: number) => `₱${b} Budget`,
+  emptyInventoryTitle: 'Wala Pang Paninda sa Tindahan',
+  emptyInventorySub: 'Magdagdag muna ng mga paninda sa Imbentaryo. Kusa itong bubuo ng forecast habang nagbebenta ka sa POS.',
+  addProductsInventoryBtn: '+ Add Products in Inventory',
+  recommendedRestockHeader: (count: number) => `Mga Inirerekomendang I-restock (${count})`,
+  tapToViewChartHint: '📊 Pindutin para makita ang 12-month sales chart ›',
+  vsOrdinaryMonths: 'vs Karaniwan',
+  monthsHistoryCount: (count: number) => `${count} buwan na tala`,
+  categoryPriorTag: 'Category Prior',
+  ordinarySalesAvgLabel: (qty: number) => `Karaniwang Benta: ${qty} piraso/buwan`,
+  expectedInMonthLabel: (month: string, qty: number) => `Inaasahan sa ${month}: ${qty} piraso`,
+  seasonMultiplierLabel: 'Lakas ng Season',
+  currentStockLabel: 'Kasalukuyang Stock',
+  recommendedLabel: 'Rekomendado',
+  restockActionBtnLabel: (qty: number) => `+ Restock Recommended (+${qty} piraso)`,
+  inStockSufficientBadge: (qty: number) => `✓ Sapat ang stock (${qty} piraso)`,
+  restockSuccessToast: (qty: number, name: string) => `✓ Na-restock +${qty} ${name} sa tindahan`,
+  modalProductAnalysisTitle: '💡 Pagsusuri sa Benta ng Produkto',
+  modalChartTitle: '📊 Kasaysayan ng Buwanang Benta sa Tindahan',
+  modalChartSub: 'Talaan ng benta mula Enero hanggang Disyembre (naka-highlight ang 🔥 Target Month):',
+  modalRestockBtnLabel: (qty: number) => `+ I-restock ang +${qty} Piraso sa Imbentaryo`,
+  modalStockSufficientCloseBtn: '✓ Sapat ang Stock sa Ngayon (Isara)',
+  chartTargetTag: '🔥 Target',
+  unitsSoldLabel: (units: number) => `${units} piraso`,
+  perMonthLabel: '/buwan',
 };
 
 const dictionaries: Record<'English' | 'Taglish' | 'Filipino', Translations> = {

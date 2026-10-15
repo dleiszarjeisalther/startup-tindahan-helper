@@ -14,62 +14,81 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { seasonalForecastEngine } from '@/infrastructure/container';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
+import { getTranslations, Translations } from '@/presentation/localization/i18n';
 import { FloatingToast } from '@/presentation/components/FloatingToast';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { ProductDTO } from '@/domain/entities/Product';
 import { SeasonalForecastResult } from '@/domain/strategies/SeasonalForecastEngine';
 
-const PHILIPPINE_MONTHS = [
-  { month: 1, name: 'Enero', short: 'Ene' },
-  { month: 2, name: 'Pebrero', short: 'Peb' },
-  { month: 3, name: 'Marso', short: 'Mar' },
-  { month: 4, name: 'Abril', short: 'Abr' },
-  { month: 5, name: 'Mayo', short: 'May' },
-  { month: 6, name: 'Hunyo', short: 'Hun' },
-  { month: 7, name: 'Hulyo', short: 'Hul' },
-  { month: 8, name: 'Agosto', short: 'Ago' },
-  { month: 9, name: 'Setyembre', short: 'Set' },
-  { month: 10, name: 'Oktubre', short: 'Okt' },
-  { month: 11, name: 'Nobyembre', short: 'Nob' },
-  { month: 12, name: 'Disyembre', short: 'Dis' },
-];
+function getLocalizedMonths(isEnglish: boolean) {
+  if (isEnglish) {
+    return [
+      { month: 1, name: 'January', short: 'Jan' },
+      { month: 2, name: 'February', short: 'Feb' },
+      { month: 3, name: 'March', short: 'Mar' },
+      { month: 4, name: 'April', short: 'Apr' },
+      { month: 5, name: 'May', short: 'May' },
+      { month: 6, name: 'June', short: 'Jun' },
+      { month: 7, name: 'July', short: 'Jul' },
+      { month: 8, name: 'August', short: 'Aug' },
+      { month: 9, name: 'September', short: 'Sep' },
+      { month: 10, name: 'October', short: 'Oct' },
+      { month: 11, name: 'November', short: 'Nov' },
+      { month: 12, name: 'December', short: 'Dec' },
+    ];
+  }
+  return [
+    { month: 1, name: 'Enero', short: 'Ene' },
+    { month: 2, name: 'Pebrero', short: 'Peb' },
+    { month: 3, name: 'Marso', short: 'Mar' },
+    { month: 4, name: 'Abril', short: 'Abr' },
+    { month: 5, name: 'Mayo', short: 'May' },
+    { month: 6, name: 'Hunyo', short: 'Hun' },
+    { month: 7, name: 'Hulyo', short: 'Hul' },
+    { month: 8, name: 'Agosto', short: 'Ago' },
+    { month: 9, name: 'Setyembre', short: 'Set' },
+    { month: 10, name: 'Oktubre', short: 'Okt' },
+    { month: 11, name: 'Nobyembre', short: 'Nob' },
+    { month: 12, name: 'Disyembre', short: 'Dis' },
+  ];
+}
 
-function getPhilippineSeasonInfo(targetMonth: number) {
+function getPhilippineSeasonInfo(targetMonth: number, t: Translations) {
   if (targetMonth === 11 || targetMonth === 12) {
     return {
-      title: '🎄 Pasko & Bagong Taon Peak Season',
-      sub: 'Panahon ng handaan, pasta, fruit cocktail, all-purpose cream, at party grocery.',
+      title: t.seasonChristmasTitle,
+      sub: t.seasonChristmasSub,
       badgeColor: '#FEE2E2',
       textColor: '#991B1B',
     };
   }
   if (targetMonth >= 3 && targetMonth <= 5) {
     return {
-      title: '☀️ Tag-init / Summer Peak Season',
-      sub: 'Malakas ang malamig na softdrinks, yelo, halo-halo ingredients, at tubig.',
+      title: t.seasonSummerTitle,
+      sub: t.seasonSummerSub,
       badgeColor: '#FEF3C7',
       textColor: '#92400E',
     };
   }
   if (targetMonth === 6 || targetMonth === 7) {
     return {
-      title: '🎒 Balik-Eskwela Peak Season',
-      sub: 'Dagsa ang school supplies, notebooks, ballpen, at baon/meryenda ng mga bata.',
+      title: t.seasonSchoolTitle,
+      sub: t.seasonSchoolSub,
       badgeColor: '#E0E7FF',
       textColor: '#3730A3',
     };
   }
   if (targetMonth >= 8 && targetMonth <= 10) {
     return {
-      title: '🌧️ Tag-ulan & Panahon ng Bagyo',
-      sub: 'Mabili ang kape, instant noodles, sabaw, delata, posporo, at kandila.',
+      title: t.seasonRainyTitle,
+      sub: t.seasonRainySub,
       badgeColor: '#E0F2FE',
       textColor: '#075985',
     };
   }
   return {
-    title: '✨ Bagong Taon & Karaniwang Araw',
-    sub: 'Matatag na benta ng bigas, mantika, asukal, toyo, at pang-araw-araw na grocery.',
+    title: t.seasonDefaultTitle,
+    sub: t.seasonDefaultSub,
     badgeColor: '#F1F5F9',
     textColor: '#334155',
   };
@@ -84,6 +103,10 @@ export default function SeasonalForecastScreen() {
     getMonthlySalesHistory,
     updateSettings,
   } = useTindahanStore();
+
+  const t = getTranslations(settings.language);
+  const isEnglish = settings.language === 'English';
+  const localizedMonths = getLocalizedMonths(isEnglish);
 
   const currentMonth = new Date().getMonth() + 1; // 1-12
   const defaultTargetMonth = currentMonth === 12 ? 1 : currentMonth + 1;
@@ -108,7 +131,7 @@ export default function SeasonalForecastScreen() {
     return { product: p, forecast };
   });
 
-  const seasonInfo = getPhilippineSeasonInfo(selectedTargetMonth);
+  const seasonInfo = getPhilippineSeasonInfo(selectedTargetMonth, t);
   const totalRecommendedRestockUnits = allForecasts.reduce(
     (sum, item) => sum + item.forecast.recommendedRestockQty,
     0
@@ -118,12 +141,12 @@ export default function SeasonalForecastScreen() {
     {
       id: 'next',
       month: defaultTargetMonth,
-      label: `⚡ Susunod (${PHILIPPINE_MONTHS[defaultTargetMonth - 1]?.short ?? ''})`,
+      label: t.seasonPresetNext(localizedMonths[defaultTargetMonth - 1]?.short ?? ''),
     },
-    { id: 'pasko', month: 12, label: '🎄 Pasko (Dis)' },
-    { id: 'summer', month: 4, label: '☀️ Tag-init (Abr)' },
-    { id: 'school', month: 7, label: '🎒 Eskwela (Hul)' },
-    { id: 'rainy', month: 9, label: '🌧️ Tag-ulan (Set)' },
+    { id: 'pasko', month: 12, label: t.seasonPresetChristmas },
+    { id: 'summer', month: 4, label: t.seasonPresetSummer },
+    { id: 'school', month: 7, label: t.seasonPresetSchool },
+    { id: 'rainy', month: 9, label: t.seasonPresetRainy },
   ];
 
   // Helper to render horizontal sales chart bars in modal
@@ -134,13 +157,13 @@ export default function SeasonalForecastScreen() {
     // Find highest units sold in any month for proportional scaling
     const maxUnits = Math.max(
       1,
-      ...PHILIPPINE_MONTHS.map((m) => {
+      ...localizedMonths.map((m) => {
         const row = history.find((h) => h.month === m.month);
         return row ? Math.max(0, row.grossUnitsSold - row.voidedUnits - row.returnedChangedMindUnits) : 0;
       })
     );
 
-    return PHILIPPINE_MONTHS.map((m) => {
+    return localizedMonths.map((m) => {
       const row = history.find((h) => h.month === m.month);
       const units = row
         ? Math.max(0, row.grossUnitsSold - row.voidedUnits - row.returnedChangedMindUnits)
@@ -155,7 +178,7 @@ export default function SeasonalForecastScreen() {
             <Text style={[styles.chartMonthText, isTarget ? styles.chartMonthTextTarget : null]}>
               {m.short}
             </Text>
-            {isTarget ? <Text style={styles.chartTargetPill}>🔥 Target</Text> : null}
+            {isTarget ? <Text style={styles.chartTargetPill}>{t.chartTargetTag}</Text> : null}
           </View>
           <View style={styles.chartTrackCol}>
             <View style={styles.chartTrack}>
@@ -169,7 +192,7 @@ export default function SeasonalForecastScreen() {
             </View>
           </View>
           <Text style={[styles.chartUnitText, isTarget ? styles.chartUnitTextTarget : null]}>
-            {units} piraso
+            {t.unitsSoldLabel(units)}
           </Text>
         </View>
       );
@@ -200,9 +223,9 @@ export default function SeasonalForecastScreen() {
           <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
         </Pressable>
         <View style={styles.headerTextCol}>
-          <Text style={styles.headerTitle}>Seasonal Product Forecast</Text>
+          <Text style={styles.headerTitle}>{t.seasonalForecastTitle}</Text>
           <Text style={styles.headerSubtitle}>
-            ⚡ 100% Awtomatikong Pagtataya mula sa POS Receipts
+            {t.seasonalForecastSub}
           </Text>
         </View>
       </View>
@@ -219,7 +242,7 @@ export default function SeasonalForecastScreen() {
               {seasonInfo.title}
             </Text>
             <View style={styles.autoTag}>
-              <Text style={styles.autoTagText}>Kusa / Automated</Text>
+              <Text style={styles.autoTagText}>{t.seasonAutoBadge}</Text>
             </View>
           </View>
           <Text style={[styles.seasonBannerSub, { color: seasonInfo.textColor }]}>
@@ -230,7 +253,7 @@ export default function SeasonalForecastScreen() {
         {/* 1-Tap Target Season Switcher Pills */}
         <View style={styles.seasonSwitcherCard}>
           <Text style={styles.switcherLabel}>
-            📅 Piliin ang Buwan / Panahon na Pinaghahandaan:
+            {t.seasonPromptLabel}
           </Text>
           <ScrollView
             horizontal
@@ -261,9 +284,9 @@ export default function SeasonalForecastScreen() {
         <View style={styles.budgetCard}>
           <View style={styles.budgetHeader}>
             <View>
-              <Text style={styles.budgetTitle}>💰 Owner Wholesale Restock Budget</Text>
+              <Text style={styles.budgetTitle}>💰 {t.wholesaleBudgetSectionTitle}</Text>
               <Text style={styles.budgetSub}>
-                Kabuuang kailangang bilhin: <Text style={styles.boldGreen}>+{totalRecommendedRestockUnits} piraso</Text>
+                {t.totalNeededToRestock(totalRecommendedRestockUnits)}
               </Text>
             </View>
             <Text style={styles.budgetAmount}>₱{settings.wholesaleBudgetPhp}</Text>
@@ -283,7 +306,7 @@ export default function SeasonalForecastScreen() {
                       active ? styles.budgetPillTextActive : null,
                     ]}
                   >
-                    ₱{b} Budget
+                    {t.budgetPillLabel(b)}
                   </Text>
                 </Pressable>
               );
@@ -293,25 +316,25 @@ export default function SeasonalForecastScreen() {
 
         {products.length === 0 ? (
           <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>Wala Pang Paninda sa Tindahan</Text>
+            <Text style={styles.emptyTitle}>{t.emptyInventoryTitle}</Text>
             <Text style={styles.emptySub}>
-              Magdagdag muna ng mga paninda sa Imbentaryo. Kusa itong bubuo ng forecast habang nagbebenta ka sa POS.
+              {t.emptyInventorySub}
             </Text>
             <Pressable
               style={styles.emptyBtn}
               onPress={() => router.push('/inventory')}
             >
-              <Text style={styles.emptyBtnText}>+ Add Products in Inventory</Text>
+              <Text style={styles.emptyBtnText}>{t.addProductsInventoryBtn}</Text>
             </Pressable>
           </View>
         ) : (
           <>
             <View style={styles.listHeaderRow}>
               <Text style={styles.listSectionTitle}>
-                Mga Inirerekomendang I-restock ({allForecasts.length})
+                {t.recommendedRestockHeader(allForecasts.length)}
               </Text>
               <Text style={styles.listSectionSub}>
-                Pindutin ang produkto para makita ang 12-month chart
+                {t.tapToViewChartHint}
               </Text>
             </View>
 
@@ -331,6 +354,8 @@ export default function SeasonalForecastScreen() {
                       )
                     )
                   : 20;
+
+              const targetMonthName = localizedMonths[fc.targetMonth - 1]?.short ?? `Month #${fc.targetMonth}`;
 
               return (
                 <Pressable
@@ -352,7 +377,7 @@ export default function SeasonalForecastScreen() {
                       <View style={styles.badgeRow}>
                         <View style={styles.peakBadge}>
                           <Text style={styles.peakBadgeText}>
-                            🔥 {fc.peakVsOrdinaryMultiplier}× vs Karaniwan
+                            🔥 {fc.peakVsOrdinaryMultiplier}× {t.vsOrdinaryMonths}
                           </Text>
                         </View>
                         <View
@@ -367,7 +392,7 @@ export default function SeasonalForecastScreen() {
                               is24m ? styles.confTextGreen : styles.confTextBlue,
                             ]}
                           >
-                            {historyCount > 0 ? `${historyCount} buwan na tala` : 'Category Prior'}
+                            {historyCount > 0 ? t.monthsHistoryCount(historyCount) : t.categoryPriorTag}
                           </Text>
                         </View>
                       </View>
@@ -386,7 +411,7 @@ export default function SeasonalForecastScreen() {
                   <View style={styles.comparisonBox}>
                     <View style={styles.barGroup}>
                       <Text style={styles.barLabel}>
-                        Karaniwang Benta: {fc.ordinaryMonthlyAverage} piraso/buwan
+                        {t.ordinarySalesAvgLabel(fc.ordinaryMonthlyAverage)}
                       </Text>
                       <View style={styles.barTrack}>
                         <View
@@ -397,7 +422,7 @@ export default function SeasonalForecastScreen() {
 
                     <View style={styles.barGroup}>
                       <Text style={styles.barLabelPeak}>
-                        Inaasahan sa {PHILIPPINE_MONTHS[fc.targetMonth - 1]?.short ?? `Month #${fc.targetMonth}`}: {fc.forecastedUnits} piraso
+                        {t.expectedInMonthLabel(targetMonthName, fc.forecastedUnits)}
                       </Text>
                       <View style={styles.barTrack}>
                         <View
@@ -413,15 +438,15 @@ export default function SeasonalForecastScreen() {
                   {/* Metrics Row */}
                   <View style={styles.metricsRow}>
                     <View style={styles.metricItem}>
-                      <Text style={styles.metricLabel}>Lakas ng Season</Text>
+                      <Text style={styles.metricLabel}>{t.seasonMultiplierLabel}</Text>
                       <Text style={styles.metricValue}>{fc.seasonalIndex}×</Text>
                     </View>
                     <View style={styles.metricItem}>
-                      <Text style={styles.metricLabel}>Kasalukuyang Stock</Text>
+                      <Text style={styles.metricLabel}>{t.currentStockLabel}</Text>
                       <Text style={styles.metricValue}>{fc.currentStock}</Text>
                     </View>
                     <View style={styles.metricItemHighlight}>
-                      <Text style={styles.metricLabelHighlight}>Rekomendado</Text>
+                      <Text style={styles.metricLabelHighlight}>{t.recommendedLabel}</Text>
                       <Text style={styles.metricValueHighlight}>
                         +{fc.recommendedRestockQty}
                       </Text>
@@ -442,25 +467,25 @@ export default function SeasonalForecastScreen() {
                           quantity: fc.recommendedRestockQty,
                         });
                         setRestockToast(
-                          `✓ Na-restock +${fc.recommendedRestockQty} ${fc.productName} sa tindahan`
+                          t.restockSuccessToast(fc.recommendedRestockQty, fc.productName)
                         );
                       }}
                     >
                       <Text style={styles.restockActionText}>
-                        + Restock Recommended (+{fc.recommendedRestockQty} piraso)
+                        {t.restockActionBtnLabel(fc.recommendedRestockQty)}
                       </Text>
                     </Pressable>
                   ) : (
                     <View style={styles.inStockBadge}>
                       <Text style={styles.inStockBadgeText}>
-                        ✓ Sapat ang stock ({fc.currentStock} piraso)
+                        {t.inStockSufficientBadge(fc.currentStock)}
                       </Text>
                     </View>
                   )}
 
                   <View style={styles.tapToViewRow}>
                     <Text style={styles.tapToViewText}>
-                      📊 Pindutin para makita ang 12-month sales chart ›
+                      {t.tapToViewChartHint}
                     </Text>
                   </View>
                 </Pressable>
@@ -497,7 +522,7 @@ export default function SeasonalForecastScreen() {
                     Barcode: {detailItem?.product.barcode}
                   </Text>
                   <Text style={styles.modalStockLabel}>
-                    Kasalukuyang Stock: <Text style={styles.boldDark}>{detailItem?.product.stockCount} piraso</Text>
+                    {t.currentStockLabel}: <Text style={styles.boldDark}>{detailItem?.product.stockCount} {t.unitsSoldLabel(detailItem?.product.stockCount ?? 0)}</Text>
                   </Text>
                 </View>
               </View>
@@ -517,26 +542,26 @@ export default function SeasonalForecastScreen() {
               {/* Season Explanation Card */}
               <View style={styles.modalExplanationCard}>
                 <Text style={styles.modalExplTitle}>
-                  💡 Pagsusuri sa Benta ng Produkto
+                  {t.modalProductAnalysisTitle}
                 </Text>
                 <Text style={styles.modalExplText}>
                   {detailItem?.forecast.explanation}
                 </Text>
                 <View style={styles.modalKpiRow}>
                   <View style={styles.modalKpiItem}>
-                    <Text style={styles.modalKpiLabel}>Karaniwang Benta</Text>
+                    <Text style={styles.modalKpiLabel}>{t.ordinarySalesAvgLabel(detailItem?.forecast.ordinaryMonthlyAverage ?? 0).split(':')[0]}</Text>
                     <Text style={styles.modalKpiVal}>
-                      {detailItem?.forecast.ordinaryMonthlyAverage} /buwan
+                      {detailItem?.forecast.ordinaryMonthlyAverage} {t.perMonthLabel}
                     </Text>
                   </View>
                   <View style={styles.modalKpiItem}>
-                    <Text style={styles.modalKpiLabel}>Target Season</Text>
+                    <Text style={styles.modalKpiLabel}>{t.seasonMultiplierLabel}</Text>
                     <Text style={styles.modalKpiVal}>
-                      {detailItem ? PHILIPPINE_MONTHS[detailItem.forecast.targetMonth - 1]?.short : ''} ({detailItem?.forecast.seasonalIndex}×)
+                      {detailItem ? localizedMonths[detailItem.forecast.targetMonth - 1]?.short : ''} ({detailItem?.forecast.seasonalIndex}×)
                     </Text>
                   </View>
                   <View style={[styles.modalKpiItem, styles.modalKpiHighlight]}>
-                    <Text style={styles.modalKpiLabelHighlight}>Rekomendasyon</Text>
+                    <Text style={styles.modalKpiLabelHighlight}>{t.recommendedLabel}</Text>
                     <Text style={styles.modalKpiValHighlight}>
                       +{detailItem?.forecast.recommendedRestockQty}
                     </Text>
@@ -547,10 +572,10 @@ export default function SeasonalForecastScreen() {
               {/* 12-Month Horizontal Bar Chart */}
               <View style={styles.chartCard}>
                 <Text style={styles.chartTitle}>
-                  📊 Kasaysayan ng Buwanang Benta sa Tindahan
+                  {t.modalChartTitle}
                 </Text>
                 <Text style={styles.chartSubtitle}>
-                  Talaan ng benta mula Enero hanggang Disyembre (naka-highlight ang 🔥 Target Month):
+                  {t.modalChartSub}
                 </Text>
 
                 <View style={styles.chartBarsContainer}>
@@ -574,13 +599,13 @@ export default function SeasonalForecastScreen() {
                       quantity: detailItem.forecast.recommendedRestockQty,
                     });
                     setRestockToast(
-                      `✓ Na-restock +${detailItem.forecast.recommendedRestockQty} ${detailItem.product.name} sa tindahan`
+                      t.restockSuccessToast(detailItem.forecast.recommendedRestockQty, detailItem.product.name)
                     );
                     setDetailItem(null);
                   }}
                 >
                   <Text style={styles.modalRestockBtnText}>
-                    + I-restock ang +{detailItem.forecast.recommendedRestockQty} Piraso sa Imbentaryo
+                    {t.modalRestockBtnLabel(detailItem.forecast.recommendedRestockQty)}
                   </Text>
                 </Pressable>
               ) : (
@@ -589,7 +614,7 @@ export default function SeasonalForecastScreen() {
                   onPress={() => setDetailItem(null)}
                 >
                   <Text style={styles.modalCloseDoneBtnText}>
-                    ✓ Sapat ang Stock sa Ngayon (Isara)
+                    {t.modalStockSufficientCloseBtn}
                   </Text>
                 </Pressable>
               )}
@@ -731,10 +756,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#64748B',
     marginTop: 2,
-  },
-  boldGreen: {
-    color: '#0D7A52',
-    fontWeight: '800',
   },
   budgetPills: {
     flexDirection: 'row',
@@ -1166,7 +1187,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E2E8F0',
   },
   chartUnitText: {
-    width: 65,
+    width: 75,
     fontSize: 11,
     fontWeight: '700',
     color: '#475569',

@@ -35,9 +35,9 @@ export default function StoreSettingsScreen() {
   };
 
   const monthNames: Record<number, string> = {
-    6: 'June (Classic Opening)',
-    7: 'July (Current DepEd Calendar)',
-    8: 'August (Shifted Calendar)',
+    6: t.schoolMonthJune,
+    7: t.schoolMonthJuly,
+    8: t.schoolMonthAugust,
   };
 
   return (
@@ -100,7 +100,7 @@ export default function StoreSettingsScreen() {
                   if (draftName.trim()) {
                     updateSettings({ storeName: draftName.trim() });
                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                    showToast(`✓ Na-save ang pangalan: "${draftName.trim()}"`, 'success');
+                    showToast(t.storeNameSaved, 'success');
                   }
                   setEditingField('NONE');
                 }}
@@ -152,7 +152,7 @@ export default function StoreSettingsScreen() {
                   if (draftAddress.trim()) {
                     updateSettings({ address: draftAddress.trim() });
                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                    showToast('✓ Na-save ang address ng tindahan', 'success');
+                    showToast(t.storeAddressSaved, 'success');
                   }
                   setEditingField('NONE');
                 }}
@@ -170,11 +170,7 @@ export default function StoreSettingsScreen() {
           <View style={[styles.settingRow, styles.rowBorder]}>
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>{t.language}</Text>
-              <Text style={styles.rowValue}>
-                {settings.language === 'Taglish' || settings.language === 'Filipino'
-                  ? '🇵🇭 Filipino / Taglish (Aktibo)'
-                  : '🇺🇸 English (Active)'}
-              </Text>
+              <Text style={styles.rowValue}>{t.activeLangBadge}</Text>
             </View>
             <Ionicons name="language-outline" size={20} color="#0D7A52" />
           </View>
@@ -189,7 +185,8 @@ export default function StoreSettingsScreen() {
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                 updateSettings({ language: 'English' });
-                showToast(t.langChangedToast || '✓ Language switched to English');
+                const nextT = getTranslations('English');
+                showToast(nextT.langChangedToast);
               }}
             >
               <Text
@@ -198,7 +195,7 @@ export default function StoreSettingsScreen() {
                   settings.language === 'English' ? styles.langChipTextActive : null,
                 ]}
               >
-                🇺🇸 English {settings.language === 'English' ? '✓' : ''}
+                {t.langEnglish} {settings.language === 'English' ? '✓' : ''}
               </Text>
             </Pressable>
 
@@ -212,7 +209,8 @@ export default function StoreSettingsScreen() {
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                 updateSettings({ language: 'Filipino' });
-                showToast(t.langChangedToast || '✓ Wika binago sa Filipino / Taglish');
+                const nextT = getTranslations('Filipino');
+                showToast(nextT.langChangedToast);
               }}
             >
               <Text
@@ -223,7 +221,7 @@ export default function StoreSettingsScreen() {
                     : null,
                 ]}
               >
-                🇵🇭 Filipino / Taglish {settings.language === 'Filipino' || settings.language === 'Taglish' ? '✓' : ''}
+                {t.langFilipino} {settings.language === 'Filipino' || settings.language === 'Taglish' ? '✓' : ''}
               </Text>
             </Pressable>
           </View>
@@ -235,11 +233,7 @@ export default function StoreSettingsScreen() {
           >
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>{t.manageCategories}</Text>
-              <Text style={styles.rowValue}>
-                {settings.language === 'Taglish' || settings.language === 'Filipino'
-                  ? 'Pamahalaan ang mga kategorya sa imbentaryo'
-                  : 'Manage product categories in inventory'}
-              </Text>
+              <Text style={styles.rowValue}>{t.manageCategoriesSub}</Text>
             </View>
             <Text style={styles.chevron}>›</Text>
           </Pressable>
@@ -255,7 +249,7 @@ export default function StoreSettingsScreen() {
               onValueChange={(val) => {
                 updateSettings({ notifications: val });
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                showToast(val ? '✓ Naka-on ang notifications' : 'ℹ️ Naka-off ang notifications', 'info');
+                showToast(val ? t.notificationsOnToast : t.notificationsOffToast, 'info');
               }}
               trackColor={{ false: '#D1D5DB', true: '#0D7A52' }}
               thumbColor="#FFFFFF"
@@ -277,7 +271,7 @@ export default function StoreSettingsScreen() {
                   : 7;
               updateSettings({ schoolOpeningMonth: nextMonth });
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-              showToast(`✓ Target School Opening: ${monthNames[nextMonth] ?? 'July'}`);
+              showToast(t.schoolOpeningToast(monthNames[nextMonth] ?? 'July'));
             }}
           >
             <View style={styles.rowTextCol}>
@@ -310,10 +304,10 @@ export default function StoreSettingsScreen() {
                     onPress: () => {
                       clearAllDatabaseData();
                       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                      showToast('✓ Matagumpay na na-reset ang lahat ng data', 'warning');
+                      showToast(t.resetSuccess, 'warning');
                       Alert.alert(
-                        '✓ Na-reset Na',
-                        'Matagumpay na na-reset ang lahat ng paninda at talaan sa tindahan sa panimulang ayos.'
+                        t.resetSuccess,
+                        t.clearDataConfirmMessage
                       );
                     },
                   },
