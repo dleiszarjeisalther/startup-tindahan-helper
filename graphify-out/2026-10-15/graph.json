@@ -6607,7 +6607,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/sales.tsx",
-      "source_location": "L2191"
+      "source_location": "L2393"
     },
     {
       "id": "src_app_settings",
@@ -21471,7 +21471,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/sales.tsx",
-      "source_location": "L2191",
+      "source_location": "L2393",
       "weight": 1.0
     },
     {

@@ -53,6 +53,7 @@ export default function SalesHistoryScreen() {
     processReturnOrExchange,
     addCashAdjustment,
     deleteCashAdjustment,
+    transactions,
     settings,
   } = useTindahanStore();
 
@@ -70,6 +71,30 @@ export default function SalesHistoryScreen() {
   const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
   const [tempStartDate, setTempStartDate] = useState<Date | null>(null);
   const [tempEndDate, setTempEndDate] = useState<Date | null>(null);
+  const [activeDateField, setActiveDateField] = useState<'START' | 'END'>('START');
+
+  // Compute only the years that actually exist in the database (plus current year)
+  const availableYears = useMemo(() => {
+    const yearSet = new Set<number>();
+    yearSet.add(new Date().getFullYear());
+    for (const tx of transactions) {
+      const ms = tx.timestampMs ?? new Date(tx.dateLabel).getTime();
+      if (Number.isFinite(ms) && !isNaN(ms)) {
+        yearSet.add(new Date(ms).getFullYear());
+      }
+    }
+    return Array.from(yearSet).sort((a, b) => b - a);
+  }, [transactions]);
+
+  // Number of days in selected range for user confirmation
+  const diffDays = useMemo(() => {
+    if (!tempStartDate) return 1;
+    const end = tempEndDate || tempStartDate;
+    const s = new Date(tempStartDate.getFullYear(), tempStartDate.getMonth(), tempStartDate.getDate()).getTime();
+    const e = new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime();
+    const diffTime = Math.abs(e - s);
+    return Math.max(1, Math.round(diffTime / 86400000) + 1);
+  }, [tempStartDate, tempEndDate]);
 
   // Sales & Collections Full Overview Modal state
   const [salesOverviewModalVisible, setSalesOverviewModalVisible] = useState(false);
@@ -77,12 +102,10 @@ export default function SalesHistoryScreen() {
   const [selectedTxId, setSelectedTxId] = useState<string | null>(null);
   const [disposition, setDisposition] = useState<ReturnDisposition>('SELLABLE');
   const [returnReason, setReturnReason] = useState<string>('Defective / Wrong Item');
-  const [actionMsg, setActionMsg] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
 
   const showActionToast = (msg: string, type: ToastType = 'success') => {
-    setActionMsg(msg);
     setToastMsg(msg);
     setToastType(type);
   };
@@ -236,6 +259,7 @@ export default function SalesHistoryScreen() {
   };
 
   const openDateFilterModal = () => {
+    setActiveDateField('START');
     if (customDateRange) {
       setTempStartDate(new Date(customDateRange.startMs));
       setTempEndDate(new Date(customDateRange.endMs));
@@ -261,13 +285,16 @@ export default function SalesHistoryScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     setSelectedPreset('CUSTOM');
 
-    if (!tempStartDate || (tempStartDate && tempEndDate)) {
+    if (activeDateField === 'START') {
       setTempStartDate(dayDate);
-      setTempEndDate(null);
+      if (!tempEndDate || dayDate.getTime() > tempEndDate.getTime()) {
+        setTempEndDate(dayDate);
+      }
+      setActiveDateField('END');
     } else {
-      if (dayDate.getTime() < tempStartDate.getTime()) {
-        setTempEndDate(tempStartDate);
+      if (tempStartDate && dayDate.getTime() < tempStartDate.getTime()) {
         setTempStartDate(dayDate);
+        setTempEndDate(tempStartDate);
       } else {
         setTempEndDate(dayDate);
       }
@@ -738,12 +765,6 @@ export default function SalesHistoryScreen() {
             <Text style={styles.secondaryKpiVal}>{summary.totalTransactions}</Text>
           </View>
         </View>
-
-        {actionMsg ? (
-          <View style={styles.actionToast}>
-            <Text style={styles.actionToastText}>{actionMsg}</Text>
-          </View>
-        ) : null}
 
         {/* Recent Transactions Section Header */}
         <View style={styles.sectionHeaderRow}>
@@ -1817,7 +1838,9 @@ export default function SalesHistoryScreen() {
             <View style={styles.modalHeader}>
               <View>
                 <Text style={styles.modalTitle}>{t.dateFilterTitle || 'Salain ayon sa Petsa'}</Text>
-                <Text style={styles.modalSubtitle}>{t.dateFilterSub || 'Pumili ng preset o sariling range sa kalendaryo'}</Text>
+                <Text style={styles.modalSubtitle}>
+                  {t.dateFilterSub || 'Pumili ng preset o sariling sakop ng petsa sa kalendaryo'}
+                </Text>
               </View>
               <Pressable
                 style={styles.modalCloseBtn}
@@ -1827,7 +1850,7 @@ export default function SalesHistoryScreen() {
               </Pressable>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 520 }}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 540 }}>
               {/* Presets Horizontal Chips */}
               <Text style={styles.filterSectionHeader}>MGA PRESET SHORTCUTS</Text>
               <ScrollView
@@ -1851,7 +1874,10 @@ export default function SalesHistoryScreen() {
                         styles.datePresetChip,
                         isSelected ? styles.datePresetChipActive : null,
                       ]}
-                      onPress={() => handlePresetSelect(item.key as any)}
+                      onPress={() => {
+                        handlePresetSelect(item.key as any);
+                        setActiveDateField('START');
+                      }}
                     >
                       {isSelected ? (
                         <Ionicons name="checkmark-circle" size={13} color="#0D7A52" style={{ marginRight: 4 }} />
@@ -1869,10 +1895,88 @@ export default function SalesHistoryScreen() {
                 })}
               </ScrollView>
 
-              {/* Start & End Selected Info Card (Interactive / Customizable) */}
-              <Text style={[styles.filterSectionHeader, { marginTop: 4 }]}>
-                PUMILI NG SIMULA AT HULING PETSA
-              </Text>
+              {/* Step-by-Step Guidance & Confirmation Banner */}
+              <View
+                style={{
+                  backgroundColor:
+                    tempStartDate && tempEndDate
+                      ? '#ECFDF5'
+                      : activeDateField === 'START'
+                      ? '#EFF6FF'
+                      : '#FFFBEB',
+                  borderWidth: 1.5,
+                  borderColor:
+                    tempStartDate && tempEndDate
+                      ? '#A7F3D0'
+                      : activeDateField === 'START'
+                      ? '#BFDBFE'
+                      : '#FDE68A',
+                  borderRadius: 12,
+                  padding: 12,
+                  marginBottom: 12,
+                  gap: 4,
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Ionicons
+                    name={
+                      tempStartDate && tempEndDate
+                        ? 'checkmark-circle'
+                        : activeDateField === 'START'
+                        ? 'calendar-outline'
+                        : 'arrow-forward-circle-outline'
+                    }
+                    size={16}
+                    color={
+                      tempStartDate && tempEndDate
+                        ? '#059669'
+                        : activeDateField === 'START'
+                        ? '#2563EB'
+                        : '#D97706'
+                    }
+                  />
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      fontWeight: '800',
+                      letterSpacing: 0.5,
+                      color:
+                        tempStartDate && tempEndDate
+                          ? '#065F46'
+                          : activeDateField === 'START'
+                          ? '#1E40AF'
+                          : '#92400E',
+                    }}
+                  >
+                    {tempStartDate && tempEndDate
+                      ? '✓ KUMPIRMADO: SAKOP NA PETSA'
+                      : activeDateField === 'START'
+                      ? 'HAKBANG 1: PILIIN ANG SIMULANG PETSA (CHOOSE START DATE)'
+                      : 'HAKBANG 2: PILIIN ANG HULING PETSA (CHOOSE END DATE)'}
+                  </Text>
+                </View>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: '600',
+                    color:
+                      tempStartDate && tempEndDate
+                        ? '#047857'
+                        : activeDateField === 'START'
+                        ? '#1D4ED8'
+                        : '#B45309',
+                    lineHeight: 16,
+                  }}
+                >
+                  {tempStartDate && tempEndDate
+                    ? `${tempStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} hanggang ${tempEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} (${diffDays} araw). I-tap ang I-apply sa ibaba.`
+                    : activeDateField === 'START'
+                    ? 'I-tap ang araw sa kalendaryo kung kailan magsisimula ang benta.'
+                    : `Naitakda na ang simula (${tempStartDate?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}). Piliin naman ang huling araw.`}
+                </Text>
+              </View>
+
+              {/* Start & End Selected Info Cards (Customizable & Tappable) */}
               <View
                 style={{
                   flexDirection: 'row',
@@ -1883,7 +1987,7 @@ export default function SalesHistoryScreen() {
                   padding: 10,
                   borderWidth: 1,
                   borderColor: '#E5E7EB',
-                  marginBottom: 14,
+                  marginBottom: 10,
                   gap: 8,
                 }}
               >
@@ -1891,39 +1995,39 @@ export default function SalesHistoryScreen() {
                 <Pressable
                   style={{
                     flex: 1,
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: activeDateField === 'START' ? '#ECFDF5' : '#FFFFFF',
                     borderRadius: 10,
                     paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    borderWidth: 1.5,
-                    borderColor:
-                      tempStartDate === null || (tempStartDate !== null && tempEndDate === null)
-                        ? '#0D7A52'
-                        : '#E5E7EB',
+                    paddingVertical: 9,
+                    borderWidth: 2,
+                    borderColor: activeDateField === 'START' ? '#0D7A52' : '#E5E7EB',
                   }}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                    setTempStartDate(null);
-                    setTempEndDate(null);
+                    setActiveDateField('START');
                   }}
                 >
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
                     <Text style={{ fontSize: 10, fontWeight: '800', color: '#4B5563', letterSpacing: 0.5 }}>
                       {t.startDateLabel || 'SIMULANG PETSA'}
                     </Text>
-                    {tempStartDate === null ? (
+                    {activeDateField === 'START' ? (
+                      <View style={{ backgroundColor: '#0D7A52', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                        <Text style={{ fontSize: 9, fontWeight: '800', color: '#FFFFFF' }}>PUMIPILI</Text>
+                      </View>
+                    ) : tempStartDate ? (
                       <View style={{ backgroundColor: '#DCFCE7', paddingHorizontal: 5, paddingVertical: 1, borderRadius: 4 }}>
-                        <Text style={{ fontSize: 9, fontWeight: '800', color: '#0D7A52' }}>PUMIPILI</Text>
+                        <Text style={{ fontSize: 8, fontWeight: '800', color: '#0D7A52' }}>✓ SET</Text>
                       </View>
                     ) : null}
                   </View>
                   <Text style={{ fontSize: 13, fontWeight: '800', color: tempStartDate ? '#111827' : '#9CA3AF' }}>
                     {tempStartDate
                       ? tempStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                      : 'I-tap ang araw...'}
+                      : 'Pumili sa ibaba...'}
                   </Text>
-                  <Text style={{ fontSize: 9, color: '#6B7280', marginTop: 2 }}>
-                    {tempStartDate ? 'I-tap para palitan' : 'Pumili sa ibaba'}
+                  <Text style={{ fontSize: 9, color: activeDateField === 'START' ? '#0D7A52' : '#6B7280', marginTop: 2, fontWeight: '600' }}>
+                    {activeDateField === 'START' ? '👉 Piliin sa kalendaryo' : 'I-tap para baguhin'}
                   </Text>
                 </Pressable>
 
@@ -1933,26 +2037,29 @@ export default function SalesHistoryScreen() {
                 <Pressable
                   style={{
                     flex: 1,
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: activeDateField === 'END' ? '#ECFDF5' : '#FFFFFF',
                     borderRadius: 10,
                     paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    borderWidth: 1.5,
-                    borderColor:
-                      tempStartDate !== null && tempEndDate === null ? '#0D7A52' : '#E5E7EB',
+                    paddingVertical: 9,
+                    borderWidth: 2,
+                    borderColor: activeDateField === 'END' ? '#0D7A52' : '#E5E7EB',
                   }}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                    setTempEndDate(null);
+                    setActiveDateField('END');
                   }}
                 >
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
                     <Text style={{ fontSize: 10, fontWeight: '800', color: '#4B5563', letterSpacing: 0.5 }}>
                       {t.endDateLabel || 'HULING PETSA'}
                     </Text>
-                    {tempStartDate !== null && tempEndDate === null ? (
+                    {activeDateField === 'END' ? (
+                      <View style={{ backgroundColor: '#0D7A52', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                        <Text style={{ fontSize: 9, fontWeight: '800', color: '#FFFFFF' }}>PUMIPILI</Text>
+                      </View>
+                    ) : tempEndDate ? (
                       <View style={{ backgroundColor: '#DCFCE7', paddingHorizontal: 5, paddingVertical: 1, borderRadius: 4 }}>
-                        <Text style={{ fontSize: 9, fontWeight: '800', color: '#0D7A52' }}>PUMIPILI</Text>
+                        <Text style={{ fontSize: 8, fontWeight: '800', color: '#0D7A52' }}>✓ SET</Text>
                       </View>
                     ) : null}
                   </View>
@@ -1966,35 +2073,67 @@ export default function SalesHistoryScreen() {
                     {tempEndDate
                       ? tempEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                       : tempStartDate
-                      ? 'I-tap ang araw...'
+                      ? tempStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                       : '---'}
                   </Text>
-                  <Text style={{ fontSize: 9, color: '#6B7280', marginTop: 2 }}>
-                    {tempEndDate ? 'I-tap para palitan' : 'Pumili sa ibaba'}
+                  <Text style={{ fontSize: 9, color: activeDateField === 'END' ? '#0D7A52' : '#6B7280', marginTop: 2, fontWeight: '600' }}>
+                    {activeDateField === 'END' ? '👉 Piliin sa kalendaryo' : 'I-tap para baguhin'}
                   </Text>
                 </Pressable>
               </View>
 
-              {/* Interactive Calendar with Year and Month Selectors */}
-              <View style={styles.calendarContainer}>
-                {/* Year Selector ("i want to see year month") */}
-                <View style={{ marginBottom: 10 }}>
-                  <Text style={{ fontSize: 11, fontWeight: '800', color: '#6B7280', marginBottom: 6, letterSpacing: 0.5 }}>
-                    TAON (YEAR)
+              {/* Single Day Shortcut Button */}
+              {tempStartDate ? (
+                <Pressable
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#F3F4F6',
+                    paddingVertical: 6,
+                    paddingHorizontal: 12,
+                    borderRadius: 8,
+                    marginBottom: 12,
+                    alignSelf: 'center',
+                    gap: 6,
+                  }}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setTempEndDate(tempStartDate);
+                    setActiveDateField('START');
+                  }}
+                >
+                  <Ionicons name="calendar-sharp" size={13} color="#4B5563" />
+                  <Text style={{ fontSize: 11, fontWeight: '700', color: '#374151' }}>
+                    Isang araw lamang ang sakop (Gawing pareho ang Simula at Huli)
                   </Text>
-                  <View style={{ flexDirection: 'row', gap: 8 }}>
-                    {[2024, 2025, 2026].map((yr) => {
+                </Pressable>
+              ) : null}
+
+              {/* Interactive Calendar with Database Years & 12 Months */}
+              <View style={styles.calendarContainer}>
+                {/* Year Selector from Database Only ("only output year that is on database") */}
+                <View style={{ marginBottom: 10 }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <Text style={{ fontSize: 11, fontWeight: '800', color: '#6B7280', letterSpacing: 0.5 }}>
+                      TAON SA DATABASE ({availableYears.length})
+                    </Text>
+                    <Text style={{ fontSize: 10, color: '#9CA3AF' }}>Mula sa mga resibo sa tindahan</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                    {availableYears.map((yr) => {
                       const isSelectedYear = calendarMonth.getFullYear() === yr;
                       return (
                         <Pressable
                           key={yr}
                           style={{
-                            flex: 1,
+                            flex: availableYears.length <= 3 ? 1 : undefined,
+                            minWidth: 80,
                             paddingVertical: 7,
                             alignItems: 'center',
                             borderRadius: 8,
                             backgroundColor: isSelectedYear ? '#0D7A52' : '#F3F4F6',
-                            borderWidth: 1,
+                            borderWidth: 1.5,
                             borderColor: isSelectedYear ? '#0D7A52' : '#E5E7EB',
                           }}
                           onPress={() => {
@@ -2009,7 +2148,7 @@ export default function SalesHistoryScreen() {
                         >
                           <Text
                             style={{
-                              fontSize: 12,
+                              fontSize: 13,
                               fontWeight: isSelectedYear ? '800' : '600',
                               color: isSelectedYear ? '#FFFFFF' : '#374151',
                             }}
@@ -2022,7 +2161,7 @@ export default function SalesHistoryScreen() {
                   </View>
                 </View>
 
-                {/* Month Selector ("i want to see year month") */}
+                {/* Month Selector */}
                 <View style={{ marginBottom: 12 }}>
                   <Text style={{ fontSize: 11, fontWeight: '800', color: '#6B7280', marginBottom: 6, letterSpacing: 0.5 }}>
                     BUWAN (MONTH)
@@ -2096,7 +2235,7 @@ export default function SalesHistoryScreen() {
                   </ScrollView>
                 </View>
 
-                {/* Month Navigation */}
+                {/* Month Title & Chevron Navigation */}
                 <View style={styles.calendarNavRow}>
                   <Pressable
                     style={styles.calendarNavBtn}
@@ -2186,7 +2325,7 @@ export default function SalesHistoryScreen() {
                 </View>
               </View>
 
-              {/* Action Buttons */}
+              {/* Action Buttons with Clear Confirmation */}
               <View style={styles.dateFilterActionRow}>
                 <Pressable
                   style={styles.dateFilterResetBtn}
@@ -2201,7 +2340,13 @@ export default function SalesHistoryScreen() {
                   onPress={handleApplyDateRange}
                 >
                   <Ionicons name="checkmark-sharp" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
-                  <Text style={styles.dateFilterApplyText}>{t.applyDateFilter || 'I-apply ang Petsa'}</Text>
+                  <Text style={styles.dateFilterApplyText}>
+                    {tempStartDate && tempEndDate
+                      ? `✓ I-apply ang Sakop (${diffDays} araw)`
+                      : tempStartDate
+                      ? '✓ I-apply ang Petsa (1 araw)'
+                      : t.applyDateFilter || 'I-apply ang Petsa'}
+                  </Text>
                 </Pressable>
               </View>
             </ScrollView>
