@@ -1,22 +1,49 @@
-// src/app/sales.tsx — Screen 5: Sales History (+ Owner Return / Void / Exchange Wizard)
-import React, { useState } from 'react';
+// src/app/sales.tsx — Screen 5: Sales History, Cash Drawer & Financial Intelligence
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
   Pressable,
   ScrollView,
   StyleSheet,
+  TextInput,
+  Modal,
+  Share,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
-import { ReturnDisposition } from '@/application/TindahanStoreService';
+import {
+  ReturnDisposition,
+  CashAdjustmentType,
+  DateRangeFilter,
+} from '@/application/TindahanStoreService';
 import { Money } from '@/domain/value-objects/Money';
 import { getTranslations } from '@/presentation/localization/i18n';
 
+import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
+
 const PERIODS = ['Daily', 'Weekly', 'Monthly'] as const;
+
+const PANUKLI_CATEGORIES = [
+  'Panukli sa Umaga',
+  'Dagdag Barya',
+  'Paluwal Deposit',
+  'Iba pa',
+];
+
+const GASTOS_CATEGORIES = [
+  'Yelo / Tubig',
+  'Bili ng Paninda',
+  'Plastic / Kagamitan',
+  'Paluwal / Personal',
+  'Iba pa',
+];
 
 export default function SalesHistoryScreen() {
   const router = useRouter();
@@ -24,6 +51,8 @@ export default function SalesHistoryScreen() {
     getSalesSummary,
     voidEntireTransaction,
     processReturnOrExchange,
+    addCashAdjustment,
+    deleteCashAdjustment,
     settings,
   } = useTindahanStore();
 
@@ -31,41 +60,436 @@ export default function SalesHistoryScreen() {
 
   const [selectedPeriod, setSelectedPeriod] =
     useState<(typeof PERIODS)[number]>('Daily');
+  const [customDateRange, setCustomDateRange] = useState<DateRangeFilter | null>(null);
+
+  // Date Range Filter Modal state
+  const [dateFilterModalVisible, setDateFilterModalVisible] = useState(false);
+  const [selectedPreset, setSelectedPreset] = useState<
+    'TODAY' | 'YESTERDAY' | 'LAST_7' | 'THIS_MONTH' | 'LAST_MONTH' | 'YTD' | 'CUSTOM'
+  >('TODAY');
+  const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
+  const [tempStartDate, setTempStartDate] = useState<Date | null>(null);
+  const [tempEndDate, setTempEndDate] = useState<Date | null>(null);
+
+  // Sales & Collections Full Overview Modal state
+  const [salesOverviewModalVisible, setSalesOverviewModalVisible] = useState(false);
+
   const [selectedTxId, setSelectedTxId] = useState<string | null>(null);
   const [disposition, setDisposition] = useState<ReturnDisposition>('SELLABLE');
   const [returnReason, setReturnReason] = useState<string>('Defective / Wrong Item');
   const [actionMsg, setActionMsg] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<ToastType>('success');
 
-  const summary = getSalesSummary(selectedPeriod);
+  const showActionToast = (msg: string, type: ToastType = 'success') => {
+    setActionMsg(msg);
+    setToastMsg(msg);
+    setToastType(type);
+  };
 
+  // Profit privacy toggle (Show or Mask with ₱ ••••••)
+  const [showProfit, setShowProfit] = useState(false);
+
+  // Search & Filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState<
+    'ALL' | 'CASH' | 'GCASH' | 'UTANG' | 'PAYMENT' | 'VOIDED'
+  >('ALL');
+
+  // Cash Drawer Modal state
+  const [cashDrawerModalVisible, setCashDrawerModalVisible] = useState(false);
+  const [adjType, setAdjType] = useState<CashAdjustmentType>('PANUKLI');
+  const [adjAmount, setAdjAmount] = useState('');
+  const [adjCategory, setAdjCategory] = useState(PANUKLI_CATEGORIES[0]);
+  const [adjNote, setAdjNote] = useState('');
+  const [drawerSavedMsg, setDrawerSavedMsg] = useState<string | null>(null);
+  const [isJustSavedDrawer, setIsJustSavedDrawer] = useState(false);
+
+  // Top Movers & Z-Reading Modals state
+  const [topMoversModalVisible, setTopMoversModalVisible] = useState(false);
+  const [zReadingModalVisible, setZReadingModalVisible] = useState(false);
+
+  // Pagination state (10 transactions per page)
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  const isSameDay = (d1: Date, d2: Date) => {
+    return (
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate()
+    );
+  };
+
+  const getPresetRange = (
+    preset: 'TODAY' | 'YESTERDAY' | 'LAST_7' | 'THIS_MONTH' | 'LAST_MONTH' | 'YTD'
+  ): DateRangeFilter => {
+    const now = new Date();
+    if (preset === 'TODAY') {
+      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      return {
+        startMs: start.getTime(),
+        endMs: end.getTime(),
+        label: `${t.filterToday} (${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`,
+      };
+    }
+    if (preset === 'YESTERDAY') {
+      const y = new Date(now.getTime() - 86400000);
+      const start = new Date(y.getFullYear(), y.getMonth(), y.getDate(), 0, 0, 0, 0);
+      const end = new Date(y.getFullYear(), y.getMonth(), y.getDate(), 23, 59, 59, 999);
+      return {
+        startMs: start.getTime(),
+        endMs: end.getTime(),
+        label: `${t.filterYesterday} (${y.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`,
+      };
+    }
+    if (preset === 'LAST_7') {
+      const p7 = new Date(now.getTime() - 6 * 86400000);
+      const start = new Date(p7.getFullYear(), p7.getMonth(), p7.getDate(), 0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      return {
+        startMs: start.getTime(),
+        endMs: end.getTime(),
+        label: `${t.filterLast7Days} (${p7.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`,
+      };
+    }
+    if (preset === 'THIS_MONTH') {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      return {
+        startMs: start.getTime(),
+        endMs: end.getTime(),
+        label: now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+      };
+    }
+    if (preset === 'LAST_MONTH') {
+      const lYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+      const lMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+      const lEnd = new Date(lYear, lMonth + 1, 0);
+      const start = new Date(lYear, lMonth, 1, 0, 0, 0, 0);
+      const end = new Date(lYear, lMonth, lEnd.getDate(), 23, 59, 59, 999);
+      return {
+        startMs: start.getTime(),
+        endMs: end.getTime(),
+        label: start.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+      };
+    }
+    // YTD
+    const start = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    return {
+      startMs: start.getTime(),
+      endMs: end.getTime(),
+      label: `${t.filterYtd} (${now.getFullYear()})`,
+    };
+  };
+
+  const calendarDays = useMemo(() => {
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const firstDayIndex = new Date(year, month, 1).getDay(); // 0 is Sunday
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const list: ({ type: 'empty'; key: string } | { type: 'day'; date: Date; dayNum: number; key: string })[] = [];
+    for (let i = 0; i < firstDayIndex; i++) {
+      list.push({ type: 'empty', key: `empty-${i}` });
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      list.push({
+        type: 'day',
+        date: new Date(year, month, d),
+        dayNum: d,
+        key: `day-${year}-${month}-${d}`,
+      });
+    }
+    return list;
+  }, [calendarMonth]);
+
+  const handlePrevMonth = () => {
+    setCalendarMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+  };
+
+  const handleNextMonth = () => {
+    const now = new Date();
+    const next = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
+    if (
+      next.getFullYear() > now.getFullYear() ||
+      (next.getFullYear() === now.getFullYear() && next.getMonth() > now.getMonth())
+    ) {
+      return;
+    }
+    setCalendarMonth(next);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+  };
+
+  const handlePresetSelect = (
+    preset: 'TODAY' | 'YESTERDAY' | 'LAST_7' | 'THIS_MONTH' | 'LAST_MONTH' | 'YTD'
+  ) => {
+    setSelectedPreset(preset);
+    const range = getPresetRange(preset);
+    setTempStartDate(new Date(range.startMs));
+    setTempEndDate(new Date(range.endMs));
+    setCalendarMonth(new Date(range.endMs));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+  };
+
+  const openDateFilterModal = () => {
+    if (customDateRange) {
+      setTempStartDate(new Date(customDateRange.startMs));
+      setTempEndDate(new Date(customDateRange.endMs));
+      setCalendarMonth(new Date(customDateRange.endMs));
+      setSelectedPreset('CUSTOM');
+    } else {
+      const now = new Date();
+      setTempStartDate(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0));
+      setTempEndDate(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999));
+      setCalendarMonth(now);
+      setSelectedPreset('TODAY');
+    }
+    setDateFilterModalVisible(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+  };
+
+  const handleDaySelect = (dayDate: Date) => {
+    const now = new Date();
+    if (dayDate.getTime() > now.getTime()) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      return;
+    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    setSelectedPreset('CUSTOM');
+
+    if (!tempStartDate || (tempStartDate && tempEndDate)) {
+      setTempStartDate(dayDate);
+      setTempEndDate(null);
+    } else {
+      if (dayDate.getTime() < tempStartDate.getTime()) {
+        setTempEndDate(tempStartDate);
+        setTempStartDate(dayDate);
+      } else {
+        setTempEndDate(dayDate);
+      }
+    }
+  };
+
+  const handleApplyDateRange = () => {
+    if (selectedPreset === 'CUSTOM') {
+      if (!tempStartDate) {
+        showActionToast('Pumili ng petsa sa kalendaryo bago i-apply.', 'warning');
+        return;
+      }
+      const s = new Date(tempStartDate.getFullYear(), tempStartDate.getMonth(), tempStartDate.getDate(), 0, 0, 0, 0);
+      const effEnd = tempEndDate || tempStartDate;
+      const e = new Date(effEnd.getFullYear(), effEnd.getMonth(), effEnd.getDate(), 23, 59, 59, 999);
+      const isSingleDay = isSameDay(s, effEnd);
+      const label = isSingleDay
+        ? s.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : `${s.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${effEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+      setCustomDateRange({
+        startMs: s.getTime(),
+        endMs: e.getTime(),
+        label,
+      });
+    } else {
+      const range = getPresetRange(selectedPreset);
+      setCustomDateRange(range);
+    }
+    setDateFilterModalVisible(false);
+    setCurrentPage(1);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    showActionToast('✓ Na-apply ang petsa', 'success');
+  };
+
+  const handleResetDateFilter = () => {
+    setCustomDateRange(null);
+    setSelectedPeriod('Daily');
+    setSelectedPreset('TODAY');
+    setTempStartDate(null);
+    setTempEndDate(null);
+    setDateFilterModalVisible(false);
+    setCurrentPage(1);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    showActionToast('✓ Naibalik sa Ngayong Araw (Daily)', 'info');
+  };
+
+  const summary = getSalesSummary(customDateRange ?? selectedPeriod);
+
+  // Filter counts for pills
+  const cashCount = summary.transactions.filter(
+    (t) => t.tenderType === 'CASH' && t.status !== 'VOIDED' && t.transactionType !== 'UTANG_PAYMENT'
+  ).length;
+  const gcashCount = summary.transactions.filter(
+    (t) => t.tenderType === 'GCASH' && t.status !== 'VOIDED'
+  ).length;
+  const utangCount = summary.transactions.filter(
+    (t) => t.tenderType === 'UTANG' && t.status !== 'VOIDED'
+  ).length;
+  const paymentCount = summary.transactions.filter(
+    (t) => t.transactionType === 'UTANG_PAYMENT' && t.status !== 'VOIDED'
+  ).length;
+  const voidedCount = summary.transactions.filter(
+    (t) => t.status === 'VOIDED'
+  ).length;
+
+  const filteredTransactions = useMemo(() => {
+    return summary.transactions.filter((tx) => {
+      // 1. Filter pill check
+      if (filterType === 'CASH') {
+        if (tx.status === 'VOIDED' || tx.tenderType !== 'CASH' || tx.transactionType === 'UTANG_PAYMENT') return false;
+      } else if (filterType === 'GCASH') {
+        if (tx.status === 'VOIDED' || tx.tenderType !== 'GCASH') return false;
+      } else if (filterType === 'UTANG') {
+        if (tx.status === 'VOIDED' || tx.tenderType !== 'UTANG') return false;
+      } else if (filterType === 'PAYMENT') {
+        if (tx.status === 'VOIDED' || tx.transactionType !== 'UTANG_PAYMENT') return false;
+      } else if (filterType === 'VOIDED') {
+        if (tx.status !== 'VOIDED') return false;
+      }
+
+      // 2. Search query check
+      if (searchQuery.trim()) {
+        const query = searchQuery.trim().toLowerCase();
+        const matchesId = tx.id.toLowerCase().includes(query);
+        const matchesCustomer = tx.customerName?.toLowerCase().includes(query);
+        const matchesItem = tx.items.some((i) => i.name.toLowerCase().includes(query));
+        return matchesId || matchesCustomer || matchesItem;
+      }
+
+      return true;
+    });
+  }, [summary.transactions, filterType, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedTransactions = filteredTransactions.slice(
+    (safeCurrentPage - 1) * ITEMS_PER_PAGE,
+    safeCurrentPage * ITEMS_PER_PAGE
+  );
+
+  const handleSaveDrawerAdjustment = () => {
+    const val = parseFloat(adjAmount);
+    if (isNaN(val) || val <= 0) {
+      Alert.alert('Halaga', 'Mangyaring maglagay ng wastong halaga ng pera.');
+      return;
+    }
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    addCashAdjustment(adjType, val, adjCategory, adjNote);
+    setAdjAmount('');
+    setAdjNote('');
+
+    const formatted = Money.fromPhp(val).format();
+    const isPanukli = adjType === 'PANUKLI';
+    const msg = `✓ Naitala ang ${isPanukli ? '+ Panukli' : '- Gastos'} na ${formatted} sa kahon!`;
+    setDrawerSavedMsg(msg);
+    setIsJustSavedDrawer(true);
+
+    setTimeout(() => {
+      setIsJustSavedDrawer(false);
+    }, 1400);
+
+    setTimeout(() => {
+      setDrawerSavedMsg((prev) => (prev === msg ? null : prev));
+    }, 3500);
+
+    showActionToast(`✓ Naitala ang ${isPanukli ? '+ Panukli' : '- Gastos'} na ${formatted}`, 'success');
+  };
+
+  const handleShareZReading = async () => {
+    try {
+      const nowStr = new Date().toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      const lines = [
+        `==================================`,
+        `🏪 ${settings?.storeName || "Juan's Store"} - Z-READING`,
+        `📅 Petsa: ${nowStr} (${selectedPeriod})`,
+        `==================================`,
+        `💰 BENTA (Gross Sales): ${summary.formattedTotalSales}`,
+        `📦 PUHUNAN (COGS): ${summary.formattedTotalCost}`,
+        `✨ TINUBONG KITA (Profit): ${summary.formattedTubo} (${summary.profitMarginPercent}%)`,
+        `----------------------------------`,
+        `💵 PERA SA KAHON: ${summary.formattedCashInDrawer}`,
+        `  • Panukli (Float In): ${summary.formattedStartingCash}`,
+        `  • Cash Benta: ${summary.formattedCashSales}`,
+        `  • Koleksyon (Utang): ${summary.formattedUtangCashCollected}`,
+        `  • Gastos (Cash Out): -${summary.formattedGastos}`,
+        `----------------------------------`,
+        `📱 GCash Total: ${summary.formattedGcashTotal}`,
+        `📝 Bagong Utang: ${summary.formattedUtangCreditIssued}`,
+        `🛒 Nabentang Paninda: ${summary.totalItems} pcs`,
+        `🧾 Bilang ng Resibo: ${summary.totalTransactions}`,
+        summary.totalVoidedTransactions > 0
+          ? `🚫 Na-Void: ${summary.formattedTotalVoided} (${summary.totalVoidedTransactions} resibo)`
+          : '',
+        `==================================`,
+        `Startup Tindahan Helper POS`,
+      ].filter(Boolean);
+
+      await Share.share({
+        message: lines.join('\n'),
+        title: `${settings?.storeName || "Juan's Store"} Z-Reading (${selectedPeriod})`,
+      });
+    } catch (err) {
+      console.warn('Share error:', err);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* Header: Sales | Seasonal Forecast Quick Button */}
+      <FloatingToast
+        message={toastMsg}
+        type={toastType}
+        onDismiss={() => setToastMsg(null)}
+      />
+      {/* Header: Title | Z-Reading Report | Seasonal Forecast */}
       <View style={styles.headerRow}>
         <Text style={styles.headerTitle}>{t.salesTitle}</Text>
-        <Pressable
-          style={styles.forecastBtn}
-          onPress={() => router.push('/explore')}
-        >
-          <Ionicons name="trending-up" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
-          <Text style={styles.forecastBtnText}>Seasonal Forecast</Text>
-        </Pressable>
+        <View style={styles.headerBtns}>
+          <Pressable
+            style={styles.zReadingBtn}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              setZReadingModalVisible(true);
+            }}
+          >
+            <Ionicons name="document-text-outline" size={15} color="#0D7A52" style={{ marginRight: 4 }} />
+            <Text style={styles.zReadingBtnText}>Z-Reading</Text>
+          </Pressable>
+
+          <Pressable
+            style={styles.forecastBtn}
+            onPress={() => router.push('/explore')}
+          >
+            <Ionicons name="trending-up" size={15} color="#0D7A52" style={{ marginRight: 4 }} />
+            <Text style={styles.forecastBtnText}>Forecast</Text>
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Period Segmented Control: Daily | Weekly | Monthly (Matches Screen 5 Prototype) */}
+        {/* Period Segmented Control: Daily | Weekly | Monthly */}
         <View style={styles.segmentedBar}>
           {PERIODS.map((p) => {
-            const active = selectedPeriod === p;
+            const active = !customDateRange && selectedPeriod === p;
             return (
               <Pressable
                 key={p}
                 style={[styles.segmentPill, active ? styles.segmentPillActive : null]}
-                onPress={() => setSelectedPeriod(p)}
+                onPress={() => {
+                  setCustomDateRange(null);
+                  setSelectedPeriod(p);
+                  setCurrentPage(1);
+                }}
               >
                 <Text
                   style={[
@@ -80,41 +504,208 @@ export default function SalesHistoryScreen() {
           })}
         </View>
 
-        {/* Date Selector Card: Dynamic Current Date */}
-        <View style={styles.dateCard}>
-          <View style={styles.dateLeft}>
-            <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginRight: 6 }} />
-            <Text style={styles.dateText}>
-              {new Date().toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
+        {/* Date Selector & Day Comparison or Mini Bar Chart */}
+        {selectedPeriod === 'Daily' || customDateRange ? (
+          <Pressable
+            style={[styles.dateCard, customDateRange ? styles.dateCardActive : null]}
+            onPress={openDateFilterModal}
+          >
+            <View style={styles.dateLeft}>
+              <Ionicons
+                name={customDateRange ? 'calendar' : 'calendar-outline'}
+                size={16}
+                color={customDateRange ? '#0D7A52' : '#6B7280'}
+                style={{ marginRight: 6 }}
+              />
+              <Text style={[styles.dateText, customDateRange ? styles.dateTextActive : null]}>
+                {customDateRange
+                  ? customDateRange.label
+                  : new Date().toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+              </Text>
+              <Text style={styles.dateDropdownHint}>▾</Text>
+            </View>
+            {customDateRange ? (
+              <Pressable
+                style={styles.clearDateFilterChip}
+                hitSlop={8}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleResetDateFilter();
+                }}
+              >
+                <Ionicons name="close-circle" size={14} color="#0D7A52" />
+                <Text style={styles.clearDateFilterText}>{t.resetDateFilter || 'I-reset'}</Text>
+              </Pressable>
+            ) : summary.dayOverDayDiffPercent !== null ? (
+              <View
+                style={[
+                  styles.growthBadge,
+                  summary.dayOverDayDiffPercent >= 0
+                    ? styles.growthBadgePos
+                    : styles.growthBadgeNeg,
+                ]}
+              >
+                <Ionicons
+                  name={summary.dayOverDayDiffPercent >= 0 ? 'trending-up' : 'trending-down'}
+                  size={12}
+                  color={summary.dayOverDayDiffPercent >= 0 ? '#059669' : '#DC2626'}
+                />
+                <Text
+                  style={[
+                    styles.growthBadgeText,
+                    summary.dayOverDayDiffPercent >= 0
+                      ? styles.growthBadgeTextPos
+                      : styles.growthBadgeTextNeg,
+                  ]}
+                >
+                  {summary.dayOverDayDiffPercent >= 0
+                    ? `+${summary.dayOverDayDiffPercent}% vs kahapon`
+                    : `${summary.dayOverDayDiffPercent}% vs kahapon`}
+                </Text>
+              </View>
+            ) : (
+              <Text style={styles.dateChevron}>›</Text>
+            )}
+          </Pressable>
+        ) : summary.dayBuckets.length > 0 ? (
+          <View style={styles.chartCard}>
+            <View style={styles.chartHeaderRow}>
+              <View style={styles.chartHeaderLeft}>
+                <Ionicons name="bar-chart-outline" size={16} color="#0D7A52" />
+                <Text style={styles.chartTitle}>
+                  {selectedPeriod === 'Weekly' ? 'Benta sa Nakaraang 7 Araw' : 'Benta sa Buwang Ito'}
+                </Text>
+              </View>
+              <Pressable
+                style={styles.dateFilterTriggerBtn}
+                onPress={openDateFilterModal}
+              >
+                <Ionicons name="calendar-outline" size={13} color="#0D7A52" style={{ marginRight: 4 }} />
+                <Text style={styles.dateFilterTriggerText}>Petsa ▾</Text>
+              </Pressable>
+            </View>
+            <View style={styles.barContainer}>
+              {summary.dayBuckets.map((bucket, bIdx) => {
+                const maxVal = Math.max(1, ...summary.dayBuckets.map((b) => b.totalSalesPhp));
+                const heightRatio = Math.max(0.08, bucket.totalSalesPhp / maxVal);
+                const barHeight = Math.round(heightRatio * 64);
+
+                return (
+                  <View key={bIdx} style={styles.barCol}>
+                    {bucket.isPeak && bucket.totalSalesPhp > 0 ? (
+                      <Text style={styles.peakCrown}>👑</Text>
+                    ) : (
+                      <View style={{ height: 14 }} />
+                    )}
+                    <View style={styles.barTrack}>
+                      <View
+                        style={[
+                          styles.barFill,
+                          { height: barHeight },
+                          bucket.isPeak ? styles.barFillPeak : null,
+                        ]}
+                      />
+                    </View>
+                    <Text
+                      style={[
+                        styles.barDayText,
+                        bucket.isPeak ? styles.barDayTextPeak : null,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {bucket.dayLabel}
+                    </Text>
+                  </View>
+                );
               })}
-            </Text>
+            </View>
           </View>
-          <Text style={styles.dateChevron}>›</Text>
-        </View>
+        ) : null}
 
-        {/* 3 KPI Summary Cards: Benta, Koleksyon, Pera sa Kahon */}
+        {/* 3 KPI Summary Cards: Benta & Tubo, Koleksyon, Pera sa Kahon */}
         <View style={styles.kpiRow}>
-          <View style={styles.kpiCard}>
-            <Text style={styles.kpiLabel}>
-              {selectedPeriod === 'Daily' ? 'Benta Today' : `${selectedPeriod} Benta`}
-            </Text>
-            <Text style={styles.kpiValue}>{summary.formattedTotalSales}</Text>
-          </View>
+          {/* Card 1: Benta & Tubo (Tappable for Full Sales & Collections Overview) */}
+          <Pressable
+            style={[styles.kpiCard, styles.kpiCardInteractive]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              setSalesOverviewModalVisible(true);
+            }}
+          >
+            <View style={styles.kpiHeaderRow}>
+              <Text style={styles.kpiLabel} numberOfLines={1}>
+                {customDateRange ? 'Benta sa Panahon' : selectedPeriod === 'Daily' ? (t.bentaToday || 'Benta Today') : `${selectedPeriod} ${t.bentaToday || 'Benta'}`}
+              </Text>
+              <Pressable
+                style={styles.eyeBtn}
+                hitSlop={10}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setShowProfit(!showProfit);
+                }}
+              >
+                <Ionicons
+                  name={showProfit ? 'eye-outline' : 'eye-off-outline'}
+                  size={14}
+                  color="#0D7A52"
+                />
+              </Pressable>
+            </View>
+            <Text style={styles.kpiValue} numberOfLines={1}>{summary.formattedTotalSales}</Text>
 
-          <View style={styles.kpiCard}>
-            <Text style={styles.kpiLabel}>Koleksyon (Utang)</Text>
-            <Text style={[styles.kpiValue, { color: '#0D7A52' }]}>
+            <View style={styles.kpiCardFooter}>
+              <Text style={styles.tuboValue} numberOfLines={1}>
+                {t.tuboLabel || 'Tubo'}: {showProfit ? `${summary.formattedTubo} (${summary.profitMarginPercent}%)` : t.tuboHidden}
+              </Text>
+              <Text style={styles.kahaTapHint} numberOfLines={1}>{t.salesOverviewBtnHint || 'Buong Buod ›'}</Text>
+            </View>
+          </Pressable>
+
+          {/* Card 2: Koleksyon (Tappable for Full Sales & Collections Overview) */}
+          <Pressable
+            style={[styles.kpiCard, styles.kpiCardInteractive]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              setSalesOverviewModalVisible(true);
+            }}
+          >
+            <View style={styles.kpiHeaderRow}>
+              <Text style={styles.kpiLabel} numberOfLines={1}>{t.koleksyonTitle} (Utang)</Text>
+              <Ionicons name="receipt-outline" size={13} color="#0D7A52" />
+            </View>
+            <Text style={[styles.kpiValue, { color: '#0D7A52' }]} numberOfLines={1}>
               {summary.formattedUtangCollected}
             </Text>
-          </View>
+            <View style={styles.kpiCardFooter}>
+              <Text style={styles.kpiSubText} numberOfLines={1}>
+                {summary.totalPaymentTransactions} {t.koleksyonTitle}
+              </Text>
+              <Text style={styles.kahaTapHint} numberOfLines={1}>{t.salesOverviewBtnHint || 'Buong Buod ›'}</Text>
+            </View>
+          </Pressable>
 
-          <View style={styles.kpiCard}>
-            <Text style={styles.kpiLabel}>Pera sa Kahon</Text>
-            <Text style={styles.kpiValue}>{summary.formattedCashInDrawer}</Text>
-          </View>
+          {/* Card 3: Pera sa Kahon (Tappable for Breakdown & Float/Gastos) */}
+          <Pressable
+            style={[styles.kpiCard, styles.kpiCardTappable]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+              setCashDrawerModalVisible(true);
+            }}
+          >
+            <View style={styles.kpiHeaderRow}>
+              <Text style={styles.kpiLabel} numberOfLines={1}>{t.cashInDrawerLabel}</Text>
+              <Ionicons name="wallet-outline" size={13} color="#0D7A52" />
+            </View>
+            <Text style={styles.kpiValue} numberOfLines={1}>{summary.formattedCashInDrawer}</Text>
+            <View style={styles.kpiCardFooter}>
+              <Text style={styles.kahaTapHint} numberOfLines={1}>Breakdown & Kaha ›</Text>
+            </View>
+          </Pressable>
         </View>
 
         {/* Secondary Financial & Inventory Breakdown */}
@@ -127,10 +718,21 @@ export default function SalesHistoryScreen() {
             <Text style={styles.secondaryKpiLabel}>Bagong Utang</Text>
             <Text style={styles.secondaryKpiVal}>{summary.formattedUtangCreditIssued}</Text>
           </View>
-          <View style={styles.secondaryKpiItem}>
+          <Pressable
+            style={[styles.secondaryKpiItem, styles.secondaryKpiItemTappable]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              setTopMoversModalVisible(true);
+            }}
+          >
             <Text style={styles.secondaryKpiLabel}>Items Sold</Text>
-            <Text style={styles.secondaryKpiVal}>{summary.totalItems}</Text>
-          </View>
+            <View style={styles.itemsSoldRow}>
+              <Text style={styles.secondaryKpiVal}>{summary.totalItems}</Text>
+              <View style={styles.mabentaPill}>
+                <Text style={styles.mabentaPillText}>🔥 Mabenta ›</Text>
+              </View>
+            </View>
+          </Pressable>
           <View style={styles.secondaryKpiItem}>
             <Text style={styles.secondaryKpiLabel}>Receipts</Text>
             <Text style={styles.secondaryKpiVal}>{summary.totalTransactions}</Text>
@@ -143,17 +745,75 @@ export default function SalesHistoryScreen() {
           </View>
         ) : null}
 
-        {/* Recent Transactions Section */}
+        {/* Recent Transactions Section Header */}
         <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionTitle}>Recent Transactions</Text>
-          <Text style={styles.sectionHint}>Tap receipt for Return / Exchange / Void</Text>
+          <Text style={styles.sectionHint}>Tap receipt for Return / Void</Text>
         </View>
 
+        {/* Live Search Bar */}
+        <View style={styles.searchBarRow}>
+          <Ionicons name="search-outline" size={16} color="#6B7280" style={{ marginRight: 6 }} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder={t.searchTxPlaceholder}
+            placeholderTextColor="#9CA3AF"
+            value={searchQuery}
+            onChangeText={(text) => {
+              setSearchQuery(text);
+              setCurrentPage(1);
+            }}
+          />
+          {searchQuery ? (
+            <Pressable onPress={() => setSearchQuery('')} hitSlop={8}>
+              <Ionicons name="close-circle" size={16} color="#9CA3AF" />
+            </Pressable>
+          ) : null}
+        </View>
+
+        {/* Filter Pills */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterPillsScroll}
+        >
+          {[
+            { key: 'ALL', label: `Lahat (${summary.transactions.length})` },
+            { key: 'CASH', label: `Cash (${cashCount})` },
+            { key: 'GCASH', label: `GCash (${gcashCount})` },
+            { key: 'UTANG', label: `Utang (${utangCount})` },
+            { key: 'PAYMENT', label: `Bayad Utang (${paymentCount})` },
+            { key: 'VOIDED', label: `Na-Void (${voidedCount})` },
+          ].map((f) => {
+            const active = filterType === f.key;
+            return (
+              <Pressable
+                key={f.key}
+                style={[styles.filterChip, active ? styles.filterChipActive : null]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setFilterType(f.key as any);
+                  setCurrentPage(1);
+                }}
+              >
+                <Text
+                  style={[styles.filterChipText, active ? styles.filterChipTextActive : null]}
+                >
+                  {f.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
+        {/* Transactions List */}
         <View style={styles.txListCard}>
-          {summary.transactions.length === 0 ? (
-            <View style={{ padding: 20, alignItems: 'center', gap: 6 }}>
+          {filteredTransactions.length === 0 ? (
+            <View style={{ padding: 24, alignItems: 'center', gap: 6 }}>
               <Text style={{ fontSize: 14, fontWeight: '700', color: '#475569' }}>
-                {summary.allTransactions && summary.allTransactions.length > 0
+                {searchQuery || filterType !== 'ALL'
+                  ? t.noMatchingTransactions
+                  : summary.allTransactions && summary.allTransactions.length > 0
                   ? `Walang naitalang benta para sa ${selectedPeriod}`
                   : 'Wala pang naitatalang benta sa tindahan'}
               </Text>
@@ -164,7 +824,8 @@ export default function SalesHistoryScreen() {
               </Text>
             </View>
           ) : null}
-          {summary.transactions.map((tx, idx) => {
+
+          {paginatedTransactions.map((tx, idx) => {
             const isExpanded = selectedTxId === tx.id;
             const isPayment = tx.transactionType === 'UTANG_PAYMENT';
             const netPhp = Math.max(0, tx.totalPhp - tx.refundedPhp);
@@ -175,7 +836,7 @@ export default function SalesHistoryScreen() {
                   key={tx.id}
                   style={[
                     styles.txContainer,
-                    idx < summary.transactions.length - 1 ? styles.txBorder : null,
+                    idx < paginatedTransactions.length - 1 ? styles.txBorder : null,
                   ]}
                 >
                   <Pressable
@@ -186,14 +847,24 @@ export default function SalesHistoryScreen() {
                   >
                     <View style={styles.txTimeCol}>
                       <Text style={styles.txTime}>{tx.timeLabel}</Text>
-                      <Text
-                        style={[
-                          styles.txStatusTag,
-                          tx.status === 'VOIDED' ? styles.tagVoid : styles.tagPayment,
-                        ]}
-                      >
-                        {tx.status === 'VOIDED' ? 'VOIDED' : 'BAYAD UTANG'}
-                      </Text>
+                      <View style={styles.badgesRow}>
+                        <Text
+                          style={[
+                            styles.txStatusTag,
+                            tx.status === 'VOIDED' ? styles.tagVoid : styles.tagPayment,
+                          ]}
+                        >
+                          {tx.status === 'VOIDED' ? 'VOIDED' : 'BAYAD UTANG'}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.txMethodTag,
+                            tx.tenderType === 'GCASH' ? styles.tagGcash : styles.tagCash,
+                          ]}
+                        >
+                          {tx.tenderType}
+                        </Text>
+                      </View>
                     </View>
 
                     <Text
@@ -233,13 +904,27 @@ export default function SalesHistoryScreen() {
                       {tx.status !== 'VOIDED' ? (
                         <Pressable
                           style={styles.voidSaleBtn}
-                          onPress={async () => {
-                            Haptics.notificationAsync(
-                              Haptics.NotificationFeedbackType.Warning
-                            ).catch(() => {});
-                            await voidEntireTransaction(tx.id, 'Pambawi ng Bayad Utang');
-                            setActionMsg(
-                              `✓ Na-void ang bayad utang ni ${tx.customerName || 'Customer'} at naibalik ang balanse`
+                          onPress={() => {
+                            Alert.alert(
+                              'Kumpirmahin ang Pag-Void ng Bayad',
+                              `Sigurado ka bang nais mong i-void ang bayad utang na ito? Ibabalik ang halagang ${Money.fromPhp(tx.totalPhp).format()} sa natitirang utang ni ${tx.customerName || 'Customer'}.`,
+                              [
+                                { text: 'Bumalik', style: 'cancel' },
+                                {
+                                  text: 'Oo, I-Void ang Bayad',
+                                  style: 'destructive',
+                                  onPress: async () => {
+                                    Haptics.notificationAsync(
+                                      Haptics.NotificationFeedbackType.Warning
+                                    ).catch(() => {});
+                                    await voidEntireTransaction(tx.id, 'Pambawi ng Bayad Utang');
+                                    showActionToast(
+                                      `✓ Na-void ang bayad utang ni ${tx.customerName || 'Customer'} at naibalik ang balanse`,
+                                      'warning'
+                                    );
+                                  },
+                                },
+                              ]
                             );
                           }}
                         >
@@ -259,7 +944,7 @@ export default function SalesHistoryScreen() {
                 key={tx.id}
                 style={[
                   styles.txContainer,
-                  idx < summary.transactions.length - 1 ? styles.txBorder : null,
+                  idx < paginatedTransactions.length - 1 ? styles.txBorder : null,
                 ]}
               >
                 <Pressable
@@ -270,37 +955,67 @@ export default function SalesHistoryScreen() {
                 >
                   <View style={styles.txTimeCol}>
                     <Text style={styles.txTime}>{tx.timeLabel}</Text>
-                    {tx.status !== 'COMPLETED' ? (
+                    <View style={styles.badgesRow}>
+                      {tx.status !== 'COMPLETED' ? (
+                        <Text
+                          style={[
+                            styles.txStatusTag,
+                            tx.status === 'VOIDED'
+                              ? styles.tagVoid
+                              : styles.tagReturn,
+                          ]}
+                        >
+                          {tx.status}
+                        </Text>
+                      ) : null}
                       <Text
                         style={[
-                          styles.txStatusTag,
-                          tx.status === 'VOIDED'
-                            ? styles.tagVoid
-                            : styles.tagReturn,
+                          styles.txMethodTag,
+                          tx.tenderType === 'CASH'
+                            ? styles.tagCash
+                            : tx.tenderType === 'GCASH'
+                            ? styles.tagGcash
+                            : tx.tenderType === 'UTANG'
+                            ? styles.tagUtang
+                            : styles.tagSplit,
                         ]}
                       >
-                        {tx.status}
+                        {tx.tenderType}
                       </Text>
-                    ) : tx.tenderType === 'UTANG' ? (
-                      <Text style={[styles.txStatusTag, styles.tagUtang]}>UTANG</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.txAmountCol}>
+                    <Text
+                      style={[
+                        styles.txAmount,
+                        tx.status === 'VOIDED' ? styles.txAmountVoided : null,
+                      ]}
+                    >
+                      {Money.fromPhp(netPhp).format()}
+                    </Text>
+                    {tx.status !== 'VOIDED' ? (
+                      <Text style={styles.txTuboSub}>
+                        {t.tuboLabel || 'Tubo'}: {showProfit ? `+₱${(tx.tuboPhp ?? 0).toFixed(2)}` : '••••'}
+                      </Text>
                     ) : null}
                   </View>
 
-                  <Text
-                    style={[
-                      styles.txAmount,
-                      tx.status === 'VOIDED' ? styles.txAmountVoided : null,
-                    ]}
-                  >
-                    {Money.fromPhp(netPhp).format()}
-                  </Text>
-
-                  <Text style={styles.txItemsCount}>
-                    {tx.itemCount} {tx.itemCount === 1 ? 'Item' : 'Items'}
-                  </Text>
+                  <View style={styles.txRightCol}>
+                    {tx.tenderType === 'UTANG' ? (
+                      <Text style={styles.customerUtangBadge} numberOfLines={1}>
+                        {tx.customerName || 'Suki'} • {tx.itemCount} {tx.itemCount === 1 ? 'Item' : 'Items'}
+                      </Text>
+                    ) : (
+                      <Text style={styles.txItemsCount} numberOfLines={1}>
+                        {tx.customerName ? `${tx.customerName} • ` : ''}
+                        {tx.itemCount} {tx.itemCount === 1 ? 'Item' : 'Items'}
+                      </Text>
+                    )}
+                  </View>
                 </Pressable>
 
-                {/* Owner Guided Return / Exchange / Void Wizard (POS-01, POS-02, POS-03, POS-04) */}
+                {/* Owner Guided Return / Exchange / Void Wizard */}
                 {isExpanded ? (
                   <View style={styles.wizardBox}>
                     <View style={styles.wizardHeader}>
@@ -310,13 +1025,38 @@ export default function SalesHistoryScreen() {
                       </Text>
                     </View>
 
+                    {/* Financial Tubo & Puhunan Breakdown for this specific sale */}
+                    {tx.status !== 'VOIDED' ? (
+                      <View style={styles.saleFinancialCard}>
+                        <View style={styles.saleFinancialCol}>
+                          <Text style={styles.saleFinancialLabel}>{t.bentaToday || 'Benta'}</Text>
+                          <Text style={styles.saleFinancialValue}>₱{netPhp.toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.saleFinancialCol}>
+                          <Text style={styles.saleFinancialLabel}>{t.puhunanOnSale || 'Puhunan'}</Text>
+                          <Text style={styles.saleFinancialValue}>
+                            {showProfit ? `₱${(tx.costPhp ?? 0).toFixed(2)}` : '••••••'}
+                          </Text>
+                        </View>
+                        <View style={styles.saleFinancialCol}>
+                          <Text style={[styles.saleFinancialLabel, { color: '#0D7A52' }]}>
+                            {t.tuboOnSale || 'Tubo'}
+                          </Text>
+                          <Text style={[styles.saleFinancialValue, { color: '#0D7A52', fontWeight: '800' }]}>
+                            {showProfit
+                              ? `+₱${(tx.tuboPhp ?? 0).toFixed(2)} (${tx.profitMarginPercent ?? 0}%)`
+                              : '••••••'}
+                          </Text>
+                        </View>
+                      </View>
+                    ) : null}
+
                     {tx.voidOrReturnNote ? (
                       <Text style={styles.auditNoteText}>{tx.voidOrReturnNote}</Text>
                     ) : null}
 
                     {tx.status !== 'VOIDED' ? (
                       <>
-                        {/* Step 1: Mandatory Condition Disposition Gate (POS-03) */}
                         <Text style={styles.stepLabel}>
                           1. Returned Item Condition (Prevents Phantom Stock):
                         </Text>
@@ -362,7 +1102,6 @@ export default function SalesHistoryScreen() {
                           </Pressable>
                         </View>
 
-                        {/* Reason Pills */}
                         <View style={styles.reasonRow}>
                           {['Defective / Spoiled', 'Wrong Item', 'Changed Mind'].map(
                             (r) => (
@@ -387,7 +1126,6 @@ export default function SalesHistoryScreen() {
                           )}
                         </View>
 
-                        {/* Step 2: Line items with capped Refund & Instant Exchange buttons */}
                         <Text style={styles.stepLabel}>
                           2. Select Item to Refund or Exchange (Capped at Receipt Price):
                         </Text>
@@ -403,6 +1141,9 @@ export default function SalesHistoryScreen() {
                                 </Text>
                                 <Text style={styles.lineItemSub}>
                                   Paid ₱{item.unitPricePaidPhp.toFixed(2)}/pc
+                                  {showProfit && (item.unitCostPhp !== undefined && item.unitCostPhp > 0)
+                                    ? ` • Puhunan ₱${item.unitCostPhp.toFixed(2)} (Tubo +₱${Math.max(0, item.unitPricePaidPhp - item.unitCostPhp).toFixed(2)})`
+                                    : ''}
                                 </Text>
                               </View>
 
@@ -427,7 +1168,7 @@ export default function SalesHistoryScreen() {
                                           ? 'UTANG_DEDUCTION'
                                           : 'CASH_REFUND',
                                       });
-                                      setActionMsg(
+                                      showActionToast(
                                         isUtangSale
                                           ? `✓ Nabawas ang ₱${res.creditPhp.toFixed(2)} sa utang ni ${
                                               tx.customerName || 'Customer'
@@ -466,7 +1207,7 @@ export default function SalesHistoryScreen() {
                                         disposition,
                                         resolution: 'EXCHANGE_CREDIT',
                                       });
-                                      setActionMsg(
+                                      showActionToast(
                                         `✓ Applied ₱${res.creditPhp.toFixed(
                                           2
                                         )} Exchange Credit to New Sale`
@@ -486,16 +1227,30 @@ export default function SalesHistoryScreen() {
                           );
                         })}
 
-                        {/* Owner Same-Day Void Button (POS-01) */}
+                        {/* Owner Same-Day Void Button */}
                         <Pressable
                           style={styles.voidSaleBtn}
-                          onPress={async () => {
-                            Haptics.notificationAsync(
-                              Haptics.NotificationFeedbackType.Warning
-                            ).catch(() => {});
-                            await voidEntireTransaction(tx.id, 'Owner Entry Correction');
-                            setActionMsg(
-                              `✓ Voided ${tx.id} and restored sellable stock to Inventory`
+                          onPress={() => {
+                            Alert.alert(
+                              'Kumpirmahin ang Pag-Void ng Resibo',
+                              `Sigurado ka bang nais mong i-void ang Resibo #${tx.id}? Mababawi ang benta at maibabalik ang mga paninda sa imbentaryo.`,
+                              [
+                                { text: 'Huwag', style: 'cancel' },
+                                {
+                                  text: 'Oo, I-Void ang Resibo',
+                                  style: 'destructive',
+                                  onPress: async () => {
+                                    Haptics.notificationAsync(
+                                      Haptics.NotificationFeedbackType.Warning
+                                    ).catch(() => {});
+                                    await voidEntireTransaction(tx.id, 'Owner Entry Correction');
+                                    showActionToast(
+                                      `✓ Na-void ang Resibo #${tx.id} at naibalik ang paninda sa imbentaryo`,
+                                      'warning'
+                                    );
+                                  },
+                                },
+                              ]
                             );
                           }}
                         >
@@ -510,8 +1265,1127 @@ export default function SalesHistoryScreen() {
               </View>
             );
           })}
+
+          {totalPages > 1 ? (
+            <View style={styles.paginationRow}>
+              <Pressable
+                style={[styles.pageBtn, safeCurrentPage === 1 ? styles.pageBtnDisabled : null]}
+                disabled={safeCurrentPage === 1}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setCurrentPage((p) => Math.max(1, p - 1));
+                }}
+              >
+                <Text
+                  style={[
+                    styles.pageBtnText,
+                    safeCurrentPage === 1 ? styles.pageBtnTextDisabled : null,
+                  ]}
+                >
+                  {t.previousPage}
+                </Text>
+              </Pressable>
+
+              <Text style={styles.pageIndicatorText}>
+                {t.pageIndicator(safeCurrentPage, totalPages)}
+              </Text>
+
+              <Pressable
+                style={[
+                  styles.pageBtn,
+                  safeCurrentPage >= totalPages ? styles.pageBtnDisabled : null,
+                ]}
+                disabled={safeCurrentPage >= totalPages}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setCurrentPage((p) => Math.min(totalPages, p + 1));
+                }}
+              >
+                <Text
+                  style={[
+                    styles.pageBtnText,
+                    safeCurrentPage >= totalPages ? styles.pageBtnTextDisabled : null,
+                  ]}
+                >
+                  {t.nextPage}
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
+
+      {/* ========================================================================= */}
+      {/* MODAL 1: Cash Drawer Reconciliation & Adjustment Modal (Panukli & Gastos) */}
+      {/* ========================================================================= */}
+      <Modal
+        visible={cashDrawerModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setCashDrawerModalVisible(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={styles.modalTitle}>{t.cashDrawerTitle}</Text>
+                <Text style={styles.modalSubtitle}>{t.cashDrawerSub}</Text>
+              </View>
+              <Pressable
+                style={styles.modalCloseBtn}
+                onPress={() => setCashDrawerModalVisible(false)}
+              >
+                <Ionicons name="close" size={20} color="#6B7280" />
+              </Pressable>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 520 }}>
+              {/* Cash Drawer Breakdown Card */}
+              <View style={styles.kahaBreakdownCard}>
+                <View style={styles.kahaRow}>
+                  <Text style={styles.kahaRowLabel}>{t.panukliStartingFloat}</Text>
+                  <Text style={[styles.kahaRowVal, { color: '#0369A1' }]}>
+                    +{summary.formattedStartingCash}
+                  </Text>
+                </View>
+                <View style={styles.kahaRow}>
+                  <Text style={styles.kahaRowLabel}>{t.cashSalesShort}</Text>
+                  <Text style={[styles.kahaRowVal, { color: '#047857' }]}>
+                    +{summary.formattedCashSales}
+                  </Text>
+                </View>
+                <View style={styles.kahaRow}>
+                  <Text style={styles.kahaRowLabel}>{t.utangCashCollectedShort}</Text>
+                  <Text style={[styles.kahaRowVal, { color: '#047857' }]}>
+                    +{summary.formattedUtangCashCollected}
+                  </Text>
+                </View>
+                <View style={styles.kahaRow}>
+                  <Text style={styles.kahaRowLabel}>{t.gastosCashOut}</Text>
+                  <Text style={[styles.kahaRowVal, { color: '#DC2626' }]}>
+                    -{summary.formattedGastos}
+                  </Text>
+                </View>
+                <View style={styles.kahaDivider} />
+                <View style={styles.kahaTotalRow}>
+                  <Text style={styles.kahaTotalLabel}>{t.cashInBox}</Text>
+                  <Text style={styles.kahaTotalVal}>{summary.formattedCashInDrawer}</Text>
+                </View>
+              </View>
+
+              {/* Adjustment Entry Form */}
+              <View style={styles.adjFormCard}>
+                <Text style={styles.formSectionTitle}>Magtala sa Kaha</Text>
+
+                {drawerSavedMsg ? (
+                  <View style={styles.inModalFeedbackBanner}>
+                    <Ionicons name="checkmark-circle" size={16} color="#059669" />
+                    <Text style={styles.inModalFeedbackText}>{drawerSavedMsg}</Text>
+                  </View>
+                ) : null}
+
+                {/* Segmented Picker: Panukli vs Gastos */}
+                <View style={styles.adjSegmentRow}>
+                  <Pressable
+                    style={[
+                      styles.adjSegmentBtn,
+                      adjType === 'PANUKLI' ? styles.adjSegmentBtnPanukli : null,
+                    ]}
+                    onPress={() => {
+                      setAdjType('PANUKLI');
+                      setAdjCategory(PANUKLI_CATEGORIES[0]);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.adjSegmentText,
+                        adjType === 'PANUKLI' ? styles.adjSegmentTextActive : null,
+                      ]}
+                    >
+                      + Panukli (Cash In)
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={[
+                      styles.adjSegmentBtn,
+                      adjType === 'GASTOS' ? styles.adjSegmentBtnGastos : null,
+                    ]}
+                    onPress={() => {
+                      setAdjType('GASTOS');
+                      setAdjCategory(GASTOS_CATEGORIES[0]);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.adjSegmentText,
+                        adjType === 'GASTOS' ? styles.adjSegmentTextActive : null,
+                      ]}
+                    >
+                      - Gastos (Cash Out)
+                    </Text>
+                  </Pressable>
+                </View>
+
+                {/* Amount Input */}
+                <Text style={styles.inputFieldLabel}>{t.amountPhpLabel}</Text>
+                <View style={styles.amountInputRow}>
+                  <Text style={styles.pesoPrefix}>₱</Text>
+                  <TextInput
+                    style={styles.amountInput}
+                    keyboardType="numeric"
+                    placeholder="0.00"
+                    placeholderTextColor="#9CA3AF"
+                    value={adjAmount}
+                    onChangeText={setAdjAmount}
+                  />
+                </View>
+
+                {/* Category Chips */}
+                <Text style={styles.inputFieldLabel}>{t.categoryLabel}</Text>
+                <View style={styles.catChipsRow}>
+                  {(adjType === 'PANUKLI' ? PANUKLI_CATEGORIES : GASTOS_CATEGORIES).map(
+                    (cat) => {
+                      const active = adjCategory === cat;
+                      return (
+                        <Pressable
+                          key={cat}
+                          style={[
+                            styles.catChip,
+                            active ? styles.catChipActive : null,
+                          ]}
+                          onPress={() => setAdjCategory(cat)}
+                        >
+                          <Text
+                            style={[
+                              styles.catChipText,
+                              active ? styles.catChipTextActive : null,
+                            ]}
+                          >
+                            {cat}
+                          </Text>
+                        </Pressable>
+                      );
+                    }
+                  )}
+                </View>
+
+                {/* Note Input */}
+                <Text style={styles.inputFieldLabel}>{t.noteLabel}</Text>
+                <TextInput
+                  style={styles.noteInput}
+                  placeholder="hal. Para sa 3 sako ng yelo"
+                  placeholderTextColor="#9CA3AF"
+                  value={adjNote}
+                  onChangeText={setAdjNote}
+                />
+
+                <Pressable
+                  style={[
+                    styles.saveAdjBtn,
+                    isJustSavedDrawer ? styles.saveAdjBtnSuccess : null,
+                  ]}
+                  onPress={handleSaveDrawerAdjustment}
+                >
+                  <Ionicons
+                    name={isJustSavedDrawer ? 'checkmark' : 'save-outline'}
+                    size={16}
+                    color="#FFFFFF"
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text style={styles.saveAdjBtnText}>
+                    {isJustSavedDrawer ? '✓ Naitala Na!' : t.saveAdjustmentBtn}
+                  </Text>
+                </Pressable>
+              </View>
+
+              {/* Today's Adjustments History */}
+              <View style={styles.drawerHistorySection}>
+                <Text style={styles.historySectionTitle}>{t.drawerHistoryTitle}</Text>
+                {summary.periodAdjustments.length === 0 ? (
+                  <Text style={styles.noHistoryText}>{t.noDrawerAdjustments}</Text>
+                ) : (
+                  summary.periodAdjustments.map((item) => (
+                    <View key={item.id} style={styles.drawerHistoryRow}>
+                      <View style={{ flex: 1, gap: 2 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                          <Text
+                            style={[
+                              styles.adjTypeTag,
+                              item.type === 'PANUKLI'
+                                ? styles.tagPanukli
+                                : styles.tagGastos,
+                            ]}
+                          >
+                            {item.type === 'PANUKLI' ? '+ PANUKLI' : '- GASTOS'}
+                          </Text>
+                          <Text style={styles.adjCategoryText}>{item.category}</Text>
+                        </View>
+                        {item.note ? (
+                          <Text style={styles.adjNoteText}>{item.note}</Text>
+                        ) : null}
+                        <Text style={styles.adjTimeText}>{item.timeLabel}</Text>
+                      </View>
+
+                      <View style={{ alignItems: 'flex-end', gap: 4 }}>
+                        <Text
+                          style={[
+                            styles.adjAmountText,
+                            item.type === 'PANUKLI'
+                              ? { color: '#0369A1' }
+                              : { color: '#DC2626' },
+                          ]}
+                        >
+                          {item.type === 'PANUKLI' ? '+' : '-'}
+                          {Money.fromPhp(item.amountPhp).format()}
+                        </Text>
+                        <Pressable
+                          style={styles.deleteAdjBtn}
+                          onPress={() => {
+                            Alert.alert(
+                              'Alisin ang Tala sa Kahon?',
+                              `Sigurado ka bang nais mong alisin ang ${
+                                item.type === 'PANUKLI' ? '+ Panukli' : '- Gastos'
+                              } na ${Money.fromPhp(item.amountPhp).format()}?`,
+                              [
+                                { text: 'Bumalik', style: 'cancel' },
+                                {
+                                  text: 'Oo, Alisin',
+                                  style: 'destructive',
+                                  onPress: () => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+                                    deleteCashAdjustment(item.id);
+                                    const delMsg = `🗑️ Naalis ang tala (${Money.fromPhp(item.amountPhp).format()}) sa kahon.`;
+                                    setDrawerSavedMsg(delMsg);
+                                    setTimeout(() => {
+                                      setDrawerSavedMsg((prev) => (prev === delMsg ? null : prev));
+                                    }, 3000);
+                                    showActionToast(delMsg, 'warning');
+                                  },
+                                },
+                              ]
+                            );
+                          }}
+                        >
+                          <Ionicons name="trash-outline" size={14} color="#EF4444" />
+                        </Pressable>
+                      </View>
+                    </View>
+                  ))
+                )}
+              </View>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      {/* ========================================================================= */}
+      {/* MODAL 2: "Mabenta Today" Top-Moving Products Sheet                       */}
+      {/* ========================================================================= */}
+      <Modal
+        visible={topMoversModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setTopMoversModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={styles.modalTitle}>{t.mabentaTitle}</Text>
+                <Text style={styles.modalSubtitle}>{t.mabentaSub}</Text>
+              </View>
+              <Pressable
+                style={styles.modalCloseBtn}
+                onPress={() => setTopMoversModalVisible(false)}
+              >
+                <Ionicons name="close" size={20} color="#6B7280" />
+              </Pressable>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 480 }}>
+              {summary.topSellingProducts.length === 0 ? (
+                <View style={{ padding: 24, alignItems: 'center' }}>
+                  <Text style={{ fontSize: 14, color: '#6B7280', fontWeight: '600' }}>
+                    {t.noSalesYet}
+                  </Text>
+                </View>
+              ) : (
+                summary.topSellingProducts.map((p, idx) => (
+                  <View key={p.productId} style={styles.topProductRow}>
+                    <View
+                      style={[
+                        styles.rankBadge,
+                        idx === 0
+                          ? styles.rankGold
+                          : idx === 1
+                          ? styles.rankSilver
+                          : idx === 2
+                          ? styles.rankBronze
+                          : null,
+                      ]}
+                    >
+                      <Text style={styles.rankText}>#{idx + 1}</Text>
+                    </View>
+
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={styles.topProdName} numberOfLines={1}>
+                        {p.name}
+                      </Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <Text style={styles.topProdUnits}>
+                          {p.unitsSold} pcs {t.unitsSoldSuffix}
+                        </Text>
+                        <Text style={styles.topProdDot}>•</Text>
+                        <Text style={styles.topProdRevenue}>
+                          {Money.fromPhp(p.revenuePhp).format()}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={{ alignItems: 'flex-end', gap: 2 }}>
+                      {p.isOutOfStock ? (
+                        <View style={styles.stockChipOut}>
+                          <Text style={styles.stockChipTextOut}>Ubos na</Text>
+                        </View>
+                      ) : p.isLowStock ? (
+                        <View style={styles.stockChipLow}>
+                          <Text style={styles.stockChipTextLow}>Kakaunti na</Text>
+                        </View>
+                      ) : (
+                        <View style={styles.stockChipIn}>
+                          <Text style={styles.stockChipTextIn}>Stock: {p.currentStock}</Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+                ))
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ========================================================================= */}
+      {/* MODAL 3: End-of-Day Z-Reading Summary & Sharing Receipt                   */}
+      {/* ========================================================================= */}
+      <Modal
+        visible={zReadingModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setZReadingModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={styles.modalTitle}>{t.zReadingTitle}</Text>
+                <Text style={styles.modalSubtitle}>{t.zReadingSub}</Text>
+              </View>
+              <Pressable
+                style={styles.modalCloseBtn}
+                onPress={() => setZReadingModalVisible(false)}
+              >
+                <Ionicons name="close" size={20} color="#6B7280" />
+              </Pressable>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 480 }}>
+              {/* Thermal Receipt Paper Card */}
+              <View style={styles.receiptPaper}>
+                <Text style={styles.receiptStoreName}>{settings?.storeName || "Juan's Store"}</Text>
+                <Text style={styles.receiptStoreAddress}>{settings?.address || 'Enter Store Address'}</Text>
+                <Text style={styles.receiptDate}>
+                  {new Date().toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}{' '}
+                  • {selectedPeriod} Report
+                </Text>
+
+                <View style={styles.receiptDashedLine} />
+
+                {/* Sales & Profit */}
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabel}>BENTA (Gross Sales)</Text>
+                  <Text style={styles.receiptValBold}>{summary.formattedTotalSales}</Text>
+                </View>
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabelSub}>Puhunan (COGS)</Text>
+                  <Text style={styles.receiptValSub}>{summary.formattedTotalCost}</Text>
+                </View>
+                <View style={styles.receiptRow}>
+                  <Text style={[styles.receiptLabelBold, { color: '#0D7A52' }]}>
+                    TINUBONG KITA (Profit)
+                  </Text>
+                  <Text style={[styles.receiptValBold, { color: '#0D7A52' }]}>
+                    {summary.formattedTubo} ({summary.profitMarginPercent}%)
+                  </Text>
+                </View>
+
+                <View style={styles.receiptDashedLine} />
+
+                {/* Cash in Box Breakdown */}
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabelBold}>PERA SA KAHON (Cash)</Text>
+                  <Text style={styles.receiptValBold}>{summary.formattedCashInDrawer}</Text>
+                </View>
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabelSub}>  • Panukli (Float In)</Text>
+                  <Text style={styles.receiptValSub}>+{summary.formattedStartingCash}</Text>
+                </View>
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabelSub}>  • Cash Benta</Text>
+                  <Text style={styles.receiptValSub}>+{summary.formattedCashSales}</Text>
+                </View>
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabelSub}>  • Koleksyon sa Utang</Text>
+                  <Text style={styles.receiptValSub}>+{summary.formattedUtangCashCollected}</Text>
+                </View>
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabelSub}>  • Gastos / Paluwal</Text>
+                  <Text style={[styles.receiptValSub, { color: '#DC2626' }]}>
+                    -{summary.formattedGastos}
+                  </Text>
+                </View>
+
+                <View style={styles.receiptDashedLine} />
+
+                {/* Other Tender & Volume */}
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabel}>GCash Total</Text>
+                  <Text style={styles.receiptVal}>{summary.formattedGcashTotal}</Text>
+                </View>
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabel}>Bagong Utang (Credit)</Text>
+                  <Text style={styles.receiptVal}>{summary.formattedUtangCreditIssued}</Text>
+                </View>
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabel}>Nabentang Paninda</Text>
+                  <Text style={styles.receiptVal}>{summary.totalItems} pcs</Text>
+                </View>
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabel}>Bilang ng Resibo</Text>
+                  <Text style={styles.receiptVal}>{summary.totalTransactions}</Text>
+                </View>
+                {summary.totalVoidedTransactions > 0 ? (
+                  <View style={styles.receiptRow}>
+                    <Text style={[styles.receiptLabel, { color: '#DC2626' }]}>
+                      Na-Void na Benta ({summary.totalVoidedTransactions})
+                    </Text>
+                    <Text style={[styles.receiptVal, { color: '#DC2626' }]}>
+                      {summary.formattedTotalVoided}
+                    </Text>
+                  </View>
+                ) : null}
+
+                <View style={styles.receiptDashedLine} />
+                <Text style={styles.receiptFooter}>
+                  Generated with Startup Tindahan Helper POS
+                </Text>
+              </View>
+
+              {/* Action Buttons */}
+              <Pressable
+                style={styles.shareZBtn}
+                onPress={handleShareZReading}
+              >
+                <Ionicons name="share-social-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                <Text style={styles.shareZBtnText}>{t.shareZReadingBtn}</Text>
+              </Pressable>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ========================================================================= */}
+      {/* MODAL 4: Custom Date Range & Interactive Calendar Modal                  */}
+      {/* ========================================================================= */}
+      <Modal
+        visible={dateFilterModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setDateFilterModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            {/* Header */}
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={styles.modalTitle}>{t.dateFilterTitle || 'Salain ayon sa Petsa'}</Text>
+                <Text style={styles.modalSubtitle}>{t.dateFilterSub || 'Pumili ng preset o sariling range sa kalendaryo'}</Text>
+              </View>
+              <Pressable
+                style={styles.modalCloseBtn}
+                onPress={() => setDateFilterModalVisible(false)}
+              >
+                <Ionicons name="close" size={20} color="#6B7280" />
+              </Pressable>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 520 }}>
+              {/* Presets Horizontal Chips */}
+              <Text style={styles.filterSectionHeader}>MGA PRESET SHORTCUTS</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.datePresetsScroll}
+              >
+                {[
+                  { key: 'TODAY', label: t.filterToday || 'Ngayon' },
+                  { key: 'YESTERDAY', label: t.filterYesterday || 'Kahapon' },
+                  { key: 'LAST_7', label: t.filterLast7Days || '7 Araw' },
+                  { key: 'THIS_MONTH', label: t.filterThisMonth || 'Buwang Ito' },
+                  { key: 'LAST_MONTH', label: t.filterLastMonth || 'Nakaraang Buwan' },
+                  { key: 'YTD', label: t.filterYtd || 'Taong Ito (YTD)' },
+                ].map((item) => {
+                  const isSelected = selectedPreset === item.key;
+                  return (
+                    <Pressable
+                      key={item.key}
+                      style={[
+                        styles.datePresetChip,
+                        isSelected ? styles.datePresetChipActive : null,
+                      ]}
+                      onPress={() => handlePresetSelect(item.key as any)}
+                    >
+                      {isSelected ? (
+                        <Ionicons name="checkmark-circle" size={13} color="#0D7A52" style={{ marginRight: 4 }} />
+                      ) : null}
+                      <Text
+                        style={[
+                          styles.datePresetChipText,
+                          isSelected ? styles.datePresetChipTextActive : null,
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+
+              {/* Start & End Selected Info Card (Interactive / Customizable) */}
+              <Text style={[styles.filterSectionHeader, { marginTop: 4 }]}>
+                PUMILI NG SIMULA AT HULING PETSA
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  backgroundColor: '#F9FAFB',
+                  borderRadius: 12,
+                  padding: 10,
+                  borderWidth: 1,
+                  borderColor: '#E5E7EB',
+                  marginBottom: 14,
+                  gap: 8,
+                }}
+              >
+                {/* Start Date Card */}
+                <Pressable
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 10,
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderWidth: 1.5,
+                    borderColor:
+                      tempStartDate === null || (tempStartDate !== null && tempEndDate === null)
+                        ? '#0D7A52'
+                        : '#E5E7EB',
+                  }}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setTempStartDate(null);
+                    setTempEndDate(null);
+                  }}
+                >
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                    <Text style={{ fontSize: 10, fontWeight: '800', color: '#4B5563', letterSpacing: 0.5 }}>
+                      {t.startDateLabel || 'SIMULANG PETSA'}
+                    </Text>
+                    {tempStartDate === null ? (
+                      <View style={{ backgroundColor: '#DCFCE7', paddingHorizontal: 5, paddingVertical: 1, borderRadius: 4 }}>
+                        <Text style={{ fontSize: 9, fontWeight: '800', color: '#0D7A52' }}>PUMIPILI</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <Text style={{ fontSize: 13, fontWeight: '800', color: tempStartDate ? '#111827' : '#9CA3AF' }}>
+                    {tempStartDate
+                      ? tempStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                      : 'I-tap ang araw...'}
+                  </Text>
+                  <Text style={{ fontSize: 9, color: '#6B7280', marginTop: 2 }}>
+                    {tempStartDate ? 'I-tap para palitan' : 'Pumili sa ibaba'}
+                  </Text>
+                </Pressable>
+
+                <Ionicons name="arrow-forward" size={16} color="#9CA3AF" />
+
+                {/* End Date Card */}
+                <Pressable
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 10,
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderWidth: 1.5,
+                    borderColor:
+                      tempStartDate !== null && tempEndDate === null ? '#0D7A52' : '#E5E7EB',
+                  }}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setTempEndDate(null);
+                  }}
+                >
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                    <Text style={{ fontSize: 10, fontWeight: '800', color: '#4B5563', letterSpacing: 0.5 }}>
+                      {t.endDateLabel || 'HULING PETSA'}
+                    </Text>
+                    {tempStartDate !== null && tempEndDate === null ? (
+                      <View style={{ backgroundColor: '#DCFCE7', paddingHorizontal: 5, paddingVertical: 1, borderRadius: 4 }}>
+                        <Text style={{ fontSize: 9, fontWeight: '800', color: '#0D7A52' }}>PUMIPILI</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: '800',
+                      color: tempEndDate ? '#111827' : '#9CA3AF',
+                    }}
+                  >
+                    {tempEndDate
+                      ? tempEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                      : tempStartDate
+                      ? 'I-tap ang araw...'
+                      : '---'}
+                  </Text>
+                  <Text style={{ fontSize: 9, color: '#6B7280', marginTop: 2 }}>
+                    {tempEndDate ? 'I-tap para palitan' : 'Pumili sa ibaba'}
+                  </Text>
+                </Pressable>
+              </View>
+
+              {/* Interactive Calendar with Year and Month Selectors */}
+              <View style={styles.calendarContainer}>
+                {/* Year Selector ("i want to see year month") */}
+                <View style={{ marginBottom: 10 }}>
+                  <Text style={{ fontSize: 11, fontWeight: '800', color: '#6B7280', marginBottom: 6, letterSpacing: 0.5 }}>
+                    TAON (YEAR)
+                  </Text>
+                  <View style={{ flexDirection: 'row', gap: 8 }}>
+                    {[2024, 2025, 2026].map((yr) => {
+                      const isSelectedYear = calendarMonth.getFullYear() === yr;
+                      return (
+                        <Pressable
+                          key={yr}
+                          style={{
+                            flex: 1,
+                            paddingVertical: 7,
+                            alignItems: 'center',
+                            borderRadius: 8,
+                            backgroundColor: isSelectedYear ? '#0D7A52' : '#F3F4F6',
+                            borderWidth: 1,
+                            borderColor: isSelectedYear ? '#0D7A52' : '#E5E7EB',
+                          }}
+                          onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                            const now = new Date();
+                            let targetMonth = calendarMonth.getMonth();
+                            if (yr === now.getFullYear() && targetMonth > now.getMonth()) {
+                              targetMonth = now.getMonth();
+                            }
+                            setCalendarMonth(new Date(yr, targetMonth, 1));
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              fontWeight: isSelectedYear ? '800' : '600',
+                              color: isSelectedYear ? '#FFFFFF' : '#374151',
+                            }}
+                          >
+                            {yr}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
+
+                {/* Month Selector ("i want to see year month") */}
+                <View style={{ marginBottom: 12 }}>
+                  <Text style={{ fontSize: 11, fontWeight: '800', color: '#6B7280', marginBottom: 6, letterSpacing: 0.5 }}>
+                    BUWAN (MONTH)
+                  </Text>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ flexDirection: 'row', gap: 6, paddingBottom: 2 }}
+                  >
+                    {[
+                      { m: 0, label: 'Ene' },
+                      { m: 1, label: 'Peb' },
+                      { m: 2, label: 'Mar' },
+                      { m: 3, label: 'Abr' },
+                      { m: 4, label: 'May' },
+                      { m: 5, label: 'Hun' },
+                      { m: 6, label: 'Hul' },
+                      { m: 7, label: 'Ago' },
+                      { m: 8, label: 'Set' },
+                      { m: 9, label: 'Okt' },
+                      { m: 10, label: 'Nob' },
+                      { m: 11, label: 'Dis' },
+                    ].map((item) => {
+                      const isSelectedMonth = calendarMonth.getMonth() === item.m;
+                      const now = new Date();
+                      const isFutureMonth =
+                        calendarMonth.getFullYear() === now.getFullYear() && item.m > now.getMonth();
+
+                      return (
+                        <Pressable
+                          key={item.m}
+                          disabled={isFutureMonth}
+                          style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            borderRadius: 16,
+                            backgroundColor: isSelectedMonth
+                              ? '#0D7A52'
+                              : isFutureMonth
+                              ? '#F9FAFB'
+                              : '#F3F4F6',
+                            borderWidth: 1,
+                            borderColor: isSelectedMonth
+                              ? '#0D7A52'
+                              : isFutureMonth
+                              ? '#F3F4F6'
+                              : '#E5E7EB',
+                            opacity: isFutureMonth ? 0.35 : 1,
+                          }}
+                          onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                            setCalendarMonth(new Date(calendarMonth.getFullYear(), item.m, 1));
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              fontWeight: isSelectedMonth ? '800' : '600',
+                              color: isSelectedMonth
+                                ? '#FFFFFF'
+                                : isFutureMonth
+                                ? '#9CA3AF'
+                                : '#374151',
+                            }}
+                          >
+                            {item.label}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </ScrollView>
+                </View>
+
+                {/* Month Navigation */}
+                <View style={styles.calendarNavRow}>
+                  <Pressable
+                    style={styles.calendarNavBtn}
+                    onPress={handlePrevMonth}
+                    hitSlop={8}
+                  >
+                    <Ionicons name="chevron-back" size={18} color="#1F2937" />
+                  </Pressable>
+                  <Text style={styles.calendarMonthTitle}>
+                    {calendarMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </Text>
+                  <Pressable
+                    style={[
+                      styles.calendarNavBtn,
+                      calendarMonth.getFullYear() === new Date().getFullYear() &&
+                      calendarMonth.getMonth() === new Date().getMonth()
+                        ? { opacity: 0.3 }
+                        : null,
+                    ]}
+                    onPress={handleNextMonth}
+                    hitSlop={8}
+                  >
+                    <Ionicons name="chevron-forward" size={18} color="#1F2937" />
+                  </Pressable>
+                </View>
+
+                {/* Day of Week Headers */}
+                <View style={styles.calendarWeekRow}>
+                  {['Li', 'Lu', 'Ma', 'Mi', 'Hu', 'Bi', 'Sa'].map((d, dIdx) => (
+                    <Text key={dIdx} style={styles.calendarWeekHeader}>
+                      {d}
+                    </Text>
+                  ))}
+                </View>
+
+                {/* Day Cells Grid */}
+                <View style={styles.calendarGrid}>
+                  {calendarDays.map((item) => {
+                    if (item.type === 'empty') {
+                      return <View key={item.key} style={styles.calendarDayCell} />;
+                    }
+
+                    const isStart = tempStartDate && isSameDay(item.date, tempStartDate);
+                    const isEnd = tempEndDate && isSameDay(item.date, tempEndDate);
+                    const isInRange =
+                      tempStartDate &&
+                      tempEndDate &&
+                      item.date.getTime() > tempStartDate.getTime() &&
+                      item.date.getTime() < tempEndDate.getTime();
+                    const isToday = isSameDay(item.date, new Date());
+                    const isFuture = item.date.getTime() > new Date().setHours(23, 59, 59, 999);
+
+                    return (
+                      <Pressable
+                        key={item.key}
+                        disabled={isFuture}
+                        style={[
+                          styles.calendarDayCell,
+                          isInRange ? styles.calendarDayInRange : null,
+                          isStart || isEnd ? styles.calendarDaySelected : null,
+                          isStart && tempEndDate ? styles.calendarDayStartWithEnd : null,
+                          isEnd ? styles.calendarDayEnd : null,
+                        ]}
+                        onPress={() => handleDaySelect(item.date)}
+                      >
+                        <View
+                          style={[
+                            styles.calendarDayCircle,
+                            isStart || isEnd ? styles.calendarDayCircleSelected : null,
+                            isToday && !isStart && !isEnd ? styles.calendarDayCircleToday : null,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.calendarDayText,
+                              isFuture ? styles.calendarDayTextFuture : null,
+                              isStart || isEnd ? styles.calendarDayTextSelected : null,
+                              isToday && !isStart && !isEnd ? styles.calendarDayTextToday : null,
+                            ]}
+                          >
+                            {item.dayNum}
+                          </Text>
+                        </View>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+
+              {/* Action Buttons */}
+              <View style={styles.dateFilterActionRow}>
+                <Pressable
+                  style={styles.dateFilterResetBtn}
+                  onPress={handleResetDateFilter}
+                >
+                  <Ionicons name="refresh-outline" size={16} color="#4B5563" style={{ marginRight: 4 }} />
+                  <Text style={styles.dateFilterResetText}>{t.resetDateFilter || 'I-reset (Ngayon)'}</Text>
+                </Pressable>
+
+                <Pressable
+                  style={styles.dateFilterApplyBtn}
+                  onPress={handleApplyDateRange}
+                >
+                  <Ionicons name="checkmark-sharp" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
+                  <Text style={styles.dateFilterApplyText}>{t.applyDateFilter || 'I-apply ang Petsa'}</Text>
+                </Pressable>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ========================================================================= */}
+      {/* MODAL 5: Sales & Collections Full Overview Modal                          */}
+      {/* ========================================================================= */}
+      <Modal
+        visible={salesOverviewModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setSalesOverviewModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            {/* Header */}
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={styles.modalTitle}>{t.salesOverviewTitle || 'Buong Buod ng Benta at Koleksyon'}</Text>
+                <View style={styles.modalPeriodBadgeRow}>
+                  <Ionicons name="calendar-outline" size={12} color="#0D7A52" style={{ marginRight: 4 }} />
+                  <Text style={styles.modalPeriodBadgeText}>{summary.periodLabel}</Text>
+                </View>
+              </View>
+              <Pressable
+                style={styles.modalCloseBtn}
+                onPress={() => setSalesOverviewModalVisible(false)}
+              >
+                <Ionicons name="close" size={20} color="#6B7280" />
+              </Pressable>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 520 }}>
+              {/* Section 1: Sales, Cost, Tubo & Profitability */}
+              <View style={styles.overviewCard}>
+                <View style={styles.overviewSectionHeader}>
+                  <Ionicons name="trending-up" size={16} color="#0D7A52" />
+                  <Text style={styles.overviewSectionTitle}>{t.salesSectionTitle || 'Benta, Puhunan at Tubo'}</Text>
+                </View>
+
+                {/* Primary Hero Row */}
+                <View style={styles.overviewHeroRow}>
+                  <View style={styles.overviewHeroBox}>
+                    <Text style={styles.overviewHeroLabel}>KABUUANG BENTA</Text>
+                    <Text style={styles.overviewHeroValGreen}>{summary.formattedTotalSales}</Text>
+                    <Text style={styles.overviewHeroSub}>{summary.totalItems} piraso ({summary.totalTransactions} resibo)</Text>
+                  </View>
+                  <View style={styles.overviewHeroDivider} />
+                  <View style={styles.overviewHeroBox}>
+                    <Text style={styles.overviewHeroLabel}>MALINIS NA TUBO</Text>
+                    <Text style={[styles.overviewHeroValGreen, { color: '#0D7A52' }]}>{summary.formattedTubo}</Text>
+                    <Text style={styles.overviewHeroSub}>{summary.profitMarginPercent}% margin ({summary.markupPercent}% markup)</Text>
+                  </View>
+                </View>
+
+                <View style={styles.overviewLine} />
+
+                {/* Secondary breakdown */}
+                <View style={styles.overviewRow}>
+                  <Text style={styles.overviewRowLabel}>Kabuuang Puhunan (COGS)</Text>
+                  <Text style={styles.overviewRowVal}>{summary.formattedTotalCost}</Text>
+                </View>
+                <View style={styles.overviewRow}>
+                  <Text style={styles.overviewRowLabel}>{t.avgSpendPerReceipt || 'Karaniwang Gastos / Resibo'}</Text>
+                  <Text style={styles.overviewRowVal}>{summary.formattedAverageSpend}</Text>
+                </View>
+                {summary.totalVoidedTransactions > 0 ? (
+                  <View style={styles.overviewRow}>
+                    <Text style={[styles.overviewRowLabel, { color: '#DC2626' }]}>
+                      Na-Void na Benta ({summary.totalVoidedTransactions})
+                    </Text>
+                    <Text style={[styles.overviewRowVal, { color: '#DC2626' }]}>
+                      {summary.formattedTotalVoided}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+
+              {/* Section 2: Sales Tender Breakdown (Saan Galing ang Benta?) */}
+              <View style={styles.overviewCard}>
+                <View style={styles.overviewSectionHeader}>
+                  <Ionicons name="wallet-outline" size={16} color="#2563EB" />
+                  <Text style={[styles.overviewSectionTitle, { color: '#1E40AF' }]}>
+                    {t.salesTenderSectionTitle || 'Paraan ng Pagbayad sa Benta'}
+                  </Text>
+                </View>
+
+                <View style={styles.overviewRow}>
+                  <View style={styles.overviewRowLeft}>
+                    <View style={[styles.tenderDot, { backgroundColor: '#10B981' }]} />
+                    <Text style={styles.overviewRowLabel}>Cash Benta (Bayad Agad)</Text>
+                  </View>
+                  <Text style={styles.overviewRowValBold}>{summary.formattedCashSales}</Text>
+                </View>
+                <View style={styles.overviewRow}>
+                  <View style={styles.overviewRowLeft}>
+                    <View style={[styles.tenderDot, { backgroundColor: '#3B82F6' }]} />
+                    <Text style={styles.overviewRowLabel}>GCash Benta (E-Wallet)</Text>
+                  </View>
+                  <Text style={styles.overviewRowValBold}>{summary.formattedGcashSales}</Text>
+                </View>
+                <View style={styles.overviewRow}>
+                  <View style={styles.overviewRowLeft}>
+                    <View style={[styles.tenderDot, { backgroundColor: '#F59E0B' }]} />
+                    <Text style={styles.overviewRowLabel}>Ipina-Utang na Paninda (Credit)</Text>
+                  </View>
+                  <Text style={[styles.overviewRowValBold, { color: '#D97706' }]}>
+                    {summary.formattedUtangCreditIssued}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Section 3: Suki Utang Collections (Koleksyon sa Pautang) */}
+              <View style={styles.overviewCard}>
+                <View style={styles.overviewSectionHeader}>
+                  <Ionicons name="receipt-outline" size={16} color="#D97706" />
+                  <Text style={[styles.overviewSectionTitle, { color: '#B45309' }]}>
+                    {t.collectionsSectionTitle || 'Koleksyon sa Pautang (Bayad ng Suki)'}
+                  </Text>
+                </View>
+
+                <View style={styles.overviewRow}>
+                  <View style={styles.overviewRowLeft}>
+                    <View style={[styles.tenderDot, { backgroundColor: '#10B981' }]} />
+                    <Text style={styles.overviewRowLabel}>Cash na Bayad sa Utang</Text>
+                  </View>
+                  <Text style={styles.overviewRowValBold}>{summary.formattedUtangCashCollected}</Text>
+                </View>
+                <View style={styles.overviewRow}>
+                  <View style={styles.overviewRowLeft}>
+                    <View style={[styles.tenderDot, { backgroundColor: '#3B82F6' }]} />
+                    <Text style={styles.overviewRowLabel}>GCash na Bayad sa Utang</Text>
+                  </View>
+                  <Text style={styles.overviewRowValBold}>{summary.formattedUtangGcashCollected}</Text>
+                </View>
+                <View style={styles.overviewLine} />
+                <View style={styles.overviewRow}>
+                  <Text style={[styles.overviewRowLabel, { fontWeight: '700' }]}>Kabuuang Nakolektang Utang</Text>
+                  <Text style={[styles.overviewRowValBold, { color: '#0D7A52', fontSize: 14 }]}>
+                    {summary.formattedUtangCollected}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Section 4: Total Operational Cash Inflow (Kabuuang Pumasok na Pera) */}
+              <View style={[styles.overviewCard, styles.overviewInflowCard]}>
+                <View style={styles.overviewSectionHeader}>
+                  <Ionicons name="cash-outline" size={16} color="#0D7A52" />
+                  <Text style={styles.overviewSectionTitle}>
+                    {t.totalInflowSectionTitle || 'Kabuuang Pumasok na Pera sa Negosyo'}
+                  </Text>
+                </View>
+
+                <View style={styles.inflowBox}>
+                  <View style={styles.inflowRow}>
+                    <Text style={styles.inflowLabel}>{t.cashInflowLabel || 'Cash Benta + Cash Bayad Utang'}</Text>
+                    <Text style={styles.inflowVal}>{summary.formattedTotalCashInflow}</Text>
+                  </View>
+                  <View style={styles.inflowRow}>
+                    <Text style={styles.inflowLabel}>{t.digitalInflowLabel || 'GCash Benta + GCash Bayad Utang'}</Text>
+                    <Text style={styles.inflowVal}>{summary.formattedTotalDigitalInflow}</Text>
+                  </View>
+                  <View style={styles.inflowDivider} />
+                  <View style={styles.inflowRow}>
+                    <Text style={styles.inflowGrandLabel}>{t.grandTotalInflowLabel || 'KABUUANG PUMASOK (Operating Inflow)'}</Text>
+                    <Text style={styles.inflowGrandVal}>{summary.formattedGrandTotalOperatingInflow}</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Close Button */}
+              <Pressable
+                style={styles.overviewDoneBtn}
+                onPress={() => setSalesOverviewModalVisible(false)}
+              >
+                <Text style={styles.overviewDoneBtnText}>Isara ang Buod</Text>
+              </Pressable>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -534,23 +2408,45 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#111827',
   },
-  forecastBtn: {
+  headerBtns: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  zReadingBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#ECFDF5',
     borderWidth: 1,
     borderColor: '#A7F3D0',
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  zReadingBtnText: {
+    color: '#0D7A52',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  forecastBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 16,
   },
   forecastBtnText: {
-    color: '#0D7A52',
+    color: '#374151',
     fontSize: 12,
     fontWeight: '800',
   },
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 6,
-    paddingBottom: 120,
+    paddingBottom: 155,
     gap: 14,
   },
   segmentedBar: {
@@ -589,46 +2485,287 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     height: 46,
   },
+  dateCardActive: {
+    borderColor: '#0D7A52',
+    backgroundColor: '#ECFDF5',
+  },
   dateLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-  },
-  calendarIcon: {
-    fontSize: 15,
   },
   dateText: {
     fontSize: 14,
     fontWeight: '700',
     color: '#111827',
   },
+  dateTextActive: {
+    color: '#0D7A52',
+  },
+  dateDropdownHint: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginLeft: 4,
+  },
+  clearDateFilterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  clearDateFilterText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
   dateChevron: {
     fontSize: 20,
     color: '#6B7280',
     fontWeight: '600',
   },
+  dateFilterTriggerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  dateFilterTriggerText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  growthBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  growthBadgePos: {
+    backgroundColor: '#ECFDF5',
+  },
+  growthBadgeNeg: {
+    backgroundColor: '#FEF2F2',
+  },
+  growthBadgeText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  growthBadgeTextPos: {
+    color: '#059669',
+  },
+  growthBadgeTextNeg: {
+    color: '#DC2626',
+  },
+  chartCard: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 14,
+    padding: 12,
+    gap: 10,
+  },
+  chartHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  chartHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  chartTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  chartPeakSubtitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  barContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    height: 96,
+    paddingTop: 4,
+  },
+  barCol: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 4,
+  },
+  peakCrown: {
+    fontSize: 11,
+    lineHeight: 14,
+  },
+  barTrack: {
+    width: 14,
+    height: 64,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 7,
+    justifyContent: 'flex-end',
+    overflow: 'hidden',
+  },
+  barFill: {
+    width: '100%',
+    backgroundColor: '#9CA3AF',
+    borderRadius: 7,
+  },
+  barFillPeak: {
+    backgroundColor: '#0D7A52',
+  },
+  barDayText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  barDayTextPeak: {
+    color: '#0D7A52',
+    fontWeight: '800',
+  },
   kpiRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 8,
   },
   kpiCard: {
     flex: 1,
     backgroundColor: '#F3F4F6',
     borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    gap: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 9,
+    minHeight: 94,
+    justifyContent: 'space-between',
+  },
+  kpiCardTappable: {
+    borderWidth: 1,
+    borderColor: '#D1FAE5',
+    backgroundColor: '#F0FDF4',
+  },
+  kpiCardInteractive: {
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    backgroundColor: '#F0FDF4',
+  },
+  kpiHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 18,
   },
   kpiLabel: {
     fontSize: 11,
     color: '#4B5563',
     fontWeight: '600',
+    flexShrink: 1,
   },
   kpiValue: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '900',
     color: '#111827',
     fontVariant: ['tabular-nums'],
+    marginVertical: 2,
+  },
+  kpiCardFooter: {
+    gap: 1.5,
+  },
+  kpiSubText: {
+    fontSize: 10,
+    color: '#6B7280',
+    fontWeight: '600',
+  },
+  tuboContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  tuboLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    flexShrink: 1,
+  },
+  tuboLabel: {
+    fontSize: 10,
+    color: '#0D7A52',
+    fontWeight: '700',
+  },
+  tuboValue: {
+    fontSize: 10,
+    color: '#0D7A52',
+    fontWeight: '800',
+    fontVariant: ['tabular-nums'],
+  },
+  eyeBtn: {
+    padding: 2,
+  },
+  puhunanText: {
+    fontSize: 9.5,
+    color: '#6B7280',
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
+  },
+  kahaTapHint: {
+    fontSize: 10,
+    color: '#0D7A52',
+    fontWeight: '700',
+  },
+  secondaryKpiRow: {
+    flexDirection: 'row',
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 10,
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  secondaryKpiItem: {
+    alignItems: 'center',
+    flex: 1,
+    gap: 2,
+  },
+  secondaryKpiItemTappable: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  secondaryKpiLabel: {
+    fontSize: 10,
+    color: '#6B7280',
+    fontWeight: '600',
+  },
+  secondaryKpiVal: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  itemsSoldRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  mabentaPill: {
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 6,
+  },
+  mabentaPillText: {
+    fontSize: 8,
+    fontWeight: '800',
+    color: '#B45309',
   },
   actionToast: {
     backgroundColor: '#ECFDF5',
@@ -659,6 +2796,44 @@ const styles = StyleSheet.create({
     color: '#0D7A52',
     fontWeight: '600',
   },
+  searchBarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    height: 40,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 13,
+    color: '#111827',
+  },
+  filterPillsScroll: {
+    gap: 8,
+    paddingVertical: 2,
+  },
+  filterChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  filterChipActive: {
+    backgroundColor: '#0D7A52',
+    borderColor: '#0D7A52',
+  },
+  filterChipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#4B5563',
+  },
+  filterChipTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
   txListCard: {
     backgroundColor: '#FFFFFF',
   },
@@ -673,84 +2848,166 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
+    paddingVertical: 12,
   },
   txTimeCol: {
-    width: 96,
+    width: 110,
     gap: 2,
   },
   txTime: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#4B5563',
     fontWeight: '500',
     fontVariant: ['tabular-nums'],
+  },
+  badgesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   txStatusTag: {
     fontSize: 9,
     fontWeight: '800',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 5,
-    paddingVertical: 1,
     borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+  },
+  txMethodTag: {
+    fontSize: 8,
+    fontWeight: '800',
+    borderRadius: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+  },
+  tagCash: {
+    backgroundColor: '#DCFCE7',
+    color: '#15803D',
+  },
+  tagGcash: {
+    backgroundColor: '#DBEAFE',
+    color: '#1D4ED8',
+  },
+  tagUtang: {
+    backgroundColor: '#FEF3C7',
+    color: '#B45309',
+  },
+  tagSplit: {
+    backgroundColor: '#F3E8FF',
+    color: '#7E22CE',
   },
   tagVoid: {
     backgroundColor: '#FEE2E2',
-    color: '#991B1B',
+    color: '#B91C1C',
+  },
+  tagPayment: {
+    backgroundColor: '#DCFCE7',
+    color: '#15803D',
   },
   tagReturn: {
     backgroundColor: '#FEF3C7',
-    color: '#92400E',
+    color: '#B45309',
+  },
+  txAmountCol: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   txAmount: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '800',
     color: '#111827',
     fontVariant: ['tabular-nums'],
+    textAlign: 'center',
+  },
+  txTuboSub: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#0D7A52',
+    fontVariant: ['tabular-nums'],
+    marginTop: 1,
+  },
+  txAmountGreen: {
+    color: '#15803D',
   },
   txAmountVoided: {
+    color: '#94A3B8',
     textDecorationLine: 'line-through',
-    color: '#9CA3AF',
+  },
+  txRightCol: {
+    width: 100,
+    alignItems: 'flex-end',
   },
   txItemsCount: {
-    fontSize: 13,
-    color: '#4B5563',
+    fontSize: 12,
+    color: '#6B7280',
     fontWeight: '500',
-    width: 70,
     textAlign: 'right',
-    fontVariant: ['tabular-nums'],
+  },
+  customerUtangBadge: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#B45309',
+    textAlign: 'right',
   },
   wizardBox: {
     backgroundColor: '#F8FAFC',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 10,
     borderWidth: 1,
     borderColor: '#E2E8F0',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 4,
+    marginBottom: 8,
     gap: 8,
   },
-  wizardHeader: {
+  saleFinancialCard: {
     flexDirection: 'row',
+    backgroundColor: '#ECFDF5',
+    borderRadius: 8,
+    padding: 8,
     justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    marginVertical: 4,
+  },
+  saleFinancialCol: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  saleFinancialLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#475569',
+  },
+  saleFinancialValue: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginTop: 2,
+    fontVariant: ['tabular-nums'],
+  },
+  wizardHeader: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+    paddingBottom: 6,
   },
   wizardTitle: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#1E293B',
+    color: '#334155',
   },
   auditNoteText: {
     fontSize: 11,
-    color: '#B45309',
-    fontWeight: '700',
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    color: '#64748B',
+    fontStyle: 'italic',
+  },
+  paymentDetailText: {
+    fontSize: 12,
+    color: '#334155',
   },
   stepLabel: {
     fontSize: 11,
     fontWeight: '700',
     color: '#475569',
-    marginTop: 2,
   },
   dispositionRow: {
     flexDirection: 'row',
@@ -758,33 +3015,33 @@ const styles = StyleSheet.create({
   },
   dispChip: {
     flex: 1,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 8,
     paddingVertical: 6,
     paddingHorizontal: 8,
-    borderRadius: 8,
-    backgroundColor: '#E2E8F0',
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
   },
   dispChipGreen: {
-    backgroundColor: '#DCFCE7',
-    borderWidth: 1,
-    borderColor: '#16A34A',
+    borderColor: '#10B981',
+    backgroundColor: '#ECFDF5',
   },
   dispChipAmber: {
-    backgroundColor: '#FEF3C7',
-    borderWidth: 1,
-    borderColor: '#D97706',
+    borderColor: '#F59E0B',
+    backgroundColor: '#FFFBEB',
   },
   dispChipText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#475569',
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748B',
   },
   dispChipTextGreen: {
-    color: '#15803D',
+    color: '#065F46',
     fontWeight: '800',
   },
   dispChipTextAmber: {
-    color: '#B45309',
+    color: '#92400E',
     fontWeight: '800',
   },
   reasonRow: {
@@ -794,16 +3051,19 @@ const styles = StyleSheet.create({
   reasonPill: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 10,
-    backgroundColor: '#E2E8F0',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    backgroundColor: '#FFFFFF',
   },
   reasonPillActive: {
-    backgroundColor: '#0D7A52',
+    backgroundColor: '#334155',
+    borderColor: '#334155',
   },
   reasonText: {
     fontSize: 10,
+    color: '#64748B',
     fontWeight: '600',
-    color: '#334155',
   },
   reasonTextActive: {
     color: '#FFFFFF',
@@ -811,11 +3071,11 @@ const styles = StyleSheet.create({
   },
   lineItemRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
-    padding: 8,
     borderRadius: 8,
+    padding: 8,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
@@ -825,10 +3085,10 @@ const styles = StyleSheet.create({
   lineItemName: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#111827',
+    color: '#1E293B',
   },
   lineItemSub: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#64748B',
   },
   lineActionBtns: {
@@ -836,89 +3096,908 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   refundBtn: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#FEE2E2',
     paddingHorizontal: 8,
-    paddingVertical: 5,
+    paddingVertical: 4,
     borderRadius: 6,
   },
+  utangDeductBtn: {
+    backgroundColor: '#FEF3C7',
+  },
   refundBtnText: {
-    color: '#92400E',
+    color: '#B91C1C',
     fontSize: 11,
-    fontWeight: '800',
+    fontWeight: '700',
+  },
+  utangDeductBtnText: {
+    color: '#B45309',
   },
   exchangeBtn: {
-    backgroundColor: '#DCFCE7',
+    backgroundColor: '#DBEAFE',
     paddingHorizontal: 8,
-    paddingVertical: 5,
+    paddingVertical: 4,
     borderRadius: 6,
   },
   exchangeBtnText: {
-    color: '#065F46',
+    color: '#1D4ED8',
     fontSize: 11,
-    fontWeight: '800',
-  },
-  returnedBadge: {
-    fontSize: 11,
-    color: '#9CA3AF',
     fontWeight: '700',
   },
+  returnedBadge: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#94A3B8',
+  },
   voidSaleBtn: {
-    marginTop: 4,
-    backgroundColor: '#FEE2E2',
-    paddingVertical: 8,
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
     borderRadius: 8,
+    paddingVertical: 8,
     alignItems: 'center',
+    marginTop: 4,
   },
   voidSaleBtnText: {
-    color: '#991B1B',
     fontSize: 11,
     fontWeight: '800',
+    color: '#B91C1C',
   },
-  tagPayment: {
-    backgroundColor: '#DCFCE7',
-    color: '#15803D',
-  },
-  tagUtang: {
-    backgroundColor: '#EFF6FF',
-    color: '#1D4ED8',
-  },
-  txAmountGreen: {
-    color: '#15803D',
-  },
-  secondaryKpiRow: {
+  paginationRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#F9FAFB',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  secondaryKpiItem: {
     alignItems: 'center',
-    gap: 2,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
   },
-  secondaryKpiLabel: {
-    fontSize: 10,
+  pageBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#F3F4F6',
+  },
+  pageBtnDisabled: {
+    opacity: 0.4,
+  },
+  pageBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#374151',
+  },
+  pageBtnTextDisabled: {
+    color: '#9CA3AF',
+  },
+  pageIndicatorText: {
+    fontSize: 12,
     color: '#6B7280',
     fontWeight: '600',
   },
-  secondaryKpiVal: {
+
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 16,
+    maxHeight: '90%',
+    gap: 12,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    paddingBottom: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  modalSubtitle: {
     fontSize: 12,
+    color: '#6B7280',
+  },
+  modalCloseBtn: {
+    padding: 4,
+  },
+
+  // Kaha Breakdown
+  kahaBreakdownCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 6,
+  },
+  kahaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  kahaRowLabel: {
+    fontSize: 12,
+    color: '#475569',
+    fontWeight: '500',
+  },
+  kahaRowVal: {
+    fontSize: 13,
+    fontWeight: '700',
+    fontVariant: ['tabular-nums'],
+  },
+  kahaDivider: {
+    height: 1,
+    backgroundColor: '#CBD5E1',
+    marginVertical: 4,
+  },
+  kahaTotalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  kahaTotalLabel: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  kahaTotalVal: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#0D7A52',
+    fontVariant: ['tabular-nums'],
+  },
+
+  // Adj Form
+  adjFormCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    gap: 8,
+    marginTop: 10,
+  },
+  formSectionTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  adjSegmentRow: {
+    flexDirection: 'row',
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    padding: 2,
+  },
+  adjSegmentBtn: {
+    flex: 1,
+    paddingVertical: 7,
+    alignItems: 'center',
+    borderRadius: 6,
+  },
+  adjSegmentBtnPanukli: {
+    backgroundColor: '#0284C7',
+  },
+  adjSegmentBtnGastos: {
+    backgroundColor: '#DC2626',
+  },
+  adjSegmentText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#4B5563',
+  },
+  adjSegmentTextActive: {
+    color: '#FFFFFF',
+  },
+  inputFieldLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#374151',
+    marginTop: 4,
+  },
+  amountInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    height: 42,
+  },
+  pesoPrefix: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#374151',
+    marginRight: 6,
+  },
+  amountInput: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  catChipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  catChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  catChipActive: {
+    backgroundColor: '#0D7A52',
+    borderColor: '#0D7A52',
+  },
+  catChipText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#4B5563',
+  },
+  catChipTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  noteInput: {
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    height: 40,
+    fontSize: 12,
+    color: '#111827',
+  },
+  saveAdjBtn: {
+    backgroundColor: '#0D7A52',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginTop: 6,
+  },
+  saveAdjBtnSuccess: {
+    backgroundColor: '#059669',
+  },
+  saveAdjBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  inModalFeedbackBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    gap: 8,
+  },
+  inModalFeedbackText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#065F46',
+    flex: 1,
+  },
+
+  // Drawer History
+  drawerHistorySection: {
+    marginTop: 12,
+    gap: 8,
+  },
+  historySectionTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  noHistoryText: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    fontStyle: 'italic',
+  },
+  drawerHistoryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  adjTypeTag: {
+    fontSize: 9,
+    fontWeight: '800',
+    borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+  },
+  tagPanukli: {
+    backgroundColor: '#E0F2FE',
+    color: '#0369A1',
+  },
+  tagGastos: {
+    backgroundColor: '#FEE2E2',
+    color: '#DC2626',
+  },
+  adjCategoryText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  adjNoteText: {
+    fontSize: 10,
+    color: '#64748B',
+  },
+  adjTimeText: {
+    fontSize: 9,
+    color: '#94A3B8',
+  },
+  adjAmountText: {
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  deleteAdjBtn: {
+    padding: 2,
+  },
+
+  // Top Movers
+  topProductRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    gap: 10,
+  },
+  rankBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rankGold: {
+    backgroundColor: '#FEF3C7',
+  },
+  rankSilver: {
+    backgroundColor: '#E2E8F0',
+  },
+  rankBronze: {
+    backgroundColor: '#FFEDD5',
+  },
+  rankText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#374151',
+  },
+  topProdName: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  topProdUnits: {
+    fontSize: 11,
+    color: '#0D7A52',
+    fontWeight: '700',
+  },
+  topProdDot: {
+    fontSize: 10,
+    color: '#9CA3AF',
+  },
+  topProdRevenue: {
+    fontSize: 11,
+    color: '#4B5563',
+    fontWeight: '600',
+  },
+  stockChipIn: {
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  stockChipTextIn: {
+    color: '#15803D',
+    fontSize: 9,
+    fontWeight: '700',
+  },
+  stockChipLow: {
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  stockChipTextLow: {
+    color: '#B45309',
+    fontSize: 9,
+    fontWeight: '700',
+  },
+  stockChipOut: {
+    backgroundColor: '#FEE2E2',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  stockChipTextOut: {
+    color: '#DC2626',
+    fontSize: 9,
+    fontWeight: '700',
+  },
+
+  // Z-Reading Receipt Paper
+  receiptPaper: {
+    backgroundColor: '#FAFAF9',
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#E7E5E4',
+    gap: 6,
+  },
+  receiptStoreName: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#1C1917',
+    textAlign: 'center',
+  },
+  receiptStoreAddress: {
+    fontSize: 11,
+    color: '#78716C',
+    textAlign: 'center',
+  },
+  receiptDate: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#44403C',
+    textAlign: 'center',
+    marginTop: 2,
+  },
+  receiptDashedLine: {
+    height: 1,
+    borderWidth: 1,
+    borderColor: '#D6D3D1',
+    borderStyle: 'dashed',
+    marginVertical: 4,
+  },
+  receiptRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  receiptLabel: {
+    fontSize: 12,
+    color: '#44403C',
+    fontWeight: '600',
+  },
+  receiptLabelBold: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#1C1917',
+  },
+  receiptLabelSub: {
+    fontSize: 11,
+    color: '#78716C',
+  },
+  receiptVal: {
+    fontSize: 12,
+    color: '#1C1917',
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
+  },
+  receiptValBold: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#1C1917',
+    fontVariant: ['tabular-nums'],
+  },
+  receiptValSub: {
+    fontSize: 11,
+    color: '#78716C',
+    fontVariant: ['tabular-nums'],
+  },
+  receiptFooter: {
+    fontSize: 10,
+    color: '#A8A29E',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  shareZBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0D7A52',
+    borderRadius: 10,
+    paddingVertical: 12,
+    marginTop: 10,
+  },
+  shareZBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+
+  // Modal 4: Date Filter & Calendar Styles
+  filterSectionHeader: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#6B7280',
+    letterSpacing: 0.5,
+    marginBottom: 8,
+  },
+  datePresetsScroll: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingBottom: 12,
+  },
+  datePresetChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  datePresetChipActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#0D7A52',
+  },
+  datePresetChipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  datePresetChipTextActive: {
+    color: '#0D7A52',
+    fontWeight: '800',
+  },
+  dateRangeDisplayCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    marginBottom: 16,
+  },
+  dateRangeBox: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  dateRangeBoxLabel: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#6B7280',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  dateRangeBoxVal: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  calendarContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    padding: 12,
+    marginBottom: 16,
+  },
+  calendarNavRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    marginBottom: 8,
+  },
+  calendarNavBtn: {
+    padding: 6,
+    borderRadius: 8,
+    backgroundColor: '#F3F4F6',
+  },
+  calendarMonthTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  calendarWeekRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  calendarWeekHeader: {
+    width: '14.28%',
+    textAlign: 'center',
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#9CA3AF',
+  },
+  calendarGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  calendarDayCell: {
+    width: '14.28%',
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  calendarDayInRange: {
+    backgroundColor: '#ECFDF5',
+  },
+  calendarDaySelected: {
+    backgroundColor: '#ECFDF5',
+  },
+  calendarDayStartWithEnd: {
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+  },
+  calendarDayEnd: {
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  calendarDayCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  calendarDayCircleSelected: {
+    backgroundColor: '#0D7A52',
+  },
+  calendarDayCircleToday: {
+    borderWidth: 1.5,
+    borderColor: '#0D7A52',
+  },
+  calendarDayText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  calendarDayTextFuture: {
+    color: '#D1D5DB',
+  },
+  calendarDayTextSelected: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+  },
+  calendarDayTextToday: {
+    color: '#0D7A52',
+    fontWeight: '800',
+  },
+  dateFilterActionRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  dateFilterResetBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F3F4F6',
+    borderRadius: 10,
+    paddingVertical: 12,
+  },
+  dateFilterResetText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#4B5563',
+  },
+  dateFilterApplyBtn: {
+    flex: 1.4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0D7A52',
+    borderRadius: 10,
+    paddingVertical: 12,
+  },
+  dateFilterApplyText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+
+  // Modal 5: Sales & Collections Full Overview Styles
+  modalPeriodBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    marginTop: 4,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  modalPeriodBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  overviewCard: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    marginBottom: 12,
+  },
+  overviewSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 10,
+  },
+  overviewSectionTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  overviewHeroRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    marginBottom: 8,
+  },
+  overviewHeroBox: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  overviewHeroDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#E5E7EB',
+    marginHorizontal: 8,
+  },
+  overviewHeroLabel: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#6B7280',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  overviewHeroValGreen: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#111827',
+    fontVariant: ['tabular-nums'],
+  },
+  overviewHeroSub: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#0D7A52',
+    marginTop: 2,
+    textAlign: 'center',
+  },
+  overviewLine: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginVertical: 8,
+  },
+  overviewRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  overviewRowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  tenderDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  overviewRowLabel: {
+    fontSize: 12,
+    color: '#4B5563',
+    fontWeight: '600',
+  },
+  overviewRowVal: {
+    fontSize: 12,
+    color: '#111827',
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
+  },
+  overviewRowValBold: {
+    fontSize: 13,
     color: '#111827',
     fontWeight: '800',
     fontVariant: ['tabular-nums'],
   },
-  utangDeductBtn: {
-    backgroundColor: '#DBEAFE',
+  overviewInflowCard: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
   },
-  utangDeductBtnText: {
-    color: '#1D4ED8',
+  inflowBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
   },
-  paymentDetailText: {
+  inflowRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  inflowLabel: {
+    fontSize: 11,
+    color: '#4B5563',
+    fontWeight: '600',
+  },
+  inflowVal: {
     fontSize: 12,
-    color: '#334155',
-    lineHeight: 18,
+    fontWeight: '700',
+    color: '#111827',
+    fontVariant: ['tabular-nums'],
+  },
+  inflowDivider: {
+    height: 1,
+    backgroundColor: '#D1FAE5',
+    marginVertical: 6,
+  },
+  inflowGrandLabel: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#065F46',
+    flex: 1,
+  },
+  inflowGrandVal: {
+    fontSize: 15,
+    fontWeight: '900',
+    color: '#0D7A52',
+    fontVariant: ['tabular-nums'],
+  },
+  overviewDoneBtn: {
+    backgroundColor: '#0D7A52',
+    borderRadius: 10,
+    paddingVertical: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+    marginBottom: 12,
+  },
+  overviewDoneBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
   },
 });

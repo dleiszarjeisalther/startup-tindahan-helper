@@ -71,6 +71,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
   const [torchOn, setTorchOn] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
   const scanLockRef = useRef(false);
+  const lastScannedBarcodeRef = useRef<{ code: string; time: number } | null>(null);
 
   // Smooth continuous vertical scanning laser animation
   const [laserAnim] = useState(() => new Animated.Value(0));
@@ -102,6 +103,15 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
     outputRange: [6, maxTravel],
   });
 
+  useEffect(() => {
+    if (isActive) {
+      scanLockRef.current = false;
+      console.log('[BarcodeScannerViewfinder] Camera became active.');
+    } else {
+      console.log('[BarcodeScannerViewfinder] Camera deactivated / standby.');
+    }
+  }, [isActive]);
+
   const handleToggleCamera = async () => {
     if (!isActive) {
       if (!permission?.granted) {
@@ -117,13 +127,47 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
 
   const handleDetected = (rawCode: string) => {
     const clean = (rawCode || '').trim();
-    if (!clean || scanLockRef.current) return;
+    if (!clean) {
+      console.log('[BarcodeScannerViewfinder] Ignored empty barcode scan event.');
+      return;
+    }
+    if (scanLockRef.current) {
+      console.log(`[BarcodeScannerViewfinder] Barcode "${clean}" ignored due to active scanLock throttle (1400ms).`);
+      return;
+    }
+
+    // Ignore continuous scanning of the exact same item held stationary in front of the lens
+    if (
+      lastScannedBarcodeRef.current &&
+      lastScannedBarcodeRef.current.code === clean &&
+      Date.now() - lastScannedBarcodeRef.current.time < 2200
+    ) {
+      return;
+    }
+
     scanLockRef.current = true;
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    soundFeedbackService.playBarcodeBeep().catch(() => {});
+    lastScannedBarcodeRef.current = { code: clean, time: Date.now() };
+    console.log(`[BarcodeScannerViewfinder] ✓ Barcode accepted: "${clean}". Triggering haptics and beep...`);
+
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch((err) => {
+      console.log('[BarcodeScannerViewfinder] Haptics error:', err);
+    });
+
+    soundFeedbackService
+      .playBarcodeBeep()
+      .then(() => {
+        console.log(`[BarcodeScannerViewfinder] ✓ playBarcodeBeep completed for "${clean}".`);
+      })
+      .catch((err) => {
+        console.error(`[BarcodeScannerViewfinder] ❌ playBarcodeBeep failed for "${clean}":`, err);
+      });
+
+    console.log(`[BarcodeScannerViewfinder] Dispatching onBarcodeScanned callback to parent for "${clean}"...`);
     onBarcodeScanned(clean);
+
     setTimeout(() => {
       scanLockRef.current = false;
+      console.log('[BarcodeScannerViewfinder] Scan lock released after 1400ms debounce interval.');
     }, 1400);
   };
 
@@ -132,13 +176,20 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
       {/* Background Camera View or Standby Backdrop */}
       {isActive ? (
         <CameraView
+          key="camera-view-live"
           style={StyleSheet.absoluteFill}
           facing="back"
           enableTorch={torchOn}
+          mute={true}
           barcodeScannerSettings={{
             barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'qr'],
           }}
           onBarcodeScanned={(res) => {
+            console.log('[BarcodeScannerViewfinder] Raw scan event captured from CameraView:', {
+              data: res.data,
+              type: res.type,
+              scanLocked: scanLockRef.current,
+            });
             if (res.data) handleDetected(res.data);
           }}
         />

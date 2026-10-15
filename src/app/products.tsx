@@ -19,24 +19,28 @@ import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { BarcodeInputField } from '@/presentation/components/BarcodeInputField';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 import { getTranslations } from '@/presentation/localization/i18n';
-
-const CATEGORIES = ['All', 'Beverages', 'Snacks', 'Groceries', 'School Supplies'];
-const ADD_CATEGORIES = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
+import { FloatingToast } from '@/presentation/components/FloatingToast';
 
 export default function ProductListScreen() {
   const router = useRouter();
-  const { products, addToCart, addProductToDatabase, settings } = useTindahanStore();
+  const { products, categories, addToCart, addProductToDatabase, settings } = useTindahanStore();
   const t = getTranslations(settings?.language);
+
+  const filterCategories = ['All', ...categories];
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
   const [addedBanner, setAddedBanner] = useState<string | null>(null);
 
+  // Pagination state (12 items per page)
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
+
   // Add Product Form State
   const [newImageUri, setNewImageUri] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
-  const [newCategory, setNewCategory] = useState('Snacks');
+  const [newCategory, setNewCategory] = useState(categories[0] ?? 'Snacks');
   const [newBarcode, setNewBarcode] = useState('');
   const [barcodeMode, setBarcodeMode] = useState<'SCAN' | 'MANUAL' | 'GENERATE_TINGI'>(
     'MANUAL'
@@ -148,8 +152,19 @@ export default function ProductListScreen() {
     );
   });
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <FloatingToast
+        message={addedBanner}
+        type={addedBanner?.startsWith('⚠️') ? 'warning' : 'success'}
+        onDismiss={() => setAddedBanner(null)}
+      />
       {/* Top Header: <- Products | + Add Product */}
       <View style={styles.headerRow}>
         <Pressable
@@ -204,7 +219,7 @@ export default function ProductListScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.pillsContent}
         >
-          {CATEGORIES.map((cat) => {
+          {filterCategories.map((cat) => {
             const active = selectedCategory === cat;
             return (
               <Pressable
@@ -295,7 +310,7 @@ export default function ProductListScreen() {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.catRow}
             >
-              {ADD_CATEGORIES.map((cat) => {
+              {categories.map((cat) => {
                 const active = newCategory === cat;
                 return (
                   <Pressable
@@ -385,7 +400,7 @@ export default function ProductListScreen() {
           </View>
         ) : null}
 
-        {filtered.map((item) => (
+        {paginated.map((item) => (
           <Pressable
             key={item.id}
             style={styles.productRow}
@@ -459,6 +474,54 @@ export default function ProductListScreen() {
             <Text style={styles.chevron}>+🛒</Text>
           </Pressable>
         ))}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 ? (
+          <View style={styles.paginationRow}>
+            <Pressable
+              style={[styles.pageBtn, currentPage === 1 ? styles.pageBtnDisabled : null]}
+              disabled={currentPage === 1}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                setCurrentPage((p) => Math.max(1, p - 1));
+              }}
+            >
+              <Text
+                style={[
+                  styles.pageBtnText,
+                  currentPage === 1 ? styles.pageBtnTextDisabled : null,
+                ]}
+              >
+                {t.previousPage}
+              </Text>
+            </Pressable>
+
+            <Text style={styles.pageIndicatorText}>
+              {t.pageIndicator(currentPage, totalPages)}
+            </Text>
+
+            <Pressable
+              style={[
+                styles.pageBtn,
+                currentPage >= totalPages ? styles.pageBtnDisabled : null,
+              ]}
+              disabled={currentPage >= totalPages}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                setCurrentPage((p) => Math.min(totalPages, p + 1));
+              }}
+            >
+              <Text
+                style={[
+                  styles.pageBtnText,
+                  currentPage >= totalPages ? styles.pageBtnTextDisabled : null,
+                ]}
+              >
+                {t.nextPage}
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -850,5 +913,40 @@ const styles = StyleSheet.create({
     color: '#0D7A52',
     fontWeight: '800',
     paddingLeft: 4,
+  },
+  paginationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginTop: 10,
+    marginBottom: 8,
+  },
+  pageBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: '#0D7A52',
+  },
+  pageBtnDisabled: {
+    backgroundColor: '#E2E8F0',
+  },
+  pageBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  pageBtnTextDisabled: {
+    color: '#94A3B8',
+  },
+  pageIndicatorText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#475569',
   },
 });

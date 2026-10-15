@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -19,21 +18,13 @@ export default function MenuProfileScreen() {
   const {
     settings,
     utangCustomers,
-    addUtangCustomer,
-    deleteUtangCustomer,
-    recordUtangPayment,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
 
   const [activeSection, setActiveSection] = useState<
-    'NONE' | 'UTANG_ONLINE' | 'SUBSCRIPTION' | 'HELP'
-  >('UTANG_ONLINE');
-
-  const [newCustomerName, setNewCustomerName] = useState('');
-  const [newCreditLimit, setNewCreditLimit] = useState('500');
-  const [newInitialBalance, setNewInitialBalance] = useState('0');
-  const [payAmountMap, setPayAmountMap] = useState<Record<string, string>>({});
+    'NONE' | 'SUBSCRIPTION' | 'HELP'
+  >('NONE');
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -117,14 +108,10 @@ export default function MenuProfileScreen() {
             <Text style={styles.menuChevron}>›</Text>
           </Pressable>
 
-          {/* 5. Online Store & Owner Utang Credit Ledger (SQLite CRUD) */}
+          {/* 5. Suki Utang Ledger (Dedicated Screen) */}
           <Pressable
             style={styles.menuRow}
-            onPress={() =>
-              setActiveSection((prev) =>
-                prev === 'UTANG_ONLINE' ? 'NONE' : 'UTANG_ONLINE'
-              )
-            }
+            onPress={() => router.push('/utang')}
           >
             <View style={styles.menuLeft}>
               <Ionicons name="people-outline" size={22} color="#0D7A52" />
@@ -137,115 +124,6 @@ export default function MenuProfileScreen() {
               <Text style={styles.menuChevron}>›</Text>
             </View>
           </Pressable>
-
-          {activeSection === 'UTANG_ONLINE' ? (
-            <View style={styles.inlinePanel}>
-              <Text style={styles.inlinePanelTitle}>
-                📒 Talaan ng Utang ng mga Suki — Maglista ng Kostumer
-              </Text>
-
-              <View style={styles.addCustForm}>
-                <TextInput
-                  style={styles.custInput}
-                  value={newCustomerName}
-                  onChangeText={setNewCustomerName}
-                  placeholder="Customer Name *"
-                  placeholderTextColor="#9CA3AF"
-                />
-                <View style={styles.custTwoCol}>
-                  <TextInput
-                    style={[styles.custInput, styles.halfInput]}
-                    value={newInitialBalance}
-                    onChangeText={setNewInitialBalance}
-                    placeholder="Initial Utang ₱"
-                    placeholderTextColor="#9CA3AF"
-                    keyboardType="decimal-pad"
-                  />
-                  <TextInput
-                    style={[styles.custInput, styles.halfInput]}
-                    value={newCreditLimit}
-                    onChangeText={setNewCreditLimit}
-                    placeholder="Credit Limit ₱"
-                    placeholderTextColor="#9CA3AF"
-                    keyboardType="decimal-pad"
-                  />
-                </View>
-                <Pressable
-                  style={styles.addCustBtn}
-                  onPress={() => {
-                    if (!newCustomerName.trim()) return;
-                    const limit = parseFloat(newCreditLimit) || 500;
-                    const bal = parseFloat(newInitialBalance) || 0;
-                    addUtangCustomer(newCustomerName.trim(), limit, bal);
-                    setNewCustomerName('');
-                    setNewInitialBalance('0');
-                  }}
-                >
-                  <Text style={styles.addCustBtnText}>
-                    + I-lista ang Kostumer sa Tindahan
-                  </Text>
-                </Pressable>
-              </View>
-
-              {utangCustomers.length === 0 ? (
-                <Text style={styles.emptyUtangText}>
-                  Wala pang listahan ng may utang. Maglista sa itaas o pumili ng &quot;Utang&quot; sa Bagong Benta.
-                </Text>
-              ) : (
-                utangCustomers.map((c) => {
-                  const payInput = payAmountMap[c.id] ?? '';
-                  return (
-                    <View key={c.id} style={styles.utangRow}>
-                      <View style={styles.utangTopRow}>
-                        <View style={{ flex: 1 }}>
-                          <Text style={styles.utangName}>{c.name}</Text>
-                          <Text style={styles.utangMeta}>
-                            Balance: ₱{c.balancePhp.toFixed(2)} / Limit: ₱{c.creditLimitPhp}
-                          </Text>
-                        </View>
-                        <Pressable
-                          style={styles.deleteCustBtn}
-                          onPress={() => deleteUtangCustomer(c.id)}
-                        >
-                          <Text style={styles.deleteCustText}>✕</Text>
-                        </Pressable>
-                      </View>
-
-                      {c.balancePhp > 0 ? (
-                        <View style={styles.collectRow}>
-                          <TextInput
-                            style={styles.collectInput}
-                            value={payInput}
-                            onChangeText={(txt) =>
-                              setPayAmountMap((prev) => ({ ...prev, [c.id]: txt }))
-                            }
-                            placeholder={`Pay ₱ (max ${c.balancePhp.toFixed(0)})`}
-                            placeholderTextColor="#9CA3AF"
-                            keyboardType="decimal-pad"
-                          />
-                          <Pressable
-                            style={styles.payUtangBtn}
-                            onPress={() => {
-                              const amt =
-                                parseFloat(payInput) || c.balancePhp;
-                              recordUtangPayment(c.id, amt);
-                              setPayAmountMap((prev) => ({ ...prev, [c.id]: '' }));
-                            }}
-                          >
-                            <Text style={styles.payUtangBtnText}>
-                              {payInput ? 'Collect ₱' : 'Clear Full'}
-                            </Text>
-                          </Pressable>
-                        </View>
-                      ) : (
-                        <Text style={styles.paidBadge}>Settled ✓</Text>
-                      )}
-                    </View>
-                  );
-                })
-              )}
-            </View>
-          ) : null}
 
           {/* 6. Subscription [Free] */}
           <Pressable
@@ -476,106 +354,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#475569',
     lineHeight: 18,
-  },
-  addCustForm: {
-    gap: 8,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-  },
-  custInput: {
-    height: 40,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    fontSize: 13,
-    color: '#111827',
-  },
-  custTwoCol: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  halfInput: {
-    flex: 1,
-  },
-  addCustBtn: {
-    backgroundColor: '#0D7A52',
-    paddingVertical: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  addCustBtnText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  emptyUtangText: {
-    fontSize: 12,
-    color: '#64748B',
-    textAlign: 'center',
-    paddingVertical: 8,
-  },
-  utangRow: {
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-    gap: 6,
-  },
-  utangTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  utangName: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#1E293B',
-  },
-  utangMeta: {
-    fontSize: 11,
-    color: '#64748B',
-  },
-  deleteCustBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  deleteCustText: {
-    fontSize: 13,
-    color: '#EF4444',
-    fontWeight: '800',
-  },
-  collectRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  collectInput: {
-    flex: 1,
-    height: 36,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    fontSize: 12,
-    color: '#111827',
-  },
-  payUtangBtn: {
-    backgroundColor: '#0D7A52',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  payUtangBtnText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '800',
-  },
-  paidBadge: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#16A34A',
   },
 });

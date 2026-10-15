@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useIsFocused } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { BarcodeInputField } from '@/presentation/components/BarcodeInputField';
@@ -24,15 +24,20 @@ import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { ProductDTO } from '@/domain/entities/Product';
+import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
 
 const STOCK_FILTERS = ['All', 'In Stock', 'Low Stock', 'Out of Stock'] as const;
-const PRODUCT_CATEGORIES = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
 
 export default function InventoryManagementScreen() {
   const router = useRouter();
+  const isFocused = useIsFocused();
   const params = useLocalSearchParams<{ autoBarcode?: string }>();
   const {
     products,
+    categories,
+    addCategory,
+    updateCategory,
+    deleteCategory,
     addProductToDatabase,
     deleteProductFromDatabase,
     updateProductImage,
@@ -52,9 +57,98 @@ export default function InventoryManagementScreen() {
     useState<(typeof STOCK_FILTERS)[number]>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchScanning, setIsSearchScanning] = useState(false);
+  const activeSearchScanning = isSearchScanning && isFocused;
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
   const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
   const [customRestockQty, setCustomRestockQty] = useState<string>('10');
+
+  // Pagination state (12 items per page)
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
+
+  // Category Management Modal State
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [editingCategoryOldName, setEditingCategoryOldName] = useState<string | null>(null);
+  const [editingCategoryNewName, setEditingCategoryNewName] = useState('');
+  const [categoryModalError, setCategoryModalError] = useState<string | null>(null);
+  const [categoryModalSuccess, setCategoryModalSuccess] = useState<string | null>(null);
+
+  const handleAddNewCategory = () => {
+    const trimmed = newCategoryName.trim();
+    if (!trimmed) {
+      setCategoryModalError(t.categoryRequired);
+      return;
+    }
+    if (categories.some((c) => c.toLowerCase() === trimmed.toLowerCase())) {
+      setCategoryModalError('Mayroon nang ganitong kategorya.');
+      return;
+    }
+    addCategory(trimmed);
+    setNewCategoryName('');
+    setCategoryModalError(null);
+    setCategoryModalSuccess(`✓ Naidagdag ang kategoryang "${trimmed}"`);
+    setTimeout(() => {
+      setCategoryModalSuccess((prev) => (prev?.includes(trimmed) ? null : prev));
+    }, 2800);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+  };
+
+  const handleSaveCategoryEdit = async (oldName: string) => {
+    const trimmed = editingCategoryNewName.trim();
+    if (!trimmed) {
+      setCategoryModalError(t.categoryRequired);
+      return;
+    }
+    if (
+      oldName.toLowerCase() !== trimmed.toLowerCase() &&
+      categories.some((c) => c.toLowerCase() === trimmed.toLowerCase())
+    ) {
+      setCategoryModalError('Mayroon nang ganitong kategorya.');
+      return;
+    }
+    await updateCategory(oldName, trimmed);
+    setEditingCategoryOldName(null);
+    setEditingCategoryNewName('');
+    setCategoryModalError(null);
+    setCategoryModalSuccess(`✓ Na-update ang kategoryang "${trimmed}"`);
+    setTimeout(() => {
+      setCategoryModalSuccess((prev) => (prev?.includes(trimmed) ? null : prev));
+    }, 2800);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+  };
+
+  const handleDeleteCategory = (catName: string) => {
+    if (categories.length <= 1) {
+      Alert.alert('Hindi Maaari', 'Dapat may matirang kahit isang kategorya.');
+      return;
+    }
+    Alert.alert(
+      t.categoryDeleteConfirm,
+      `${t.categoryDeleteWarning}\n\nKategorya: "${catName}"`,
+      [
+        { text: t.cancelBtn, style: 'cancel' },
+        {
+          text: t.deleteBtn,
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteCategory(catName);
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+              setCategoryModalSuccess(`🗑️ Naalis ang kategoryang "${catName}"`);
+              setTimeout(() => {
+                setCategoryModalSuccess((prev) => (prev?.includes(catName) ? null : prev));
+              }, 2800);
+            } catch (err) {
+              setCategoryModalError(
+                err instanceof Error ? err.message : 'Hindi mabura ang kategorya.'
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
 
   // Edit Product Modal State
   const [editingProduct, setEditingProduct] = useState<ProductDTO | null>(null);
@@ -62,18 +156,130 @@ export default function InventoryManagementScreen() {
   const [editPricePhp, setEditPricePhp] = useState('');
   const [editStock, setEditStock] = useState('');
   const [editLowThreshold, setEditLowThreshold] = useState('');
-  const [editCategory, setEditCategory] = useState('Snacks');
+  const [editCategory, setEditCategory] = useState(categories[0] ?? 'Snacks');
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+
+  // Edit Receipt-First Workflow States & Math
+  const [editCostInputMode, setEditCostInputMode] = useState<'PIECE' | 'BUNDLE'>('PIECE');
+  const [editCostPhp, setEditCostPhp] = useState('');
+  const [editBundleCostPhp, setEditBundleCostPhp] = useState('');
+  const [editTuboMode, setEditTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
+  const [editTuboValue, setEditTuboValue] = useState('');
+
+  const editParsedStock = parseInt(editStock.replace(/[^0-9]/g, '') || '0', 10);
+  const editBundleCostParsed = parseFloat(editBundleCostPhp.replace(/[^0-9.]/g, '') || '0');
+  const editPieceCostParsed = parseFloat(editCostPhp.replace(/[^0-9.]/g, '') || '0');
+
+  const editEffectiveUnitCost = useMemo(() => {
+    if (editCostInputMode === 'BUNDLE') {
+      if (editBundleCostParsed <= 0) return 0;
+      const divisor = editParsedStock > 0 ? editParsedStock : 1;
+      return Number((editBundleCostParsed / divisor).toFixed(2));
+    }
+    return editPieceCostParsed > 0 ? editPieceCostParsed : 0;
+  }, [editCostInputMode, editBundleCostParsed, editPieceCostParsed, editParsedStock]);
+
+  const editTotalCapitalSpent = useMemo(() => {
+    if (editCostInputMode === 'BUNDLE' && editBundleCostParsed > 0) {
+      return editBundleCostParsed;
+    }
+    return Number((editEffectiveUnitCost * (editParsedStock > 0 ? editParsedStock : 1)).toFixed(2));
+  }, [editCostInputMode, editBundleCostParsed, editEffectiveUnitCost, editParsedStock]);
+
+  const editCurrentEnteredPrice = parseFloat(editPricePhp.replace(/[^0-9.]/g, '') || '0');
+
+  const editProfitPerPiece = useMemo(() => {
+    if (editCurrentEnteredPrice > 0 && editEffectiveUnitCost > 0) {
+      return Number(Math.max(0, editCurrentEnteredPrice - editEffectiveUnitCost).toFixed(2));
+    }
+    return 0;
+  }, [editCurrentEnteredPrice, editEffectiveUnitCost]);
+
+  const editTotalBatchProfit = useMemo(() => {
+    return Number((editProfitPerPiece * (editParsedStock > 0 ? editParsedStock : 1)).toFixed(2));
+  }, [editProfitPerPiece, editParsedStock]);
+
+  const handleEditTuboChange = (val: string, mode: 'PESO' | 'PERCENT' = editTuboMode) => {
+    setEditTuboValue(val);
+    const num = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+    if (editEffectiveUnitCost > 0) {
+      let nextPrice = 0;
+      if (mode === 'PESO') {
+        nextPrice = Number((editEffectiveUnitCost + num).toFixed(2));
+      } else {
+        nextPrice = Number((editEffectiveUnitCost * (1 + num / 100)).toFixed(2));
+      }
+      setEditPricePhp(nextPrice > 0 ? nextPrice.toString() : '');
+    }
+  };
+
+  const handleEditPriceChange = (val: string) => {
+    setEditError(null);
+    setEditPricePhp(val);
+    const num = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+    if (editEffectiveUnitCost > 0 && num > 0) {
+      const diff = Math.max(0, num - editEffectiveUnitCost);
+      if (editTuboMode === 'PESO') {
+        setEditTuboValue(diff > 0 ? diff.toFixed(2) : '0');
+      } else {
+        const pct = (diff / editEffectiveUnitCost) * 100;
+        setEditTuboValue(pct > 0 ? pct.toFixed(0) : '0');
+      }
+    }
+  };
+
+  const handleEditQuickTubo = (amount: number, isPercent: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    if (isPercent) {
+      setEditTuboMode('PERCENT');
+      handleEditTuboChange(amount.toString(), 'PERCENT');
+    } else {
+      setEditTuboMode('PESO');
+      handleEditTuboChange(amount.toString(), 'PESO');
+    }
+  };
+
+  const editRoundingSuggestions = useMemo(() => {
+    if (editCurrentEnteredPrice <= 0) return [];
+    const isDecimal = editCurrentEnteredPrice % 1 !== 0;
+    if (!isDecimal) return [];
+
+    const floorVal = Math.floor(editCurrentEnteredPrice);
+    const ceilVal = Math.ceil(editCurrentEnteredPrice);
+    const list: number[] = [];
+
+    if (floorVal > editEffectiveUnitCost && floorVal > 0) {
+      list.push(floorVal);
+    }
+    if (ceilVal > 0 && ceilVal !== floorVal) {
+      list.push(ceilVal);
+    }
+    return list;
+  }, [editCurrentEnteredPrice, editEffectiveUnitCost]);
 
   const handleOpenEditModal = (item: ProductDTO) => {
     setEditingProduct(item);
     setEditName(item.name);
-    setEditPricePhp(item.defaultPricePhp.toString());
+    setEditPricePhp(item.defaultPricePhp > 0 ? item.defaultPricePhp.toString() : '');
     setEditStock(item.stockCount.toString());
     setEditLowThreshold(item.ordinaryLowStockThreshold.toString());
-    setEditCategory(item.category || 'Snacks');
+    setEditCategory(item.category || (categories[0] ?? 'Snacks'));
     setEditError(null);
+
+    // Initialize Receipt-First fields for Edit
+    setEditCostInputMode('PIECE');
+    setEditBundleCostPhp('');
+    const cost = item.unitCostPhp > 0 ? item.unitCostPhp : 0;
+    setEditCostPhp(cost > 0 ? cost.toString() : '');
+    setEditTuboMode('PESO');
+
+    if (item.defaultPricePhp > 0 && cost > 0) {
+      const markup = Math.max(0, item.defaultPricePhp - cost);
+      setEditTuboValue(markup.toFixed(2));
+    } else {
+      setEditTuboValue('');
+    }
   };
 
   const handleSaveEditProduct = async () => {
@@ -98,9 +304,26 @@ export default function InventoryManagementScreen() {
       return;
     }
 
+    if (editEffectiveUnitCost > 0 && price > 0 && editEffectiveUnitCost >= price) {
+      setEditError(
+        `Ang puhunan (₱${editEffectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo (₱${price.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.`
+      );
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      return;
+    }
+
+    const finalUnitCost =
+      editEffectiveUnitCost > 0
+        ? editEffectiveUnitCost
+        : price > 0
+          ? Math.max(0.5, price * 0.75)
+          : 0;
+
+    const markupDiff = Math.max(0, price - finalUnitCost);
+
     Alert.alert(
       'Kumpirmahin ang Pagbabago',
-      `Paninda: ${editName.trim()}\nPresyo: ₱${price.toFixed(2)}\nStock: ${stock} piraso\nLow Stock Alert: ${threshold} piraso\nKategorya: ${editCategory}\n\nNais mo bang i-save ang mga pagbabagong ito?`,
+      `Paninda: ${editName.trim()}\nPresyo: ₱${price.toFixed(2)}\nPuhunan: ₱${finalUnitCost.toFixed(2)} (Tubo: ₱${markupDiff.toFixed(2)})\nStock: ${stock} piraso\nLow Stock Alert: ${threshold} piraso\nKategorya: ${editCategory}\n\nNais mo bang i-save ang mga pagbabagong ito?`,
       [
         { text: 'Bumalik', style: 'cancel' },
         {
@@ -113,11 +336,12 @@ export default function InventoryManagementScreen() {
                 name: editName.trim(),
                 category: editCategory,
                 pricePhp: price,
+                unitCostPhp: finalUnitCost,
                 baseStockCount: stock,
                 lowStockThreshold: threshold,
               });
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-              setFeedbackMsg(`✓ Na-save ang pagbabago sa "${editName.trim()}"`);
+              showToast(`✓ Na-save ang pagbabago sa "${editName.trim()}"`, 'success');
               setEditingProduct(null);
             } catch (err) {
               setEditError(err instanceof Error ? err.message : 'Hindi ma-update ang paninda.');
@@ -133,7 +357,7 @@ export default function InventoryManagementScreen() {
   // Add Product Form State (Saved directly to SQLite)
   const [newImageUri, setNewImageUri] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
-  const [newCategory, setNewCategory] = useState('Snacks');
+  const [newCategory, setNewCategory] = useState(categories[0] ?? 'Snacks');
   const [newBarcode, setNewBarcode] = useState('');
   const [barcodeMode, setBarcodeMode] = useState<'SCAN' | 'MANUAL' | 'GENERATE_TINGI'>(
     'MANUAL'
@@ -143,9 +367,114 @@ export default function InventoryManagementScreen() {
   const [newStock, setNewStock] = useState('');
   const [newLowThreshold, setNewLowThreshold] = useState('5');
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<ToastType>('success');
+
+  const showToast = (msg: string, type: ToastType = 'success') => {
+    setFeedbackMsg(msg);
+    setToastMsg(msg);
+    setToastType(type);
+  };
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLookingUpOnline, setIsLookingUpOnline] = useState(false);
   const [onlineNotice, setOnlineNotice] = useState<string | null>(null);
+
+  // Receipt-First Workflow States & Math
+  const [costInputMode, setCostInputMode] = useState<'PIECE' | 'BUNDLE'>('PIECE');
+  const [bundleCostPhp, setBundleCostPhp] = useState('');
+  const [tuboMode, setTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
+  const [tuboValue, setTuboValue] = useState('');
+
+  const parsedStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+  const bundleCostParsed = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
+  const pieceCostParsed = parseFloat(newCostPhp.replace(/[^0-9.]/g, '') || '0');
+
+  const effectiveUnitCost = useMemo(() => {
+    if (costInputMode === 'BUNDLE') {
+      if (bundleCostParsed <= 0) return 0;
+      const divisor = parsedStock > 0 ? parsedStock : 1;
+      return Number((bundleCostParsed / divisor).toFixed(2));
+    }
+    return pieceCostParsed > 0 ? pieceCostParsed : 0;
+  }, [costInputMode, bundleCostParsed, pieceCostParsed, parsedStock]);
+
+  const totalCapitalSpent = useMemo(() => {
+    if (costInputMode === 'BUNDLE' && bundleCostParsed > 0) {
+      return bundleCostParsed;
+    }
+    return Number((effectiveUnitCost * (parsedStock > 0 ? parsedStock : 1)).toFixed(2));
+  }, [costInputMode, bundleCostParsed, effectiveUnitCost, parsedStock]);
+
+  const currentEnteredPrice = parseFloat(newPricePhp.replace(/[^0-9.]/g, '') || '0');
+
+  const profitPerPiece = useMemo(() => {
+    if (currentEnteredPrice > 0 && effectiveUnitCost > 0) {
+      return Number(Math.max(0, currentEnteredPrice - effectiveUnitCost).toFixed(2));
+    }
+    return 0;
+  }, [currentEnteredPrice, effectiveUnitCost]);
+
+  const totalBatchProfit = useMemo(() => {
+    return Number((profitPerPiece * (parsedStock > 0 ? parsedStock : 1)).toFixed(2));
+  }, [profitPerPiece, parsedStock]);
+
+  const handleTuboChange = (val: string, mode: 'PESO' | 'PERCENT' = tuboMode) => {
+    setTuboValue(val);
+    const num = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+    if (effectiveUnitCost > 0) {
+      let nextPrice = 0;
+      if (mode === 'PESO') {
+        nextPrice = Number((effectiveUnitCost + num).toFixed(2));
+      } else {
+        nextPrice = Number((effectiveUnitCost * (1 + num / 100)).toFixed(2));
+      }
+      setNewPricePhp(nextPrice > 0 ? nextPrice.toString() : '');
+    }
+  };
+
+  const handlePriceChange = (val: string) => {
+    setErrorMsg(null);
+    setNewPricePhp(val);
+    const num = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+    if (effectiveUnitCost > 0 && num > 0) {
+      const diff = Math.max(0, num - effectiveUnitCost);
+      if (tuboMode === 'PESO') {
+        setTuboValue(diff > 0 ? diff.toFixed(2) : '0');
+      } else {
+        const pct = (diff / effectiveUnitCost) * 100;
+        setTuboValue(pct > 0 ? pct.toFixed(0) : '0');
+      }
+    }
+  };
+
+  const handleQuickTubo = (amount: number, isPercent: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    if (isPercent) {
+      setTuboMode('PERCENT');
+      handleTuboChange(amount.toString(), 'PERCENT');
+    } else {
+      setTuboMode('PESO');
+      handleTuboChange(amount.toString(), 'PESO');
+    }
+  };
+
+  const roundingSuggestions = useMemo(() => {
+    if (currentEnteredPrice <= 0) return [];
+    const isDecimal = currentEnteredPrice % 1 !== 0;
+    if (!isDecimal) return [];
+
+    const floorVal = Math.floor(currentEnteredPrice);
+    const ceilVal = Math.ceil(currentEnteredPrice);
+    const list: number[] = [];
+
+    if (floorVal > effectiveUnitCost && floorVal > 0) {
+      list.push(floorVal);
+    }
+    if (ceilVal > 0 && ceilVal !== floorVal) {
+      list.push(ceilVal);
+    }
+    return list;
+  }, [currentEnteredPrice, effectiveUnitCost]);
 
   const handleBarcodeChange = useCallback(
     async (code: string, mode: 'SCAN' | 'MANUAL' | 'GENERATE_TINGI') => {
@@ -177,7 +506,7 @@ export default function InventoryManagementScreen() {
         return;
       }
 
-      // 2. Automated Open Food Facts lookup when barcode is scanned or has at least 8 digits
+      // 2. Automated online catalog lookup when barcode is scanned or has at least 8 digits
       if (clean.length >= 8) {
         setIsLookingUpOnline(true);
         try {
@@ -193,13 +522,17 @@ export default function InventoryManagementScreen() {
             if (res.inferredCategory) {
               setNewCategory(res.inferredCategory);
             }
-            setOnlineNotice(
-              `✓ Open Food Facts: Found "${res.productName ?? 'Product'}" (Photo & Name autofilled)`
-            );
+            const foundLabel =
+              settings?.language === 'Taglish'
+                ? `✓ Nahanap ang paninda online: "${res.productName ?? 'Paninda'}" (Nailagay na ang litrato at pangalan)`
+                : `✓ Product found online: "${res.productName ?? 'Product'}" (Photo & Name autofilled)`;
+            setOnlineNotice(foundLabel);
           } else {
-            setOnlineNotice(
-              'ℹ️ Not in Open Food Facts catalog. You can input name and photo manually.'
-            );
+            const notFoundLabel =
+              settings?.language === 'Taglish'
+                ? 'ℹ️ Hindi nahanap online. Maaari mong ilagay ang pangalan at litrato nang mano-mano.'
+                : 'ℹ️ Not found online. You can enter name and photo manually.';
+            setOnlineNotice(notFoundLabel);
           }
         } catch {
           // Seamless fallback
@@ -208,7 +541,17 @@ export default function InventoryManagementScreen() {
         }
       }
     },
-    [products, lookupOnlineCatalog]
+    [
+      products,
+      lookupOnlineCatalog,
+      settings,
+      setBarcodeMode,
+      setNewBarcode,
+      setNewName,
+      setNewImageUri,
+      setNewCategory,
+      setFeedbackMsg,
+    ]
   );
 
   useEffect(() => {
@@ -227,24 +570,27 @@ export default function InventoryManagementScreen() {
   const handleSearchBarcodeScanned = useCallback(
     async (code: string) => {
       const clean = code.trim();
+      console.log(`[Inventory Screen] handleSearchBarcodeScanned received code: "${code}", clean: "${clean}"`);
       if (!clean) return;
       setIsSearchScanning(false);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
 
       const matched = products.find((p) => p.barcode === clean);
       if (matched) {
+        console.log(`[Inventory Screen] ✓ Matched existing product: "${matched.name}" (ID: ${matched.id})`);
         // Exists: act as barcode search
         setSearchQuery(clean);
         setExpandedProductId(matched.id);
         setShowAddForm(false);
-        setFeedbackMsg(`✓ Found existing product: "${matched.name}" (Stock: ${matched.stockCount})`);
+        showToast(`✓ Found existing product: "${matched.name}" (Stock: ${matched.stockCount})`, 'success');
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       } else {
+        console.log(`[Inventory Screen] ℹ️ Barcode "${clean}" not in catalog. Switching to Add Product form.`);
         // Did not exist: take it as an add product!
         setSearchQuery('');
         setShowAddForm(true);
         setErrorMsg(null);
-        setFeedbackMsg(`ℹ️ Barcode "${clean}" not found in inventory. Opened Add Product to register it!`);
+        showToast(`ℹ️ Barcode "${clean}" not found in inventory. Opened Add Product to register it!`, 'info');
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
         handleBarcodeChange(clean, 'SCAN');
       }
@@ -304,7 +650,7 @@ export default function InventoryManagementScreen() {
       if (!result.canceled && result.assets[0]?.uri) {
         await updateProductImage(productId, result.assets[0].uri);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-        setFeedbackMsg('✓ Na-update ang litrato ng paninda');
+        showToast('✓ Na-update ang litrato ng paninda', 'success');
       }
     } catch {
       setErrorMsg('Could not update photo.');
@@ -364,7 +710,14 @@ export default function InventoryManagementScreen() {
         return;
       }
 
-      const parsedCost = parseFloat(newCostPhp.replace(/[^0-9.]/g, '') || '0');
+      if (effectiveUnitCost > 0 && parsedPrice > 0 && effectiveUnitCost >= parsedPrice) {
+        setErrorMsg(
+          `Ang puhunan (₱${effectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo ng benta (₱${parsedPrice.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.`
+        );
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        return;
+      }
+
       const parsedStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
       const parsedLow = parseInt(newLowThreshold.replace(/[^0-9]/g, '') || '5', 10);
 
@@ -376,8 +729,8 @@ export default function InventoryManagementScreen() {
         initialStock: Number.isFinite(parsedStock) ? parsedStock : 0,
         lowStockThreshold: Number.isFinite(parsedLow) ? parsedLow : 5,
         unitCostPhp:
-          Number.isFinite(parsedCost) && parsedCost > 0
-            ? parsedCost
+          Number.isFinite(effectiveUnitCost) && effectiveUnitCost > 0
+            ? effectiveUnitCost
             : Math.max(0.5, (Number.isFinite(parsedPrice) ? parsedPrice : 1) * 0.75),
         unitPricePhp: Number.isFinite(parsedPrice) ? parsedPrice : 0,
         imageUri: newImageUri ?? undefined,
@@ -388,15 +741,17 @@ export default function InventoryManagementScreen() {
         setSearchQuery(result.existingProduct.barcode);
         setExpandedProductId(result.existingProduct.id);
         setShowAddForm(false);
-        setFeedbackMsg(
-          `⚠️ Mayroon nang paninda na "${result.existingProduct.name}" (${result.existingProduct.barcode}) sa tindahan!`
+        showToast(
+          `⚠️ Mayroon nang paninda na "${result.existingProduct.name}" (${result.existingProduct.barcode}) sa tindahan!`,
+          'warning'
         );
         return;
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      setFeedbackMsg(
-        `✓ Na-save ang "${result.product.name}" na may litrato`
+      showToast(
+        `✓ Na-save ang "${result.product.name}" na may litrato`,
+        'success'
       );
       setNewName('');
       setNewBarcode('');
@@ -405,6 +760,10 @@ export default function InventoryManagementScreen() {
       setNewCostPhp('');
       setNewStock('');
       setNewLowThreshold('5');
+      setCostInputMode('PIECE');
+      setBundleCostPhp('');
+      setTuboValue('');
+      setTuboMode('PESO');
       setNewImageUri(null);
       setSearchQuery('');
       setSelectedFilter('All');
@@ -430,26 +789,52 @@ export default function InventoryManagementScreen() {
     );
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / ITEMS_PER_PAGE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedProducts = filteredProducts.slice(
+    (safeCurrentPage - 1) * ITEMS_PER_PAGE,
+    safeCurrentPage * ITEMS_PER_PAGE
+  );
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* Header: Inventory | Circular Green '+' Button */}
+      <FloatingToast
+        message={toastMsg}
+        type={toastType}
+        onDismiss={() => setToastMsg(null)}
+      />
+      {/* Header: Inventory | Manage Categories & Circular Green '+' Button */}
       <View style={styles.headerRow}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.headerTitle}>{t.inventoryTitle}</Text>
           <Text style={styles.headerSub}>
             {products.length} {products.length === 1 ? 'paninda' : 'mga paninda'} sa tindahan
           </Text>
         </View>
-        <Pressable
-          style={styles.plusCircleBtn}
-          onPress={() => {
-            setErrorMsg(null);
-            setShowAddForm((prev) => !prev);
-          }}
-          hitSlop={10}
-        >
-          <Text style={styles.plusCircleIcon}>{showAddForm ? '✕' : '+'}</Text>
-        </Pressable>
+
+        <View style={styles.headerRightActions}>
+          <Pressable
+            style={styles.manageCatHeaderBtn}
+            onPress={() => setShowCategoryModal(true)}
+            hitSlop={8}
+          >
+            <Ionicons name="folder-outline" size={15} color="#0D7A52" />
+            <Text style={styles.manageCatHeaderText}>
+              {settings?.language === 'Taglish' ? 'Kategorya' : 'Categories'}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={styles.plusCircleBtn}
+            onPress={() => {
+              setErrorMsg(null);
+              setShowAddForm((prev) => !prev);
+            }}
+            hitSlop={10}
+          >
+            <Text style={styles.plusCircleIcon}>{showAddForm ? '✕' : '+'}</Text>
+          </Pressable>
+        </View>
       </View>
 
       {/* Search Bar with Live Barcode Scanner */}
@@ -470,7 +855,7 @@ export default function InventoryManagementScreen() {
             </Pressable>
           ) : null}
           <Pressable
-            style={[styles.searchScanBtn, isSearchScanning && styles.searchScanBtnActive]}
+            style={[styles.searchScanBtn, activeSearchScanning && styles.searchScanBtnActive]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
               setIsSearchScanning((prev) => !prev);
@@ -480,19 +865,19 @@ export default function InventoryManagementScreen() {
             accessibilityLabel="Scan barcode to search"
           >
             <Ionicons
-              name={isSearchScanning ? 'close-circle' : 'barcode-outline'}
+              name={activeSearchScanning ? 'close-circle' : 'barcode-outline'}
               size={15}
               color="#FFFFFF"
               style={{ marginRight: 4 }}
             />
-            <Text style={[styles.searchScanIcon, isSearchScanning && styles.searchScanIconActive]}>
-              {isSearchScanning ? t.stopScanBtn : t.scanBarcodeBtn}
+            <Text style={[styles.searchScanIcon, activeSearchScanning && styles.searchScanIconActive]}>
+              {activeSearchScanning ? t.stopScanBtn : t.scanBarcodeBtn}
             </Text>
           </Pressable>
         </View>
 
         {/* Live Camera Barcode Scanner for Inventory Search */}
-        {isSearchScanning ? (
+        {activeSearchScanning ? (
           <View style={styles.searchScannerContainer}>
             <BarcodeScannerViewfinder
               isActive={true}
@@ -703,11 +1088,11 @@ export default function InventoryManagementScreen() {
               errorMessage={null}
             />
 
-            {/* Open Food Facts Live Lookup Status Badge */}
+            {/* Online Lookup Status Badge */}
             {isLookingUpOnline ? (
               <View style={styles.onlineBadgeLoading}>
                 <Text style={styles.onlineBadgeTextLoading}>
-                  🔍 Naghahanap ng litrato at pangalan sa Open Food Facts...
+                  {t.searchingOnline}
                 </Text>
               </View>
             ) : onlineNotice ? (
@@ -749,7 +1134,7 @@ export default function InventoryManagementScreen() {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.catRow}
             >
-              {PRODUCT_CATEGORIES.map((cat) => {
+              {categories.map((cat) => {
                 const active = newCategory === cat;
                 return (
                   <Pressable
@@ -768,50 +1153,32 @@ export default function InventoryManagementScreen() {
                   </Pressable>
                 );
               })}
+              <Pressable
+                style={styles.catChipManage}
+                onPress={() => setShowCategoryModal(true)}
+              >
+                <Text style={styles.catChipManageText}>{t.addCategory}</Text>
+              </Pressable>
             </ScrollView>
 
+            {/* ROW 1: Stock & Alert Level First */}
             <View style={styles.twoColRow}>
               <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>Selling Price (₱) *</Text>
-                <TextInput
-                  style={styles.textInput}
-                  value={newPricePhp}
-                  onChangeText={(t) => {
-                    setErrorMsg(null);
-                    setNewPricePhp(t);
-                  }}
-                  placeholder="0.00"
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType="decimal-pad"
-                />
-              </View>
-              <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>Unit Cost (₱, optional)</Text>
-                <TextInput
-                  style={styles.textInput}
-                  value={newCostPhp}
-                  onChangeText={setNewCostPhp}
-                  placeholder="Auto (75%)"
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType="decimal-pad"
-                />
-              </View>
-            </View>
-
-            <View style={styles.twoColRow}>
-              <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>Initial Stock (pcs) *</Text>
+                <Text style={styles.fieldLabel}>{t.initialStockLabel}</Text>
                 <TextInput
                   style={styles.textInput}
                   value={newStock}
-                  onChangeText={setNewStock}
+                  onChangeText={(val) => {
+                    setErrorMsg(null);
+                    setNewStock(val);
+                  }}
                   placeholder="0"
                   placeholderTextColor="#9CA3AF"
                   keyboardType="number-pad"
                 />
               </View>
               <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>Low Stock Alert At</Text>
+                <Text style={styles.fieldLabel}>{t.lowStockThresholdLabel}</Text>
                 <TextInput
                   style={styles.textInput}
                   value={newLowThreshold}
@@ -821,6 +1188,291 @@ export default function InventoryManagementScreen() {
                   keyboardType="number-pad"
                 />
               </View>
+            </View>
+
+            {/* ROW 2: Unit Cost / Puhunan with Per Piraso vs. Buong Balot switch */}
+            <View style={styles.costSectionCard}>
+              <View style={styles.costModeHeader}>
+                <Text style={styles.fieldLabel}>{t.unitCostLabel}</Text>
+                <View style={styles.modeSegmentRow}>
+                  <Pressable
+                    style={[
+                      styles.modeSegmentBtn,
+                      costInputMode === 'PIECE' ? styles.modeSegmentBtnActive : null,
+                    ]}
+                    onPress={() => {
+                      setCostInputMode('PIECE');
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.modeSegmentText,
+                        costInputMode === 'PIECE' ? styles.modeSegmentTextActive : null,
+                      ]}
+                    >
+                      {t.perPieceMode}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={[
+                      styles.modeSegmentBtn,
+                      costInputMode === 'BUNDLE' ? styles.modeSegmentBtnActive : null,
+                    ]}
+                    onPress={() => {
+                      setCostInputMode('BUNDLE');
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.modeSegmentText,
+                        costInputMode === 'BUNDLE' ? styles.modeSegmentTextActive : null,
+                      ]}
+                    >
+                      {t.buongBalotMode}
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              {costInputMode === 'PIECE' ? (
+                <TextInput
+                  style={styles.textInput}
+                  value={newCostPhp}
+                  onChangeText={(val) => {
+                    setNewCostPhp(val);
+                    const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                    if (tuboValue && costNum > 0) {
+                      const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
+                      const nextPrice =
+                        tuboMode === 'PESO'
+                          ? costNum + tuboNum
+                          : costNum * (1 + tuboNum / 100);
+                      setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                    }
+                  }}
+                  placeholder={t.autoCostHint}
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="decimal-pad"
+                />
+              ) : (
+                <View style={{ gap: 4 }}>
+                  <TextInput
+                    style={styles.textInput}
+                    value={bundleCostPhp}
+                    onChangeText={(val) => {
+                      setBundleCostPhp(val);
+                      const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                      const divisor = parsedStock > 0 ? parsedStock : 1;
+                      const costNum = bCost > 0 ? bCost / divisor : 0;
+                      if (tuboValue && costNum > 0) {
+                        const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
+                        const nextPrice =
+                          tuboMode === 'PESO'
+                            ? costNum + tuboNum
+                            : costNum * (1 + tuboNum / 100);
+                        setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                      }
+                    }}
+                    placeholder={t.bundleCostPlaceholder}
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="decimal-pad"
+                  />
+                  <Text style={styles.bundleHint}>
+                    {parsedStock > 0
+                      ? `Hahatiin sa ${parsedStock} piraso = ₱${effectiveUnitCost.toFixed(2)} bawat piraso`
+                      : 'Ilagay ang bilang ng paninda sa itaas para makuha ang halaga bawat piraso'}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* ROW 3: Sneak Peek ng Puhunan Banner (Appears when cost > 0) */}
+            {effectiveUnitCost > 0 ? (
+              <View style={styles.sneakPeekBanner}>
+                <View style={styles.sneakPeekHeader}>
+                  <Ionicons name="pricetag-outline" size={14} color="#065F46" />
+                  <Text style={styles.sneakPeekTitle}>{t.costSneakPeekTitle}</Text>
+                </View>
+                <View style={styles.sneakPeekMetrics}>
+                  <View style={styles.sneakPeekItem}>
+                    <Text style={styles.sneakPeekLabel}>{t.costPerPiece}</Text>
+                    <Text style={styles.sneakPeekValue}>₱{effectiveUnitCost.toFixed(2)}</Text>
+                  </View>
+                  <View style={styles.sneakPeekDivider} />
+                  <View style={styles.sneakPeekItem}>
+                    <Text style={styles.sneakPeekLabel}>{t.totalCapitalSpent}</Text>
+                    <Text style={styles.sneakPeekValue}>
+                      ₱{totalCapitalSpent.toFixed(2)}
+                      {parsedStock > 0 ? ` (${parsedStock} pcs)` : ''}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            ) : null}
+
+            {/* ROW 4: Gustong Tubo (Markup) with Quick-Add Buttons */}
+            <View style={styles.tuboSectionCard}>
+              <View style={styles.tuboHeaderRow}>
+                <Text style={styles.fieldLabel}>{t.desiredProfitLabel}</Text>
+                <View style={styles.modeSegmentRow}>
+                  <Pressable
+                    style={[
+                      styles.modeSegmentBtn,
+                      tuboMode === 'PESO' ? styles.modeSegmentBtnActive : null,
+                    ]}
+                    onPress={() => {
+                      setTuboMode('PESO');
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      if (tuboValue && effectiveUnitCost > 0) {
+                        handleTuboChange(tuboValue, 'PESO');
+                      }
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.modeSegmentText,
+                        tuboMode === 'PESO' ? styles.modeSegmentTextActive : null,
+                      ]}
+                    >
+                      ₱ Peso
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={[
+                      styles.modeSegmentBtn,
+                      tuboMode === 'PERCENT' ? styles.modeSegmentBtnActive : null,
+                    ]}
+                    onPress={() => {
+                      setTuboMode('PERCENT');
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      if (tuboValue && effectiveUnitCost > 0) {
+                        handleTuboChange(tuboValue, 'PERCENT');
+                      }
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.modeSegmentText,
+                        tuboMode === 'PERCENT' ? styles.modeSegmentTextActive : null,
+                      ]}
+                    >
+                      % Percent
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              {/* Quick Preset Tubo Chips */}
+              <View style={styles.quickChipsRow}>
+                {[
+                  { label: '+₱1.00', amount: 1, isPercent: false },
+                  { label: '+₱2.00', amount: 2, isPercent: false },
+                  { label: '+₱3.00', amount: 3, isPercent: false },
+                  { label: '+₱5.00', amount: 5, isPercent: false },
+                  { label: '+20%', amount: 20, isPercent: true },
+                ].map((chip) => {
+                  const isSelected =
+                    (chip.isPercent && tuboMode === 'PERCENT' && tuboValue === chip.amount.toString()) ||
+                    (!chip.isPercent && tuboMode === 'PESO' && tuboValue === chip.amount.toString());
+                  return (
+                    <Pressable
+                      key={chip.label}
+                      style={[
+                        styles.quickTuboChip,
+                        isSelected ? styles.quickTuboChipActive : null,
+                      ]}
+                      onPress={() => handleQuickTubo(chip.amount, chip.isPercent)}
+                    >
+                      <Text
+                        style={[
+                          styles.quickTuboChipText,
+                          isSelected ? styles.quickTuboChipTextActive : null,
+                        ]}
+                      >
+                        {chip.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              <TextInput
+                style={styles.textInput}
+                value={tuboValue}
+                onChangeText={(val) => handleTuboChange(val, tuboMode)}
+                placeholder={tuboMode === 'PESO' ? '0.00' : '20%'}
+                placeholderTextColor="#9CA3AF"
+                keyboardType="decimal-pad"
+              />
+            </View>
+
+            {/* ROW 5: Selling Price (₱) * with Whole-Peso Rounding & Live Batch Profit Preview */}
+            <View style={styles.sellingPriceSectionCard}>
+              <Text style={styles.fieldLabel}>{t.sellingPriceLabel}</Text>
+              <TextInput
+                style={[styles.textInput, styles.sellingPriceInput]}
+                value={newPricePhp}
+                onChangeText={handlePriceChange}
+                placeholder="0.00"
+                placeholderTextColor="#9CA3AF"
+                keyboardType="decimal-pad"
+              />
+
+              {/* Whole-Peso Rounding ("Walang Barya" Helper) */}
+              {roundingSuggestions.length > 0 ? (
+                <View style={styles.roundingBox}>
+                  <Text style={styles.roundingTitle}>🪙 Walang Barya Helper:</Text>
+                  <View style={styles.roundingChipsRow}>
+                    {roundingSuggestions.map((roundPrice: number) => (
+                      <Pressable
+                        key={roundPrice}
+                        style={styles.roundingChip}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          handlePriceChange(roundPrice.toFixed(2));
+                        }}
+                      >
+                        <Text style={styles.roundingChipText}>
+                          {t.roundToLabel(roundPrice.toString())}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
+              ) : null}
+
+              {/* Profit Preview Summary */}
+              {currentEnteredPrice > 0 ? (
+                <View style={styles.profitSummaryBox}>
+                  <View style={styles.profitSummaryRow}>
+                    <Text style={styles.profitSummaryLabel}>{t.profitPerPiece}</Text>
+                    <Text style={styles.profitSummaryVal}>
+                      {effectiveUnitCost > 0
+                        ? `₱${profitPerPiece.toFixed(2)}`
+                        : `~₱${(currentEnteredPrice * 0.25).toFixed(2)} (est.)`}
+                    </Text>
+                  </View>
+                  <View style={styles.profitSummaryRow}>
+                    <Text style={styles.profitSummaryLabel}>{t.totalBatchProfit}</Text>
+                    <Text style={[styles.profitSummaryVal, { color: '#0D7A52', fontWeight: '800' }]}>
+                      {effectiveUnitCost > 0
+                        ? `₱${totalBatchProfit.toFixed(2)}`
+                        : `~₱${(currentEnteredPrice * 0.25 * (parsedStock > 0 ? parsedStock : 1)).toFixed(2)} (est.)`}
+                    </Text>
+                  </View>
+                </View>
+              ) : null}
+
+              {currentEnteredPrice > 0 && effectiveUnitCost >= currentEnteredPrice ? (
+                <View style={styles.costWarningBox}>
+                  <Ionicons name="warning-outline" size={14} color="#B45309" />
+                  <Text style={styles.costWarningText}>
+                    Puhunan (₱{effectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo (₱{currentEnteredPrice.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.
+                  </Text>
+                </View>
+              ) : null}
             </View>
 
             {errorMsg ? (
@@ -885,8 +1537,8 @@ export default function InventoryManagementScreen() {
           </View>
         ) : null}
 
-        {/* Dynamic SQLite Inventory Product List with Images */}
-        {filteredProducts.map((item) => {
+        {/* Dynamic Inventory Product List with Images */}
+        {paginatedProducts.map((item) => {
           const isExpanded = expandedProductId === item.id;
           return (
             <View key={item.id} style={styles.inventoryItemContainer}>
@@ -983,7 +1635,8 @@ export default function InventoryManagementScreen() {
                           mode: 'RESTOCK',
                           quantity: qty,
                         });
-                        setFeedbackMsg(`✓ Naidagdag +${qty} ${item.name} sa stock`);
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                        showToast(`✓ Naidagdag +${qty} ${item.name} sa stock (Total: ${item.stockCount + qty} pcs)`, 'success');
                       }}
                     >
                       <Text style={styles.adjBtnGreenText}>
@@ -999,8 +1652,10 @@ export default function InventoryManagementScreen() {
                           mode: 'UNPACK_TINGI',
                           quantity: 1,
                         });
-                        setFeedbackMsg(
-                          `✓ Na-unpack ang 1 bulk pack sa +10 tingi piraso ng ${item.name}`
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                        showToast(
+                          `✓ Na-unpack ang 1 bulk pack sa +10 tingi piraso ng ${item.name}`,
+                          'success'
                         );
                       }}
                     >
@@ -1017,8 +1672,10 @@ export default function InventoryManagementScreen() {
                           mode: 'HOME_USE',
                           quantity: 1,
                         });
-                        setFeedbackMsg(
-                          `Naitala ang -1 ${item.name} bilang Gamit sa Bahay`
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                        showToast(
+                          `✓ Naitala ang -1 ${item.name} bilang Gamit sa Bahay (Tira: ${Math.max(0, item.stockCount - 1)} pcs)`,
+                          'warning'
                         );
                       }}
                     >
@@ -1033,8 +1690,10 @@ export default function InventoryManagementScreen() {
                           mode: 'DAMAGED_EXPIRED',
                           quantity: 1,
                         });
-                        setFeedbackMsg(
-                          `Inilipat ang 1 ${item.name} sa Sira/Expired`
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                        showToast(
+                          `✓ Inilipat ang 1 ${item.name} sa Sira/Expired (Tira: ${Math.max(0, item.stockCount - 1)} pcs)`,
+                          'warning'
                         );
                       }}
                     >
@@ -1057,7 +1716,7 @@ export default function InventoryManagementScreen() {
                                   await deleteProductFromDatabase(item.id);
                                   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
                                   setExpandedProductId(null);
-                                  setFeedbackMsg(`🗑 Naalis ang "${item.name}" sa imbentaryo`);
+                                  showToast(`🗑️ Naalis ang "${item.name}" sa imbentaryo`, 'warning');
                                   setErrorMsg(null);
                                 } catch (error) {
                                   setErrorMsg(
@@ -1080,6 +1739,54 @@ export default function InventoryManagementScreen() {
             </View>
           );
         })}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 ? (
+          <View style={styles.paginationRow}>
+            <Pressable
+              style={[styles.pageBtn, safeCurrentPage === 1 ? styles.pageBtnDisabled : null]}
+              disabled={safeCurrentPage === 1}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                setCurrentPage((p) => Math.max(1, p - 1));
+              }}
+            >
+              <Text
+                style={[
+                  styles.pageBtnText,
+                  safeCurrentPage === 1 ? styles.pageBtnTextDisabled : null,
+                ]}
+              >
+                {t.previousPage}
+              </Text>
+            </Pressable>
+
+            <Text style={styles.pageIndicatorText}>
+              {t.pageIndicator(safeCurrentPage, totalPages)}
+            </Text>
+
+            <Pressable
+              style={[
+                styles.pageBtn,
+                safeCurrentPage >= totalPages ? styles.pageBtnDisabled : null,
+              ]}
+              disabled={safeCurrentPage >= totalPages}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                setCurrentPage((p) => Math.min(totalPages, p + 1));
+              }}
+            >
+              <Text
+                style={[
+                  styles.pageBtnText,
+                  safeCurrentPage >= totalPages ? styles.pageBtnTextDisabled : null,
+                ]}
+              >
+                {t.nextPage}
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
 
         {/* Seasonal Forecast Navigation Card */}
         <Pressable
@@ -1153,34 +1860,24 @@ export default function InventoryManagementScreen() {
                 placeholderTextColor="#9CA3AF"
               />
 
-              <View style={styles.modalTwoColGrid}>
+              {/* ROW 1: Stock (piraso) * & Paalala (Mababang Stock) */}
+              <View style={[styles.modalTwoColGrid, { marginTop: 10 }]}>
                 <View style={styles.modalCol}>
-                  <Text style={styles.modalInputLabel}>Presyo (₱) *</Text>
-                  <TextInput
-                    style={styles.modalInputField}
-                    value={editPricePhp}
-                    onChangeText={setEditPricePhp}
-                    placeholder="0.00"
-                    placeholderTextColor="#9CA3AF"
-                    keyboardType="decimal-pad"
-                  />
-                </View>
-                <View style={styles.modalCol}>
-                  <Text style={styles.modalInputLabel}>Stock (piraso) *</Text>
+                  <Text style={styles.modalInputLabel}>{t.initialStockLabel}</Text>
                   <TextInput
                     style={styles.modalInputField}
                     value={editStock}
-                    onChangeText={setEditStock}
+                    onChangeText={(val) => {
+                      setEditError(null);
+                      setEditStock(val);
+                    }}
                     placeholder="0"
                     placeholderTextColor="#9CA3AF"
                     keyboardType="number-pad"
                   />
                 </View>
-              </View>
-
-              <View style={styles.modalTwoColGrid}>
                 <View style={styles.modalCol}>
-                  <Text style={styles.modalInputLabel}>Paalala (Mababang Stock)</Text>
+                  <Text style={styles.modalInputLabel}>{t.lowStockThresholdLabel}</Text>
                   <TextInput
                     style={styles.modalInputField}
                     value={editLowThreshold}
@@ -1190,6 +1887,295 @@ export default function InventoryManagementScreen() {
                     keyboardType="number-pad"
                   />
                 </View>
+              </View>
+
+              {/* ROW 2: Unit Cost / Puhunan with Per Piraso vs. Buong Balot switch */}
+              <View style={[styles.costSectionCard, { marginTop: 12 }]}>
+                <View style={styles.costModeHeader}>
+                  <Text style={styles.fieldLabel}>{t.unitCostLabel}</Text>
+                  <View style={styles.modeSegmentRow}>
+                    <Pressable
+                      style={[
+                        styles.modeSegmentBtn,
+                        editCostInputMode === 'PIECE' ? styles.modeSegmentBtnActive : null,
+                      ]}
+                      onPress={() => {
+                        setEditCostInputMode('PIECE');
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.modeSegmentText,
+                          editCostInputMode === 'PIECE' ? styles.modeSegmentTextActive : null,
+                        ]}
+                      >
+                        {t.perPieceMode}
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      style={[
+                        styles.modeSegmentBtn,
+                        editCostInputMode === 'BUNDLE' ? styles.modeSegmentBtnActive : null,
+                      ]}
+                      onPress={() => {
+                        setEditCostInputMode('BUNDLE');
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.modeSegmentText,
+                          editCostInputMode === 'BUNDLE' ? styles.modeSegmentTextActive : null,
+                        ]}
+                      >
+                        {t.buongBalotMode}
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+
+                {editCostInputMode === 'PIECE' ? (
+                  <TextInput
+                    style={styles.textInput}
+                    value={editCostPhp}
+                    onChangeText={(val) => {
+                      setEditCostPhp(val);
+                      const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                      if (editTuboValue && costNum > 0) {
+                        const tuboNum = parseFloat(editTuboValue.replace(/[^0-9.]/g, '') || '0');
+                        const nextPrice =
+                          editTuboMode === 'PESO'
+                            ? costNum + tuboNum
+                            : costNum * (1 + tuboNum / 100);
+                        setEditPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                      }
+                    }}
+                    placeholder={t.autoCostHint}
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="decimal-pad"
+                  />
+                ) : (
+                  <View style={{ gap: 4 }}>
+                    <TextInput
+                      style={styles.textInput}
+                      value={editBundleCostPhp}
+                      onChangeText={(val) => {
+                        setEditBundleCostPhp(val);
+                        const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                        const divisor = editParsedStock > 0 ? editParsedStock : 1;
+                        const costNum = bCost > 0 ? bCost / divisor : 0;
+                        if (editTuboValue && costNum > 0) {
+                          const tuboNum = parseFloat(editTuboValue.replace(/[^0-9.]/g, '') || '0');
+                          const nextPrice =
+                            editTuboMode === 'PESO'
+                              ? costNum + tuboNum
+                              : costNum * (1 + tuboNum / 100);
+                          setEditPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                        }
+                      }}
+                      placeholder={t.bundleCostPlaceholder}
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
+                    <Text style={styles.bundleHint}>
+                      {editParsedStock > 0
+                        ? `Hahatiin sa ${editParsedStock} piraso = ₱${editEffectiveUnitCost.toFixed(2)} bawat piraso`
+                        : 'Ilagay ang bilang ng paninda sa itaas para makuha ang halaga bawat piraso'}
+                    </Text>
+                  </View>
+                )}
+              </View>
+
+              {/* ROW 3: Sneak Peek ng Puhunan Banner */}
+              {editEffectiveUnitCost > 0 ? (
+                <View style={[styles.sneakPeekBanner, { marginTop: 10 }]}>
+                  <View style={styles.sneakPeekHeader}>
+                    <Ionicons name="pricetag-outline" size={14} color="#065F46" />
+                    <Text style={styles.sneakPeekTitle}>{t.costSneakPeekTitle}</Text>
+                  </View>
+                  <View style={styles.sneakPeekMetrics}>
+                    <View style={styles.sneakPeekItem}>
+                      <Text style={styles.sneakPeekLabel}>{t.costPerPiece}</Text>
+                      <Text style={styles.sneakPeekValue}>₱{editEffectiveUnitCost.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.sneakPeekDivider} />
+                    <View style={styles.sneakPeekItem}>
+                      <Text style={styles.sneakPeekLabel}>{t.totalCapitalSpent}</Text>
+                      <Text style={styles.sneakPeekValue}>
+                        ₱{editTotalCapitalSpent.toFixed(2)}
+                        {editParsedStock > 0 ? ` (${editParsedStock} pcs)` : ''}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              ) : null}
+
+              {/* ROW 4: Gustong Tubo (Markup) with Quick-Add Buttons */}
+              <View style={[styles.tuboSectionCard, { marginTop: 12 }]}>
+                <View style={styles.tuboHeaderRow}>
+                  <Text style={styles.fieldLabel}>{t.desiredProfitLabel}</Text>
+                  <View style={styles.modeSegmentRow}>
+                    <Pressable
+                      style={[
+                        styles.modeSegmentBtn,
+                        editTuboMode === 'PESO' ? styles.modeSegmentBtnActive : null,
+                      ]}
+                      onPress={() => {
+                        setEditTuboMode('PESO');
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        if (editTuboValue && editEffectiveUnitCost > 0) {
+                          handleEditTuboChange(editTuboValue, 'PESO');
+                        }
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.modeSegmentText,
+                          editTuboMode === 'PESO' ? styles.modeSegmentTextActive : null,
+                        ]}
+                      >
+                        ₱ Peso
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      style={[
+                        styles.modeSegmentBtn,
+                        editTuboMode === 'PERCENT' ? styles.modeSegmentBtnActive : null,
+                      ]}
+                      onPress={() => {
+                        setEditTuboMode('PERCENT');
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        if (editTuboValue && editEffectiveUnitCost > 0) {
+                          handleEditTuboChange(editTuboValue, 'PERCENT');
+                        }
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.modeSegmentText,
+                          editTuboMode === 'PERCENT' ? styles.modeSegmentTextActive : null,
+                        ]}
+                      >
+                        % Percent
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+
+                {/* Quick Preset Tubo Chips */}
+                <View style={styles.quickChipsRow}>
+                  {[
+                    { label: '+₱1.00', amount: 1, isPercent: false },
+                    { label: '+₱2.00', amount: 2, isPercent: false },
+                    { label: '+₱3.00', amount: 3, isPercent: false },
+                    { label: '+₱5.00', amount: 5, isPercent: false },
+                    { label: '+20%', amount: 20, isPercent: true },
+                  ].map((chip) => {
+                    const isSelected =
+                      (chip.isPercent && editTuboMode === 'PERCENT' && editTuboValue === chip.amount.toString()) ||
+                      (!chip.isPercent && editTuboMode === 'PESO' && editTuboValue === chip.amount.toString());
+                    return (
+                      <Pressable
+                        key={chip.label}
+                        style={[
+                          styles.quickTuboChip,
+                          isSelected ? styles.quickTuboChipActive : null,
+                        ]}
+                        onPress={() => handleEditQuickTubo(chip.amount, chip.isPercent)}
+                      >
+                        <Text
+                          style={[
+                            styles.quickTuboChipText,
+                            isSelected ? styles.quickTuboChipTextActive : null,
+                          ]}
+                        >
+                          {chip.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+
+                <TextInput
+                  style={styles.textInput}
+                  value={editTuboValue}
+                  onChangeText={(val) => handleEditTuboChange(val, editTuboMode)}
+                  placeholder={editTuboMode === 'PESO' ? '0.00' : '20%'}
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="decimal-pad"
+                />
+              </View>
+
+              {/* ROW 5: Presyo ng Benta (Selling Price) with Whole-Peso Rounding & Live Batch Profit Preview */}
+              <View style={[styles.sellingPriceSectionCard, { marginTop: 12 }]}>
+                <Text style={styles.fieldLabel}>{t.sellingPriceLabel}</Text>
+                <TextInput
+                  style={[styles.textInput, styles.sellingPriceInput]}
+                  value={editPricePhp}
+                  onChangeText={handleEditPriceChange}
+                  placeholder="0.00"
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="decimal-pad"
+                />
+
+                {/* Whole-Peso Rounding ("Walang Barya" Helper) */}
+                {editRoundingSuggestions.length > 0 ? (
+                  <View style={styles.roundingBox}>
+                    <Text style={styles.roundingTitle}>🪙 Walang Barya Helper:</Text>
+                    <View style={styles.roundingChipsRow}>
+                      {editRoundingSuggestions.map((roundPrice: number) => (
+                        <Pressable
+                          key={roundPrice}
+                          style={styles.roundingChip}
+                          onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                            handleEditPriceChange(roundPrice.toFixed(2));
+                          }}
+                        >
+                          <Text style={styles.roundingChipText}>
+                            {t.roundToLabel(roundPrice.toString())}
+                          </Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                  </View>
+                ) : null}
+
+                {/* Profit Preview Summary */}
+                {editCurrentEnteredPrice > 0 ? (
+                  <View style={styles.profitSummaryBox}>
+                    <View style={styles.profitSummaryRow}>
+                      <Text style={styles.profitSummaryLabel}>{t.profitPerPiece}</Text>
+                      <Text style={styles.profitSummaryVal}>
+                        {editEffectiveUnitCost > 0
+                          ? `₱${editProfitPerPiece.toFixed(2)}`
+                          : `~₱${(editCurrentEnteredPrice * 0.25).toFixed(2)} (est.)`}
+                      </Text>
+                    </View>
+                    <View style={styles.profitSummaryRow}>
+                      <Text style={styles.profitSummaryLabel}>{t.totalBatchProfit}</Text>
+                      <Text style={[styles.profitSummaryVal, { color: '#0D7A52', fontWeight: '800' }]}>
+                        {editEffectiveUnitCost > 0
+                          ? `₱${editTotalBatchProfit.toFixed(2)}`
+                          : `~₱${(editCurrentEnteredPrice * 0.25 * (editParsedStock > 0 ? editParsedStock : 1)).toFixed(2)} (est.)`}
+                      </Text>
+                    </View>
+                  </View>
+                ) : null}
+
+                {editCurrentEnteredPrice > 0 && editEffectiveUnitCost >= editCurrentEnteredPrice ? (
+                  <View style={styles.costWarningBox}>
+                    <Ionicons name="warning-outline" size={14} color="#B45309" />
+                    <Text style={styles.costWarningText}>
+                      Puhunan (₱{editEffectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo (₱{editCurrentEnteredPrice.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+
+              {/* Kasalukuyang Kategorya */}
+              <View style={[styles.modalTwoColGrid, { marginTop: 14 }]}>
                 <View style={styles.modalCol}>
                   <Text style={styles.modalInputLabel}>Kasalukuyang Kategorya</Text>
                   <Text style={styles.modalSelectedCatBadge}>{editCategory}</Text>
@@ -1198,7 +2184,7 @@ export default function InventoryManagementScreen() {
 
               <Text style={[styles.modalInputLabel, { marginTop: 10 }]}>Pumili ng Kategorya:</Text>
               <View style={styles.modalCategoryWrap}>
-                {PRODUCT_CATEGORIES.map((cat) => {
+                {categories.map((cat) => {
                   const isSelected = editCategory === cat;
                   return (
                     <Pressable
@@ -1248,6 +2234,178 @@ export default function InventoryManagementScreen() {
                   </Text>
                 </Pressable>
               </View>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Category Management Modal (Add, Edit, Delete with Confirmation) */}
+      <Modal
+        visible={showCategoryModal}
+        animationType="slide"
+        transparent={true}
+        statusBarTranslucent={true}
+        onRequestClose={() => {
+          setShowCategoryModal(false);
+          setEditingCategoryOldName(null);
+        }}
+      >
+        <KeyboardAvoidingView
+          style={styles.modalBackdropContainer}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <Pressable
+            style={styles.modalBackdropPressable}
+            onPress={() => {
+              setShowCategoryModal(false);
+              setEditingCategoryOldName(null);
+            }}
+          />
+          <View style={styles.modalContentCard}>
+            <View style={styles.modalDragHandle} />
+
+            <View style={styles.modalHeaderRow}>
+              <View style={styles.modalHeaderTitleGroup}>
+                <View style={styles.modalHeaderIconBadge}>
+                  <Ionicons name="folder-outline" size={16} color="#0D7A52" />
+                </View>
+                <View>
+                  <Text style={styles.modalTitleText}>{t.manageCategories}</Text>
+                  <Text style={styles.modalSubtitleBarcode}>
+                    {categories.length} {categories.length === 1 ? 'kategorya' : 'mga kategorya'}
+                  </Text>
+                </View>
+              </View>
+              <Pressable
+                onPress={() => {
+                  setShowCategoryModal(false);
+                  setEditingCategoryOldName(null);
+                }}
+                hitSlop={10}
+                style={styles.modalCloseCircle}
+              >
+                <Ionicons name="close" size={20} color="#64748B" />
+              </Pressable>
+            </View>
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.modalScrollContent}
+            >
+              {categoryModalSuccess ? (
+                <View style={styles.inModalSuccessBanner}>
+                  <Ionicons name="checkmark-circle" size={16} color="#059669" />
+                  <Text style={styles.inModalSuccessText}>{categoryModalSuccess}</Text>
+                </View>
+              ) : null}
+
+              {/* Add New Category Box */}
+              <View style={styles.addCategoryBox}>
+                <TextInput
+                  style={styles.addCategoryInput}
+                  value={newCategoryName}
+                  onChangeText={(val) => {
+                    setCategoryModalError(null);
+                    setNewCategoryName(val);
+                  }}
+                  placeholder={t.newCategoryNamePlaceholder}
+                  placeholderTextColor="#9CA3AF"
+                />
+                <Pressable
+                  style={styles.addCategoryBtn}
+                  onPress={handleAddNewCategory}
+                >
+                  <Ionicons name="add" size={18} color="#FFFFFF" />
+                  <Text style={styles.addCategoryBtnText}>{t.addCategory}</Text>
+                </Pressable>
+              </View>
+
+              {categoryModalError ? (
+                <View style={styles.modalErrorContainer}>
+                  <Ionicons name="alert-circle" size={16} color="#DC2626" />
+                  <Text style={styles.modalErrorLabel}>{categoryModalError}</Text>
+                </View>
+              ) : null}
+
+              {/* Category List */}
+              <View style={styles.categoryListContainer}>
+                {categories.map((cat) => {
+                  const isEditingThis = editingCategoryOldName === cat;
+                  return (
+                    <View key={cat} style={styles.categoryListItem}>
+                      {isEditingThis ? (
+                        <View style={styles.categoryEditRow}>
+                          <TextInput
+                            style={styles.categoryEditInput}
+                            value={editingCategoryNewName}
+                            onChangeText={setEditingCategoryNewName}
+                            autoFocus
+                          />
+                          <Pressable
+                            style={styles.categorySaveBtn}
+                            onPress={() => handleSaveCategoryEdit(cat)}
+                          >
+                            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+                          </Pressable>
+                          <Pressable
+                            style={styles.categoryCancelBtn}
+                            onPress={() => setEditingCategoryOldName(null)}
+                          >
+                            <Ionicons name="close" size={16} color="#64748B" />
+                          </Pressable>
+                        </View>
+                      ) : (
+                        <View style={styles.categoryViewRow}>
+                          <View style={styles.categoryNameCol}>
+                            <Text style={styles.categoryNameText}>{cat}</Text>
+                            <Text style={styles.categoryCountSub}>
+                              {products.filter((p) => p.category === cat).length} paninda
+                            </Text>
+                          </View>
+                          <View style={styles.categoryActionsRow}>
+                            <Pressable
+                              style={styles.categoryActionBtn}
+                              onPress={() => {
+                                setEditingCategoryOldName(cat);
+                                setEditingCategoryNewName(cat);
+                              }}
+                              hitSlop={8}
+                            >
+                              <Ionicons name="pencil-outline" size={16} color="#0D7A52" />
+                            </Pressable>
+                            <Pressable
+                              style={[
+                                styles.categoryActionBtn,
+                                categories.length <= 1 ? styles.btnDisabled : null,
+                              ]}
+                              disabled={categories.length <= 1}
+                              onPress={() => handleDeleteCategory(cat)}
+                              hitSlop={8}
+                            >
+                              <Ionicons
+                                name="trash-outline"
+                                size={16}
+                                color={categories.length <= 1 ? '#9CA3AF' : '#DC2626'}
+                              />
+                            </Pressable>
+                          </View>
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+
+              <Pressable
+                style={styles.categoryDoneBtn}
+                onPress={() => {
+                  setShowCategoryModal(false);
+                  setEditingCategoryOldName(null);
+                }}
+              >
+                <Text style={styles.categoryDoneBtnText}>{t.closeBtn}</Text>
+              </Pressable>
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
@@ -2097,5 +3255,424 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '800',
     color: '#FFFFFF',
+  },
+  headerRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  manageCatHeaderBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 16,
+    gap: 4,
+  },
+  manageCatHeaderText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#065F46',
+  },
+  catChipManage: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 18,
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1.5,
+    borderColor: '#0D7A52',
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  catChipManageText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  paginationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  pageBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: '#0D7A52',
+  },
+  pageBtnDisabled: {
+    backgroundColor: '#E2E8F0',
+  },
+  pageBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  pageBtnTextDisabled: {
+    color: '#94A3B8',
+  },
+  pageIndicatorText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#475569',
+  },
+  inModalSuccessBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
+    borderWidth: 1.5,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    marginBottom: 14,
+    gap: 8,
+  },
+  inModalSuccessText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#065F46',
+    flex: 1,
+  },
+  addCategoryBox: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  addCategoryInput: {
+    flex: 1,
+    height: 44,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1.5,
+    borderColor: '#CBD5E1',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    fontSize: 14,
+    color: '#0F172A',
+  },
+  addCategoryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0D7A52',
+    paddingHorizontal: 14,
+    height: 44,
+    borderRadius: 12,
+    gap: 4,
+  },
+  addCategoryBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  categoryListContainer: {
+    gap: 8,
+    marginBottom: 16,
+  },
+  categoryListItem: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 12,
+    padding: 10,
+  },
+  categoryViewRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  categoryNameCol: {
+    flex: 1,
+  },
+  categoryNameText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  categoryCountSub: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  categoryActionsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  categoryActionBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryEditRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  categoryEditInput: {
+    flex: 1,
+    height: 36,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#0D7A52',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    fontSize: 13,
+    color: '#0F172A',
+  },
+  categorySaveBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#0D7A52',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryCancelBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryDoneBtn: {
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  categoryDoneBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#475569',
+  },
+  costSectionCard: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    gap: 8,
+  },
+  costModeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modeSegmentRow: {
+    flexDirection: 'row',
+    backgroundColor: '#E5E7EB',
+    borderRadius: 8,
+    padding: 2,
+  },
+  modeSegmentBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  modeSegmentBtnActive: {
+    backgroundColor: '#0D7A52',
+  },
+  modeSegmentText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#4B5563',
+  },
+  modeSegmentTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  bundleHint: {
+    fontSize: 11,
+    color: '#6B7280',
+    fontStyle: 'italic',
+  },
+  sneakPeekBanner: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    borderRadius: 10,
+    padding: 10,
+    gap: 6,
+  },
+  sneakPeekHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  sneakPeekTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#065F46',
+  },
+  sneakPeekMetrics: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingTop: 2,
+  },
+  sneakPeekItem: {
+    alignItems: 'center',
+    gap: 2,
+  },
+  sneakPeekLabel: {
+    fontSize: 10,
+    color: '#047857',
+    fontWeight: '600',
+  },
+  sneakPeekValue: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#065F46',
+    fontVariant: ['tabular-nums'],
+  },
+  sneakPeekDivider: {
+    width: 1,
+    height: 24,
+    backgroundColor: '#A7F3D0',
+  },
+  tuboSectionCard: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    gap: 8,
+  },
+  tuboHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  quickChipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  quickTuboChip: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
+  },
+  quickTuboChipActive: {
+    backgroundColor: '#0D7A52',
+    borderColor: '#0D7A52',
+  },
+  quickTuboChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#374151',
+  },
+  quickTuboChipTextActive: {
+    color: '#FFFFFF',
+  },
+  sellingPriceSectionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    gap: 8,
+  },
+  sellingPriceInput: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  roundingBox: {
+    backgroundColor: '#FEF3C7',
+    borderRadius: 8,
+    padding: 8,
+    gap: 6,
+  },
+  roundingTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#92400E',
+  },
+  roundingChipsRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  roundingChip: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#F59E0B',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  roundingChipText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#B45309',
+  },
+  profitSummaryBox: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 8,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    gap: 4,
+  },
+  profitSummaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  profitSummaryLabel: {
+    fontSize: 11,
+    color: '#166534',
+    fontWeight: '600',
+  },
+  profitSummaryVal: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#15803D',
+    fontVariant: ['tabular-nums'],
+  },
+  costWarningBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#FEF3C7',
+    borderWidth: 1,
+    borderColor: '#FCD34D',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginTop: 8,
+  },
+  costWarningText: {
+    flex: 1,
+    fontSize: 11,
+    color: '#92400E',
+    fontWeight: '600',
+    lineHeight: 15,
   },
 });

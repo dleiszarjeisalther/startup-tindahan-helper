@@ -125,6 +125,27 @@ export class SqliteDatabase {
         out_of_stock_days INTEGER NOT NULL DEFAULT 0,
         total_days_in_month INTEGER NOT NULL DEFAULT 30
       );
+
+      CREATE TABLE IF NOT EXISTS cash_drawer_adjustments (
+        id TEXT PRIMARY KEY NOT NULL,
+        type TEXT NOT NULL,
+        amount_php REAL NOT NULL,
+        category TEXT NOT NULL,
+        note TEXT,
+        timestamp_ms INTEGER NOT NULL,
+        date_label TEXT NOT NULL,
+        time_label TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS held_carts (
+        id TEXT PRIMARY KEY NOT NULL,
+        customer_name TEXT NOT NULL,
+        total_php REAL NOT NULL,
+        total_count INTEGER NOT NULL,
+        items_json TEXT NOT NULL,
+        created_at_ms INTEGER NOT NULL,
+        time_label TEXT NOT NULL
+      );
     `);
     } catch (err) {
       console.warn('SQLite table initialization warning:', err);
@@ -154,11 +175,13 @@ export class SqliteDatabase {
     this.db.execSync(`
       DELETE FROM products;
       DELETE FROM cart_items;
+      DELETE FROM held_carts;
       DELETE FROM sales_transactions;
       DELETE FROM utang_customers;
       DELETE FROM store_settings;
       DELETE FROM shrinkage_logs;
       DELETE FROM monthly_sales_history;
+      DELETE FROM cash_drawer_adjustments;
     `);
   }
 }

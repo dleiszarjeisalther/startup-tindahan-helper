@@ -5,6 +5,7 @@ import { useColorScheme } from 'react-native';
 
 import AppTabs from '@/components/app-tabs';
 import { TindahanStoreProvider } from '@/presentation/providers/TindahanStoreProvider';
+import '@/infrastructure/services/SoundFeedbackService';
 
 export { ErrorBoundary } from 'expo-router';
 

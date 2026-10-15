@@ -221,6 +221,7 @@ export default function AppTabs() {
       <Tabs.Screen name="more" options={{ title: 'More' }} />
       <Tabs.Screen name="settings" options={{ title: 'Store Settings', href: null }} />
       <Tabs.Screen name="explore" options={{ title: 'Seasonal Forecast', href: null }} />
+      <Tabs.Screen name="utang" options={{ title: 'Suki Utang Ledger', href: null }} />
     </Tabs>
   );
 }

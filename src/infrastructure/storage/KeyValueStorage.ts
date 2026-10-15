@@ -13,6 +13,8 @@ export interface IKeyValueStorage {
   clearAll(): void;
   loadSettings(defaultSettings: StoreSettingsState): StoreSettingsState;
   saveSettings(settings: StoreSettingsState): void;
+  loadCategories(defaultCategories: string[]): string[];
+  saveCategories(categories: string[]): void;
 }
 
 /**
@@ -165,10 +167,20 @@ class SynchronousKeyValueStorage implements IKeyValueStorage {
     }
   }
 
+  public getStoredLanguage(): string | undefined {
+    this.ensureInitialized();
+    return this.getString('setting_language');
+  }
+
   public loadSettings(defaultSettings: StoreSettingsState): StoreSettingsState {
     this.ensureInitialized();
-    const langRaw = this.getString('setting_language', defaultSettings.language);
-    const language = langRaw === 'Taglish' ? 'Taglish' : 'English';
+    const storedLang = this.getString('setting_language');
+    let language = defaultSettings.language;
+    if (storedLang === 'Taglish' || storedLang === 'Filipino') {
+      language = 'Taglish';
+    } else if (storedLang === 'English') {
+      language = 'English';
+    }
 
     return {
       storeName: this.getString('setting_store_name', defaultSettings.storeName) || defaultSettings.storeName,
@@ -188,6 +200,25 @@ class SynchronousKeyValueStorage implements IKeyValueStorage {
     this.setBoolean('setting_notifications', settings.notifications);
     this.setNumber('setting_school_month', settings.schoolOpeningMonth);
     this.setNumber('setting_wholesale_budget', settings.wholesaleBudgetPhp);
+  }
+
+  public loadCategories(defaultCategories: string[]): string[] {
+    this.ensureInitialized();
+    const raw = this.getString('app_categories');
+    if (!raw) return [...defaultCategories];
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.filter((c) => typeof c === 'string' && c.trim().length > 0);
+      }
+    } catch {
+      // fallback to default
+    }
+    return [...defaultCategories];
+  }
+
+  public saveCategories(categories: string[]): void {
+    this.setString('app_categories', JSON.stringify(categories));
   }
 }
 

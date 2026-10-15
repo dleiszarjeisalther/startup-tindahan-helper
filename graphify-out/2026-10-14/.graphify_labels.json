@@ -56,10 +56,5 @@
   "54": "expo-image-picker",
   "55": "@expo/vector-icons",
   "56": "expo-web-browser",
-  "57": "react-native-web",
-  "58": "Barcode",
-  "59": "container.ts",
-  "60": "ProductOnboardingService.ts",
-  "61": "ProductDTO",
-  "62": "InMemoryProductRepository"
+  "57": "react-native-web"
 }

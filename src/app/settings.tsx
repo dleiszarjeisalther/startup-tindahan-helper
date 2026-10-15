@@ -16,6 +16,7 @@ import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { getTranslations } from '@/presentation/localization/i18n';
+import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
 
 export default function StoreSettingsScreen() {
   const router = useRouter();
@@ -25,6 +26,13 @@ export default function StoreSettingsScreen() {
   const [editingField, setEditingField] = useState<'NONE' | 'NAME' | 'ADDRESS'>('NONE');
   const [draftName, setDraftName] = useState(settings.storeName);
   const [draftAddress, setDraftAddress] = useState(settings.address);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<ToastType>('success');
+
+  const showToast = (msg: string, type: ToastType = 'success') => {
+    setToastMsg(msg);
+    setToastType(type);
+  };
 
   const monthNames: Record<number, string> = {
     6: 'June (Classic Opening)',
@@ -34,6 +42,11 @@ export default function StoreSettingsScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <FloatingToast
+        message={toastMsg}
+        type={toastType}
+        onDismiss={() => setToastMsg(null)}
+      />
       {/* Top Bar: <- Store Settings */}
       <View style={styles.headerRow}>
         <Pressable
@@ -67,7 +80,7 @@ export default function StoreSettingsScreen() {
             }
           >
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Store Name</Text>
+              <Text style={styles.rowTitle}>{t.storeName}</Text>
               <Text style={styles.rowValue}>{settings.storeName}</Text>
             </View>
             <Text style={styles.chevron}>›</Text>
@@ -79,18 +92,20 @@ export default function StoreSettingsScreen() {
                 style={styles.editInput}
                 value={draftName}
                 onChangeText={setDraftName}
-                placeholder="Store Name"
+                placeholder={t.storeName}
               />
               <Pressable
                 style={styles.saveMiniBtn}
                 onPress={() => {
                   if (draftName.trim()) {
                     updateSettings({ storeName: draftName.trim() });
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                    showToast(`✓ Na-save ang pangalan: "${draftName.trim()}"`, 'success');
                   }
                   setEditingField('NONE');
                 }}
               >
-                <Text style={styles.saveMiniText}>Save</Text>
+                <Text style={styles.saveMiniText}>{t.save}</Text>
               </Pressable>
             </View>
           ) : null}
@@ -98,8 +113,8 @@ export default function StoreSettingsScreen() {
           {/* Store Logo */}
           <View style={[styles.settingRow, styles.rowBorder]}>
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Store Logo</Text>
-              <Text style={styles.rowValue}>Owner Storefront Avatar</Text>
+              <Text style={styles.rowTitle}>{t.storeLogo}</Text>
+              <Text style={styles.rowValue}>{t.storeLogoSub}</Text>
             </View>
             <View style={styles.logoRight}>
               <View style={styles.miniStoreAvatar}>
@@ -117,7 +132,7 @@ export default function StoreSettingsScreen() {
             }
           >
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Address</Text>
+              <Text style={styles.rowTitle}>{t.storeAddress}</Text>
               <Text style={styles.rowValue}>{settings.address}</Text>
             </View>
             <Text style={styles.chevron}>›</Text>
@@ -129,18 +144,20 @@ export default function StoreSettingsScreen() {
                 style={styles.editInput}
                 value={draftAddress}
                 onChangeText={setDraftAddress}
-                placeholder="Store Address"
+                placeholder={t.storeAddress}
               />
               <Pressable
                 style={styles.saveMiniBtn}
                 onPress={() => {
                   if (draftAddress.trim()) {
                     updateSettings({ address: draftAddress.trim() });
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                    showToast('✓ Na-save ang address ng tindahan', 'success');
                   }
                   setEditingField('NONE');
                 }}
               >
-                <Text style={styles.saveMiniText}>Save</Text>
+                <Text style={styles.saveMiniText}>{t.save}</Text>
               </Pressable>
             </View>
           ) : null}
@@ -154,8 +171,8 @@ export default function StoreSettingsScreen() {
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>{t.language}</Text>
               <Text style={styles.rowValue}>
-                {settings.language === 'Taglish'
-                  ? '🇵🇭 Taglish / Filipino (Aktibo)'
+                {settings.language === 'Taglish' || settings.language === 'Filipino'
+                  ? '🇵🇭 Filipino / Taglish (Aktibo)'
                   : '🇺🇸 English (Active)'}
               </Text>
             </View>
@@ -172,6 +189,7 @@ export default function StoreSettingsScreen() {
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                 updateSettings({ language: 'English' });
+                showToast(t.langChangedToast || '✓ Language switched to English');
               }}
             >
               <Text
@@ -180,52 +198,73 @@ export default function StoreSettingsScreen() {
                   settings.language === 'English' ? styles.langChipTextActive : null,
                 ]}
               >
-                English {settings.language === 'English' ? '✓' : ''}
+                🇺🇸 English {settings.language === 'English' ? '✓' : ''}
               </Text>
             </Pressable>
 
             <Pressable
               style={[
                 styles.langChip,
-                settings.language === 'Taglish' ? styles.langChipActive : null,
+                settings.language === 'Filipino' || settings.language === 'Taglish'
+                  ? styles.langChipActive
+                  : null,
               ]}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                updateSettings({ language: 'Taglish' });
+                updateSettings({ language: 'Filipino' });
+                showToast(t.langChangedToast || '✓ Wika binago sa Filipino / Taglish');
               }}
             >
               <Text
                 style={[
                   styles.langChipText,
-                  settings.language === 'Taglish' ? styles.langChipTextActive : null,
+                  settings.language === 'Filipino' || settings.language === 'Taglish'
+                    ? styles.langChipTextActive
+                    : null,
                 ]}
               >
-                Taglish / Filipino {settings.language === 'Taglish' ? '✓' : ''}
+                🇵🇭 Filipino / Taglish {settings.language === 'Filipino' || settings.language === 'Taglish' ? '✓' : ''}
               </Text>
             </Pressable>
           </View>
+
+          {/* Manage Categories Shortcut Row */}
+          <Pressable
+            style={[styles.settingRow, styles.rowBorder]}
+            onPress={() => router.push('/inventory')}
+          >
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>{t.manageCategories}</Text>
+              <Text style={styles.rowValue}>
+                {settings.language === 'Taglish' || settings.language === 'Filipino'
+                  ? 'Pamahalaan ang mga kategorya sa imbentaryo'
+                  : 'Manage product categories in inventory'}
+              </Text>
+            </View>
+            <Text style={styles.chevron}>›</Text>
+          </Pressable>
 
           {/* Notifications Switch */}
           <View style={styles.settingRow}>
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>{t.notifications}</Text>
-              <Text style={styles.rowValue}>
-                {t.notificationsSub}
-              </Text>
+              <Text style={styles.rowValue}>{t.notificationsSub}</Text>
             </View>
             <Switch
               value={settings.notifications}
-              onValueChange={(val) => updateSettings({ notifications: val })}
+              onValueChange={(val) => {
+                updateSettings({ notifications: val });
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                showToast(val ? '✓ Naka-on ang notifications' : 'ℹ️ Naka-off ang notifications', 'info');
+              }}
               trackColor={{ false: '#D1D5DB', true: '#0D7A52' }}
               thumbColor="#FFFFFF"
             />
           </View>
         </View>
 
-        {/* Section 3: Seasonal Calendar Anchor & Owner Controls (Mitigates FC-03 & POS-09) */}
-        <Text style={styles.sectionHeader}>
-          Owner POS &amp; Seasonal Forecast Configuration
-        </Text>
+        {/* Section 3: Owner Controls & Seasonal Calendar */}
+        <Text style={styles.sectionHeader}>{t.ownerControlsSection}</Text>
         <View style={styles.cardGroup}>
           <Pressable
             style={[styles.settingRow, styles.rowBorder]}
@@ -237,12 +276,12 @@ export default function StoreSettingsScreen() {
                   ? 8
                   : 7;
               updateSettings({ schoolOpeningMonth: nextMonth });
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              showToast(`✓ Target School Opening: ${monthNames[nextMonth] ?? 'July'}`);
             }}
           >
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>
-                School Opening Calendar Anchor (FC-03)
-              </Text>
+              <Text style={styles.rowTitle}>{t.schoolOpening}</Text>
               <Text style={styles.rowValue}>
                 {monthNames[settings.schoolOpeningMonth] ?? 'July'}
               </Text>
@@ -252,10 +291,8 @@ export default function StoreSettingsScreen() {
 
           <View style={[styles.settingRow, styles.rowBorder]}>
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Pansariling Talaan sa Telepono (Offline Data)</Text>
-              <Text style={styles.rowValue}>
-                ✓ Aktibo at Ligtas (Nakatago sa iyong telepono nang offline)
-              </Text>
+              <Text style={styles.rowTitle}>{t.offlineStorage}</Text>
+              <Text style={styles.rowValue}>{t.offlineStorageSub}</Text>
             </View>
           </View>
 
@@ -263,16 +300,21 @@ export default function StoreSettingsScreen() {
             style={styles.settingRow}
             onPress={() => {
               Alert.alert(
-                'Burahin ang Lahat ng Talaan?',
-                'Sigurado ka bang nais mong burahin ang lahat ng paninda, benta, at talaan ng utang sa iyong tindahan? Hindi na ito maibabalik.',
+                t.clearDataConfirmTitle,
+                t.clearDataConfirmMessage,
                 [
-                  { text: 'Huwag', style: 'cancel' },
+                  { text: t.cancelBtn, style: 'cancel' },
                   {
-                    text: 'Oo, Burahin Lahat',
+                    text: t.clearDataConfirmBtn,
                     style: 'destructive',
                     onPress: () => {
                       clearAllDatabaseData();
                       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                      showToast('✓ Matagumpay na na-reset ang lahat ng data', 'warning');
+                      Alert.alert(
+                        '✓ Na-reset Na',
+                        'Matagumpay na na-reset ang lahat ng paninda at talaan sa tindahan sa panimulang ayos.'
+                      );
                     },
                   },
                 ]
@@ -280,10 +322,8 @@ export default function StoreSettingsScreen() {
             }}
           >
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Burahin ang Lahat ng Talaan sa Tindahan</Text>
-              <Text style={styles.rowValue}>
-                Burahin ang lahat ng paninda, benta, cart, at talaan ng utang
-              </Text>
+              <Text style={styles.rowTitle}>{t.clearDataTitle}</Text>
+              <Text style={styles.rowValue}>{t.clearDataSub}</Text>
             </View>
             <Text style={styles.chevron}>🗑️</Text>
           </Pressable>

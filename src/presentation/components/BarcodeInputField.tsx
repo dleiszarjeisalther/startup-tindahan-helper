@@ -19,6 +19,7 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
   const [scannerOpen, setScannerOpen] = useState(false);
 
   const handleBarcodeScanned = (scannedCode: string) => {
+    console.log(`[BarcodeInputField] Barcode scanned from camera viewfinder: "${scannedCode}"`);
     setScannerOpen(false);
     onChangeBarcode(scannedCode, 'SCAN');
     onDuplicateCheck?.(scannedCode);

@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { seasonalForecastEngine } from '@/infrastructure/container';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
+import { FloatingToast } from '@/presentation/components/FloatingToast';
 
 export default function SeasonalForecastScreen() {
   const router = useRouter();
@@ -54,6 +55,11 @@ export default function SeasonalForecastScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <FloatingToast
+        message={restockToast}
+        type="success"
+        onDismiss={() => setRestockToast(null)}
+      />
       <View style={styles.headerRow}>
         <Pressable
           style={styles.backBtn}

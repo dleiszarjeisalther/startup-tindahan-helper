@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useRouter, useIsFocused } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
@@ -19,6 +19,7 @@ import { getTranslations } from '@/presentation/localization/i18n';
 
 export default function PosScanProductScreen() {
   const router = useRouter();
+  const isFocused = useIsFocused();
   const { products, addToCart, cartSummary, settings, version } = useTindahanStore();
   const t = getTranslations(settings?.language);
   const [searchQuery, setSearchQuery] = useState('');
@@ -26,10 +27,15 @@ export default function PosScanProductScreen() {
   const [liveCameraActive, setLiveCameraActive] = useState(true);
   const [scanToast, setScanToast] = useState<string | null>(null);
   const [unknownBarcode, setUnknownBarcode] = useState<string | null>(null);
+  const [lastScannedProductId, setLastScannedProductId] = useState<string | null>(null);
 
   useEffect(() => {
     if (__DEV__) console.debug('[StoreRender]', { surface: 'Scan', version, cartCount: cartSummary.totalCount });
   }, [version, cartSummary.totalCount]);
+
+  useEffect(() => {
+    console.log(`[POS Screen] Screen focus changed: isFocused = ${isFocused}`);
+  }, [isFocused]);
 
   const triggerScanToast = (msg: string) => {
     setScanToast(msg);
@@ -43,24 +49,32 @@ export default function PosScanProductScreen() {
       addToCart(productId, 1);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       triggerScanToast(successMessage);
+      console.log(`[POS Screen] ✓ Added to cart: productId=${productId}`);
       return true;
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       triggerScanToast(error instanceof Error ? error.message : 'Could not update the cart. Try again.');
+      console.log('[POS Screen] Failed to add to cart:', error);
       return false;
     }
   };
 
   const handleBarcodeDetected = (rawCode: string) => {
     const clean = rawCode.replace(/\s+/g, '').trim().toUpperCase();
+    console.log(`[POS Screen] handleBarcodeDetected received rawCode="${rawCode}", normalized="${clean}"`);
     if (!clean) return;
+
     const matched = products.find(
       (p) =>
         p.barcode.toUpperCase() === clean ||
         p.barcode.toUpperCase().endsWith(clean)
     );
+
     if (matched) {
+      console.log(`[POS Screen] ✓ Product matched: "${matched.name}" (ID: ${matched.id}, Price: ₱${matched.defaultPricePhp}, Stock: ${matched.stockCount})`);
+      setLastScannedProductId(matched.id);
       if (matched.stockCount <= 0) {
+        console.log(`[POS Screen] ⚠️ Product "${matched.name}" is OUT OF STOCK.`);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
         triggerScanToast(`⚠️ ${matched.name} is Out of Stock!`);
         return;
@@ -69,29 +83,38 @@ export default function PosScanProductScreen() {
         setUnknownBarcode(null);
       }
     } else {
+      console.log(`[POS Screen] Barcode not in catalog: "${clean}" (Prompting quick register banner)`);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       setUnknownBarcode(clean);
     }
   };
 
-  const filteredProducts = products.filter((p) => {
-    if (onlyTingi && p.barcodeSource !== 'GENERATED_TINGI' && p.defaultPricePhp > 20) {
-      return false;
-    }
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.trim().toLowerCase();
-    return (
-      p.name.toLowerCase().includes(q) ||
-      p.barcode.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q)
-    );
-  });
+  const filteredProducts = products
+    .filter((p) => {
+      if (onlyTingi && p.barcodeSource !== 'GENERATED_TINGI' && p.defaultPricePhp > 20) {
+        return false;
+      }
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.trim().toLowerCase();
+      return (
+        p.name.toLowerCase().includes(q) ||
+        p.barcode.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q)
+      );
+    })
+    .sort((a, b) => {
+      if (lastScannedProductId) {
+        if (a.id === lastScannedProductId) return -1;
+        if (b.id === lastScannedProductId) return 1;
+      }
+      return 0;
+    });
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       {/* TOP HALF: Camera Barcode Viewfinder with Animated Sweeping Laser (OOP Shared Component) */}
       <BarcodeScannerViewfinder
-        isActive={liveCameraActive}
+        isActive={liveCameraActive && isFocused}
         onToggleActive={setLiveCameraActive}
         onBarcodeScanned={handleBarcodeDetected}
         toastMessage={scanToast}
@@ -226,6 +249,7 @@ export default function PosScanProductScreen() {
                     style={[
                       styles.productCard,
                       item.stockCount <= 0 ? styles.productCardDisabled : null,
+                      item.id === lastScannedProductId ? styles.productCardHighlighted : null,
                     ]}
                     onPress={() => {
                       if (item.stockCount <= 0) {
@@ -244,6 +268,11 @@ export default function PosScanProductScreen() {
                         imageUri={item.imageUri}
                         size="lg"
                       />
+                      {item.id === lastScannedProductId ? (
+                        <View style={styles.scannedBadge}>
+                          <Text style={styles.scannedBadgeText}>⚡ Scanned</Text>
+                        </View>
+                      ) : null}
                       {inCartQty > 0 ? (
                         <View style={styles.inCartBadge}>
                           <Text style={styles.inCartBadgeText}>×{inCartQty}</Text>
@@ -635,6 +664,26 @@ const styles = StyleSheet.create({
   },
   productCardDisabled: {
     opacity: 0.65,
+  },
+  productCardHighlighted: {
+    borderColor: '#0D7A52',
+    borderWidth: 2,
+    backgroundColor: '#F0FDF4',
+  },
+  scannedBadge: {
+    position: 'absolute',
+    top: 6,
+    left: 6,
+    backgroundColor: '#0D7A52',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+    zIndex: 10,
+  },
+  scannedBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '800',
   },
   cardThumbArea: {
     height: 82,

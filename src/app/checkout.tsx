@@ -6,6 +6,10 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Modal,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -17,20 +21,97 @@ import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { PaymentTenderType, SaleTransactionRecord } from '@/application/TindahanStoreService';
 import { Money } from '@/domain/value-objects/Money';
 import { getTranslations } from '@/presentation/localization/i18n';
+import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
+
+interface CartItemStepperProps {
+  productId: string;
+  quantity: number;
+  onUpdateQty: (qty: number) => void;
+  onDelta: (delta: number) => void;
+}
+
+function CartItemStepper({
+  quantity,
+  onUpdateQty,
+  onDelta,
+}: CartItemStepperProps) {
+  const [focusedText, setFocusedText] = useState<string | null>(null);
+
+  const displayValue = focusedText !== null ? focusedText : String(quantity);
+
+  const handleBlur = () => {
+    if (focusedText !== null) {
+      const parsed = parseInt(focusedText.replace(/[^0-9]/g, ''), 10);
+      if (!isNaN(parsed) && parsed >= 0) {
+        onUpdateQty(parsed);
+      }
+      setFocusedText(null);
+    }
+  };
+
+  const handleChangeText = (val: string) => {
+    setFocusedText(val);
+    const parsed = parseInt(val.replace(/[^0-9]/g, ''), 10);
+    if (!isNaN(parsed) && parsed >= 0) {
+      onUpdateQty(parsed);
+    }
+  };
+
+  return (
+    <View style={styles.stepperContainer}>
+      <Pressable
+        style={styles.stepperBtn}
+        hitSlop={8}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+          onDelta(-1);
+        }}
+      >
+        <Text style={styles.stepperSymbol}>−</Text>
+      </Pressable>
+
+      <TextInput
+        style={styles.stepperInput}
+        value={displayValue}
+        onChangeText={handleChangeText}
+        onFocus={() => setFocusedText(String(quantity))}
+        onBlur={handleBlur}
+        keyboardType="number-pad"
+        selectTextOnFocus
+        textAlign="center"
+        maxLength={4}
+      />
+
+      <Pressable
+        style={styles.stepperBtn}
+        hitSlop={8}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+          onDelta(1);
+        }}
+      >
+        <Text style={styles.stepperSymbol}>+</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 export default function CheckoutNewSaleScreen() {
   const router = useRouter();
   const {
     products,
     cartSummary,
+    heldCarts,
     utangCustomers,
     settings,
     addToCart,
+    setCartItemQuantity,
     undoRemoveCartItem,
     setDiscountPhp,
     clearCart,
     parkCurrentCart,
-    restoreParkedCart,
+    restoreHeldCart,
+    deleteHeldCart,
     completeSale,
     cartRevision,
     version,
@@ -51,8 +132,18 @@ export default function CheckoutNewSaleScreen() {
   const [selectedCustomer, setSelectedCustomer] = useState<string>('');
   const [chargeShortfallToUtang, setChargeShortfallToUtang] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [holdModalVisible, setHoldModalVisible] = useState(false);
+  const [holdCustomerName, setHoldCustomerName] = useState('');
+  const [heldCartsModalVisible, setHeldCartsModalVisible] = useState(false);
   const [completedTx, setCompletedTx] = useState<SaleTransactionRecord | null>(null);
   const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<ToastType>('success');
+
+  const showToast = useCallback((msg: string, type: ToastType = 'success') => {
+    setToastMsg(msg);
+    setToastType(type);
+  }, []);
 
   useEffect(() => {
     if (__DEV__) console.debug('[StoreRender]', { surface: 'Checkout', version, cartCount: cartSummary.totalCount });
@@ -179,6 +270,11 @@ export default function CheckoutNewSaleScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <FloatingToast
+        message={toastMsg}
+        type={toastType}
+        onDismiss={() => setToastMsg(null)}
+      />
       {/* Top Bar: <- New Sale  |  Trash Icon */}
       <View style={styles.headerRow}>
         <View style={styles.headerLeft}>
@@ -195,12 +291,18 @@ export default function CheckoutNewSaleScreen() {
         </View>
 
         <View style={styles.headerRight}>
-          {cartSummary.hasParkedCart ? (
+          {heldCarts && heldCarts.length > 0 ? (
             <Pressable
               style={styles.restoreParkedBtn}
-              onPress={() => runCartAction(restoreParkedCart)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                setHeldCartsModalVisible(true);
+              }}
             >
-              <Text style={styles.restoreParkedText}>Restore Held Cart</Text>
+              <Ionicons name="cube-outline" size={13} color="#92400E" style={{ marginRight: 3 }} />
+              <Text style={styles.restoreParkedText}>
+                {t.heldCartsTitle} ({heldCarts.length})
+              </Text>
             </Pressable>
           ) : null}
           <Pressable
@@ -227,11 +329,13 @@ export default function CheckoutNewSaleScreen() {
             <Pressable
               style={styles.parkBtn}
               onPress={() => {
-                runCartAction(parkCurrentCart, () => setShowClearConfirm(false));
+                setShowClearConfirm(false);
+                setHoldCustomerName('');
+                setHoldModalVisible(true);
               }}
             >
               <Ionicons name="pause-circle-outline" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
-              <Text style={styles.parkBtnText}>Hold / Park Cart</Text>
+              <Text style={styles.parkBtnText}>{t.holdCartBtn}</Text>
             </Pressable>
             <Pressable
               style={styles.clearConfirmBtn}
@@ -239,17 +343,19 @@ export default function CheckoutNewSaleScreen() {
                 runCartAction(clearCart, () => {
                   resetSaleForm();
                   setShowClearConfirm(false);
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                  showToast('✓ Na-clear ang mga paninda sa checkout.', 'warning');
                 });
               }}
             >
               <Ionicons name="trash-outline" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
-              <Text style={styles.clearConfirmText}>Clear Sale</Text>
+              <Text style={styles.clearConfirmText}>{t.clearCart}</Text>
             </Pressable>
             <Pressable
               style={styles.cancelConfirmBtn}
               onPress={() => setShowClearConfirm(false)}
             >
-              <Text style={styles.cancelConfirmText}>Cancel</Text>
+              <Text style={styles.cancelConfirmText}>{t.cancel}</Text>
             </Pressable>
           </View>
         </View>
@@ -320,36 +426,17 @@ export default function CheckoutNewSaleScreen() {
                       ) : null}
                     </View>
 
-                    {/* - 2 + Quantity Stepper */}
-                    <View style={styles.stepperContainer}>
-                      <Pressable
-                        style={styles.stepperBtn}
-                        hitSlop={8}
-                        onPress={() => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
-                            () => {}
-                          );
-                          runCartAction(() => addToCart(item.productId, -1));
-                        }}
-                      >
-                        <Text style={styles.stepperSymbol}>−</Text>
-                      </Pressable>
-
-                      <Text style={styles.stepperQty}>{item.quantity}</Text>
-
-                      <Pressable
-                        style={styles.stepperBtn}
-                        hitSlop={8}
-                        onPress={() => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
-                            () => {}
-                          );
-                          runCartAction(() => addToCart(item.productId, 1));
-                        }}
-                      >
-                        <Text style={styles.stepperSymbol}>+</Text>
-                      </Pressable>
-                    </View>
+                    {/* Editable Quantity Stepper */}
+                    <CartItemStepper
+                      productId={item.productId}
+                      quantity={item.quantity}
+                      onUpdateQty={(qty) =>
+                        runCartAction(() => setCartItemQuantity(item.productId, qty))
+                      }
+                      onDelta={(delta) =>
+                        runCartAction(() => addToCart(item.productId, delta))
+                      }
+                    />
                   </View>
 
                   <Text style={styles.itemLineTotal}>{item.formattedLineTotal}</Text>
@@ -726,6 +813,183 @@ export default function CheckoutNewSaleScreen() {
           </View>
         </View>
       ) : null}
+      {/* Hold Cart Modal with Customer Name / Note */}
+      <Modal
+        visible={holdModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setHoldModalVisible(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.holdModalCard}>
+            <View style={styles.holdModalHeader}>
+              <View style={styles.holdIconCircle}>
+                <Ionicons name="pause-circle" size={24} color="#D97706" />
+              </View>
+              <Text style={styles.holdModalTitle}>{t.holdCartModalTitle}</Text>
+              <Text style={styles.holdModalSubtitle}>
+                {cartSummary.totalCount} items • {cartSummary.formattedTotal}
+              </Text>
+            </View>
+
+            <View style={styles.holdModalBody}>
+              <Text style={styles.holdInputLabel}>{t.customerNameOrNote}</Text>
+              <TextInput
+                style={styles.holdTextInput}
+                value={holdCustomerName}
+                onChangeText={setHoldCustomerName}
+                placeholder="Hal. Aling Maria, Kuya Bert, Suki"
+                placeholderTextColor="#9CA3AF"
+                autoFocus
+                maxLength={40}
+              />
+            </View>
+
+            <View style={styles.holdModalBtns}>
+              <Pressable
+                style={styles.holdCancelBtn}
+                onPress={() => setHoldModalVisible(false)}
+              >
+                <Text style={styles.holdCancelText}>{t.cancel}</Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.holdSubmitBtn}
+                onPress={() => {
+                  const count = cartSummary.totalCount;
+                  const total = cartSummary.formattedTotal;
+                  const name = holdCustomerName.trim() || `Customer #${(heldCarts?.length || 0) + 1}`;
+                  runCartAction(() => parkCurrentCart(name), () => {
+                    setHoldModalVisible(false);
+                    setHoldCustomerName('');
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                    showToast(`✓ Naitabi ang cart para kay "${name}" (${count} paninda, ${total}).`, 'success');
+                  });
+                }}
+              >
+                <Text style={styles.holdSubmitText}>{t.confirmHoldBtn}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Held Carts Queue Modal */}
+      <Modal
+        visible={heldCartsModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setHeldCartsModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.heldQueueCard}>
+            <View style={styles.heldQueueHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Ionicons name="cube" size={20} color="#0D7A52" />
+                <Text style={styles.heldQueueTitle}>
+                  {t.heldCartsTitle} ({heldCarts?.length || 0})
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => setHeldCartsModalVisible(false)}
+                hitSlop={10}
+                style={styles.closeModalBtn}
+              >
+                <Ionicons name="close" size={20} color="#64748B" />
+              </Pressable>
+            </View>
+
+            <ScrollView style={styles.heldQueueList} showsVerticalScrollIndicator={false}>
+              {(!heldCarts || heldCarts.length === 0) ? (
+                <View style={styles.emptyHeldBox}>
+                  <Text style={styles.emptyHeldText}>{t.noHeldCarts}</Text>
+                </View>
+              ) : (
+                heldCarts.map((hc) => (
+                  <View key={hc.id} style={styles.heldCartItem}>
+                    <View style={styles.heldCartTop}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.heldCustomerName} numberOfLines={1}>
+                          👤 {hc.customerName}
+                        </Text>
+                        <Text style={styles.heldTimeLabel}>
+                          🕒 {hc.timeLabel} • {hc.totalCount} items
+                        </Text>
+                      </View>
+                      <Text style={styles.heldTotalText}>
+                        ₱{hc.totalPhp.toFixed(2)}
+                      </Text>
+                    </View>
+
+                    <Text style={styles.heldItemsSummary} numberOfLines={2}>
+                      {hc.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
+                    </Text>
+
+                    <View style={styles.heldActionsRow}>
+                      <Pressable
+                        style={styles.heldDeleteBtn}
+                        onPress={() => {
+                          Alert.alert(
+                            t.deleteHeldCartTitle,
+                            `Burahin ang nakatabing cart ni ${hc.customerName}?`,
+                            [
+                              { text: t.cancel, style: 'cancel' },
+                              {
+                                text: t.delete,
+                                style: 'destructive',
+                                onPress: () => {
+                                  deleteHeldCart(hc.id);
+                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                                  showToast('✓ Nabura ang nakatabing cart', 'warning');
+                                },
+                              },
+                            ]
+                          );
+                        }}
+                      >
+                        <Ionicons name="trash-outline" size={14} color="#DC2626" style={{ marginRight: 4 }} />
+                        <Text style={styles.heldDeleteText}>{t.delete}</Text>
+                      </Pressable>
+
+                      <Pressable
+                        style={styles.heldRestoreBtn}
+                        onPress={() => {
+                          const doRestore = () => {
+                            runCartAction(() => restoreHeldCart(hc.id), () => {
+                              setHeldCartsModalVisible(false);
+                              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                              showToast(`✓ Naibalik ang cart ni "${hc.customerName}" sa checkout`, 'success');
+                            });
+                          };
+
+                          if (cartSummary.totalCount > 0) {
+                            Alert.alert(
+                              'Palitan ang Cart?',
+                              `May laman ang kasalukuyang cart (${cartSummary.totalCount} paninda). Papalitan ito ng cart ni ${hc.customerName}. Nais mo bang magpatuloy?`,
+                              [
+                                { text: t.cancel, style: 'cancel' },
+                                { text: 'Palitan & I-restore', onPress: doRestore },
+                              ]
+                            );
+                          } else {
+                            doRestore();
+                          }
+                        }}
+                      >
+                        <Ionicons name="arrow-undo-outline" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
+                        <Text style={styles.heldRestoreText}>{t.restoreBtn}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                ))
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -1009,6 +1273,22 @@ const styles = StyleSheet.create({
     color: '#111827',
     minWidth: 16,
     textAlign: 'center',
+    fontVariant: ['tabular-nums'],
+  },
+  stepperInput: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#111827',
+    minWidth: 36,
+    maxWidth: 60,
+    height: 28,
+    textAlign: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 0,
     fontVariant: ['tabular-nums'],
   },
   itemLineTotal: {
@@ -1523,5 +1803,206 @@ const styles = StyleSheet.create({
     color: '#334155',
     fontWeight: '800',
     fontSize: 13,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  holdModalCard: {
+    width: '100%',
+    maxWidth: 380,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000000',
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  holdModalHeader: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  holdIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FEF3C7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  holdModalTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#1E293B',
+  },
+  holdModalSubtitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#64748B',
+    marginTop: 2,
+  },
+  holdModalBody: {
+    marginBottom: 20,
+  },
+  holdInputLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#334155',
+    marginBottom: 6,
+  },
+  holdTextInput: {
+    borderWidth: 1.5,
+    borderColor: '#CBD5E1',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: '#0F172A',
+    backgroundColor: '#F8FAFC',
+  },
+  holdModalBtns: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  holdCancelBtn: {
+    flex: 1,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  holdCancelText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  holdSubmitBtn: {
+    flex: 1.5,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#D97706',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  holdSubmitText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  heldQueueCard: {
+    width: '100%',
+    maxWidth: 420,
+    maxHeight: '80%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 18,
+    shadowColor: '#000000',
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  heldQueueHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  heldQueueTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  closeModalBtn: {
+    padding: 4,
+  },
+  heldQueueList: {
+    marginTop: 10,
+  },
+  emptyHeldBox: {
+    paddingVertical: 36,
+    alignItems: 'center',
+  },
+  emptyHeldText: {
+    fontSize: 14,
+    color: '#94A3B8',
+    fontWeight: '600',
+  },
+  heldCartItem: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  heldCartTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  heldCustomerName: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  heldTimeLabel: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
+    fontWeight: '500',
+  },
+  heldTotalText: {
+    fontSize: 15,
+    fontWeight: '900',
+    color: '#0D7A52',
+  },
+  heldItemsSummary: {
+    fontSize: 12,
+    color: '#475569',
+    marginTop: 6,
+    lineHeight: 16,
+  },
+  heldActionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 8,
+    marginTop: 10,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+  },
+  heldDeleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#FEE2E2',
+  },
+  heldDeleteText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#DC2626',
+  },
+  heldRestoreBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#0D7A52',
+  },
+  heldRestoreText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
 });

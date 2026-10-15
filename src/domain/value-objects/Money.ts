@@ -61,4 +61,8 @@ export class Money {
   public format(): string {
     return phpCurrencyFormatter.format(this.php);
   }
+
+  public formatPhp(): string {
+    return this.format();
+  }
 }

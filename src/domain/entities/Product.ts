@@ -146,6 +146,7 @@ export class Product {
     name?: string;
     category?: string;
     pricePhp?: number;
+    unitCostPhp?: number;
     baseStockCount?: number;
     lowStockThreshold?: number;
   }): Product {
@@ -153,6 +154,7 @@ export class Product {
     const nextCategory = updates.category !== undefined && updates.category.trim() ? updates.category.trim() : this._category;
     const nextStock = updates.baseStockCount !== undefined ? Math.max(0, updates.baseStockCount) : this._baseStockCount;
     const nextThreshold = updates.lowStockThreshold !== undefined ? Math.max(1, updates.lowStockThreshold) : this._ordinaryLowStockThreshold;
+    const nextCost = updates.unitCostPhp !== undefined && updates.unitCostPhp >= 0 ? updates.unitCostPhp : this._unitCostPhp;
     const nextOosDays = nextStock === 0 ? Math.max(1, this._outOfStockDays) : (this._baseStockCount === 0 && nextStock > 0 ? 0 : this._outOfStockDays);
     let nextTiers = this._sellingTiers;
     if (updates.pricePhp !== undefined && updates.pricePhp >= 0) {
@@ -172,7 +174,7 @@ export class Product {
       this._barcode,
       nextStock,
       nextThreshold,
-      this._unitCostPhp,
+      nextCost,
       nextTiers,
       this._quarantineStockCount,
       nextOosDays,
