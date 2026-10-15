@@ -108,7 +108,24 @@ export default function MenuProfileScreen() {
             <Text style={styles.menuChevron}>›</Text>
           </Pressable>
 
-          {/* 5. Suki Utang Ledger (Dedicated Screen) */}
+          {/* 5. Stock Movement History & Audit Log */}
+          <Pressable
+            style={styles.menuRow}
+            onPress={() => router.push('/history')}
+          >
+            <View style={styles.menuLeft}>
+              <Ionicons name="time-outline" size={22} color="#0D7A52" />
+              <Text style={styles.menuLabel}>{t.historyTitle}</Text>
+            </View>
+            <View style={styles.menuRightGroup}>
+              <View style={styles.forecastTag}>
+                <Text style={styles.forecastTagText}>Audit Log</Text>
+              </View>
+              <Text style={styles.menuChevron}>›</Text>
+            </View>
+          </Pressable>
+
+          {/* 6. Suki Utang Ledger (Dedicated Screen) */}
           <Pressable
             style={styles.menuRow}
             onPress={() => router.push('/utang')}

@@ -147,6 +147,20 @@ export interface StoreSettingsState {
 
 export const DEFAULT_CATEGORIES: string[] = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
 
+export interface StockMovementRecord {
+  id: string;
+  productId: string;
+  productName: string;
+  movementType: 'RESTOCK' | 'SALE' | 'HOME_USE' | 'DAMAGED_EXPIRED' | 'UNPACK_TINGI' | 'RETURN';
+  quantityDelta: number;
+  previousStock: number;
+  resultingStock: number;
+  unitCostPhp: number;
+  reason?: string;
+  referenceId?: string;
+  createdAt: string;
+}
+
 export interface StoreSnapshot {
   revision: number;
   cartRevision: number;
@@ -159,6 +173,7 @@ export interface StoreSnapshot {
   utangCustomers: UtangCustomerRecord[];
   categories: string[];
   cashDrawerAdjustments: CashDrawerAdjustmentRecord[];
+  stockMovements: StockMovementRecord[];
 }
 
 type Listener = () => void;
@@ -200,6 +215,7 @@ export class TindahanStoreService {
   }[] = [];
   private categories: string[] = DEFAULT_CATEGORIES;
   private cashDrawerAdjustments: CashDrawerAdjustmentRecord[] = [];
+  private stockMovements: StockMovementRecord[] = [];
 
   constructor(
     private readonly productRepo: IProductRepository,
@@ -492,6 +508,88 @@ export class TindahanStoreService {
       } catch {
         this.cashDrawerAdjustments = [];
       }
+
+      // 8. Hydrate Stock Movement Logs
+      try {
+        let movRows = db.getAllSync<{
+          id: string;
+          product_id: string;
+          product_name: string;
+          movement_type: string;
+          quantity_delta: number;
+          previous_stock: number;
+          resulting_stock: number;
+          unit_cost_php: number;
+          reason: string | null;
+          reference_id: string | null;
+          created_at: string;
+        }>('SELECT * FROM stock_movement_logs ORDER BY created_at DESC, rowid DESC LIMIT 300');
+
+        if (movRows.length === 0) {
+          try {
+            const pastSales = db.getAllSync<{
+              product_id: string;
+              product_name: string;
+              quantity: number;
+              cost_php: number;
+              tx_id: string;
+              created_at: string;
+            }>(`
+              SELECT si.product_id,
+                     COALESCE(p.name, si.product_id) as product_name,
+                     si.quantity,
+                     ROUND(si.cost_centavos / 100.0, 2) as cost_php,
+                     t.id as tx_id,
+                     t.created_at
+              FROM sale_items si
+              JOIN transactions t ON si.transaction_id = t.id
+              LEFT JOIN products p ON si.product_id = p.id
+              WHERE t.is_voided = 0
+              ORDER BY t.created_at DESC
+              LIMIT 150
+            `);
+
+            for (const sale of pastSales) {
+              const movId = `mov_backfill_${sale.tx_id}_${sale.product_id}`;
+              db.runSync(`
+                INSERT OR IGNORE INTO stock_movement_logs (
+                  id, product_id, product_name, movement_type, quantity_delta,
+                  previous_stock, resulting_stock, unit_cost_php, reason, reference_id, created_at
+                ) VALUES (?, ?, ?, 'SALE', ?, 0, 0, ?, ?, ?, ?)
+              `, [
+                movId,
+                sale.product_id,
+                sale.product_name,
+                -sale.quantity,
+                sale.cost_php || 0,
+                `POS Sale (${sale.tx_id})`,
+                sale.tx_id,
+                sale.created_at
+              ]);
+            }
+
+            movRows = db.getAllSync('SELECT * FROM stock_movement_logs ORDER BY created_at DESC, rowid DESC LIMIT 300');
+          } catch {
+            // Non-fatal if tables do not exist yet on fresh migration
+          }
+        }
+
+        this.stockMovements = movRows.map((r) => ({
+          id: r.id,
+          productId: r.product_id,
+          productName: r.product_name,
+          movementType: (r.movement_type as StockMovementRecord['movementType']) || 'SALE',
+          quantityDelta: r.quantity_delta,
+          previousStock: r.previous_stock,
+          resultingStock: r.resulting_stock,
+          unitCostPhp: r.unit_cost_php,
+          reason: r.reason ?? undefined,
+          referenceId: r.reference_id ?? undefined,
+          createdAt: r.created_at,
+        }));
+      } catch {
+        this.stockMovements = [];
+      }
     } catch (err) {
       console.warn('Error hydrating store state from SQLite:', err);
     }
@@ -635,7 +733,69 @@ export class TindahanStoreService {
       cashDrawerAdjustments: Object.freeze(
         this.cashDrawerAdjustments.map((adj) => ({ ...adj }))
       ) as CashDrawerAdjustmentRecord[],
+      stockMovements: Object.freeze(
+        this.stockMovements.map((mov) => ({ ...mov }))
+      ) as StockMovementRecord[],
     });
+  }
+
+  public recordStockMovement(params: {
+    productId: string;
+    productName: string;
+    movementType: StockMovementRecord['movementType'];
+    quantityDelta: number;
+    previousStock: number;
+    resultingStock: number;
+    unitCostPhp?: number;
+    reason?: string;
+    referenceId?: string;
+  }): void {
+    const db = SqliteDatabase.getInstance().rawDb;
+    const nowIso = new Date().toISOString();
+    const id = `mov_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+    const record: StockMovementRecord = {
+      id,
+      productId: params.productId,
+      productName: params.productName,
+      movementType: params.movementType,
+      quantityDelta: params.quantityDelta,
+      previousStock: params.previousStock,
+      resultingStock: params.resultingStock,
+      unitCostPhp: params.unitCostPhp ?? 0,
+      reason: params.reason,
+      referenceId: params.referenceId,
+      createdAt: nowIso,
+    };
+
+    this.stockMovements.unshift(record);
+    if (this.stockMovements.length > 500) {
+      this.stockMovements.pop();
+    }
+
+    if (db) {
+      try {
+        db.runSync(
+          `INSERT INTO stock_movement_logs (
+            id, product_id, product_name, movement_type, quantity_delta,
+            previous_stock, resulting_stock, unit_cost_php, reason, reference_id, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', 'localtime'))`,
+          [
+            record.id,
+            record.productId,
+            record.productName,
+            record.movementType,
+            record.quantityDelta,
+            record.previousStock,
+            record.resultingStock,
+            record.unitCostPhp,
+            record.reason ?? null,
+            record.referenceId ?? null,
+          ]
+        );
+      } catch (err) {
+        console.warn('Failed to insert stock movement log:', err);
+      }
+    }
   }
 
   public refreshFromSqlite(): void {
@@ -662,6 +822,7 @@ export class TindahanStoreService {
     this.utangCustomers = [];
     this.monthlyHistoryMap.clear();
     this.cashDrawerAdjustments = [];
+    this.stockMovements = [];
     const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
     if (repo.hydrateFromSqlite) {
       repo.hydrateFromSqlite();
@@ -699,6 +860,18 @@ export class TindahanStoreService {
       const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
       if (repo.hydrateFromSqlite) {
         repo.hydrateFromSqlite();
+      }
+      if (cmd.initialStock > 0) {
+        this.recordStockMovement({
+          productId: result.product.id,
+          productName: result.product.name,
+          movementType: 'RESTOCK',
+          quantityDelta: cmd.initialStock,
+          previousStock: 0,
+          resultingStock: cmd.initialStock,
+          unitCostPhp: result.product.unitCostPhp,
+          reason: 'Initial Stock Entry',
+        });
       }
       this.notify();
     }
@@ -1263,6 +1436,28 @@ export class TindahanStoreService {
               'UPDATE products SET base_stock_count = ROUND(base_stock_count - ?, 3) WHERE id = ?',
               [item.quantity, item.productId]
             );
+            const prevStock = row.base_stock_count;
+            const resStock = Number((prevStock - item.quantity).toFixed(3));
+            const movementId = `mov_${txTime}_${item.productId}`;
+            const lineRecord = saleItems.find((s) => s.productId === item.productId);
+            const lineCost = lineRecord?.unitCostPhp ?? 0;
+            db.runSync(
+              `INSERT INTO stock_movement_logs (
+                id, product_id, product_name, movement_type, quantity_delta,
+                previous_stock, resulting_stock, unit_cost_php, reason, reference_id, created_at
+              ) VALUES (?, ?, ?, 'SALE', ?, ?, ?, ?, ?, ?, datetime('now', 'localtime'))`,
+              [
+                movementId,
+                item.productId,
+                item.name,
+                -item.quantity,
+                prevStock,
+                resStock,
+                lineCost,
+                `POS Sale (${newTx.id})`,
+                newTx.id,
+              ]
+            );
             if (!options.isOneTimeBulkOrder) {
               const historyId = `msh_${item.productId}_${curYear}_${curMonth}`;
               db.runSync(
@@ -1312,6 +1507,17 @@ export class TindahanStoreService {
           const product = allProducts.find((candidate) => candidate.id === item.productId);
           if (!product) throw new Error(`${item.name} is no longer in inventory.`);
           await this.productRepo.save(product.adjustStock(-item.quantity));
+          this.recordStockMovement({
+            productId: item.productId,
+            productName: item.name,
+            movementType: 'SALE',
+            quantityDelta: -item.quantity,
+            previousStock: product.baseStockCount,
+            resultingStock: product.baseStockCount - item.quantity,
+            unitCostPhp: product.unitCostPhp,
+            reason: `POS Sale (${newTx.id})`,
+            referenceId: newTx.id,
+          });
           if (!options.isOneTimeBulkOrder) {
             this.recordMonthlySaleIncrement(item.productId, curYear, curMonth, item.quantity);
           }
@@ -1838,7 +2044,19 @@ export class TindahanStoreService {
       if (remainingQty > 0) {
         const prod = allProducts.find((p) => p.id === item.productId);
         if (prod) {
+          const prevStock = prod.baseStockCount;
           await this.productRepo.save(prod.adjustStock(remainingQty));
+          this.recordStockMovement({
+            productId: item.productId,
+            productName: item.name,
+            movementType: 'RETURN',
+            quantityDelta: remainingQty,
+            previousStock: prevStock,
+            resultingStock: prevStock + remainingQty,
+            unitCostPhp: item.unitCostPhp ?? 0,
+            reason: `Restocked from Voided Receipt (${tx.id})`,
+            referenceId: tx.id,
+          });
         }
         if (!tx.isOneTimeBulkOrder) {
           this.recordMonthlyReturnIncrement(
@@ -1920,8 +2138,20 @@ export class TindahanStoreService {
     const db = SqliteDatabase.getInstance().rawDb;
 
     if (prod) {
+      const prevStock = prod.baseStockCount;
       if (params.disposition === 'SELLABLE') {
         await this.productRepo.save(prod.adjustStock(qty));
+        this.recordStockMovement({
+          productId: prod.id,
+          productName: prod.name,
+          movementType: 'RETURN',
+          quantityDelta: qty,
+          previousStock: prevStock,
+          resultingStock: prevStock + qty,
+          unitCostPhp: prod.unitCostPhp,
+          reason: `Customer Return Restocked (${params.reason})`,
+          referenceId: params.txId,
+        });
       } else {
         await this.productRepo.save(prod.addQuarantineStock(qty, false));
         const shk = {
@@ -1938,6 +2168,17 @@ export class TindahanStoreService {
             [shk.id, shk.productName, shk.qty, shk.reason, shk.timestamp]
           );
         }
+        this.recordStockMovement({
+          productId: prod.id,
+          productName: prod.name,
+          movementType: 'DAMAGED_EXPIRED',
+          quantityDelta: -qty,
+          previousStock: prevStock,
+          resultingStock: Math.max(0, prevStock - qty),
+          unitCostPhp: prod.unitCostPhp,
+          reason: `Customer Return Damaged (${params.reason})`,
+          referenceId: params.txId,
+        });
       }
     }
 
@@ -1980,12 +2221,34 @@ export class TindahanStoreService {
     if (!prod) return;
 
     const qty = Math.max(1, params.quantity);
+    const prevStock = prod.baseStockCount;
     const db = SqliteDatabase.getInstance().rawDb;
 
     if (params.mode === 'RESTOCK') {
       await this.productRepo.save(prod.adjustStock(qty));
+      this.recordStockMovement({
+        productId: prod.id,
+        productName: prod.name,
+        movementType: 'RESTOCK',
+        quantityDelta: qty,
+        previousStock: prevStock,
+        resultingStock: prevStock + qty,
+        unitCostPhp: prod.unitCostPhp,
+        reason: 'Store Inventory Restock',
+      });
     } else if (params.mode === 'UNPACK_TINGI') {
-      await this.productRepo.save(prod.adjustStock(qty * 10));
+      const tingiQty = qty * 10;
+      await this.productRepo.save(prod.adjustStock(tingiQty));
+      this.recordStockMovement({
+        productId: prod.id,
+        productName: prod.name,
+        movementType: 'UNPACK_TINGI',
+        quantityDelta: tingiQty,
+        previousStock: prevStock,
+        resultingStock: prevStock + tingiQty,
+        unitCostPhp: prod.unitCostPhp,
+        reason: `Unpacked ${qty} pack(s) into tingi pieces`,
+      });
     } else if (params.mode === 'HOME_USE') {
       await this.productRepo.save(prod.adjustStock(-qty));
       const shk = {
@@ -2002,6 +2265,16 @@ export class TindahanStoreService {
           [shk.id, shk.productName, shk.qty, shk.reason, shk.timestamp]
         );
       }
+      this.recordStockMovement({
+        productId: prod.id,
+        productName: prod.name,
+        movementType: 'HOME_USE',
+        quantityDelta: -qty,
+        previousStock: prevStock,
+        resultingStock: Math.max(0, prevStock - qty),
+        unitCostPhp: prod.unitCostPhp,
+        reason: 'Owner / Household Consumption (Sariling Gamit)',
+      });
     } else if (params.mode === 'DAMAGED_EXPIRED') {
       await this.productRepo.save(prod.addQuarantineStock(qty, true));
       const shk = {
@@ -2018,6 +2291,16 @@ export class TindahanStoreService {
           [shk.id, shk.productName, shk.qty, shk.reason, shk.timestamp]
         );
       }
+      this.recordStockMovement({
+        productId: prod.id,
+        productName: prod.name,
+        movementType: 'DAMAGED_EXPIRED',
+        quantityDelta: -qty,
+        previousStock: prevStock,
+        resultingStock: Math.max(0, prevStock - qty),
+        unitCostPhp: prod.unitCostPhp,
+        reason: 'Shelf Expired / Damaged (Moved to Quarantine)',
+      });
     }
     this.notify();
   }

@@ -115,6 +115,20 @@ export class SqliteDatabase {
         timestamp TEXT NOT NULL
       );
 
+      CREATE TABLE IF NOT EXISTS stock_movement_logs (
+        id TEXT PRIMARY KEY NOT NULL,
+        product_id TEXT NOT NULL,
+        product_name TEXT NOT NULL,
+        movement_type TEXT NOT NULL,
+        quantity_delta REAL NOT NULL,
+        previous_stock REAL NOT NULL,
+        resulting_stock REAL NOT NULL,
+        unit_cost_php REAL NOT NULL DEFAULT 0,
+        reason TEXT,
+        reference_id TEXT,
+        created_at TEXT NOT NULL
+      );
+
       CREATE TABLE IF NOT EXISTS monthly_sales_history (
         id TEXT PRIMARY KEY NOT NULL,
         product_id TEXT NOT NULL,
@@ -187,6 +201,7 @@ export class SqliteDatabase {
       DELETE FROM utang_customers;
       DELETE FROM store_settings;
       DELETE FROM shrinkage_logs;
+      DELETE FROM stock_movement_logs;
       DELETE FROM monthly_sales_history;
       DELETE FROM cash_drawer_adjustments;
     `);

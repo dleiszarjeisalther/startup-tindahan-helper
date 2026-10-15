@@ -86,6 +86,8 @@ const addCashAdjustment = (
 ) => tindahanStoreService.addCashAdjustment(type, amountPhp, category, note);
 const deleteCashAdjustment = (adjustmentId: string) =>
   tindahanStoreService.deleteCashAdjustment(adjustmentId);
+const recordStockMovement = (params: Parameters<typeof tindahanStoreService.recordStockMovement>[0]) =>
+  tindahanStoreService.recordStockMovement(params);
 const clearAllDatabaseData = () => tindahanStoreService.clearAllDatabaseData();
 const notifyCatalogChanged = () => tindahanStoreService.notifyCatalogChanged();
 
@@ -111,6 +113,8 @@ export function useTindahanStore() {
     utangCustomers: snapshot.utangCustomers,
     categories: snapshot.categories,
     cashDrawerAdjustments: snapshot.cashDrawerAdjustments,
+    stockMovements: snapshot.stockMovements,
+    recordStockMovement,
     refreshFromSqlite,
     getSalesSummary,
     addProductToDatabase,

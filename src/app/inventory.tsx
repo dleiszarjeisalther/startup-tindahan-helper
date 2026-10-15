@@ -829,6 +829,19 @@ export default function InventoryManagementScreen() {
         <View style={styles.headerRightActions}>
           <Pressable
             style={styles.manageCatHeaderBtn}
+            onPress={() => router.push('/history')}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Stock Movement History"
+          >
+            <Ionicons name="time-outline" size={15} color="#0D7A52" />
+            <Text style={styles.manageCatHeaderText}>
+              History
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={styles.manageCatHeaderBtn}
             onPress={() => setShowCategoryModal(true)}
             hitSlop={8}
           >

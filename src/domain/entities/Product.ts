@@ -105,6 +105,10 @@ export class Product {
     return this._unitOfMeasure;
   }
 
+  public get unitCostPhp(): number {
+    return this._unitCostPhp;
+  }
+
   public calculateLineTotal(quantity: number): Money {
     if (this._unitOfMeasure === 'kg') {
       const pieceTier =

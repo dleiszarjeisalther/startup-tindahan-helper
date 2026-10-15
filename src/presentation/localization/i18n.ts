@@ -312,6 +312,28 @@ export interface Translations {
   chartTargetTag: string;
   unitsSoldLabel: (units: number) => string;
   perMonthLabel: string;
+  historyTitle: string;
+  historySub: string;
+  historySearchPlaceholder: string;
+  movementRestock: string;
+  movementSale: string;
+  movementHomeUse: string;
+  movementDamagedExpired: string;
+  movementUnpackTingi: string;
+  movementReturn: string;
+  kpiStockIn: string;
+  kpiStockOut: string;
+  kpiShrinkage: string;
+  shareReportBtn: string;
+  emptyHistoryTitle: string;
+  emptyHistorySub: string;
+  previousStockLabel: string;
+  resultingStockLabel: string;
+  dateFilterAll: string;
+  dateFilterToday: string;
+  dateFilterYesterday: string;
+  dateFilterThisWeek: string;
+  dateFilterThisMonth: string;
 }
 
 const en: Translations = {
@@ -613,6 +635,28 @@ const en: Translations = {
   chartTargetTag: '🔥 Target',
   unitsSoldLabel: (units: number) => `${units} units`,
   perMonthLabel: '/mo',
+  historyTitle: 'Stock Movement History',
+  historySub: 'Audit trail of restocks, sales, shrinkage & damages',
+  historySearchPlaceholder: 'Search product name or reference...',
+  movementRestock: 'Restock',
+  movementSale: 'Sale',
+  movementHomeUse: 'Home Use',
+  movementDamagedExpired: 'Damaged / Expired',
+  movementUnpackTingi: 'Tingi Unpack',
+  movementReturn: 'Return',
+  kpiStockIn: 'Total Stock In',
+  kpiStockOut: 'Total Sold',
+  kpiShrinkage: 'Total Shrinkage',
+  shareReportBtn: 'Share Report',
+  emptyHistoryTitle: 'No stock movements recorded yet',
+  emptyHistorySub: 'Stock movements will appear here when you restock, make sales, or record damages.',
+  previousStockLabel: 'Previous',
+  resultingStockLabel: 'Resulting',
+  dateFilterAll: 'All Time',
+  dateFilterToday: 'Today',
+  dateFilterYesterday: 'Yesterday',
+  dateFilterThisWeek: 'This Week',
+  dateFilterThisMonth: 'This Month',
 };
 
 const taglish: Translations = {
@@ -914,6 +958,28 @@ const taglish: Translations = {
   chartTargetTag: '🔥 Target',
   unitsSoldLabel: (units: number) => `${units} piraso`,
   perMonthLabel: '/buwan',
+  historyTitle: 'Kasaysayan ng Stock',
+  historySub: 'Talaan ng restock, benta, kupit, at sira sa tindahan',
+  historySearchPlaceholder: 'Maghanap ng produkto o talaan...',
+  movementRestock: 'Restock',
+  movementSale: 'Benta',
+  movementHomeUse: 'Sariling Gamit',
+  movementDamagedExpired: 'Sira / Paso',
+  movementUnpackTingi: 'Tingi Unpack',
+  movementReturn: 'Isinauli',
+  kpiStockIn: 'Pumasok na Stock',
+  kpiStockOut: 'Naibenta',
+  kpiShrinkage: 'Kupit at Sira',
+  shareReportBtn: 'I-share ang Tala',
+  emptyHistoryTitle: 'Wala pang naitalang paggalaw ng stock',
+  emptyHistorySub: 'Lilitaw dito ang mga tala kapag nag-restock, nagbenta, o nagtala ng sira.',
+  previousStockLabel: 'Dati',
+  resultingStockLabel: 'Kinalabasan',
+  dateFilterAll: 'Lahat',
+  dateFilterToday: 'Ngayong Araw',
+  dateFilterYesterday: 'Kahapon',
+  dateFilterThisWeek: 'Linggong Ito',
+  dateFilterThisMonth: 'Buwang Ito',
 };
 
 const dictionaries: Record<'English' | 'Taglish' | 'Filipino', Translations> = {
