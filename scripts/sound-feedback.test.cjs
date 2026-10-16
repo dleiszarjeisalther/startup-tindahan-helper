@@ -59,17 +59,17 @@ function setup({ modeFailure = false } = {}) {
   return { service: exports.soundFeedbackService, players, sources };
 }
 
-test('first scan plays directly without seeking', async () => {
+test('first scan plays directly without seeking and loop is disabled', async () => {
   const h = setup();
   await h.service.playBarcodeBeep();
   assert.equal(h.players.length, 1);
-  assert.equal(h.players[0].loop, false);
+  assert.equal(h.players[0].loop, false, 'Looping MUST be false to prevent infinite playback');
   assert.equal(h.players[0].volume, 1);
   assert.equal(h.players[0].seeks, 0, 'First scan should NOT seek since audio starts at 0');
-  assert.equal(h.players[0].plays, 1, 'First scan should play exactly once (audibly)');
+  assert.equal(h.players[0].plays, 1, 'First scan should play exactly once');
 });
 
-test('subsequent scans seek to 0 and replay', async () => {
+test('subsequent scans seek to 0 and replay exactly once per scan', async () => {
   const h = setup();
   await h.service.playBarcodeBeep(); // 1st scan
   assert.equal(h.players[0].plays, 1);
@@ -85,7 +85,7 @@ test('subsequent scans seek to 0 and replay', async () => {
   assert.equal(h.players[0].seeks, 2, '3rd scan should seek to 0 before replay');
 });
 
-test('auto-rewinds on didJustFinish', async () => {
+test('didJustFinish status update does not trigger infinite seek loop', async () => {
   const h = setup();
   await h.service.playBarcodeBeep();
   assert.equal(h.players[0].seeks, 0);
@@ -94,5 +94,6 @@ test('auto-rewinds on didJustFinish', async () => {
   for (const listener of h.players[0].listeners) {
     listener({ didJustFinish: true, isLoaded: true });
   }
-  assert.equal(h.players[0].seeks, 1, 'Should auto-rewind on didJustFinish');
+  // Seeks should NOT increase on status update (preventing infinite seek-and-play loop in ExoPlayer)
+  assert.equal(h.players[0].seeks, 0, 'Must NOT seek in didJustFinish listener to avoid infinite loop');
 });

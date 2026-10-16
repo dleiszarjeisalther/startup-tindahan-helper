@@ -4,19 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "id": "src_application_productonboardingservice_productonboardingservice",
-      "label": "ProductOnboardingService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "productonboardingservice",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L34"
-    },
-    {
       "id": "src_domain_entities_product_product",
       "label": "Product",
       "_callable": true,
@@ -30,212 +17,56 @@
       "source_location": "L52"
     },
     {
-      "id": "src_domain_entities_product_productdto",
-      "label": "ProductDTO",
+      "id": "src_application_tindahanstoreservice_storesettingsstate",
+      "label": "StoreSettingsState",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
-      "norm_label": "productdto",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L26"
+      "norm_label": "storesettingsstate",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L138"
     },
     {
-      "id": "src_domain_entities_product_productvisual",
-      "label": "ProductVisual",
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage",
+      "label": "IKeyValueStorage",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
-      "norm_label": "productvisual",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_domain_entities_product_sellingunittier",
-      "label": "SellingUnitTier",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "sellingunittier",
-      "source_file": "src/domain/entities/Product.ts",
+      "norm_label": "ikeyvaluestorage",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L5"
     },
     {
-      "id": "src_domain_entities_product_stockstatus",
-      "label": "StockStatus",
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
+      "label": "SynchronousKeyValueStorage",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
-      "norm_label": "stockstatus",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_domain_entities_product_unitofmeasure",
-      "label": "UnitOfMeasure",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "unitofmeasure",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_domain_repositories_iproductrepository_iproductrepository",
-      "label": "IProductRepository",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "iproductrepository",
-      "source_file": "src/domain/repositories/IProductRepository.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcode",
-      "label": "Barcode",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "barcode",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcodesource",
-      "label": "BarcodeSource",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "barcodesource",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository",
-      "label": "InMemoryProductRepository",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "inmemoryproductrepository",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "norm_label": "synchronouskeyvaluestorage",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L29"
     },
     {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_productrow",
-      "label": "ProductRow",
+      "id": "src_application_tindahanstoreservice_storesnapshot",
+      "label": "StoreSnapshot",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
+      "community": 2,
+      "community_name": "TindahanStoreService",
       "file_type": "code",
-      "norm_label": "productrow",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
-      "label": "ExternalProductCatalogResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "externalproductcatalogresult",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
-      "label": "IExternalCatalogLookupService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "iexternalcataloglookupservice",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
-      "label": "OpenFoodFactsApiClient",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L27"
-    },
-    {
-      "id": "src_presentation_components_productthumbnail_productthumbnailprops",
-      "label": "ProductThumbnailProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "productthumbnailprops",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_presentation_localization_i18n_supportedlanguage",
-      "label": "SupportedLanguage",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "supportedlanguage",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L2"
-    },
-    {
-      "id": "src_presentation_localization_i18n_translations",
-      "label": "Translations",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "translations",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L4"
+      "norm_label": "storesnapshot",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L164"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice",
@@ -251,6 +82,19 @@
       "source_location": "L181"
     },
     {
+      "id": "src_domain_entities_product_productdto",
+      "label": "ProductDTO",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": "productdto",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L26"
+    },
+    {
       "id": "src_domain_strategies_seasonalforecastengine_monthlysalesrecord",
       "label": "MonthlySalesRecord",
       "_callable": true,
@@ -262,19 +106,6 @@
       "norm_label": "monthlysalesrecord",
       "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
       "source_location": "L3"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage",
-      "label": "SynchronousKeyValueStorage",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": "synchronouskeyvaluestorage",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L29"
     },
     {
       "id": "src_components_external_link_props",
@@ -352,7 +183,7 @@
       "file_type": "code",
       "norm_label": "beepplayer",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L6"
+      "source_location": "L5"
     },
     {
       "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice",
@@ -365,7 +196,46 @@
       "file_type": "code",
       "norm_label": "soundfeedbackservice",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L17"
+      "source_location": "L12"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_cashadjustmenttype",
+      "label": "CashAdjustmentType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "cashadjustmenttype",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L59"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_daterangefilter",
+      "label": "DateRangeFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "daterangefilter",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L61"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_returndisposition",
+      "label": "ReturnDisposition",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "returndisposition",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L43"
     },
     {
       "id": "src_presentation_components_floatingtoast_floatingtoastprops",
@@ -431,6 +301,32 @@
       "norm_label": "filtertype",
       "source_file": "src/app/utang.tsx",
       "source_location": "L26"
+    },
+    {
+      "id": "src_presentation_localization_i18n_supportedlanguage",
+      "label": "SupportedLanguage",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "supportedlanguage",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L2"
+    },
+    {
+      "id": "src_presentation_localization_i18n_translations",
+      "label": "Translations",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "translations",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L4"
     },
     {
       "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy",
@@ -537,6 +433,32 @@
       "source_location": "L18"
     },
     {
+      "id": "src_domain_repositories_iproductrepository_iproductrepository",
+      "label": "IProductRepository",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": "iproductrepository",
+      "source_file": "src/domain/repositories/IProductRepository.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcode",
+      "label": "Barcode",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": "barcode",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L5"
+    },
+    {
       "id": "src_presentation_components_barcodeinputfield_barcodeinputfieldprops",
       "label": "BarcodeInputFieldProps",
       "_callable": true,
@@ -561,6 +483,162 @@
       "norm_label": "barcodescannerviewfinderprops",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L18"
+    },
+    {
+      "id": "src_application_productonboardingservice_productonboardingservice",
+      "label": "ProductOnboardingService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": "productonboardingservice",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L34"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
+      "label": "ExternalProductCatalogResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": "externalproductcatalogresult",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice",
+      "label": "IExternalCatalogLookupService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": "iexternalcataloglookupservice",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "label": "OpenFoodFactsApiClient",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L27"
+    },
+    {
+      "id": "src_domain_entities_product_productvisual",
+      "label": "ProductVisual",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "productvisual",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_domain_entities_product_sellingunittier",
+      "label": "SellingUnitTier",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "sellingunittier",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_domain_entities_product_stockstatus",
+      "label": "StockStatus",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "stockstatus",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_domain_entities_product_unitofmeasure",
+      "label": "UnitOfMeasure",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "unitofmeasure",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcodesource",
+      "label": "BarcodeSource",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "barcodesource",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_productrow",
+      "label": "ProductRow",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "productrow",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_presentation_components_productthumbnail_productthumbnailprops",
+      "label": "ProductThumbnailProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "productthumbnailprops",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository",
+      "label": "InMemoryProductRepository",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": "inmemoryproductrepository",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L29"
     },
     {
       "id": "src_domain_value_objects_money_money",
@@ -628,6 +706,71 @@
       "source_location": "L50"
     },
     {
+      "id": "src_app_inventory_confirmationstate",
+      "label": "ConfirmationState",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "ConfirmationModal.tsx",
+      "file_type": "code",
+      "norm_label": "confirmationstate",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L33"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal_confirmationmodaldetail",
+      "label": "ConfirmationModalDetail",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "ConfirmationModal.tsx",
+      "file_type": "code",
+      "norm_label": "confirmationmodaldetail",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L23"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal_confirmationmodalprops",
+      "label": "ConfirmationModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "ConfirmationModal.tsx",
+      "file_type": "code",
+      "norm_label": "confirmationmodalprops",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L29"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal_confirmationtype",
+      "label": "ConfirmationType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "ConfirmationModal.tsx",
+      "file_type": "code",
+      "norm_label": "confirmationtype",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal_typetheme",
+      "label": "TypeTheme",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "ConfirmationModal.tsx",
+      "file_type": "code",
+      "norm_label": "typetheme",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L43"
+    },
+    {
       "id": "src_application_productonboardingservice_addproductcommand",
       "label": "AddProductCommand",
       "_callable": true,
@@ -680,19 +823,6 @@
       "source_location": "L27"
     },
     {
-      "id": "src_application_tindahanstoreservice_cashadjustmenttype",
-      "label": "CashAdjustmentType",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "cashadjustmenttype",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L59"
-    },
-    {
       "id": "src_application_tindahanstoreservice_cashdraweradjustmentrecord",
       "label": "CashDrawerAdjustmentRecord",
       "_callable": true,
@@ -704,19 +834,6 @@
       "norm_label": "cashdraweradjustmentrecord",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L67"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_daterangefilter",
-      "label": "DateRangeFilter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "daterangefilter",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L61"
     },
     {
       "id": "src_application_tindahanstoreservice_daysalesbucket",
@@ -771,19 +888,6 @@
       "source_location": "L45"
     },
     {
-      "id": "src_application_tindahanstoreservice_returndisposition",
-      "label": "ReturnDisposition",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "returndisposition",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L43"
-    },
-    {
       "id": "src_application_tindahanstoreservice_returnresolution",
       "label": "ReturnResolution",
       "_callable": true,
@@ -836,32 +940,6 @@
       "source_location": "L150"
     },
     {
-      "id": "src_application_tindahanstoreservice_storesettingsstate",
-      "label": "StoreSettingsState",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "storesettingsstate",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L138"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_storesnapshot",
-      "label": "StoreSnapshot",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "storesnapshot",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L164"
-    },
-    {
       "id": "src_application_tindahanstoreservice_topsellingitemrecord",
       "label": "TopSellingItemRecord",
       "_callable": true,
@@ -901,67 +979,6 @@
       "source_location": "L5"
     },
     {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage",
-      "label": "IKeyValueStorage",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "ikeyvaluestorage",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_application_productonboardingservice_productonboardingservice_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L35"
-    },
-    {
-      "id": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
-      "label": ".lookupOnlineCatalog()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".lookuponlinecatalog()",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L40"
-    },
-    {
-      "id": "src_application_productonboardingservice_productonboardingservice_registernewproduct",
-      "label": ".registerNewProduct()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".registernewproduct()",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L50"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_tindahanstoreservice_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L220"
-    },
-    {
       "id": "src_domain_entities_product_product_addquarantinestock",
       "label": ".addQuarantineStock()",
       "_callable": true,
@@ -986,18 +1003,6 @@
       "source_location": "L148"
     },
     {
-      "id": "src_domain_entities_product_product_barcode",
-      "label": ".barcode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".barcode()",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L76"
-    },
-    {
       "id": "src_domain_entities_product_product_basestockcount",
       "label": ".baseStockCount()",
       "_callable": true,
@@ -1020,18 +1025,6 @@
       "norm_label": ".category()",
       "source_file": "src/domain/entities/Product.ts",
       "source_location": "L84"
-    },
-    {
-      "id": "src_domain_entities_product_product_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L53"
     },
     {
       "id": "src_domain_entities_product_product_getdefaultvisual",
@@ -1178,222 +1171,6 @@
       "source_location": "L212"
     },
     {
-      "id": "src_domain_repositories_iproductrepository_iproductrepository_findbybarcode",
-      "label": ".findByBarcode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".findbybarcode()",
-      "source_file": "src/domain/repositories/IProductRepository.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_domain_repositories_iproductrepository_iproductrepository_getnexttingisequence",
-      "label": ".getNextTingiSequence()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".getnexttingisequence()",
-      "source_file": "src/domain/repositories/IProductRepository.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcode_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcode_equals",
-      "label": ".equals()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".equals()",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L82"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcode_fromcamerascan",
-      "label": ".fromCameraScan()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".fromcamerascan()",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L25"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcode_frommanualinput",
-      "label": ".fromManualInput()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".frommanualinput()",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L37"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcode_frompersisted",
-      "label": ".fromPersisted()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".frompersisted()",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcode_generatestorecode",
-      "label": ".generateStoreCode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".generatestorecode()",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L53"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcode_isvalidgs1checksum",
-      "label": ".isValidGs1Checksum()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".isvalidgs1checksum()",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L62"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcode_value",
-      "label": ".value()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".value()",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L74"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L33"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_deletebyid",
-      "label": ".deleteById()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".deletebyid()",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L157"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_findbybarcode",
-      "label": ".findByBarcode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".findbybarcode()",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L143"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getall",
-      "label": ".getAll()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".getall()",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L139"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getinitialdtos",
-      "label": ".getInitialDTOs()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".getinitialdtos()",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L135"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getnexttingisequence",
-      "label": ".getNextTingiSequence()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".getnexttingisequence()",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L171"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_hydratefromsqlite",
-      "label": ".hydrateFromSqlite()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".hydratefromsqlite()",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L37"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_maprowtoproduct",
-      "label": ".mapRowToProduct()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".maprowtoproduct()",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L52"
-    },
-    {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_persistproducttosqlite",
       "label": ".persistProductToSqlite()",
       "_callable": true,
@@ -1418,66 +1195,6 @@
       "source_location": "L147"
     },
     {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_downloadimagelocally",
-      "label": ".downloadImageLocally()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".downloadimagelocally()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
-      "label": ".lookupBarcode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".lookupbarcode()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_downloadimagelocally",
-      "label": ".downloadImageLocally()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".downloadimagelocally()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L115"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
-      "label": ".inferCategory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".infercategory()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L137"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
-      "label": ".lookupBarcode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": ".lookupbarcode()",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L32"
-    },
-    {
       "id": "src_app_index_posscanproductscreen",
       "label": "PosScanProductScreen()",
       "_callable": true,
@@ -1499,7 +1216,7 @@
       "file_type": "code",
       "norm_label": "inventorymanagementscreen()",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L31"
+      "source_location": "L46"
     },
     {
       "id": "src_app_products_productlistscreen",
@@ -2054,18 +1771,6 @@
       "source_location": "L9"
     },
     {
-      "id": "scripts_sound_feedback_test_flush",
-      "label": "flush()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "sound-feedback.test.cjs",
-      "file_type": "code",
-      "norm_label": "flush()",
-      "source_file": "scripts/sound-feedback.test.cjs",
-      "source_location": "L12"
-    },
-    {
       "id": "scripts_sound_feedback_test_setup",
       "label": "setup()",
       "_callable": true,
@@ -2075,7 +1780,7 @@
       "file_type": "code",
       "norm_label": "setup()",
       "source_file": "scripts/sound-feedback.test.cjs",
-      "source_location": "L14"
+      "source_location": "L13"
     },
     {
       "id": "src_domain_value_objects_barcode_barcode_source",
@@ -2090,40 +1795,316 @@
       "source_location": "L78"
     },
     {
-      "id": "src_app_explore_getlocalizedmonths",
-      "label": "getLocalizedMonths()",
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_clearall",
+      "label": ".clearAll()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "explore.tsx",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
-      "norm_label": "getlocalizedmonths()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L23"
+      "norm_label": ".clearall()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L13"
     },
     {
-      "id": "src_app_explore_getphilippineseasoninfo",
-      "label": "getPhilippineSeasonInfo()",
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_delete",
+      "label": ".delete()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "explore.tsx",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
-      "norm_label": "getphilippineseasoninfo()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L56"
+      "norm_label": ".delete()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L12"
     },
     {
-      "id": "src_app_explore_seasonalforecastscreen",
-      "label": "SeasonalForecastScreen()",
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_getboolean",
+      "label": ".getBoolean()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "explore.tsx",
+      "community_name": "SynchronousKeyValueStorage",
       "file_type": "code",
-      "norm_label": "seasonalforecastscreen()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L97"
+      "norm_label": ".getboolean()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_getnumber",
+      "label": ".getNumber()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".getnumber()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_getstring",
+      "label": ".getString()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".getstring()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_loadcategories",
+      "label": ".loadCategories()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".loadcategories()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_loadsettings",
+      "label": ".loadSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".loadsettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savecategories",
+      "label": ".saveCategories()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".savecategories()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savesettings",
+      "label": ".saveSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".savesettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_setboolean",
+      "label": ".setBoolean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".setboolean()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_setnumber",
+      "label": ".setNumber()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".setnumber()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_setstring",
+      "label": ".setString()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".setstring()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_clearall",
+      "label": ".clearAll()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".clearall()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L156"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_delete",
+      "label": ".delete()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".delete()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L142"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
+      "label": ".ensureInitialized()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".ensureinitialized()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getboolean",
+      "label": ".getBoolean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".getboolean()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L119"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getnumber",
+      "label": ".getNumber()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".getnumber()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L96"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getstoredlanguage",
+      "label": ".getStoredLanguage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".getstoredlanguage()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L170"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getstring",
+      "label": ".getString()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".getstring()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L73"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadcategories",
+      "label": ".loadCategories()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".loadcategories()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L205"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadsettings",
+      "label": ".loadSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".loadsettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L175"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savecategories",
+      "label": ".saveCategories()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".savecategories()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L220"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savesettings",
+      "label": ".saveSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".savesettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L196"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setboolean",
+      "label": ".setBoolean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".setboolean()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L125"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setnumber",
+      "label": ".setNumber()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".setnumber()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L102"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setstring",
+      "label": ".setString()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "SynchronousKeyValueStorage",
+      "file_type": "code",
+      "norm_label": ".setstring()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L79"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addcashadjustment",
@@ -2210,6 +2191,18 @@
       "source_location": "L2214"
     },
     {
+      "id": "src_application_tindahanstoreservice_tindahanstoreservice_calculatecartitems",
+      "label": ".calculateCartItems()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".calculatecartitems()",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L1028"
+    },
+    {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_calculatecartsummary",
       "label": ".calculateCartSummary()",
       "_callable": true,
@@ -2256,6 +2249,18 @@
       "norm_label": ".completesale()",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L1297"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_tindahanstoreservice_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L220"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_countcart",
@@ -2882,6 +2887,18 @@
       "source_location": "L8"
     },
     {
+      "id": "src_domain_value_objects_money_money_fromphp",
+      "label": ".fromPhp()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".fromphp()",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L29"
+    },
+    {
       "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_getinstance",
       "label": ".getInstance()",
       "_callable": true,
@@ -2892,174 +2909,6 @@
       "norm_label": ".getinstance()",
       "source_file": "src/infrastructure/database/SqliteDatabase.ts",
       "source_location": "L21"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_clearall",
-      "label": ".clearAll()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".clearall()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L156"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_delete",
-      "label": ".delete()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".delete()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L142"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_ensureinitialized",
-      "label": ".ensureInitialized()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".ensureinitialized()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L33"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getboolean",
-      "label": ".getBoolean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".getboolean()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L119"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getnumber",
-      "label": ".getNumber()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".getnumber()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L96"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getstoredlanguage",
-      "label": ".getStoredLanguage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".getstoredlanguage()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L170"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_getstring",
-      "label": ".getString()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".getstring()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L73"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadcategories",
-      "label": ".loadCategories()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".loadcategories()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L205"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_loadsettings",
-      "label": ".loadSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".loadsettings()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L175"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savecategories",
-      "label": ".saveCategories()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".savecategories()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L220"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savesettings",
-      "label": ".saveSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".savesettings()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L196"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setboolean",
-      "label": ".setBoolean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".setboolean()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L125"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setnumber",
-      "label": ".setNumber()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".setnumber()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L102"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_setstring",
-      "label": ".setString()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".setstring()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L79"
     },
     {
       "id": "src_components_app_tabs_web_apptabs",
@@ -3191,7 +3040,7 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L23"
+      "source_location": "L17"
     },
     {
       "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_initplayer",
@@ -3203,19 +3052,7 @@
       "file_type": "code",
       "norm_label": ".initplayer()",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L31"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_loadbundledasset",
-      "label": ".loadBundledAsset()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "expo",
-      "file_type": "code",
-      "norm_label": ".loadbundledasset()",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L88"
+      "source_location": "L21"
     },
     {
       "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_playbarcodebeep",
@@ -3227,7 +3064,7 @@
       "file_type": "code",
       "norm_label": ".playbarcodebeep()",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L104"
+      "source_location": "L59"
     },
     {
       "id": "src_app_sales_saleshistoryscreen",
@@ -3254,6 +3091,42 @@
       "source_location": "L21"
     },
     {
+      "id": "src_app_explore_getlocalizedmonths",
+      "label": "getLocalizedMonths()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "getlocalizedmonths()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L23"
+    },
+    {
+      "id": "src_app_explore_getphilippineseasoninfo",
+      "label": "getPhilippineSeasonInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "getphilippineseasoninfo()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L56"
+    },
+    {
+      "id": "src_app_explore_seasonalforecastscreen",
+      "label": "SeasonalForecastScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "seasonalforecastscreen()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L97"
+    },
+    {
       "id": "src_app_history_stockmovementhistoryscreen",
       "label": "StockMovementHistoryScreen()",
       "_callable": true,
@@ -3264,18 +3137,6 @@
       "norm_label": "stockmovementhistoryscreen()",
       "source_file": "src/app/history.tsx",
       "source_location": "L35"
-    },
-    {
-      "id": "src_app_layout_tablayout",
-      "label": "TabLayout()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "getTranslations",
-      "file_type": "code",
-      "norm_label": "tablayout()",
-      "source_file": "src/app/_layout.tsx",
-      "source_location": "L16"
     },
     {
       "id": "src_app_more_menuprofilescreen",
@@ -3336,18 +3197,6 @@
       "norm_label": "gettranslations()",
       "source_file": "src/presentation/localization/i18n.ts",
       "source_location": "L991"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstoreprovider",
-      "label": "TindahanStoreProvider()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "getTranslations",
-      "file_type": "code",
-      "norm_label": "tindahanstoreprovider()",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L7"
     },
     {
       "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy_computeuncensorednetdemand",
@@ -3434,6 +3283,150 @@
       "source_location": "L337"
     },
     {
+      "id": "src_application_productonboardingservice_productonboardingservice_registernewproduct",
+      "label": ".registerNewProduct()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".registernewproduct()",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L50"
+    },
+    {
+      "id": "src_domain_entities_product_product_barcode",
+      "label": ".barcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".barcode()",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L76"
+    },
+    {
+      "id": "src_domain_entities_product_product_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "src_domain_repositories_iproductrepository_iproductrepository_findbybarcode",
+      "label": ".findByBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".findbybarcode()",
+      "source_file": "src/domain/repositories/IProductRepository.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_domain_repositories_iproductrepository_iproductrepository_getnexttingisequence",
+      "label": ".getNextTingiSequence()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".getnexttingisequence()",
+      "source_file": "src/domain/repositories/IProductRepository.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcode_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcode_equals",
+      "label": ".equals()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".equals()",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L82"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcode_fromcamerascan",
+      "label": ".fromCameraScan()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".fromcamerascan()",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L25"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcode_frommanualinput",
+      "label": ".fromManualInput()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".frommanualinput()",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcode_generatestorecode",
+      "label": ".generateStoreCode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".generatestorecode()",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcode_isvalidgs1checksum",
+      "label": ".isValidGs1Checksum()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".isvalidgs1checksum()",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L62"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcode_value",
+      "label": ".value()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": ".value()",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L74"
+    },
+    {
       "id": "src_presentation_components_barcodeinputfield_barcodeinputfield",
       "label": "BarcodeInputField()",
       "_callable": true,
@@ -3458,16 +3451,220 @@
       "source_location": "L55"
     },
     {
-      "id": "src_application_tindahanstoreservice_tindahanstoreservice_calculatecartitems",
-      "label": ".calculateCartItems()",
+      "id": "src_application_productonboardingservice_productonboardingservice_constructor",
+      "label": ".constructor()",
       "_callable": true,
       "_origin": "ast",
-      "community": 74,
-      "community_name": "Money",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
       "file_type": "code",
-      "norm_label": ".calculatecartitems()",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1028"
+      "norm_label": ".constructor()",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L35"
+    },
+    {
+      "id": "src_application_productonboardingservice_productonboardingservice_lookuponlinecatalog",
+      "label": ".lookupOnlineCatalog()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": ".lookuponlinecatalog()",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L40"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_downloadimagelocally",
+      "label": ".downloadImageLocally()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": ".downloadimagelocally()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
+      "label": ".lookupBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": ".lookupbarcode()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_downloadimagelocally",
+      "label": ".downloadImageLocally()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": ".downloadimagelocally()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L115"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
+      "label": ".inferCategory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": ".infercategory()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L137"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
+      "label": ".lookupBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": ".lookupbarcode()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_app_layout_tablayout",
+      "label": "TabLayout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "tablayout()",
+      "source_file": "src/app/_layout.tsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstoreprovider",
+      "label": "TindahanStoreProvider()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "tindahanstoreprovider()",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_domain_value_objects_barcode_barcode_frompersisted",
+      "label": ".fromPersisted()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": ".frompersisted()",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_deletebyid",
+      "label": ".deleteById()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": ".deletebyid()",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L157"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_findbybarcode",
+      "label": ".findByBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": ".findbybarcode()",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L143"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getall",
+      "label": ".getAll()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": ".getall()",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L139"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getinitialdtos",
+      "label": ".getInitialDTOs()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": ".getinitialdtos()",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L135"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getnexttingisequence",
+      "label": ".getNextTingiSequence()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": ".getnexttingisequence()",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L171"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_hydratefromsqlite",
+      "label": ".hydrateFromSqlite()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": ".hydratefromsqlite()",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_maprowtoproduct",
+      "label": ".mapRowToProduct()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "InMemoryProductRepository",
+      "file_type": "code",
+      "norm_label": ".maprowtoproduct()",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L52"
     },
     {
       "id": "src_domain_entities_product_product_calculatelinetotal",
@@ -3552,18 +3749,6 @@
       "norm_label": ".fromcentavos()",
       "source_file": "src/domain/value-objects/Money.ts",
       "source_location": "L21"
-    },
-    {
-      "id": "src_domain_value_objects_money_money_fromphp",
-      "label": ".fromPhp()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "Money",
-      "file_type": "code",
-      "norm_label": ".fromphp()",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L29"
     },
     {
       "id": "src_domain_value_objects_money_money_multiply",
@@ -3698,6 +3883,18 @@
       "source_location": "L7"
     },
     {
+      "id": "src_presentation_components_confirmationmodal_confirmationmodal",
+      "label": "ConfirmationModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "ConfirmationModal.tsx",
+      "file_type": "code",
+      "norm_label": "confirmationmodal()",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L95"
+    },
+    {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addproducttodatabase",
       "label": ".addProductToDatabase()",
       "_callable": true,
@@ -3770,150 +3967,6 @@
       "source_location": "L28"
     },
     {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_clearall",
-      "label": ".clearAll()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".clearall()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_delete",
-      "label": ".delete()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".delete()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_getboolean",
-      "label": ".getBoolean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".getboolean()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_getnumber",
-      "label": ".getNumber()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".getnumber()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_getstring",
-      "label": ".getString()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".getstring()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_loadcategories",
-      "label": ".loadCategories()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".loadcategories()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_loadsettings",
-      "label": ".loadSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".loadsettings()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savecategories",
-      "label": ".saveCategories()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".savecategories()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savesettings",
-      "label": ".saveSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".savesettings()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_setboolean",
-      "label": ".setBoolean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".setboolean()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_setnumber",
-      "label": ".setNumber()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".setnumber()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_setstring",
-      "label": ".setString()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".setstring()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L7"
-    },
-    {
       "id": "scripts_reset_project_movedirectories",
       "label": "moveDirectories()",
       "_callable": true,
@@ -3924,138 +3977,6 @@
       "norm_label": "movedirectories()",
       "source_file": "scripts/reset-project.js",
       "source_location": "L50"
-    },
-    {
-      "id": "src_application_productonboardingservice",
-      "label": "ProductOnboardingService.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "productonboardingservice.ts",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_domain_entities_product",
-      "label": "Product.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "product.ts",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_domain_repositories_iproductrepository",
-      "label": "IProductRepository.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "iproductrepository.ts",
-      "source_file": "src/domain/repositories/IProductRepository.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_domain_value_objects_barcode",
-      "label": "Barcode.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "barcode.ts",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_container",
-      "label": "container.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "container.ts",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_container_openfoodfactsapiclient",
-      "label": "openFoodFactsApiClient",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_infrastructure_container_productonboardingservice",
-      "label": "productOnboardingService",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "productonboardingservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_infrastructure_container_productrepository",
-      "label": "productRepository",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "productrepository",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_infrastructure_container_seasonalforecastengine",
-      "label": "seasonalForecastEngine",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "seasonalforecastengine",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_infrastructure_container_tindahanstoreservice",
-      "label": "tindahanStoreService",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "tindahanstoreservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository",
-      "label": "InMemoryProductRepository.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "inmemoryproductrepository.ts",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_services_openfoodfactsapiclient",
-      "label": "OpenFoodFactsApiClient.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Product",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient.ts",
-      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L1"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore",
@@ -4902,7 +4823,7 @@
       "file_type": "code",
       "norm_label": "h",
       "source_file": "scripts/sound-feedback.test.cjs",
-      "source_location": "L76"
+      "source_location": "L63"
     },
     {
       "id": "scripts_sound_feedback_test_readfilesync",
@@ -4958,72 +4879,6 @@
       "norm_label": "vm",
       "source_file": "scripts/sound-feedback.test.cjs",
       "source_location": "L5"
-    },
-    {
-      "id": "src_app_explore",
-      "label": "explore.tsx",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "explore.tsx",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_explore_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L629"
-    },
-    {
-      "id": "src_presentation_localization_i18n",
-      "label": "i18n.ts",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "i18n.ts",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_localization_i18n_dictionaries",
-      "label": "dictionaries",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "dictionaries",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L985"
-    },
-    {
-      "id": "src_presentation_localization_i18n_en",
-      "label": "en",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "en",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L339"
-    },
-    {
-      "id": "src_presentation_localization_i18n_taglish",
-      "label": "taglish",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "taglish",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L662"
     },
     {
       "id": "package_dependencies_expo_asset",
@@ -6342,7 +6197,7 @@
       "file_type": "code",
       "norm_label": "soundsource",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L5"
+      "source_location": "L4"
     },
     {
       "id": "ref_expo_asset",
@@ -7079,6 +6934,28 @@
       "source_location": "L162"
     },
     {
+      "id": "src_app_explore",
+      "label": "explore.tsx",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "explore.tsx",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_explore_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L629"
+    },
+    {
       "id": "src_app_history",
       "label": "history.tsx",
       "_origin": "ast",
@@ -7099,17 +6976,6 @@
       "norm_label": "styles",
       "source_file": "src/app/history.tsx",
       "source_location": "L547"
-    },
-    {
-      "id": "src_app_layout",
-      "label": "_layout.tsx",
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "getTranslations",
-      "file_type": "code",
-      "norm_label": "_layout.tsx",
-      "source_file": "src/app/_layout.tsx",
-      "source_location": "L1"
     },
     {
       "id": "src_app_more",
@@ -7178,26 +7044,48 @@
       "source_location": "L229"
     },
     {
-      "id": "src_presentation_providers_tindahanstoreprovider",
-      "label": "TindahanStoreProvider.tsx",
+      "id": "src_presentation_localization_i18n",
+      "label": "i18n.ts",
       "_origin": "ast",
       "community": 59,
       "community_name": "getTranslations",
       "file_type": "code",
-      "norm_label": "tindahanstoreprovider.tsx",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "norm_label": "i18n.ts",
+      "source_file": "src/presentation/localization/i18n.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstorecontext",
-      "label": "TindahanStoreContext",
+      "id": "src_presentation_localization_i18n_dictionaries",
+      "label": "dictionaries",
       "_origin": "ast",
       "community": 59,
       "community_name": "getTranslations",
       "file_type": "code",
-      "norm_label": "tindahanstorecontext",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L5"
+      "norm_label": "dictionaries",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L985"
+    },
+    {
+      "id": "src_presentation_localization_i18n_en",
+      "label": "en",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "en",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L339"
+    },
+    {
+      "id": "src_presentation_localization_i18n_taglish",
+      "label": "taglish",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "taglish",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L662"
     },
     {
       "id": "ref_expo_router",
@@ -7241,7 +7129,7 @@
       "file_type": "code",
       "norm_label": "stock_filters",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L29"
+      "source_location": "L44"
     },
     {
       "id": "src_app_inventory_styles",
@@ -7252,7 +7140,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2580"
+      "source_location": "L2645"
     },
     {
       "id": "src_presentation_components_barcodeinputfield",
@@ -7297,6 +7185,28 @@
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L284"
+    },
+    {
+      "id": "src_application_productonboardingservice",
+      "label": "ProductOnboardingService.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": "productonboardingservice.ts",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient",
+      "label": "OpenFoodFactsApiClient.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "ProductOnboardingService.ts",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient.ts",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L1"
     },
     {
       "id": "functional_requirements_md_functional_requirements_1245b7",
@@ -10107,6 +10017,105 @@
       "source_location": "L1"
     },
     {
+      "id": "src_app_layout",
+      "label": "_layout.tsx",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "_layout.tsx",
+      "source_file": "src/app/_layout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_container",
+      "label": "container.ts",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "container.ts",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_container_openfoodfactsapiclient",
+      "label": "openFoodFactsApiClient",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_infrastructure_container_productonboardingservice",
+      "label": "productOnboardingService",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "productonboardingservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_infrastructure_container_productrepository",
+      "label": "productRepository",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "productrepository",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_infrastructure_container_seasonalforecastengine",
+      "label": "seasonalForecastEngine",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "seasonalforecastengine",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_infrastructure_container_tindahanstoreservice",
+      "label": "tindahanStoreService",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "tindahanstoreservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider",
+      "label": "TindahanStoreProvider.tsx",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "tindahanstoreprovider.tsx",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstorecontext",
+      "label": "TindahanStoreContext",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "tindahanstorecontext",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L5"
+    },
+    {
       "id": "tsconfig",
       "label": "tsconfig.json",
       "_origin": "ast",
@@ -10248,6 +10257,50 @@
       "norm_label": "**/*.tsx",
       "source_file": "tsconfig.json",
       "source_location": "L14"
+    },
+    {
+      "id": "src_domain_entities_product",
+      "label": "Product.ts",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "product.ts",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_domain_repositories_iproductrepository",
+      "label": "IProductRepository.ts",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "iproductrepository.ts",
+      "source_file": "src/domain/repositories/IProductRepository.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_domain_value_objects_barcode",
+      "label": "Barcode.ts",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "barcode.ts",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository",
+      "label": "InMemoryProductRepository.ts",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": "inmemoryproductrepository.ts",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L1"
     },
     {
       "id": "requirements_traceability_matrix",
@@ -10894,6 +10947,39 @@
       "source_location": "L1"
     },
     {
+      "id": "src_presentation_components_confirmationmodal",
+      "label": "ConfirmationModal.tsx",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "ConfirmationModal.tsx",
+      "file_type": "code",
+      "norm_label": "confirmationmodal.tsx",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "ConfirmationModal.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L230"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal_themes",
+      "label": "THEMES",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "ConfirmationModal.tsx",
+      "file_type": "code",
+      "norm_label": "themes",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L50"
+    },
+    {
       "id": "src_application_tindahanstoreservice",
       "label": "TindahanStoreService.ts",
       "_origin": "ast",
@@ -11387,6 +11473,18 @@
     },
     {
       "source": "src_app_inventory_inventorymanagementscreen",
+      "target": "src_presentation_hooks_usetindahanstore_addcategory",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory_inventorymanagementscreen",
       "target": "src_presentation_hooks_usetindahanstore_updatecategory",
       "relation": "calls",
       "_origin": "ast",
@@ -11394,7 +11492,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L110",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -11406,7 +11504,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L136",
+      "source_location": "L163",
       "weight": 1.0
     },
     {
@@ -11418,7 +11516,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L1711",
+      "source_location": "L1748",
       "weight": 1.0
     },
     {
@@ -11430,7 +11528,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L1836",
+      "source_location": "L1887",
       "weight": 1.0
     },
     {
@@ -11442,31 +11540,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L341",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_inventory_inventorymanagementscreen",
-      "target": "src_presentation_hooks_usetindahanstore_usetindahanstore",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/app/inventory.tsx",
-      "source_location": "L48",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_inventory_inventorymanagementscreen",
-      "target": "src_presentation_localization_i18n_gettranslations",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/app/inventory.tsx",
-      "source_location": "L50",
+      "source_location": "L374",
       "weight": 1.0
     },
     {
@@ -11478,7 +11552,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L523",
+      "source_location": "L554",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory_inventorymanagementscreen",
+      "target": "src_presentation_hooks_usetindahanstore_usetindahanstore",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory_inventorymanagementscreen",
+      "target": "src_presentation_localization_i18n_gettranslations",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -11490,7 +11588,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L661",
+      "source_location": "L692",
       "weight": 1.0
     },
     {
@@ -11502,7 +11600,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L670",
+      "source_location": "L701",
       "weight": 1.0
     },
     {
@@ -11514,19 +11612,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L736",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_inventory_inventorymanagementscreen",
-      "target": "src_presentation_hooks_usetindahanstore_addcategory",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/app/inventory.tsx",
-      "source_location": "L87",
+      "source_location": "L767",
       "weight": 1.0
     },
     {
@@ -13638,19 +13724,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L25",
-      "weight": 1.0
-    },
-    {
-      "source": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_initplayer",
-      "target": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_loadbundledasset",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L45",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -13662,7 +13736,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L129",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -14023,6 +14097,30 @@
       "context": "call",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory_confirmationstate",
+      "target": "src_presentation_components_confirmationmodal_confirmationtype",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory_confirmationstate",
+      "target": "src_presentation_components_confirmationmodal_confirmationmodaldetail",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -15090,7 +15188,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -15102,7 +15200,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -15114,7 +15212,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L22",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -15126,7 +15224,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -15138,7 +15236,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -15150,7 +15248,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L25",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -15162,7 +15260,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L26",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -15174,12 +15272,48 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L27",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
       "source": "src_app_inventory",
       "target": "src_presentation_components_floatingtoast_toasttype",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory",
+      "target": "src_presentation_components_confirmationmodal_confirmationmodal",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory",
+      "target": "src_presentation_components_confirmationmodal_confirmationmodaldetail",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory",
+      "target": "src_presentation_components_confirmationmodal_confirmationtype",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16770,7 +16904,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -16782,7 +16916,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -16794,7 +16928,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -16806,7 +16940,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L22",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -16818,7 +16952,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -16830,7 +16964,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -16842,7 +16976,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L25",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -16854,12 +16988,24 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L26",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
       "source": "src_app_inventory",
       "target": "src_presentation_components_floatingtoast",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory",
+      "target": "src_presentation_components_confirmationmodal",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17819,18 +17965,6 @@
     },
     {
       "source": "src_infrastructure_services_soundfeedbackservice",
-      "target": "ref_expo_asset",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L1",
-      "weight": 1.0
-    },
-    {
-      "source": "src_infrastructure_services_soundfeedbackservice",
       "target": "ref_expo_audio",
       "relation": "imports_from",
       "_origin": "ast",
@@ -17838,7 +17972,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L2",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -23202,35 +23336,13 @@
     },
     {
       "source": "scripts_sound_feedback_test",
-      "target": "scripts_sound_feedback_test_flush",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/sound-feedback.test.cjs",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_sound_feedback_test",
-      "target": "scripts_sound_feedback_test_h",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/sound-feedback.test.cjs",
-      "source_location": "L127",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_sound_feedback_test",
       "target": "scripts_sound_feedback_test_setup",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/sound-feedback.test.cjs",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -23286,6 +23398,17 @@
       "confidence_score": 1.0,
       "source_file": "scripts/sound-feedback.test.cjs",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_sound_feedback_test",
+      "target": "scripts_sound_feedback_test_h",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/sound-feedback.test.cjs",
+      "source_location": "L89",
       "weight": 1.0
     },
     {
@@ -23450,7 +23573,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2580",
+      "source_location": "L2645",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory",
+      "target": "src_app_inventory_confirmationstate",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -23461,7 +23595,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L29",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -23472,7 +23606,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L31",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -24715,7 +24849,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L172",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -24726,7 +24860,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L5",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -24737,7 +24871,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -24837,6 +24971,83 @@
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_confirmationmodal",
+      "target": "src_presentation_components_confirmationmodal_confirmationtype",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_confirmationmodal",
+      "target": "src_presentation_components_confirmationmodal_confirmationmodaldetail",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_confirmationmodal",
+      "target": "src_presentation_components_confirmationmodal_styles",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L230",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_confirmationmodal",
+      "target": "src_presentation_components_confirmationmodal_confirmationmodalprops",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_confirmationmodal",
+      "target": "src_presentation_components_confirmationmodal_typetheme",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_confirmationmodal",
+      "target": "src_presentation_components_confirmationmodal_themes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_confirmationmodal",
+      "target": "src_presentation_components_confirmationmodal_confirmationmodal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -26931,24 +27142,13 @@
     },
     {
       "source": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice",
-      "target": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_playbarcodebeep",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L104",
-      "weight": 1.0
-    },
-    {
-      "source": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice",
       "target": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_constructor",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L23",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -26959,18 +27159,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L31",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
       "source": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice",
-      "target": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_loadbundledasset",
+      "target": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_playbarcodebeep",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L88",
+      "source_location": "L59",
       "weight": 1.0
     },
     {
@@ -27556,7 +27756,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "scripts/sound-feedback.test.cjs",
-      "source_location": "L31",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -28005,5 +28205,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "371f78874032a5765cfca139f42d88f8116f3c5d"
+  "built_at_commit": "d99d8340edb41a888685da38c0c6dc281999a631"
 }
