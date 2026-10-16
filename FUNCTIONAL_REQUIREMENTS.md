@@ -137,25 +137,46 @@ Every functional requirement in this specification is documented according to th
 
 ---
 
-### FR-POS-005: Cart Parking / Hold Basket (`Park / Hold Cart`)
-- **Traceability**: `SN-001`, `BG-001`
-- **Priority**: `SHOULD`
-- **Preconditions**: Active cart contains $\ge 1$ item; customer steps away to grab another item.
-- **Trigger**: Operator taps `Park Cart` icon in Screen 3.
+### FR-POS-005: Persistent Named Held Carts & Multi-Customer Queue ("Stock" Basket)
+- **Traceability**: `SN-001`, `SN-008`, `BG-001`, `BG-008`, `BR-RUL-007`
+- **Priority**: `MUST`
+- **Preconditions**: Active cart contains $\ge 1$ item; customer steps away or checkout is paused.
+- **Trigger**: Cashier taps `Park Cart` / `Hold Cart` icon in Checkout Screen (`Screen 3`).
+- **Inputs & Validation Rules**:
+  - `customerName`: String (optional, max 50 characters; automatically falls back to `Customer N` if left blank).
 - **Processing Logic**:
-  1. System serializes the current draft cart into SQLite table `held_carts` with a timestamp.
-  2. Cart is cleared from active session snapshot, resetting total to ₱0.00.
-  3. Header displays a notification badge: `1 Held Cart (₱54.00)`.
-  4. Operator can serve the next customer immediately.
-  5. Tapping `Resume Held Cart` restores items to the active session cart.
-- **Outputs & Feedback**: Haptic confirmation; top banner indicates held basket status.
+  1. Cashier taps the Hold/Park Cart icon in Screen 3.
+  2. Modal prompt dialog appears requesting a Customer Name / Identifier (e.g., "Ate Susan", "Tricycle Driver").
+  3. Upon confirmation, the system serializes active draft cart items and inserts a persistent row into SQLite table `held_carts` storing:
+     - `id`: Unique identifier (`held_timestamp`).
+     - `customer_name`: Assigned name or default fallback.
+     - `total_php`: Decimal cart subtotal.
+     - `total_count`: Total item units in cart.
+     - `items_json`: JSON-serialized snapshot of cart line items.
+     - `created_at_ms`: Epoch millisecond timestamp.
+     - `time_label`: Formatted human-readable timestamp (e.g., `2:45 PM`).
+  4. Active cart is cleared immediately, resetting checkout subtotal to ₱0.00 and updating the store snapshot.
+  5. Top checkout header updates to display a persistent queue pill: `📦 Held Carts (N)` with active badge count.
+  6. Tapping the queue pill opens the `Held Carts Queue` modal displaying all parked baskets sorted newest first.
+  7. For each held cart, the cashier can:
+     - Tap `Restore`: Restores items into the active cart session (if current cart is not empty, prompts cashier before replacing) and removes the record from SQLite atomically.
+     - Tap `Delete`: Displays confirmation alert and permanently deletes the held basket from SQLite.
+  8. Cold-Boot Hydration: On application launch or after process termination, all held carts are hydrated from `held_carts` in SQLite, ensuring zero cart loss across restarts or crashes.
+- **Outputs & Feedback**: Haptic confirmation (`ImpactFeedbackStyle.Medium`), queue badge counter update, success toast: `✓ Cart parked for [Customer Name]`.
 - **Acceptance Criteria**:
   ```gherkin
-  Scenario: Park active cart and serve next customer
-    Given a cart containing 2 items totaling ₱54.00
-    When the operator taps "Park Cart"
+  Scenario: Park active cart with customer name
+    Given a cart containing 3 items totaling ₱78.00
+    When the cashier taps "Park Cart" and enters name "Ate Susan"
     Then the active cart is cleared
-    And a "Held Cart" indicator is displayed with total "₱54.00"
+    And a held cart badge displays "📦 Held Carts (1)"
+    And the SQLite table "held_carts" stores "Ate Susan" with total ₱78.00
+
+  Scenario: Restore held cart from queue
+    Given 1 held cart for "Ate Susan" exists in SQLite
+    When the cashier taps "📦 Held Carts" and selects "Restore" for "Ate Susan"
+    Then the active cart is restored with 3 items totaling ₱78.00
+    And the held cart is removed from the queue and deleted from "held_carts"
   ```
 
 ---
@@ -296,6 +317,67 @@ Every functional requirement in this specification is documented according to th
 
 ---
 
+### FR-TND-006: 58mm/80mm ESC/POS Bluetooth Thermal Receipt Slip Printing
+- **Traceability**: `SN-013`, `BG-011`, `BR-RUL-012`
+- **Priority**: `SHOULD`
+- **Preconditions**: A sale is completed or a transaction is selected in Sales History; a standard Bluetooth thermal printer is paired with the mobile device.
+- **Trigger**: Operator taps the `Print Thermal Slip` button on the checkout completion modal or transaction detail card.
+- **Inputs & Validation Rules**:
+  - `paperWidth`: Selection (`58mm` [32 columns] or `80mm` [48 columns], defaults to `58mm`).
+  - Bluetooth device connection status: Active connection required; if disconnected, displays Bluetooth pairing helper modal.
+- **Processing Logic**:
+  1. Retrieve transaction details (store header, receipt number, date/time, line items, subtotal, discount, fees, total, tender method, amount received, change due, suki utang balance).
+  2. Encode data into standard ESC/POS command bytes:
+     - Initialize printer (`ESC @`).
+     - Center align store name (`ESC a 1`), bold text (`ESC E 1`).
+     - Left align line items (`ESC a 0`), standard monospace formatting with price right-aligned.
+     - Divider line (`--------------------------------`).
+     - Summary totals and tender details.
+     - Customer acknowledgment text and footer ("Salamat sa Pagbili! Balik po kayo!").
+     - Feed and cut commands (`ESC d 3`, `GS V 66 0`).
+  3. Send raw byte stream over Bluetooth SPP/BLE socket.
+  4. Privacy Guard: Ensure wholesale cost, COGS, and gross profit (*tubo*) are strictly excluded from the printed slip.
+- **Outputs & Feedback**: Haptic confirmation, printing status spinner, success toast: `✓ Receipt printed successfully`.
+- **Acceptance Criteria**:
+  ```gherkin
+  Scenario: Printing 58mm thermal receipt slip
+    Given a completed sale transaction totaling ₱145.00
+    When the operator taps "Print Thermal Slip"
+    Then the system formats the ESC/POS payload for 32 columns
+    And transmits the data to the paired Bluetooth printer within 3 seconds
+    And the printed slip contains no wholesale cost or profit margin data
+  ```
+
+---
+
+### FR-TND-007: Static QR Ph / GCash Digital Payment Verification & Convenience Surcharge
+- **Traceability**: `SN-014`, `BG-012`, `BR-RUL-013`
+- **Priority**: `MUST`
+- **Preconditions**: Checkout screen is active (`Screen 3`); cart has $\ge 1$ item.
+- **Trigger**: Operator selects `GCash` or `Maya / QR Ph` tender pill.
+- **Inputs & Validation Rules**:
+  - `referenceNumber`: String ($\ge 4$ alphanumeric characters, mandatory).
+  - `applyConvenienceFee`: Boolean toggle (configurable default in settings, e.g. +₱2.00 or +₱5.00).
+- **Processing Logic**:
+  1. Operator taps GCash tender pill.
+  2. An on-screen prompt sheet displays the store's configured QR Ph standee image so the customer can scan directly from the phone screen if the physical counter standee is unreadable.
+  3. If `applyConvenienceFee` is active, automatically append a `Cashless Convenience Surcharge` line item (+₱2.00 or +₱5.00) to the transaction total.
+  4. Cashier inspects customer's SMS/app confirmation and enters the last 4-to-6 digits of the reference number into the mandatory input field.
+  5. Upon tapping `Verify & Complete`, write transaction to `sales_transactions` with `payment_method = 'GCASH'` and `payment_reference = [ref]`.
+  6. Financial separation: Record inflow under digital receivables; physical cash drawer float remains unaffected.
+- **Outputs & Feedback**: Reference number recorded in transaction record; green cashless verified checkmark.
+- **Acceptance Criteria**:
+  ```gherkin
+  Scenario: Complete GCash sale with convenience surcharge
+    Given a cart with total ₱98.00 and convenience fee set to ₱2.00
+    When the operator selects "GCash", toggles convenience fee, and enters reference "8942"
+    Then the new total due updates to "₱100.00"
+    And the transaction completes with reference "8942" logged in SQLite
+    And the physical cash drawer float is not incremented
+  ```
+
+---
+
 ## Module 3: Catalog & Inventory Management (`FR-INV-xxx`)
 
 ### FR-INV-001: Product Onboarding with Barcode Verification & Auto-Generation
@@ -398,6 +480,40 @@ Every functional requirement in this specification is documented according to th
     Given a product has stock count 3 and threshold 5
     When rendered in the inventory list
     Then the badge displays amber fill, a warning triangle icon, and text "Low Stock (3)"
+  ```
+
+---
+
+### FR-INV-005: Expiration Date Tracking, Shelf-Life Monitoring & FEFO Clearance Alerts
+- **Traceability**: `SN-012`, `BG-010`, `BR-RUL-011`
+- **Priority**: `MUST`
+- **Preconditions**: Product catalog loaded in memory.
+- **Trigger**: Operator creates/edits a product, navigates inventory list, or scans a product at checkout.
+- **Inputs & Validation Rules**:
+  - `expiryDate`: Optional date string in ISO format (`YYYY-MM-DD`).
+- **Processing Logic**:
+  1. In `Add/Edit Product` form, provide an optional Expiration Date picker.
+  2. Calculate remaining shelf life: $\Delta\text{days} = \text{expiryDate} - \text{todayDate}$.
+  3. Assign dynamic visual status badge:
+     - `SAFE`: $\Delta\text{days} > 30$ (Green badge: `Exp: MM/DD/YYYY`).
+     - `NEAR EXPIRY`: $1 \le \Delta\text{days} \le 30$ (Amber badge: `⚠️ Expiring in X days`).
+     - `EXPIRED`: $\Delta\text{days} \le 0$ (Red badge: `⛔ EXPIRED`).
+  4. In Inventory screen, provide a quick filter tab: `Expiring Soon` (lists all items with $\le 30$ days remaining, sorted by earliest expiration date first - FEFO).
+  5. POS Checkout Guard: If an expired item ($\Delta\text{days} \le 0$) is scanned at the counter, display an immediate blocking warning modal: `⛔ Item Expired: [Product Name] expired [X] days ago. Do not sell.` Operator must explicitly override with Owner PIN or reject the scan.
+- **Outputs & Feedback**: Color-coded badges, FEFO sorted clearance list, audio-haptic double buzz on scanning expired SKU.
+- **Acceptance Criteria**:
+  ```gherkin
+  Scenario: Alerting near-expiry product in inventory
+    Given a bread product "Gardenia Loaf" has expiration date 5 days from today
+    When viewed in the inventory list
+    Then the badge displays amber fill with text "⚠️ Expiring in 5 days"
+    And the item appears in the "Expiring Soon" filter tab
+
+  Scenario: Scanning expired item at checkout
+    Given a milk product "Bear Brand Sachet" has expiration date 2 days ago
+    When the barcode is scanned in POS Screen
+    Then a blocking alert modal warns "⛔ Item Expired"
+    And the item is not added to the cart without owner confirmation
   ```
 
 ---
@@ -766,36 +882,60 @@ Every functional requirement in this specification is documented according to th
 
 ---
 
-## Module 8: Settings, Store Preferences & Local Backup (`FR-SET-xxx`)
+## Module 8: Settings, Store Preferences, Local Backup & Security Access Control (`FR-SET-xxx`, `FR-SEC-xxx`)
 
-### FR-SET-001: Store Identity & Operational Preferences
-- **Traceability**: `SN-007`, `BG-007`
+### FR-SET-001: Store Identity, Bilingual Localization & Operational Preferences
+- **Traceability**: `SN-007`, `SN-010`, `BG-001`, `BG-007`, `BR-RUL-009`
 - **Priority**: `MUST`
 - **Preconditions**: Store Settings Screen (`Screen 7`) is active.
-- **Trigger**: Operator modifies store details and taps Save.
+- **Trigger**: Operator modifies store details, toggles language, and taps Save.
 - **Inputs & Validation Rules**:
   - `storeName`: String ($2 \le \text{length} \le 60$).
   - `ownerTitle`: String (e.g., `Juan's Store • Owner`).
   - `address`: String.
-  - `language`: Selection from `['English', 'Filipino']`.
+  - `language`: Selection from `['English', 'Filipino', 'Taglish']` (stored as `'en'`, `'fil'`, `'taglish'`).
   - `notifications`: Boolean toggle.
-  - `schoolOpeningMonth`: Integer ($1 \le \text{month} \le 12$, default $7$ for July).
-  - `wholesaleBudgetPhp`: Decimal $> 0$.
 - **Processing Logic**:
-  1. Update `store_settings` table (row `id = 1`) in SQLite.
-  2. Trigger UI re-render with new language strings or store header.
+  1. Synchronously persist `language` selection to `KeyValueStorage` and SQLite `app_settings` / `store_settings`.
+  2. Cold-Boot Storage Precedence: On app launch, `KeyValueStorage` language preference takes precedence over SQLite defaults, preventing accidental revert to English.
+  3. Update `store_settings` table (row `id = 1`) in SQLite with store name, owner title, and address.
+  4. Trigger instant UI re-render across all screens, tabs, and modals without requiring manual app restart.
 - **Outputs & Feedback**: Success toast: `✓ Store settings updated`.
 - **Acceptance Criteria**:
   ```gherkin
-  Scenario: Updating language to Filipino
-    When the operator changes language to "Filipino"
-    Then UI navigation labels update to Filipino (e.g., "Talaan ng Benta")
+  Scenario: Updating language to Taglish with persistent storage precedence
+    When the operator changes language to "Taglish" in Settings
+    Then UI navigation labels update to Taglish (e.g., "Mga Benta", "Talaan")
+    And "taglish" is stored synchronously in KeyValueStorage
+    When the app is restarted from cold boot
+    Then the active language remains "Taglish"
   ```
 
 ---
 
-### FR-SET-002: Local SQLite Database Export & Import Backup
-- **Traceability**: `SN-007`, `BG-007`
+### FR-SET-002: Seasonal Calendar Configuration (School Opening & Wholesale Budget)
+- **Traceability**: `SN-006`, `BG-006`, `BR-RUL-006`
+- **Priority**: `MUST`
+- **Preconditions**: Store Settings Screen is active.
+- **Trigger**: Operator modifies seasonal parameters and taps Save.
+- **Inputs & Validation Rules**:
+  - `schoolOpeningMonth`: Integer ($1 \le \text{month} \le 12$, default $7$ for July).
+  - `wholesaleBudgetPhp`: Decimal $> 0$ (default ₱10,000.00).
+- **Processing Logic**:
+  1. Update `store_settings` table in SQLite with school opening month and capital budget.
+  2. Trigger recomputation of `SeasonalForecastEngine` targets for the configured peak window.
+- **Outputs & Feedback**: Confirmation toast: `✓ Seasonal configuration saved`.
+- **Acceptance Criteria**:
+  ```gherkin
+  Scenario: Setting school opening month to August
+    When the operator sets school opening month to "8" (August)
+    Then seasonal forecast restock cards shift peak demand window to August
+  ```
+
+---
+
+### FR-SET-003: Local SQLite Database Export & Import Backup
+- **Traceability**: `SN-007`, `BG-007`, `BR-RUL-001`
 - **Priority**: `MUST`
 - **Preconditions**: Store Settings Screen is active.
 - **Trigger**: Operator taps `Backup Database` or `Restore Database`.
@@ -815,3 +955,98 @@ Every functional requirement in this specification is documented according to th
     When the operator taps "Backup Database"
     Then a verified SQLite backup file is generated and native share dialog opens
   ```
+
+---
+
+### FR-SEC-001: Owner Master PIN & Relief Cashier Operational Access Control
+- **Traceability**: `SN-011`, `BG-009`, `BR-RUL-010`
+- **Priority**: `MUST`
+- **Preconditions**: Owner has configured a 4-digit Master PIN in Settings. System supports dual operational modes: "Owner Mode" and "Cashier Mode".
+- **Trigger**: App launch from cold boot, manual toggle to Cashier Mode, or an operator attempting any restricted action in Cashier Mode.
+- **Inputs & Validation Rules**:
+  - `masterPin`: 4-digit numeric string `^[0-9]{4}$` stored as a salted SHA-256 hash.
+  - `enteredPin`: 4-digit input submitted via the secure numeric keypad modal.
+  - `lockoutThreshold`: Maximum 5 consecutive failed attempts before triggering a 300-second (5-minute) progressive lockout timer.
+- **Processing Logic**:
+  1. **Default Mode & Privilege Boundary**:
+     - System defaults to "Cashier Mode" (or "Tindera Mode") on launch or upon tapping `Switch to Cashier`.
+     - *Permitted Cashier Operations*: Barcode camera scanning, quick manual keypad entry, cart management, hold/park cart retrieval, cash/GCash settlement, customer Utang ledger recording.
+     - *Restricted Operations (Guarded by Owner PIN)*:
+       - Modifying wholesale cost prices or retail selling prices (`Screen 4`, `Screen 7`).
+       - Logging inventory shrinkage or stock damage deductions (`Screen 4`).
+       - Viewing financial Gross Profit (*Tubo*) and markup percentages in Sales History (`Screen 5`).
+       - Viewing cumulative end-of-day Z-Reading gross profit summaries (`Screen 5`).
+       - SQLite database export, restore, or factory database reset (`Screen 7`).
+       - Modifying seasonal calendar configuration or store profile settings (`Screen 7`).
+  2. **PIN Challenge Modal & Verification**:
+     - When a restricted action or guarded screen is triggered, system displays a high-contrast PIN challenge modal: `"Ilagay ang Owner PIN / Enter Owner PIN"`.
+     - System hashes `enteredPin` with stored salt and compares against stored hash.
+     - **Success**: Grants temporary elevated privileges (Owner Mode) for the current session or switches the active mode; resets failed attempts counter to 0.
+     - **Failure**: Increments failed attempts counter. Displays warning: `"Maling PIN. [N] attempts remaining."`.
+     - **Lockout**: If failed attempts $\ge 5$, disables PIN input for 300 seconds, persists lockout timestamp in storage, and displays countdown timer: `"Too many failed attempts. Try again in [MM:SS]."`.
+  3. **Auto-Lock Timeout**:
+     - Elevated Owner Mode automatically reverts to Cashier Mode after 15 minutes of user inactivity or immediately when the user taps the quick-lock icon in the app header.
+- **Outputs & Feedback**: Role badge in top navigation bar (`Owner Mode` [Gold Pill] vs `Cashier Mode` [Blue Pill]), secure PIN numpad modal, and haptic feedback on success/failure.
+- **Acceptance Criteria**:
+  ```gherkin
+  Scenario: Relief cashier attempting to edit product price in Cashier Mode
+    Given the app is operating in "Cashier Mode"
+    When the relief cashier taps "Edit Price" on product "Safeguard White 60g"
+    Then the system displays the PIN challenge modal "Ilagay ang Owner PIN"
+    And access to the price edit form is blocked until the valid PIN is verified
+
+  Scenario: Unlocking Owner Mode with valid 4-digit Master PIN
+    Given the PIN challenge modal is active
+    When the owner enters the correct 4-digit PIN "8899"
+    Then the app switches to "Owner Mode"
+    And sensitive financial margins (Tubo) and inventory editing become accessible
+
+  Scenario: Enforcing brute-force lockout after 5 incorrect PIN attempts
+    Given the operator enters 5 consecutive incorrect PINs
+    Then the system locks PIN entry for 300 seconds
+    And displays "Too many failed attempts. Try again in 5 minutes."
+  ```
+
+---
+
+## Module 9: Sales History, Profit Intelligence & Z-Reading (`FR-SAL-xxx`)
+
+### FR-SAL-001: Sales History, Gross Profit (Tubo / Markup) Intelligence & Z-Reading
+- **Traceability**: `SN-009`, `BG-001`, `BG-002`, `BR-RUL-008`
+- **Priority**: `MUST`
+- **Preconditions**: Sales history view is active (`Screen 5` / `src/app/sales.tsx`).
+- **Trigger**: Operator opens Sales screen, selects date filter, taps transaction row, or toggles privacy mode.
+- **Inputs & Validation Rules**:
+  - `dateFilter`: Filter option (`Today`, `7 Days`, `30 Days`, `All Time`).
+  - `privacyMode`: Boolean toggle (stored in UI state, defaults to visible or saved preference).
+- **Processing Logic**:
+  1. Calculate Cost of Goods Sold (COGS) for each transaction using snapshot catalog wholesale costs:
+     $$C = \sum_{i=1}^{n} (q_i \times \text{cost}_i)$$
+  2. Compute gross profit (*Tubo*):
+     $$\text{Gross Profit} = \text{Subtotal} - \text{Discount} - \text{COGS}$$
+  3. Compute profit margin % and markup %:
+     $$\text{Margin \%} = \left(\frac{\text{Gross Profit}}{\text{Net Total}}\right) \times 100, \quad \text{Markup \%} = \left(\frac{\text{Gross Profit}}{\text{COGS}}\right) \times 100$$
+  4. Render transaction row card: display receipt number, timestamp, payment method badge, customer name (if credit), net sales amount, and green tubo pill:
+     `Tubo +₱XX.XX (YY% markup)`
+  5. Expanded financial breakdown: Tapping a transaction expands full line-item details with item names, unit selling prices, unit wholesale costs, and line-item gross profit.
+  6. Header summary metrics: Display total Gross Sales, Net Sales, Total Tubo (Gross Profit), and Average Markup Percentage across active date filter.
+  7. Owner Privacy Eye Toggle: Tapping the eye icon toggles privacy masking. When active, all gross profit values and markup percentages are obfuscated with `••••••` to shield sensitive wholesale margins from counter onlookers.
+  8. Z-Reading End-of-Day Report: Operator can generate and share a daily Z-Reading receipt summarizing total transactions, cash in drawer, credit extensions, returns/voids, and net profit.
+- **Outputs & Feedback**: Immediate financial display with `< 16ms` privacy mask toggling and high-contrast color badges.
+- **Acceptance Criteria**:
+  ```gherkin
+  Scenario: Viewing transaction tubo and markup percentage
+    Given a completed sale containing 2 "Piattos BBQ" (Price: ₱16.00, Cost: ₱12.00)
+    When the owner views the transaction in Sales History
+    Then the net sales displays "₱32.00"
+    And the COGS is calculated as "₱24.00"
+    And the tubo pill displays "+₱8.00 (33.3% markup)"
+
+  Scenario: Toggling owner privacy eye masking
+    Given the sales summary displays total tubo "₱520.00" with markup "32.5%"
+    When the owner taps the privacy eye icon
+    Then the tubo amount is masked as "••••••"
+    And the markup percentage is masked as "••••••"
+    And net sales "₱1,600.00" remains visible
+  ```
+

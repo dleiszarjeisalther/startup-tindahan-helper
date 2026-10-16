@@ -4,29 +4,30 @@
 |  | Startup Tindahan Helper (Juan's Store POS) |  |  |  |  |  |  |  |  |  |  |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  | Requirements Traceability Matrix (RTM) Dashboard — ISO/IEC/IEEE 29148 Standard |  |  |  |  |  |  |  |  |  |  |  |
-|  | 62
-TOTAL REQUIREMENTS |  | 28
-FUNCTIONAL REQS (FR) |  | 21
-NON-FUNCTIONAL (NFR) |  | 7
+|  | 71
+TOTAL REQUIREMENTS |  | 33
+FUNCTIONAL REQS (FR) |  | 24
+NON-FUNCTIONAL (NFR) |  | 14
 STAKEHOLDER NEEDS |  | 100%
 TRACEABILITY COVERAGE |  | 100% PASS
 VERIFIED STATUS |  |
 |  | Requirements Scope & Traceability Breakdown |  |  |  |  |  |  |  |  |  |  |  |
 |  | Module ID | Functional Area | Count | MoSCoW (M/S/C) | Target Screen | Verification Tool | Coverage |  |  |  |  |  |
-|  | MOD-1 | POS & Barcode Checkout | 5 | 5 Must / 0 Should | Screen 1 (POS Scan) | Jest, Camera Simulator, Haptics | 100% |  |  |  |  |  |
-|  | MOD-2 | Tender & Checkout Settlement | 5 | 5 Must / 0 Should | Screen 3 (Checkout) | Atomic SQLite Tests, ViewShot | 100% |  |  |  |  |  |
-|  | MOD-3 | Catalog & Inventory Management | 4 | 4 Must / 0 Should | Screen 4 (Inventory) & Screen 2 | Modulo-10 Checksum Tests | 100% |  |  |  |  |  |
+|  | MOD-1 | POS & Barcode Checkout | 5 | 5 Must / 0 Should | Screen 1 (POS Scan) & Screen 3 | Jest, Camera Simulator, Held Carts | 100% |  |  |  |  |  |
+|  | MOD-2 | Tender & Checkout Settlement | 7 | 6 Must / 1 Should | Screen 3 (Checkout) | Atomic SQLite Tests, ViewShot, Bluetooth ESC/POS | 100% |  |  |  |  |  |
+|  | MOD-3 | Catalog & Inventory Management | 5 | 5 Must / 0 Should | Screen 4 (Inventory) & Screen 2 | Modulo-10 Checksum Tests, FEFO Expiry | 100% |  |  |  |  |  |
 |  | MOD-4 | Exception Handling (Voids/Returns/Exchanges) | 4 | 4 Must / 0 Should | Screen 5 (Sales History) | Atomic Reversal & Quarantine Suite | 100% |  |  |  |  |  |
 |  | MOD-5 | Neighborhood Credit (Utang) Ledger | 4 | 3 Must / 1 Should | Screen 6 (Menu -> Utang) | Credit Limit Override & E-Receipt | 100% |  |  |  |  |  |
 |  | MOD-6 | Feature C: Seasonal Demand Forecast | 5 | 4 Must / 1 Should | Screen 6 (Reports) & Screen 4 | Multi-Year YoY Engine & Imputation | 100% |  |  |  |  |  |
 |  | MOD-7 | Cash Drawer Operations | 2 | 2 Must / 0 Should | Screen 6 (Menu -> Drawer) | Drawer Balance Inflow/Outflow Tests | 100% |  |  |  |  |  |
-|  | MOD-8 | Store Settings & Local Backup | 3 | 3 Must / 0 Should | Screen 7 (Settings) | PRAGMA Checkpoint & Share Sheet | 100% |  |  |  |  |  |
+|  | MOD-8 | Store Settings & Security Access Control | 4 | 4 Must / 0 Should | Screen 7 (Settings) & PIN Modal | PRAGMA Checkpoint, Salted SHA-256 PIN | 100% |  |  |  |  |  |
+|  | MOD-9 | Sales History & Profit Intelligence | 1 | 1 Must / 0 Should | Screen 5 (Sales History) | Snapshot COGS, Tubo Formula, Privacy Mask | 100% |  |  |  |  |  |
 |  | NFR-P | Performance Efficiency & Latency | 6 | 6 Must / 0 Should | Cross-Cutting | Android Systrace, adb start -W | 100% |  |  |  |  |  |
 |  | NFR-R | Reliability & Offline Autonomy | 4 | 4 Must / 0 Should | Local SQLite Architecture | Network Isolation & Crash Kill Tests | 100% |  |  |  |  |  |
-|  | NFR-U | Usability & Touch Ergonomics | 6 | 6 Must / 0 Should | All 7 Screens | WCAG Contrast, Accessibility Scanner | 100% |  |  |  |  |  |
-|  | NFR-S | Security, Privacy & Audit Integrity | 4 | 4 Must / 0 Should | Local Sandbox Storage | SQL Injection Fuzzing, PII Audit | 100% |  |  |  |  |  |
+|  | NFR-U | Usability & Touch Ergonomics | 6 | 6 Must / 0 Should | All 7 Screens | WCAG Contrast, Multi-Dialect i18n | 100% |  |  |  |  |  |
+|  | NFR-S | Security, Privacy & Audit Integrity | 6 | 6 Must / 0 Should | Local Sandbox Storage | SQL Injection Fuzzing, PIN Lockout, Privacy Masking | 100% |  |  |  |  |  |
 |  | NFR-A | Maintainability & Code Architecture | 3 | 3 Must / 0 Should | Domain / App / Infra | tsc --noEmit, Dependency Boundaries | 100% |  |  |  |  |  |
-|  | NFR-E | Environmental & Hardware Compatibility | 2 | 2 Must / 0 Should | Android 10+ 2GB Devices | Thermal Sleep & Low-RAM Profiling | 100% |  |  |  |  |  |
+|  | NFR-E | Environmental & Hardware Compatibility | 3 | 3 Must / 0 Should | Android 10+ 2GB Devices | Thermal Sleep, AMOLED True-Black Battery Saver | 100% |  |  |  |  |  |
 ## Sheet: Functional RTM
 | Req ID | Module | Functional Requirement Title | Stakeholder Need | Business Goal | Business Rule | Priority | Target Screen | Implementation Component / File Path | Database Target | Verification Method | Test Case ID | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -38,8 +39,8 @@ src/app/products.tsx | products | Unit Test (Suffix & FTS Matching) | TC-FR-POS-
 src/presentation/hooks/useTindahanStore.ts | cart_items | Unit & Gesture Test (Bundle Tiers) | TC-FR-POS-003 | VERIFIED |
 | FR-POS-004 | POS & Barcode Checkout | Scan-to-Create Shortcut for Unregistered SKUs | SN-001 | BG-001 | BR-RUL-001 | MUST | Screen 1 -> Screen 4 | src/app/index.tsx
 src/application/ProductOnboardingService.ts | products | Integration Test (Pre-filled Barcode Modal) | TC-FR-POS-004 | VERIFIED |
-| FR-POS-005 | POS & Barcode Checkout | Cart Parking / Hold Basket (Park/Hold Cart) | SN-001 | BG-001 | BR-RUL-001 | SHOULD | Screen 3 (Checkout) | src/app/checkout.tsx
-src/application/TindahanStoreService.ts | held_carts | Unit Test (Hold and Resume Basket) | TC-FR-POS-005 | VERIFIED |
+| FR-POS-005 | POS & Barcode Checkout | Persistent Named Held Carts & Multi-Customer Queue ("Stock" Basket) | SN-001, SN-008 | BG-001, BG-008 | BR-RUL-007 | MUST | Screen 3 (Checkout) | src/app/checkout.tsx
+src/application/TindahanStoreService.ts | held_carts | Unit Test (Queue Prompt, Multi-Cart Restore/Delete, Cold-Boot Hydration) | TC-FR-POS-005 | VERIFIED |
 | FR-TND-001 | Tender & Settlement | Multi-Tender Selection (Cash, GCash, Utang, Split) | SN-002, SN-005 | BG-002, BG-005 | BR-RUL-003, BR-RUL-004 | MUST | Screen 3 (Checkout) | src/app/checkout.tsx
 src/application/TindahanStoreService.ts | sales_transactions | E2E Settlement Flow Simulation | TC-FR-TND-001 | VERIFIED |
 | FR-TND-002 | Tender & Settlement | Manual Tendered Amount & Change Calculation Guard (Odd Bills) | SN-002 | BG-002 | BR-RUL-004 | MUST | Screen 3 (Checkout) | src/app/checkout.tsx
@@ -50,6 +51,10 @@ src/domain/value-objects/Money.ts | sales_transactions | Unit Test (Integer Cent
 src/application/TindahanStoreService.ts | sales_transactions, products, monthly_sales_history | Stress Test (Rapid Double-Tap Simulation) | TC-FR-TND-004 | VERIFIED |
 | FR-TND-005 | Tender & Settlement | Instant E-Receipt Image Generation & Native Sharing | SN-005 | BG-005 | BR-RUL-001 | MUST | Screen 3 & Screen 5 | src/app/checkout.tsx
 src/app/sales.tsx (react-native-view-shot) | Local Storage / Share Sheet | Native Share Intent Mock Verification | TC-FR-TND-005 | VERIFIED |
+| FR-TND-006 | Tender & Settlement | 58mm/80mm ESC/POS Bluetooth Thermal Receipt Slip Printing | SN-013 | BG-011 | BR-RUL-012 | SHOULD | Screen 3 & Screen 5 | src/app/checkout.tsx
+src/app/sales.tsx | sales_transactions | Bluetooth ESC/POS Payload Format & Print Latency Test | TC-FR-TND-006 | VERIFIED |
+| FR-TND-007 | Tender & Settlement | Static QR Ph / GCash Digital Payment Verification & Convenience Surcharge | SN-014 | BG-012 | BR-RUL-013 | MUST | Screen 3 (Checkout) | src/app/checkout.tsx
+src/domain/value-objects/Money.ts | sales_transactions | QR Ph Verification & Surcharge Ledger Calculation Test | TC-FR-TND-007 | VERIFIED |
 | FR-INV-001 | Catalog & Inventory | Product Onboarding with Barcode Verification & Auto-Generation | SN-001 | BG-001 | BR-RUL-001 | MUST | Screen 4 (Inventory) | src/app/inventory.tsx
 src/domain/value-objects/Barcode.ts | products | Unit Test (GS1 Checksum & Auto Tingi Code) | TC-FR-INV-001 | VERIFIED |
 | FR-INV-002 | Catalog & Inventory | Multi-Tier Selling Units & Fractional Tingi Conversion | SN-001 | BG-001 | BR-RUL-001 | MUST | Screen 4 & Screen 3 | src/domain/entities/Product.ts
@@ -58,6 +63,8 @@ src/application/TindahanStoreService.ts | products (selling_tiers_json) | Unit T
 src/application/TindahanStoreService.ts | products, shrinkage_logs | Integration Test (Audit Logs & Ledger Entries) | TC-FR-INV-003 | VERIFIED |
 | FR-INV-004 | Catalog & Inventory | Triple-Encoded Stock Status Badges & Dynamic Reorder Alerts | SN-006 | BG-006 | BR-RUL-001 | MUST | Screen 2 & Screen 4 | src/app/products.tsx
 src/app/inventory.tsx | products | Visual Regression & Accessibility Test | TC-FR-INV-004 | VERIFIED |
+| FR-INV-005 | Catalog & Inventory | Expiration Date Tracking, Shelf-Life Monitoring & FEFO Clearance Alerts | SN-012 | BG-010 | BR-RUL-011 | MUST | Screen 4 (Inventory) | src/app/inventory.tsx
+src/domain/entities/Product.ts | products (expiry_date) | FEFO Alert Triage & Checkout Expiration Blocker Test | TC-FR-INV-005 | VERIFIED |
 | FR-EXC-001 | Exception Handling | Same-Day Sales Void with Automatic Stock Reversal | SN-004 | BG-004 | BR-RUL-002, BR-RUL-006 | MUST | Screen 5 (Sales History) | src/app/sales.tsx
 src/application/TindahanStoreService.ts | sales_transactions, products, monthly_sales_history | Atomic Transaction Unit Test | TC-FR-EXC-001 | VERIFIED |
 | FR-EXC-002 | Exception Handling | Receipt-Linked Return Wizard with Quantity Capping | SN-004 | BG-004 | BR-RUL-002 | MUST | Screen 5 (Sales History) | src/app/sales.tsx
@@ -81,12 +88,16 @@ src/domain/strategies/SeasonalForecastEngine.ts | store_settings (wholesale_budg
 | FR-FOR-005 | Seasonal Forecast | 1-Tap Wholesale Shopping List Image Export | SN-006 | BG-006 | BR-RUL-006 | SHOULD | Screen 6 (Sales Reports) | src/app/more.tsx (react-native-view-shot) | Local Storage / Share Sheet | Native Share Intent Test | TC-FR-FOR-005 | VERIFIED |
 | FR-CSH-001 | Cash Drawer Operations | Cash Drawer Float & Paid-In / Paid-Out Logging | SN-002 | BG-002 | BR-RUL-004 | MUST | Screen 6 -> Drawer | src/application/TindahanStoreService.ts | cash_drawer_adjustments | Cash Ledger Balance Test | TC-FR-CSH-001 | VERIFIED |
 | FR-CSH-002 | Cash Drawer Operations | End-of-Day Cash Drawer Reconciliation & Variance Calculator | SN-002 | BG-002 | BR-RUL-004 | MUST | Screen 6 -> Drawer | src/application/TindahanStoreService.ts | cash_drawer_adjustments, sales_transactions | Daily Cash Balancing Calculation Test | TC-FR-CSH-002 | VERIFIED |
-| FR-SET-001 | Settings & Preferences | Store Identity & Operational Branding Preferences | SN-007 | BG-007 | BR-RUL-001 | MUST | Screen 7 (Settings) | src/app/settings.tsx
-src/application/TindahanStoreService.ts | store_settings | CRUD Persistence Unit Test | TC-FR-SET-001 | VERIFIED |
-| FR-SET-002 | Settings & Preferences | Seasonal Calendar Configuration (School Opening, Town Fiesta) | SN-006 | BG-006 | BR-RUL-006 | MUST | Screen 7 (Settings) | src/app/settings.tsx
+| FR-SET-001 | Settings & Preferences | Store Identity, Bilingual Localization & Operational Preferences | SN-007, SN-010 | BG-001, BG-007 | BR-RUL-009 | MUST | Screen 7 (Settings) | src/app/settings.tsx
+src/application/TindahanStoreService.ts | store_settings, KeyValueStorage | CRUD & Cold-Boot Storage Precedence Test | TC-FR-SET-001 | VERIFIED |
+| FR-SET-002 | Settings & Preferences | Seasonal Calendar Configuration (School Opening & Wholesale Budget) | SN-006 | BG-006 | BR-RUL-006 | MUST | Screen 7 (Settings) | src/app/settings.tsx
 src/domain/strategies/SeasonalForecastEngine.ts | store_settings | Calendar Trigger Integration Test | TC-FR-SET-002 | VERIFIED |
 | FR-SET-003 | Settings & Preferences | Local SQLite Database Export & Recovery Import | SN-007 | BG-007 | BR-RUL-001 | MUST | Screen 7 (Settings) | src/app/settings.tsx
 src/infrastructure/database/SqliteDatabase.ts | FileSystem (tindahan_pos_v3.db) | Database Backup/Restore Integrity Test | TC-FR-SET-003 | VERIFIED |
+| FR-SEC-001 | Settings & Security | Owner Master PIN & Relief Cashier Operational Access Control | SN-011 | BG-009 | BR-RUL-010 | MUST | Screen 7 & Global Modal | src/app/settings.tsx
+src/infrastructure/storage/KeyValueStorage.ts | store_settings, KeyValueStorage | Cashier Role Boundary & 5-Try Lockout Test | TC-FR-SEC-001 | VERIFIED |
+| FR-SAL-001 | Sales & Profit Intelligence | Sales History, Gross Profit (Tubo / Markup) Intelligence & Z-Reading | SN-009 | BG-001, BG-002 | BR-RUL-008 | MUST | Screen 5 (Sales History) | src/app/sales.tsx
+src/presentation/hooks/useTindahanStore.ts | sales_transactions, products | Unit & UI Test (Snapshot COGS, Tubo Formula, Privacy Eye Mask) | TC-FR-SAL-001 | VERIFIED |
 ## Sheet: Non-Functional RTM
 | NFR ID | ISO 25010 Quality Category | Quality Attribute & Specification | Target Metric Threshold | Architectural Implementation Strategy | Source Module / Component | Verification Protocol & Tool | Test Case ID | Compliance Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -110,16 +121,20 @@ src/app/index.tsx | Material 3 Ergonomic Heatmap Audit | TC-NFR-USE-002 | COMPLI
 | NFR-USE-004 | Usability | Triple-Encoding of Status Indicators | Color + Geometric Icon + Text | Compound badges: Emerald Circle, Amber Triangle, Red Cross | src/app/inventory.tsx
 src/app/products.tsx | Visual Regression Test Suite | TC-NFR-USE-004 | COMPLIANT |
 | NFR-USE-005 | Usability | Multi-Sensory Audio-Haptic Feedback | <= 50ms latency post-scan | expo-haptics notification feedback + synthesized 1200Hz sound | src/infrastructure/services/SoundFeedbackService.ts | Audio/Haptic Latency Oscilloscope | TC-NFR-USE-005 | COMPLIANT |
-| NFR-USE-006 | Usability | Bilingual Localization (English & Filipino) | 100% dictionary string parity | src/presentation/localization/i18n.ts with zero-restart toggle | src/presentation/localization/i18n.ts | Jest Translation Key Parity Linter | TC-NFR-USE-006 | COMPLIANT |
+| NFR-USE-006 | Usability | Multi-Dialect Localization (English, Filipino, Taglish) & Storage Precedence | 100% dictionary string parity across en/fil/taglish with storage precedence | src/presentation/localization/i18n.ts with KeyValueStorage precedence on cold boot | src/presentation/localization/i18n.ts
+src/infrastructure/storage/KeyValueStorage.ts | Jest Translation Key Parity & Hydration Test | TC-NFR-USE-006 | COMPLIANT |
 | NFR-SEC-001 | Security | Sandboxed Private Local Storage | Mode 0600 (Private Linux UID) | SQLite database stored in internal app data sandbox | src/infrastructure/database/SqliteDatabase.ts | Non-Rooted Android Sandbox Permission Audit | TC-NFR-SEC-001 | COMPLIANT |
 | NFR-SEC-002 | Security | Customer PII & Debt Privacy Protection | 0 bytes transmitted to cloud | Zero cloud exfiltration of names, phone numbers, or balances | Whole Application | Wireshark / Charles Proxy Packet Capture | TC-NFR-SEC-002 | COMPLIANT |
 | NFR-SEC-003 | Security | Barcode Injection & Parameterized SQL Queries | 100% parameterized SQL | Enforced db.runSync('... ?', [val]) without string concatenation | src/infrastructure/database/SqliteDatabase.ts | SQL Injection Fuzzing Suite | TC-NFR-SEC-003 | COMPLIANT |
 | NFR-SEC-004 | Security | Append-Only Immutable Audit Ledgers | Zero destructive deletion of sales | Void status updates; immutable shrinkage & cash logs | src/application/TindahanStoreService.ts | Database Schema Audit (No DELETE calls) | TC-NFR-SEC-004 | COMPLIANT |
+| NFR-SEC-005 | Security | Counter Profit Privacy Masking (Owner Tubo Obfuscation) | 100% profit/markup masked with •••••• in <= 16ms | Owner privacy toggle button obfuscating sensitive wholesale margins from counter onlookers | src/app/sales.tsx | Automated UI Privacy Mask Verification Suite | TC-NFR-SEC-005 | COMPLIANT |
+| NFR-SEC-006 | Security | Owner Master PIN Cryptographic Hash & Brute-Force Rate Limiting | Salted SHA-256 hash; 5-attempt / 300s lockout | Salted cryptographic PIN hash in sandboxed storage with persistent lockout timer | src/infrastructure/storage/KeyValueStorage.ts | Jest PIN Security Suite & Reboot Persistence Test | TC-NFR-SEC-006 | COMPLIANT |
 | NFR-ARC-001 | Maintainability | Clean Architecture & Layer Decoupling | Domain has 0 React/SQLite imports | Strict separation: Domain, Application, Infrastructure, Presentation | Whole Repository | ESLint Dependency Boundary Rules | TC-NFR-ARC-001 | COMPLIANT |
 | NFR-ARC-002 | Maintainability | Zero Floating-Point Penny Drift | Exact integer centavo math | Money Value Object; calculations in centavos (* 100) | src/domain/value-objects/Money.ts | 100,000 Randomized Split Calculations Test | TC-NFR-ARC-002 | COMPLIANT |
 | NFR-ARC-003 | Maintainability | 100% Strict TypeScript Compilation | 0 compilation errors / warnings | Strict compiler options (noImplicitAny, strictNullChecks) | Whole Repository | npx tsc --noEmit Command Verification | TC-NFR-ARC-003 | COMPLIANT |
 | NFR-ENV-001 | Environmental | Budget Mobile Hardware Compatibility | Android 10+ with 2GB RAM | Compiled with Hermes JavaScript Engine and lightweight asset pipeline | app.json, package.json | Redmi 9A Reference Hardware Deployment | TC-NFR-ENV-001 | COMPLIANT |
 | NFR-ENV-002 | Environmental | Tropical Ambient Thermal & Battery Management | Camera sleep at 45s; <= 8% drain/hr | Auto-sleep inactivity timer on camera viewfinder | src/presentation/components/BarcodeScannerViewfinder.tsx | Thermal Chamber & Battery Profiling (35°C) | TC-NFR-ENV-002 | COMPLIANT |
+| NFR-ENV-003 | Environmental | Extended Brownout Battery Saver & AMOLED True-Black Theme | >= 35% display power reduction on OLED/AMOLED | AMOLED true-black (#000000) theme tokens for extended battery runtime during 8-12h brownouts | src/constants/theme.ts | Android batterystats 2-Hour POS Profiling | TC-NFR-ENV-003 | COMPLIANT |
 ## Sheet: Stakeholder Needs Trace
 | Need ID | Stakeholder Persona | Elicited Need Description | Underlying Operational Pain Point | Business Goal | Mapped Functional Reqs | Mapped NFRs | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -130,3 +145,10 @@ src/app/products.tsx | Visual Regression Test Suite | TC-NFR-USE-004 | COMPLIANT
 | SN-005 | Suki Customer (Mang Bert) | Receive verifiable digital proof of purchases, payments, and outstanding debt balances. | Manual paper notebooks get smudged, lost, or disputed, straining neighborhood relations. | BG-005 | FR-TND-005, FR-UTG-001, FR-UTG-002, FR-UTG-003, FR-UTG-004 | NFR-SEC-002, NFR-USE-006 | FULFILLED |
 | SN-006 | Store Owner (Juan/Maria) | Know exactly how many school supplies or holiday items to buy 2-3 weeks before peak. | Static reorder points cause immediate stockouts during School Opening in July. | BG-006 | FR-FOR-001, FR-FOR-002, FR-FOR-003, FR-FOR-004, FR-FOR-005, FR-INV-004, FR-SET-002 | NFR-PERF-003, NFR-ARC-001 | FULFILLED |
 | SN-007 | Store Owner (Juan/Maria) | Operate completely uninterrupted during provincial power brownouts and cellular deadzones. | Cloud-only POS systems crash when mobile internet drops in concrete barangay homes. | BG-007 | FR-SET-001, FR-SET-003 | NFR-REL-001, NFR-REL-002, NFR-ENV-001 | FULFILLED |
+| SN-008 | Store Owner / Relief Cashier | Park/hold active customer baskets with customer names/notes ("Stock" Basket Queue) without losing cart items during counter interruptions or phone restarts. | Customers pause checkout to grab forgotten items ("sandali lang may nakalimutan ako"), blocking the line for next paying customers. | BG-008 | FR-POS-005 | NFR-REL-002, NFR-USE-001 | FULFILLED |
+| SN-009 | Store Owner | Monitor gross profit (tubo) and markup percentage in real time across transactions and daily periods, with immediate privacy masking from counter onlookers. | Store owners need visibility into whether sales meet margin targets, while shielding actual wholesale costs and profit margins from customers standing at counter. | BG-001, BG-002 | FR-SAL-001 | NFR-SEC-005, NFR-ARC-002 | FULFILLED |
+| SN-010 | Store Owner & Relief Cashier | Toggle and permanently persist the application language (English, Filipino, Taglish) across reboots and screen navigations. | Relief cashiers and older store owners prefer vernacular Tagalog/Taglish labels (Tindahan, Singilin, Tubo, Talaan) without reverting to English on restart. | BG-001, BG-007 | FR-SET-001 | NFR-USE-006 | FULFILLED |
+| SN-011 | Store Owner (Juan/Maria) | Entrust store operations to a family member or relief cashier (tindera) without risking price tampering, theft, or profit leaks. | Owners need temporary leave from counter; untrusted access leads to price alterations, shrinkage concealment, and exposed profit margins. | BG-009 | FR-SEC-001 | NFR-SEC-006 | FULFILLED |
+| SN-012 | Store Owner (Juan/Maria) | Track expiration dates for dairy, bread, and canned goods to avoid selling expired items and prevent unsellable spoilage loss. | Expired goods lead to direct capital loss, customer health risks, and community reputation loss if sold unintentionally. | BG-010 | FR-INV-005 | NFR-USE-004 | FULFILLED |
+| SN-013 | Suki Customer & Store Owner | Provide physical printed receipt slips via cheap Bluetooth thermal printers for customers who lack smartphones or request paper proof. | Elderly customers and market shoppers require physical paper slips; handwriting paper receipts slows counter lines. | BG-011 | FR-TND-006 | NFR-PERF-004, NFR-USE-001 | FULFILLED |
+| SN-014 | Store Owner & Suki Customer | Accept and verify cashless GCash/Maya QR Ph payments with reference number logging and optional convenience surcharge to protect cash flow. | Cashless payments without reference logging lead to screenshot scams and unverified transfers, while merchant cashout fees eat retail margins. | BG-012 | FR-TND-007 | NFR-ARC-002, NFR-SEC-004 | FULFILLED |

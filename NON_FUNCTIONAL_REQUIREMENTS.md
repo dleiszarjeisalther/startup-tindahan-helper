@@ -187,12 +187,13 @@ graph TD
 
 ---
 
-### NFR-USE-006: Bilingual Localization (English & Filipino/Tagalog)
-- **Description**: The entire user interface MUST support seamless, 1-tap switching between English and Filipino/Tagalog.
+### NFR-USE-006: Multi-Dialect Localization (English, Filipino, Taglish) & Storage Precedence
+- **Description**: The entire user interface MUST support seamless, 1-tap switching between English, Filipino, and Taglish, maintaining synchronous persistence across sessions and priority over default SQLite seeds on cold boot.
 - **Metric Threshold**:
-  - Localization Coverage: $100\%$ of user-facing strings localized in `src/presentation/localization/i18n.ts`.
+  - Localization Coverage: $100\%$ of user-facing strings localized in `src/presentation/localization/i18n.ts` across English, Filipino, and Taglish.
   - Language Switch Latency: Instant ($\le 100\text{ ms}$) upon setting change without requiring an application restart.
-- **Verification Method**: Automated string parity test verifying that all dictionary keys in English have matching Filipino translations.
+  - Storage Precedence: Stored language preference in `KeyValueStorage` takes precedence over SQLite table seeds upon cold launch, guaranteeing 0 accidental language resets.
+- **Verification Method**: Automated string parity test verifying that all dictionary keys in English have matching Filipino and Taglish translations, and cold-boot hydration unit tests.
 
 ---
 
@@ -236,6 +237,26 @@ graph TD
   - Stock adjustments write an immutable entry to `shrinkage_logs` with timestamp and reason.
   - Cash drawer withdrawals write an immutable entry to `cash_drawer_adjustments`.
 - **Verification Method**: Database schema audit confirming absence of `DELETE FROM sales_transactions` calls in application source code.
+
+---
+
+### NFR-SEC-005: Counter Profit Privacy Masking (Owner Tubo Obfuscation)
+- **Description**: Gross profit amounts (*tubo*) and markup percentages represent sensitive commercial margins that MUST NOT be exposed to customers or onlookers standing directly in front of the store counter window.
+- **Metric Threshold**:
+  - Masking Completeness: $100\%$ of profit, wholesale unit cost, and markup values obfuscated with `••••••` across all transaction cards and summary headers when privacy mode is active.
+  - Toggle Response Latency: $\le 16\text{ ms}$ (instant visual masking within 1 display refresh cycle).
+  - State Persistence: Privacy mode toggle state is retained across view navigations.
+- **Verification Method**: UI automated visual regression test verifying that DOM/Native text elements containing tubo/markup are replaced with mask string when privacy state is active.
+
+---
+
+### NFR-SEC-006: Owner Master PIN Cryptographic Hash & Brute-Force Rate Limiting
+- **Description**: The Owner Master PIN protects core store financials, wholesale costs, and administrative settings from unauthorized tampering by relief cashiers or curious counter patrons. It MUST be secured using cryptographic hashing and progressive brute-force rate-limiting.
+- **Metric Threshold**:
+  - Cryptographic Standard: Salted SHA-256 hash stored in sandboxed storage (`KeyValueStorage` or private SQLite table); exactly $0$ occurrences of plaintext PINs in storage files, device logs, or memory dumps.
+  - Rate Limiting & Lockout: 5 consecutive failed attempts MUST trigger an enforced 300-second (5-minute) progressive lockout timer.
+  - Lockout Persistence: Failed attempt counter and lockout expiration timestamp MUST persist across app restarts to prevent bypassing lockout via force-close or device reboot.
+- **Verification Method**: Automated unit test verifying that plaintext PIN is never written to disk, and automated security test asserting lockout enforcement and UI freeze after 5 incorrect password inputs.
 
 ---
 
@@ -303,6 +324,16 @@ graph TD
 
 ---
 
+### NFR-ENV-003: Extended Brownout Battery Saver & AMOLED True-Black Theme
+- **Description**: Sari-sari stores in Philippine provincial and rural regions experience frequent power outages, grid failures, and rotating brownouts lasting 8 to 12 hours. The application MUST support an energy-conserving true-black interface optimized for OLED/AMOLED mobile screens to maximize battery operational lifespan.
+- **Metric Threshold**:
+  - AMOLED True-Black Standard: Screen background tokens set to `#000000` (zero subpixel luminescence on OLED/AMOLED panels).
+  - Power Consumption Reduction: $\ge 35\%$ reduction in display panel energy consumption compared to standard light mode at 100% luminance.
+  - Emergency Low-Power Mode: 1-tap manual battery saver toggle in header, or automatic activation when mobile device battery drops $\le 20\%$.
+- **Verification Method**: Battery profiling session (`adb shell dumpsys batterystats`) over 2 hours of continuous POS operation comparing standard theme vs AMOLED True-Black theme.
+
+---
+
 ## Section 7: Quality Verification & Testability Matrix
 
 | Requirement ID | Quality Category | Target Metric | Verification Method | Automated Tooling |
@@ -320,6 +351,8 @@ graph TD
 | **NFR-USE-006** | Usability | 100% Bilingual Strings | Dictionary key parity test | Jest Localization Linter |
 | **NFR-SEC-002** | Security | 0 Bytes PII Exfiltration | Network packet inspection | Wireshark / Charles Proxy |
 | **NFR-SEC-003** | Security | SQL Injection Immune | Fuzzing with SQL attack vectors | Jest Security Injection Suite |
+| **NFR-SEC-006** | Security | Salted SHA-256 PIN & 5-Try Lock | Brute-force lockout test | Jest PIN Security Suite |
 | **NFR-ARC-002** | Maintainability | Zero Penny Drift | 100,000 randomized calculations | Jest Integer Centavos Test |
 | **NFR-ARC-003** | Maintainability | Strict TypeScript 0 Errors | Compiler validation | `npx tsc --noEmit` |
 | **NFR-ENV-002** | Environmental | Camera Sleep at 45s | Inactivity timer test | Jest Fake Timers Suite |
+| **NFR-ENV-003** | Environmental | $\ge 35\%$ Battery Power Saved | AMOLED battery benchmark | Android `batterystats` |

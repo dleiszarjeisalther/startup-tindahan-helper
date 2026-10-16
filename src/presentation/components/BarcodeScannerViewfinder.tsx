@@ -159,7 +159,8 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
         console.log(`[BarcodeScannerViewfinder] ✓ playBarcodeBeep completed for "${clean}".`);
       })
       .catch((err) => {
-        console.error(`[BarcodeScannerViewfinder] ❌ playBarcodeBeep failed for "${clean}":`, err);
+        // Sound feedback is non-blocking; preserve the successful barcode scan.
+        console.log(`[BarcodeScannerViewfinder] Barcode beep failed for "${clean}"; next scan will retry:`, err);
       });
 
     console.log(`[BarcodeScannerViewfinder] Dispatching onBarcodeScanned callback to parent for "${clean}"...`);

@@ -90,6 +90,13 @@ Stakeholder requirements were elicited through a combined methodology:
 | **SN-005** | Suki Customer | Must receive a verifiable digital receipt or ledger statement of total debt balance on Messenger/SMS. | Traditional paper notebooks lack transparency, causing relational friction when balances are collected. | **BG-005** (Utang Transparency) |
 | **SN-006** | Store Owner | Must know exactly how much school supplies or holiday goods to pre-order 2–3 weeks before seasonal peaks. | Relying on ordinary month averages causes stockouts within 48 hours of School Opening in July. | **BG-006** (Seasonal Forecasting) |
 | **SN-007** | Store Owner | Must operate seamlessly without electricity or cellular internet during typhoons or rural blackouts. | Grid failures are frequent in provincial municipalities (e.g., Nueva Ecija). Cloud POS apps become useless. | **BG-007** (Offline Autonomy) |
+| **SN-008** | Store Owner / Relief Cashier | Must park/hold active customer baskets with customer names/notes ("Stock" Basket Queue) without losing cart items during counter interruptions or phone restarts. | Customers frequently pause checkout to grab forgotten items (*"sandali lang may nakalimutan ako"*), blocking the line for next paying customers. Without named holding, the cashier must cancel or memorize items. | **BG-008** (Frictionless Queue Interruption) |
+| **SN-009** | Store Owner | Must monitor gross profit (*tubo*) and markup percentage in real time across transactions and daily periods, with immediate privacy masking from counter onlookers. | Store owners need visibility into whether sales meet margin targets, while shielding actual wholesale costs and profit margins from customers standing directly at the counter window. | **BG-001** (Fast Checkout), **BG-002** (Cash Integrity) |
+| **SN-010** | Store Owner & Relief Cashier | Must toggle and permanently persist the application language (English, Filipino, Taglish) across reboots and screen navigations. | Relief cashiers and older family store owners prefer vernacular Tagalog/Taglish labels (*Tindahan*, *Singilin*, *Tubo*, *Talaan*) without the setting reverting to English upon app restart. | **BG-001** (Fast Checkout), **BG-007** (Offline Autonomy) |
+| **SN-011** | Store Owner | Must delegate counter operations to relief cashiers / family members with role-based restriction (Owner Master PIN) to prevent price tampering, unapproved shrinkage write-offs, profit leakage, or database loss. | Store owners leave the counter to run errands or rest; relief staff can accidentally or maliciously edit prices, view net margins, or write off stolen goods. | **BG-009** (Staff Access & Fraud Control) |
+| **SN-012** | Store Owner | Must track product expiration dates and receive advance FEFO clearance warnings (30-day and 7-day alerts) for perishable bread, milk, and snacks. | Expired goods lead to direct inventory write-off losses of ₱800–₱2,000/month and customer health hazards if sold accidentally. | **BG-010** (Near-Expiry Loss Prevention) |
+| **SN-013** | Cashier & Suki Customer | Must print instant physical paper slips via low-cost 58mm/80mm Bluetooth ESC/POS thermal printers for senior citizens, kids running errands, or barangay buyers requiring paper proof. | Suki customers without smartphones or cellular data cannot receive SMS/Messenger e-receipts and demand physical paper slips at the counter window. | **BG-011** (Physical Paper Slip Verifiability) |
+| **SN-014** | Cashier & Store Owner | Must verify customer GCash/Maya transfers via on-screen QR Ph standee / reference input and apply standard neighborhood digital surcharge (+₱2 to +₱5). | 70%+ of neighborhood transactions use GCash; manual tracking causes cashier vulnerability to fake payment screenshots and uncollected transfer fee costs. | **BG-012** (Cashless Verification & Surcharge Guard) |
 
 ---
 
@@ -106,6 +113,11 @@ graph LR
     BG5["BG-005: 100% Utang Ledger Accuracy"]
     BG6["BG-006: 70% Seasonal Stockout Reduction"]
     BG7["BG-007: 100% Offline Operational Uptime"]
+    BG8["BG-008: Zero Lost Carts & Frictionless Queue Interruption"]
+    BG9["BG-009: 100% Staff Fraud Prevention (Owner Master PIN)"]
+    BG10["BG-010: 85% Food Spoilage & Expiry Loss Reduction"]
+    BG11["BG-011: 100% Low-Cost Bluetooth Slip Verifiability"]
+    BG12["BG-012: Zero Cashless Fraud & Surcharge Protection"]
 
     BG1 --> SUCCESS["Sustainable Micro-Retail Profitability & Capital Protection"]
     BG2 --> SUCCESS
@@ -114,6 +126,11 @@ graph LR
     BG5 --> SUCCESS
     BG6 --> SUCCESS
     BG7 --> SUCCESS
+    BG8 --> SUCCESS
+    BG9 --> SUCCESS
+    BG10 --> SUCCESS
+    BG11 --> SUCCESS
+    BG12 --> SUCCESS
 ```
 
 | Goal ID | Strategic Business Objective | Baseline (Manual/Paper POS) | Target KPI with Juan's Store POS | Measurement Protocol |
@@ -125,6 +142,11 @@ graph LR
 | **BG-005** | Resolve Debt Disputes & Accelerate Utang Collection | 15%–25% disputed or defaulted debt | **$< 2\%$ default rate**; 0 unverified claims | Debt collection cycle time and ledger audit reconciliation. |
 | **BG-006** | Eliminate Peak Season Stockouts & Capital Waste | 65% stockout rate during School Opening week | **$\le 15\%$ stockout rate** during seasonal peaks | Stock availability log for high-season SKUs across July–Aug. |
 | **BG-007** | Guarantee Zero-Downtime Autonomous Availability | 100% failure rate during internet outages | **100% offline availability** (zero dropped sales) | Synthetic cellular disconnect testing under continuous POS load. |
+| **BG-008** | Frictionless Multi-Customer Cart Holding ("Stock" Queue) | 100% cart loss or counter stall during customer interruption | **0 lost carts; $\le 2$ taps to hold/restore**; 100% persistent in SQLite across restarts | Time to park/restore customer cart, 100% preservation across app restarts in SQLite. |
+| **BG-009** | Eliminate Staff Price Tampering & Fraud | 0 staff access controls (unrestricted price/profit access) | **100% role-gated protection; 4-digit Owner Master PIN required for sensitive operations** | Audit log of gated actions and PIN verification check. |
+| **BG-010** | Prevent Food Spoilage & Expired Write-Offs | ₱800–₱2,000/month in expired goods write-offs | **$\ge 85\%$ reduction in expired stock write-offs** ($\le$ ₱150/month) | Monthly shrinkage log audit of expired reason codes. |
+| **BG-011** | Guarantee Low-Cost Physical Receipt Capability | 0 physical printing options (mobile screen only) | **$\le 3$ seconds printing latency** on standard 58mm ESC/POS Bluetooth printers | Time from checkout completion to thermal slip feed. |
+| **BG-012** | Zero Cashless Payment Fraud & Accurate Surcharge Tracking | High risk of fake GCash screenshots and uncollected fees | **0 fake digital tenders; 100% logged reference numbers and collected surcharges** | Reconciliation of GCash digital settlement log vs. reference entries. |
 
 ---
 
@@ -137,7 +159,13 @@ graph LR
 - **Exception Handling Workflows**: Same-day receipt voids, receipt-linked returns with mandatory disposition gating (Sellable Restock vs. Bad Order Quarantine), and atomic in-flow product exchanges.
 - **Neighborhood Credit (*Utang*) Management**: Customer directory, individual credit limits, partial debt repayment tracking, and 1-tap shareable e-receipt image statements.
 - **Feature C: Seasonal Demand Forecast Engine**: Multi-tier algorithms (12M initial vs. 24M+ multi-year recurring YoY), demand uncensoring for stockout days, void/anomaly exclusion, and plain-language restock shopping list export.
-- **Store Preferences & Offline Backup**: Store branding, school opening calendar configuration, language selection (English/Filipino), and SQLite database export/import.
+- **Named Cart Holding & Multi-Basket Queue**: Persistent named hold/park cart queue ("Stock" Basket) stored durably in SQLite `held_carts`, with instant restore, deletion, and cold-boot hydration.
+- **Real-Time Sales Tubo (Gross Profit) & Privacy Shield**: Live transaction COGS, tubo (PHP), markup %, daily tubo totals, and 1-tap owner privacy eye masking against counter onlookers.
+- **Store Preferences, Bilingual Localization & Offline Backup**: Store branding, school opening calendar configuration, persistent language selection (English/Filipino/Taglish) with storage precedence, and SQLite database export/import.
+- **Role-Based Staff Access Control (Owner Master PIN)**: Cashier mode restriction preventing price editing, shrinkage logging, net margin inspection, and database deletion without a 4-digit Owner Master PIN.
+- **Expiration Date Tracking & FEFO Clearance Alerts**: Shelf-life tracking, near-expiry alerts (30-day and 7-day indicators), and expired item checkout guards.
+- **ESC/POS Bluetooth Thermal Receipt Slip Printing**: Direct 58mm/80mm Bluetooth receipt slip printing supporting standard ESC/POS commands without third-party print spoolers.
+- **Static QR Ph / GCash Cashless Verification & Surcharge**: Standee digital wallet tender workflow with 4-to-6-digit reference validation and configurable convenience fee support (+₱2 to +₱5).
 
 ### 4.2 Out-of-Scope Capabilities
 - Multi-branch cloud ERP enterprise synchronization.
@@ -180,6 +208,57 @@ No returned product may enter the active sellable stock without passing through 
 - Historical sales data used in **Feature C (Seasonal Product Forecast)** MUST impute unrecorded demand for days when stock was zero (`Stock = 0`), scaling net sales by total days over in-stock days.
 - Transactions marked `VOIDED` or items returned due to entry errors MUST be excluded from historical demand models.
 - One-time non-recurring bulk orders (e.g., barangay fiesta catering) flagged by the owner MUST be isolated to prevent artificial inflation of ordinary recurring forecasts.
+
+### BR-RUL-007: Persistent Named Held Carts & Cold-Boot Queue Hydration
+- When a customer checkout is interrupted, the cashier MUST be able to park the current cart with a Customer Name / Identifier (prompt modal with default fallback "Customer N").
+- Held carts MUST be persisted in a dedicated SQLite table (`held_carts`) storing `id`, `customer_name`, `total_php`, `total_count`, `items_json`, `created_at_ms`, and `time_label`.
+- Held carts MUST persist across application restarts, OS process termination, and screen navigation without data loss.
+- Restoring a held cart MUST replace the current active cart (warning if current cart is not empty) and delete the held record from `held_carts` atomically.
+
+### BR-RUL-008: Sales Tubo (Net Margin & Markup) Calculation and Privacy Masking
+- For each completed sale, Cost of Goods Sold (COGS) MUST be calculated using current catalog snapshot wholesale costs ($C = \sum q_i \times \text{cost}_i$).
+- Gross Profit (*Tubo*) MUST be computed as $\text{Gross Profit} = \text{Subtotal} - \text{Discount} - \text{COGS}$.
+- Markup Percentage MUST be calculated as $\text{Markup \%} = (\text{Tubo} / \text{COGS}) \times 100$.
+- Sales and transaction views MUST provide an Owner Privacy Toggle (eye icon) that masks all gross profit and markup percentage values with `••••••` to prevent sensitive margin leakage to counter onlookers.
+
+### BR-RUL-009: Durable Bilingual Configuration & Storage Precedence
+- The application language preference (`fil`, `en`, `taglish`) MUST be saved synchronously to both `KeyValueStorage` and SQLite `app_settings`.
+- During application cold boot, storage hydration MUST follow strict precedence: if a valid user language preference exists in storage, it MUST supersede SQLite table defaults to prevent language resets on app update or database sync.
+- Changing language MUST trigger instantaneous reactive re-rendering of all active views and navigators without requiring manual app relaunch.
+
+### BR-RUL-010: Role-Gated Operational Security & Master PIN Verification
+- The application MUST distinguish between **Cashier Mode** (active by default for counter staff) and **Owner Mode**.
+- While in Cashier Mode, the following critical actions MUST be locked behind a 4-digit Owner Master PIN dialog:
+  - Modifying product wholesale unit costs or retail selling prices in Inventory.
+  - Submitting unapproved manual shrinkage write-offs or inventory audit adjustments.
+  - Viewing financial aggregate profit totals (*tubo*) and markup analytics in Sales History.
+  - Accessing SQLite Database Backup Export and Recovery Import in Settings.
+- 5 consecutive incorrect PIN attempts MUST enforce a 5-minute cooldown timer to prevent brute-force cracking.
+
+### BR-RUL-011: FEFO (First-Expired, First-Out) Shelf-Life & Clearance Gating
+- Each product record in inventory MAY store an optional `expiry_date` (ISO-8601 `YYYY-MM-DD`).
+- The system MUST compute remaining shelf-life days dynamically against the local device clock:
+  - `SAFE`: $\Delta\text{days} > 30$ (Standard status).
+  - `NEAR EXPIRY`: $1 \le \Delta\text{days} \le 30$ (Amber warning badge with priority shelf-clearance recommendation).
+  - `EXPIRED`: $\Delta\text{days} \le 0$ (Red alert badge; blocks addition to POS cart unless explicitly acknowledged by cashier).
+- Damaged or expired goods written off MUST be logged to `shrinkage_logs` with reason code `EXPIRED`.
+
+### BR-RUL-012: Standard ESC/POS Bluetooth Thermal Printing Specification
+- The application MUST support direct Bluetooth SPP/BLE connection to standard 58mm and 80mm ESC/POS thermal printers.
+- Printed thermal paper receipts MUST include:
+  - Store Name, Owner Title, and Address header.
+  - Unique Receipt ID, Date, and Time.
+  - Itemized rows (Quantity, Item Name, Unit Price, Line Total).
+  - Subtotal, Itemized Discounts, Convenience Fees (if applicable), and Total Due.
+  - Tender Method, Amount Tendered, and Change Due.
+  - Suki Customer Name and Remaining Utang Balance (for credit settlement).
+  - Official Acknowledgment Receipt notice (Non-VAT / BMBE RA 9178) and friendly Filipino closing (*"Salamat sa Pagbili! Balik po kayo!"*).
+- Gross profit (*tubo*) and wholesale costs MUST NEVER be printed on the customer paper receipt.
+
+### BR-RUL-013: Cashless Digital Tender Verification & Surcharge Guard
+- When a customer tenders via digital wallet (`GCash`, `Maya`, `QR Ph`), the system MUST require the cashier to record the transaction reference number (minimum 4 digits).
+- The system MUST support an optional, configurable digital payment convenience surcharge (e.g., +₱2.00 or +₱5.00 for transactions $< ₱500$).
+- Digital wallet inflows MUST be logged under a dedicated non-cash tender account and MUST NOT increment the expected physical cash drawer float.
 
 ---
 

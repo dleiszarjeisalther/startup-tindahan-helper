@@ -53,10 +53,10 @@ def build_rtm_excel(output_path: str):
 
     # KPI summary cards
     kpis = [
-        ("TOTAL REQUIREMENTS", "62", "B5", "C6"),
-        ("FUNCTIONAL REQS (FR)", "28", "D5", "E6"),
-        ("NON-FUNCTIONAL (NFR)", "21", "F5", "G6"),
-        ("STAKEHOLDER NEEDS", "7", "H5", "I6"),
+        ("TOTAL REQUIREMENTS", "71", "B5", "C6"),
+        ("FUNCTIONAL REQS (FR)", "33", "D5", "E6"),
+        ("NON-FUNCTIONAL (NFR)", "24", "F5", "G6"),
+        ("STAKEHOLDER NEEDS", "14", "H5", "I6"),
         ("TRACEABILITY COVERAGE", "100%", "J5", "K6"),
         ("VERIFIED STATUS", "100% PASS", "L5", "M6")
     ]
@@ -88,20 +88,21 @@ def build_rtm_excel(output_path: str):
     ws_summary.row_dimensions[11].height = 24
 
     summary_rows = [
-        ("MOD-1", "POS & Barcode Checkout", 5, "5 Must / 0 Should", "Screen 1 (POS Scan)", "Jest, Camera Simulator, Haptics", "100%"),
-        ("MOD-2", "Tender & Checkout Settlement", 5, "5 Must / 0 Should", "Screen 3 (Checkout)", "Atomic SQLite Tests, ViewShot", "100%"),
-        ("MOD-3", "Catalog & Inventory Management", 4, "4 Must / 0 Should", "Screen 4 (Inventory) & Screen 2", "Modulo-10 Checksum Tests", "100%"),
+        ("MOD-1", "POS & Barcode Checkout", 5, "5 Must / 0 Should", "Screen 1 (POS Scan) & Screen 3", "Jest, Camera Simulator, Held Carts", "100%"),
+        ("MOD-2", "Tender & Checkout Settlement", 7, "6 Must / 1 Should", "Screen 3 (Checkout)", "Atomic SQLite Tests, ViewShot, Bluetooth ESC/POS", "100%"),
+        ("MOD-3", "Catalog & Inventory Management", 5, "5 Must / 0 Should", "Screen 4 (Inventory) & Screen 2", "Modulo-10 Checksum Tests, FEFO Expiry", "100%"),
         ("MOD-4", "Exception Handling (Voids/Returns/Exchanges)", 4, "4 Must / 0 Should", "Screen 5 (Sales History)", "Atomic Reversal & Quarantine Suite", "100%"),
         ("MOD-5", "Neighborhood Credit (Utang) Ledger", 4, "3 Must / 1 Should", "Screen 6 (Menu -> Utang)", "Credit Limit Override & E-Receipt", "100%"),
         ("MOD-6", "Feature C: Seasonal Demand Forecast", 5, "4 Must / 1 Should", "Screen 6 (Reports) & Screen 4", "Multi-Year YoY Engine & Imputation", "100%"),
         ("MOD-7", "Cash Drawer Operations", 2, "2 Must / 0 Should", "Screen 6 (Menu -> Drawer)", "Drawer Balance Inflow/Outflow Tests", "100%"),
-        ("MOD-8", "Store Settings & Local Backup", 3, "3 Must / 0 Should", "Screen 7 (Settings)", "PRAGMA Checkpoint & Share Sheet", "100%"),
+        ("MOD-8", "Store Settings & Security Access Control", 4, "4 Must / 0 Should", "Screen 7 (Settings) & PIN Modal", "PRAGMA Checkpoint, Salted SHA-256 PIN", "100%"),
+        ("MOD-9", "Sales History & Profit Intelligence", 1, "1 Must / 0 Should", "Screen 5 (Sales History)", "Snapshot COGS, Tubo Formula, Privacy Mask", "100%"),
         ("NFR-P", "Performance Efficiency & Latency", 6, "6 Must / 0 Should", "Cross-Cutting", "Android Systrace, adb start -W", "100%"),
         ("NFR-R", "Reliability & Offline Autonomy", 4, "4 Must / 0 Should", "Local SQLite Architecture", "Network Isolation & Crash Kill Tests", "100%"),
-        ("NFR-U", "Usability & Touch Ergonomics", 6, "6 Must / 0 Should", "All 7 Screens", "WCAG Contrast, Accessibility Scanner", "100%"),
-        ("NFR-S", "Security, Privacy & Audit Integrity", 4, "4 Must / 0 Should", "Local Sandbox Storage", "SQL Injection Fuzzing, PII Audit", "100%"),
+        ("NFR-U", "Usability & Touch Ergonomics", 6, "6 Must / 0 Should", "All 7 Screens", "WCAG Contrast, Multi-Dialect i18n", "100%"),
+        ("NFR-S", "Security, Privacy & Audit Integrity", 6, "6 Must / 0 Should", "Local Sandbox Storage", "SQL Injection Fuzzing, PIN Lockout, Privacy Masking", "100%"),
         ("NFR-A", "Maintainability & Code Architecture", 3, "3 Must / 0 Should", "Domain / App / Infra", "tsc --noEmit, Dependency Boundaries", "100%"),
-        ("NFR-E", "Environmental & Hardware Compatibility", 2, "2 Must / 0 Should", "Android 10+ 2GB Devices", "Thermal Sleep & Low-RAM Profiling", "100%")
+        ("NFR-E", "Environmental & Hardware Compatibility", 3, "3 Must / 0 Should", "Android 10+ 2GB Devices", "Thermal Sleep, AMOLED True-Black Battery Saver", "100%")
     ]
 
     for row_idx, r_data in enumerate(summary_rows, start=12):
@@ -165,10 +166,10 @@ def build_rtm_excel(output_path: str):
             "products", "Integration Test (Pre-filled Barcode Modal)", "TC-FR-POS-004", "VERIFIED"
         ),
         (
-            "FR-POS-005", "POS & Barcode Checkout", "Cart Parking / Hold Basket (Park/Hold Cart)",
-            "SN-001", "BG-001", "BR-RUL-001", "SHOULD", "Screen 3 (Checkout)",
+            "FR-POS-005", "POS & Barcode Checkout", "Persistent Named Held Carts & Multi-Customer Queue (\"Stock\" Basket)",
+            "SN-001, SN-008", "BG-001, BG-008", "BR-RUL-007", "MUST", "Screen 3 (Checkout)",
             "src/app/checkout.tsx\nsrc/application/TindahanStoreService.ts",
-            "held_carts", "Unit Test (Hold and Resume Basket)", "TC-FR-POS-005", "VERIFIED"
+            "held_carts", "Unit Test (Queue Prompt, Multi-Cart Restore/Delete, Cold-Boot Hydration)", "TC-FR-POS-005", "VERIFIED"
         ),
         (
             "FR-TND-001", "Tender & Settlement", "Multi-Tender Selection (Cash, GCash, Utang, Split)",
@@ -201,6 +202,18 @@ def build_rtm_excel(output_path: str):
             "Local Storage / Share Sheet", "Native Share Intent Mock Verification", "TC-FR-TND-005", "VERIFIED"
         ),
         (
+            "FR-TND-006", "Tender & Settlement", "58mm/80mm ESC/POS Bluetooth Thermal Receipt Slip Printing",
+            "SN-013", "BG-011", "BR-RUL-012", "SHOULD", "Screen 3 & Screen 5",
+            "src/app/checkout.tsx\nsrc/app/sales.tsx",
+            "sales_transactions", "Bluetooth ESC/POS Payload Format & Print Latency Test", "TC-FR-TND-006", "VERIFIED"
+        ),
+        (
+            "FR-TND-007", "Tender & Settlement", "Static QR Ph / GCash Digital Payment Verification & Convenience Surcharge",
+            "SN-014", "BG-012", "BR-RUL-013", "MUST", "Screen 3 (Checkout)",
+            "src/app/checkout.tsx\nsrc/domain/value-objects/Money.ts",
+            "sales_transactions", "QR Ph Verification & Surcharge Ledger Calculation Test", "TC-FR-TND-007", "VERIFIED"
+        ),
+        (
             "FR-INV-001", "Catalog & Inventory", "Product Onboarding with Barcode Verification & Auto-Generation",
             "SN-001", "BG-001", "BR-RUL-001", "MUST", "Screen 4 (Inventory)",
             "src/app/inventory.tsx\nsrc/domain/value-objects/Barcode.ts",
@@ -223,6 +236,12 @@ def build_rtm_excel(output_path: str):
             "SN-006", "BG-006", "BR-RUL-001", "MUST", "Screen 2 & Screen 4",
             "src/app/products.tsx\nsrc/app/inventory.tsx",
             "products", "Visual Regression & Accessibility Test", "TC-FR-INV-004", "VERIFIED"
+        ),
+        (
+            "FR-INV-005", "Catalog & Inventory", "Expiration Date Tracking, Shelf-Life Monitoring & FEFO Clearance Alerts",
+            "SN-012", "BG-010", "BR-RUL-011", "MUST", "Screen 4 (Inventory)",
+            "src/app/inventory.tsx\nsrc/domain/entities/Product.ts",
+            "products (expiry_date)", "FEFO Alert Triage & Checkout Expiration Blocker Test", "TC-FR-INV-005", "VERIFIED"
         ),
         (
             "FR-EXC-001", "Exception Handling", "Same-Day Sales Void with Automatic Stock Reversal",
@@ -315,13 +334,13 @@ def build_rtm_excel(output_path: str):
             "cash_drawer_adjustments, sales_transactions", "Daily Cash Balancing Calculation Test", "TC-FR-CSH-002", "VERIFIED"
         ),
         (
-            "FR-SET-001", "Settings & Preferences", "Store Identity & Operational Branding Preferences",
-            "SN-007", "BG-007", "BR-RUL-001", "MUST", "Screen 7 (Settings)",
+            "FR-SET-001", "Settings & Preferences", "Store Identity, Bilingual Localization & Operational Preferences",
+            "SN-007, SN-010", "BG-001, BG-007", "BR-RUL-009", "MUST", "Screen 7 (Settings)",
             "src/app/settings.tsx\nsrc/application/TindahanStoreService.ts",
-            "store_settings", "CRUD Persistence Unit Test", "TC-FR-SET-001", "VERIFIED"
+            "store_settings, KeyValueStorage", "CRUD & Cold-Boot Storage Precedence Test", "TC-FR-SET-001", "VERIFIED"
         ),
         (
-            "FR-SET-002", "Settings & Preferences", "Seasonal Calendar Configuration (School Opening, Town Fiesta)",
+            "FR-SET-002", "Settings & Preferences", "Seasonal Calendar Configuration (School Opening & Wholesale Budget)",
             "SN-006", "BG-006", "BR-RUL-006", "MUST", "Screen 7 (Settings)",
             "src/app/settings.tsx\nsrc/domain/strategies/SeasonalForecastEngine.ts",
             "store_settings", "Calendar Trigger Integration Test", "TC-FR-SET-002", "VERIFIED"
@@ -331,6 +350,18 @@ def build_rtm_excel(output_path: str):
             "SN-007", "BG-007", "BR-RUL-001", "MUST", "Screen 7 (Settings)",
             "src/app/settings.tsx\nsrc/infrastructure/database/SqliteDatabase.ts",
             "FileSystem (tindahan_pos_v3.db)", "Database Backup/Restore Integrity Test", "TC-FR-SET-003", "VERIFIED"
+        ),
+        (
+            "FR-SEC-001", "Settings & Security", "Owner Master PIN & Relief Cashier Operational Access Control",
+            "SN-011", "BG-009", "BR-RUL-010", "MUST", "Screen 7 & Global Modal",
+            "src/app/settings.tsx\nsrc/infrastructure/storage/KeyValueStorage.ts",
+            "store_settings, KeyValueStorage", "Cashier Role Boundary & 5-Try Lockout Test", "TC-FR-SEC-001", "VERIFIED"
+        ),
+        (
+            "FR-SAL-001", "Sales & Profit Intelligence", "Sales History, Gross Profit (Tubo / Markup) Intelligence & Z-Reading",
+            "SN-009", "BG-001, BG-002", "BR-RUL-008", "MUST", "Screen 5 (Sales History)",
+            "src/app/sales.tsx\nsrc/presentation/hooks/useTindahanStore.ts",
+            "sales_transactions, products", "Unit & UI Test (Snapshot COGS, Tubo Formula, Privacy Eye Mask)", "TC-FR-SAL-001", "VERIFIED"
         )
     ]
 
@@ -469,10 +500,10 @@ def build_rtm_excel(output_path: str):
             "src/infrastructure/services/SoundFeedbackService.ts", "Audio/Haptic Latency Oscilloscope", "TC-NFR-USE-005", "COMPLIANT"
         ),
         (
-            "NFR-USE-006", "Usability", "Bilingual Localization (English & Filipino)",
-            "100% dictionary string parity",
-            "src/presentation/localization/i18n.ts with zero-restart toggle",
-            "src/presentation/localization/i18n.ts", "Jest Translation Key Parity Linter", "TC-NFR-USE-006", "COMPLIANT"
+            "NFR-USE-006", "Usability", "Multi-Dialect Localization (English, Filipino, Taglish) & Storage Precedence",
+            "100% dictionary string parity across en/fil/taglish with storage precedence",
+            "src/presentation/localization/i18n.ts with KeyValueStorage precedence on cold boot",
+            "src/presentation/localization/i18n.ts\nsrc/infrastructure/storage/KeyValueStorage.ts", "Jest Translation Key Parity & Hydration Test", "TC-NFR-USE-006", "COMPLIANT"
         ),
         (
             "NFR-SEC-001", "Security", "Sandboxed Private Local Storage",
@@ -497,6 +528,18 @@ def build_rtm_excel(output_path: str):
             "Zero destructive deletion of sales",
             "Void status updates; immutable shrinkage & cash logs",
             "src/application/TindahanStoreService.ts", "Database Schema Audit (No DELETE calls)", "TC-NFR-SEC-004", "COMPLIANT"
+        ),
+        (
+            "NFR-SEC-005", "Security", "Counter Profit Privacy Masking (Owner Tubo Obfuscation)",
+            "100% profit/markup masked with •••••• in <= 16ms",
+            "Owner privacy toggle button obfuscating sensitive wholesale margins from counter onlookers",
+            "src/app/sales.tsx", "Automated UI Privacy Mask Verification Suite", "TC-NFR-SEC-005", "COMPLIANT"
+        ),
+        (
+            "NFR-SEC-006", "Security", "Owner Master PIN Cryptographic Hash & Brute-Force Rate Limiting",
+            "Salted SHA-256 hash; 5-attempt / 300s lockout",
+            "Salted cryptographic PIN hash in sandboxed storage with persistent lockout timer",
+            "src/infrastructure/storage/KeyValueStorage.ts", "Jest PIN Security Suite & Reboot Persistence Test", "TC-NFR-SEC-006", "COMPLIANT"
         ),
         (
             "NFR-ARC-001", "Maintainability", "Clean Architecture & Layer Decoupling",
@@ -527,6 +570,12 @@ def build_rtm_excel(output_path: str):
             "Camera sleep at 45s; <= 8% drain/hr",
             "Auto-sleep inactivity timer on camera viewfinder",
             "src/presentation/components/BarcodeScannerViewfinder.tsx", "Thermal Chamber & Battery Profiling (35°C)", "TC-NFR-ENV-002", "COMPLIANT"
+        ),
+        (
+            "NFR-ENV-003", "Environmental", "Extended Brownout Battery Saver & AMOLED True-Black Theme",
+            ">= 35% display power reduction on OLED/AMOLED",
+            "AMOLED true-black (#000000) theme tokens for extended battery runtime during 8-12h brownouts",
+            "src/constants/theme.ts", "Android batterystats 2-Hour POS Profiling", "TC-NFR-ENV-003", "COMPLIANT"
         )
     ]
 
@@ -617,6 +666,55 @@ def build_rtm_excel(output_path: str):
             "Cloud-only POS systems crash when mobile internet drops in concrete barangay homes.",
             "BG-007", "FR-SET-001, FR-SET-003",
             "NFR-REL-001, NFR-REL-002, NFR-ENV-001", "FULFILLED"
+        ),
+        (
+            "SN-008", "Store Owner / Relief Cashier",
+            "Park/hold active customer baskets with customer names/notes (\"Stock\" Basket Queue) without losing cart items during counter interruptions or phone restarts.",
+            "Customers pause checkout to grab forgotten items (\"sandali lang may nakalimutan ako\"), blocking the line for next paying customers.",
+            "BG-008", "FR-POS-005",
+            "NFR-REL-002, NFR-USE-001", "FULFILLED"
+        ),
+        (
+            "SN-009", "Store Owner",
+            "Monitor gross profit (tubo) and markup percentage in real time across transactions and daily periods, with immediate privacy masking from counter onlookers.",
+            "Store owners need visibility into whether sales meet margin targets, while shielding actual wholesale costs and profit margins from customers standing at counter.",
+            "BG-001, BG-002", "FR-SAL-001",
+            "NFR-SEC-005, NFR-ARC-002", "FULFILLED"
+        ),
+        (
+            "SN-010", "Store Owner & Relief Cashier",
+            "Toggle and permanently persist the application language (English, Filipino, Taglish) across reboots and screen navigations.",
+            "Relief cashiers and older store owners prefer vernacular Tagalog/Taglish labels (Tindahan, Singilin, Tubo, Talaan) without reverting to English on restart.",
+            "BG-001, BG-007", "FR-SET-001",
+            "NFR-USE-006", "FULFILLED"
+        ),
+        (
+            "SN-011", "Store Owner (Juan/Maria)",
+            "Entrust store operations to a family member or relief cashier (tindera) without risking price tampering, theft, or profit leaks.",
+            "Owners need temporary leave from counter; untrusted access leads to price alterations, shrinkage concealment, and exposed profit margins.",
+            "BG-009", "FR-SEC-001",
+            "NFR-SEC-006", "FULFILLED"
+        ),
+        (
+            "SN-012", "Store Owner (Juan/Maria)",
+            "Track expiration dates for dairy, bread, and canned goods to avoid selling expired items and prevent unsellable spoilage loss.",
+            "Expired goods lead to direct capital loss, customer health risks, and community reputation loss if sold unintentionally.",
+            "BG-010", "FR-INV-005",
+            "NFR-USE-004", "FULFILLED"
+        ),
+        (
+            "SN-013", "Suki Customer & Store Owner",
+            "Provide physical printed receipt slips via cheap Bluetooth thermal printers for customers who lack smartphones or request paper proof.",
+            "Elderly customers and market shoppers require physical paper slips; handwriting paper receipts slows counter lines.",
+            "BG-011", "FR-TND-006",
+            "NFR-PERF-004, NFR-USE-001", "FULFILLED"
+        ),
+        (
+            "SN-014", "Store Owner & Suki Customer",
+            "Accept and verify cashless GCash/Maya QR Ph payments with reference number logging and optional convenience surcharge to protect cash flow.",
+            "Cashless payments without reference logging lead to screenshot scams and unverified transfers, while merchant cashout fees eat retail margins.",
+            "BG-012", "FR-TND-007",
+            "NFR-ARC-002, NFR-SEC-004", "FULFILLED"
         )
     ]
 
@@ -628,7 +726,7 @@ def build_rtm_excel(output_path: str):
             cell.font = regular_font
             cell.fill = fill
             cell.border = border
-            if col_idx in [1, 5, 8]:
+            if col_idx in [1, 5]:
                 cell.alignment = Alignment(horizontal="center", vertical="center")
             elif col_idx == 8: # Status
                 cell.alignment = Alignment(horizontal="center", vertical="center")

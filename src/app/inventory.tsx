@@ -1698,15 +1698,27 @@ export default function InventoryManagementScreen() {
                     />
                     <Pressable
                       style={styles.adjBtnGreen}
-                      onPress={async () => {
+                      onPress={() => {
                         const qty = Math.max(1, parseInt(customRestockQty || '1', 10) || 1);
-                        await adjustInventoryStock({
-                          productId: item.id,
-                          mode: 'RESTOCK',
-                          quantity: qty,
-                        });
-                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                        showToast(`✓ Naidagdag +${qty} ${item.name} sa stock (Total: ${item.stockCount + qty} pcs)`, 'success');
+                        Alert.alert(
+                          'Kumpirmahin ang Restock',
+                          `Sigurado ka bang nais mong magdagdag ng +${qty} pcs sa stock ng "${item.name}"? (Magiging: ${item.stockCount + qty} pcs)`,
+                          [
+                            { text: 'Kanselahin', style: 'cancel' },
+                            {
+                              text: 'Itala ang Stock',
+                              onPress: async () => {
+                                await adjustInventoryStock({
+                                  productId: item.id,
+                                  mode: 'RESTOCK',
+                                  quantity: qty,
+                                });
+                                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                                showToast(`✓ Naidagdag +${qty} ${item.name} sa stock (Total: ${item.stockCount + qty} pcs)`, 'success');
+                              },
+                            },
+                          ]
+                        );
                       }}
                     >
                       <Text style={styles.adjBtnGreenText}>
@@ -1716,16 +1728,28 @@ export default function InventoryManagementScreen() {
 
                     <Pressable
                       style={styles.adjBtnBlue}
-                      onPress={async () => {
-                        await adjustInventoryStock({
-                          productId: item.id,
-                          mode: 'UNPACK_TINGI',
-                          quantity: 1,
-                        });
-                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                        showToast(
-                          `✓ Na-unpack ang 1 bulk pack sa +10 tingi piraso ng ${item.name}`,
-                          'success'
+                      onPress={() => {
+                        Alert.alert(
+                          'Kumpirmahin ang Pag-unpack',
+                          `Nais mo bang buksan ang 1 bulk pack para maging +10 tingi piraso ng "${item.name}"?`,
+                          [
+                            { text: 'Kanselahin', style: 'cancel' },
+                            {
+                              text: 'I-unpack',
+                              onPress: async () => {
+                                await adjustInventoryStock({
+                                  productId: item.id,
+                                  mode: 'UNPACK_TINGI',
+                                  quantity: 1,
+                                });
+                                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                                showToast(
+                                  `✓ Na-unpack ang 1 bulk pack sa +10 tingi piraso ng ${item.name}`,
+                                  'success'
+                                );
+                              },
+                            },
+                          ]
                         );
                       }}
                     >
@@ -1736,16 +1760,29 @@ export default function InventoryManagementScreen() {
                   <View style={styles.adjustBtnsRow}>
                     <Pressable
                       style={styles.adjBtnAmber}
-                      onPress={async () => {
-                        await adjustInventoryStock({
-                          productId: item.id,
-                          mode: 'HOME_USE',
-                          quantity: 1,
-                        });
-                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-                        showToast(
-                          `✓ Naitala ang -1 ${item.name} bilang Gamit sa Bahay (Tira: ${Math.max(0, item.stockCount - 1)} pcs)`,
-                          'warning'
+                      onPress={() => {
+                        Alert.alert(
+                          'Kumpirmahin: Gamit sa Bahay',
+                          `Ibabawas ba ang 1 pc ng "${item.name}" para sa pansariling gamit sa bahay? (Matitira: ${Math.max(0, item.stockCount - 1)} pcs)`,
+                          [
+                            { text: 'Kanselahin', style: 'cancel' },
+                            {
+                              text: 'I-bawas',
+                              style: 'destructive',
+                              onPress: async () => {
+                                await adjustInventoryStock({
+                                  productId: item.id,
+                                  mode: 'HOME_USE',
+                                  quantity: 1,
+                                });
+                                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                                showToast(
+                                  `✓ Naitala ang -1 ${item.name} bilang Gamit sa Bahay (Tira: ${Math.max(0, item.stockCount - 1)} pcs)`,
+                                  'warning'
+                                );
+                              },
+                            },
+                          ]
                         );
                       }}
                     >
@@ -1754,16 +1791,29 @@ export default function InventoryManagementScreen() {
 
                     <Pressable
                       style={styles.adjBtnRed}
-                      onPress={async () => {
-                        await adjustInventoryStock({
-                          productId: item.id,
-                          mode: 'DAMAGED_EXPIRED',
-                          quantity: 1,
-                        });
-                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-                        showToast(
-                          `✓ Inilipat ang 1 ${item.name} sa Sira/Expired (Tira: ${Math.max(0, item.stockCount - 1)} pcs)`,
-                          'warning'
+                      onPress={() => {
+                        Alert.alert(
+                          'Kumpirmahin: Sira / Expired',
+                          `Sigurado ka bang sira o expired ang 1 pc ng "${item.name}"? Ibabawas ito sa mabebentang stock. (Matitira: ${Math.max(0, item.stockCount - 1)} pcs)`,
+                          [
+                            { text: 'Kanselahin', style: 'cancel' },
+                            {
+                              text: 'Itala bilang Sira',
+                              style: 'destructive',
+                              onPress: async () => {
+                                await adjustInventoryStock({
+                                  productId: item.id,
+                                  mode: 'DAMAGED_EXPIRED',
+                                  quantity: 1,
+                                });
+                                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                                showToast(
+                                  `✓ Inilipat ang 1 ${item.name} sa Sira/Expired (Tira: ${Math.max(0, item.stockCount - 1)} pcs)`,
+                                  'warning'
+                                );
+                              },
+                            },
+                          ]
                         );
                       }}
                     >
