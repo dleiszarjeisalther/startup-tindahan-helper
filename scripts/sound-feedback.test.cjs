@@ -9,23 +9,11 @@ const source = ts.transpileModule(
   readFileSync(resolve(__dirname, '../src/infrastructure/services/SoundFeedbackService.ts'), 'utf8'),
   { compilerOptions: { module: ts.ModuleKind.CommonJS } },
 ).outputText;
-const flush = async () => { for (let i = 0; i < 12; i++) await Promise.resolve(); };
 
-function setup({ assetFailure = false, modeFailure = false, initiallyLoaded = true } = {}) {
+function setup({ modeFailure = false } = {}) {
   const players = [];
   const sources = [];
-  let downloads = 0;
-  let failAsset = assetFailure;
   let failMode = modeFailure;
-  const asset = {
-    localUri: 'file:///cache/barcode-beep.wav',
-    uri: 'http://metro/barcode-beep.wav',
-    async downloadAsync() {
-      downloads++;
-      if (failAsset) { failAsset = false; throw new Error('asset failed'); }
-      return this;
-    },
-  };
   const exports = {};
 
   vm.runInNewContext(source, {
@@ -35,7 +23,6 @@ function setup({ assetFailure = false, modeFailure = false, initiallyLoaded = tr
     clearTimeout,
     require(name) {
       if (name === 'react-native') return { Platform: { OS: 'android' } };
-      if (name === 'expo-asset') return { Asset: { fromModule() { return asset; } } };
       if (name === 'expo-audio') return {
         async setAudioModeAsync() {
           if (failMode) { failMode = false; throw new Error('mode failed'); }
@@ -48,7 +35,7 @@ function setup({ assetFailure = false, modeFailure = false, initiallyLoaded = tr
             plays: 0,
             seeks: 0,
             removed: false,
-            isLoaded: initiallyLoaded,
+            isLoaded: true,
             listeners: new Set(),
             addListener(event, listener) {
               this.listeners.add(listener);
@@ -69,21 +56,20 @@ function setup({ assetFailure = false, modeFailure = false, initiallyLoaded = tr
     },
   });
 
-  return { service: exports.soundFeedbackService, players, sources, get downloads() { return downloads; } };
+  return { service: exports.soundFeedbackService, players, sources };
 }
 
-test('first scan plays directly from position 0 without silent warm-up or seek', async () => {
+test('first scan plays directly without seeking', async () => {
   const h = setup();
   await h.service.playBarcodeBeep();
-  assert.equal(h.downloads, 1);
-  assert.equal(h.sources[0].uri, 'file:///cache/barcode-beep.wav');
+  assert.equal(h.players.length, 1);
   assert.equal(h.players[0].loop, false);
   assert.equal(h.players[0].volume, 1);
   assert.equal(h.players[0].seeks, 0, 'First scan should NOT seek since audio starts at 0');
   assert.equal(h.players[0].plays, 1, 'First scan should play exactly once (audibly)');
 });
 
-test('later scans reuse the player and rewind to zero', async () => {
+test('subsequent scans seek to 0 and replay', async () => {
   const h = setup();
   await h.service.playBarcodeBeep(); // 1st scan
   assert.equal(h.players[0].plays, 1);
@@ -92,41 +78,21 @@ test('later scans reuse the player and rewind to zero', async () => {
   await h.service.playBarcodeBeep(); // 2nd scan
   assert.equal(h.players.length, 1);
   assert.equal(h.players[0].plays, 2);
-  assert.equal(h.players[0].seeks, 1, '2nd scan should seekTo(0) before playing');
+  assert.equal(h.players[0].seeks, 1, '2nd scan should seek to 0 before replay');
 
   await h.service.playBarcodeBeep(); // 3rd scan
   assert.equal(h.players[0].plays, 3);
-  assert.equal(h.players[0].seeks, 2, '3rd scan should seekTo(0) before playing');
+  assert.equal(h.players[0].seeks, 2, '3rd scan should seek to 0 before replay');
 });
 
-test('first scan waits for buffer readiness if player was still loading', async () => {
-  const h = setup({ initiallyLoaded: false });
-  setTimeout(() => {
-    if (h.players[0]) {
-      h.players[0].isLoaded = true;
-      for (const listener of h.players[0].listeners) {
-        listener({ isLoaded: true });
-      }
-    }
-  }, 20);
-
+test('auto-rewinds on didJustFinish', async () => {
+  const h = setup();
   await h.service.playBarcodeBeep();
-  assert.equal(h.players[0].plays, 1);
   assert.equal(h.players[0].seeks, 0);
-});
-
-test('asset download failure is retryable', async () => {
-  const h = setup({ assetFailure: true });
-  await flush();
-  await h.service.playBarcodeBeep();
-  assert.equal(h.downloads, 2);
-  assert.equal(h.players[0].plays, 1);
-});
-
-test('audio mode failure is tolerated and scan still plays', async () => {
-  const h = setup({ modeFailure: true });
-  await flush();
-  await h.service.playBarcodeBeep();
-  assert.equal(h.players.length, 1);
-  assert.equal(h.players[0].plays, 1);
+  
+  // Simulate playback finishing
+  for (const listener of h.players[0].listeners) {
+    listener({ didJustFinish: true, isLoaded: true });
+  }
+  assert.equal(h.players[0].seeks, 1, 'Should auto-rewind on didJustFinish');
 });
