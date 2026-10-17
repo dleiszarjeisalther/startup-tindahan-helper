@@ -573,7 +573,7 @@
       "file_type": "code",
       "norm_label": "escposreceiptformatter",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L45"
+      "source_location": "L46"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_paperwidth",
@@ -586,7 +586,7 @@
       "file_type": "code",
       "norm_label": "paperwidth",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L43"
+      "source_location": "L44"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_receiptdata",
@@ -4787,7 +4787,7 @@
       "file_type": "code",
       "norm_label": ".centertext()",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L202"
+      "source_location": "L209"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_escposreceiptformatter_formatmonospacetext",
@@ -4799,7 +4799,7 @@
       "file_type": "code",
       "norm_label": ".formatmonospacetext()",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L94"
+      "source_location": "L101"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_escposreceiptformatter_formatphp",
@@ -4811,7 +4811,7 @@
       "file_type": "code",
       "norm_label": ".formatphp()",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L74"
+      "source_location": "L75"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_escposreceiptformatter_formatplaintextreceipt",
@@ -4823,7 +4823,7 @@
       "file_type": "code",
       "norm_label": ".formatplaintextreceipt()",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L46"
+      "source_location": "L47"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_escposreceiptformatter_formatreceipt",
@@ -4835,7 +4835,7 @@
       "file_type": "code",
       "norm_label": ".formatreceipt()",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L51"
+      "source_location": "L52"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_escposreceiptformatter_generateescposbytes",
@@ -4847,7 +4847,7 @@
       "file_type": "code",
       "norm_label": ".generateescposbytes()",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L171"
+      "source_location": "L178"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_escposreceiptformatter_padline",
@@ -4859,7 +4859,7 @@
       "file_type": "code",
       "norm_label": ".padline()",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L81"
+      "source_location": "L82"
     },
     {
       "id": "src_infrastructure_services_bluetooththermalprinterservice_bluetooththermalprinterservice_connect",
@@ -8403,7 +8403,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/sales.tsx",
-      "source_location": "L2742"
+      "source_location": "L2743"
     },
     {
       "id": "src_presentation_components_floatingtoast",
@@ -15400,7 +15400,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L101",
+      "source_location": "L108",
       "weight": 1.0
     },
     {
@@ -15412,7 +15412,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L111",
+      "source_location": "L118",
       "weight": 1.0
     },
     {
@@ -15424,7 +15424,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L126",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -15436,7 +15436,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -15448,7 +15448,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L53",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -15460,7 +15460,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L172",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -27194,7 +27194,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/sales.tsx",
-      "source_location": "L2742",
+      "source_location": "L2743",
       "weight": 1.0
     },
     {
@@ -28118,7 +28118,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -28129,7 +28129,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -30818,13 +30818,24 @@
     },
     {
       "source": "src_domain_services_escposreceiptformatter_escposreceiptformatter",
+      "target": "src_domain_services_escposreceiptformatter_escposreceiptformatter_formatmonospacetext",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "src_domain_services_escposreceiptformatter_escposreceiptformatter",
       "target": "src_domain_services_escposreceiptformatter_escposreceiptformatter_generateescposbytes",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L171",
+      "source_location": "L178",
       "weight": 1.0
     },
     {
@@ -30835,7 +30846,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L202",
+      "source_location": "L209",
       "weight": 1.0
     },
     {
@@ -30846,7 +30857,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -30857,7 +30868,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -30868,7 +30879,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -30879,18 +30890,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L81",
-      "weight": 1.0
-    },
-    {
-      "source": "src_domain_services_escposreceiptformatter_escposreceiptformatter",
-      "target": "src_domain_services_escposreceiptformatter_escposreceiptformatter_formatmonospacetext",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/domain/services/EscPosReceiptFormatter.ts",
-      "source_location": "L94",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -33224,5 +33224,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "74a714129b349ec1ecabf7ddfb2ab1ae65a8999e"
+  "built_at_commit": "6505c76c19b9c43d795de603068c42419ea43653"
 }

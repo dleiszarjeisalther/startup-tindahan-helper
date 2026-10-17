@@ -2717,20 +2717,21 @@ export default function SalesHistoryScreen() {
             storeName: settings?.storeName || 'Tindahan Helper POS',
             receiptNumber: reprintTx.id,
             receiptId: reprintTx.id,
-            timestamp: reprintTx.timestamp,
+            timestamp: `${reprintTx.dateLabel || ''} ${reprintTx.timeLabel || ''}`.trim() || new Date().toLocaleString(),
             tenderType: reprintTx.tenderType as any,
             customerName: reprintTx.customerName,
             items: (reprintTx.items || []).map((it: any) => ({
               name: it.name,
               quantity: it.quantity,
-              unitPricePhp: it.unitPricePaidPhp,
-              totalPricePhp: it.unitPricePaidPhp * it.quantity,
+              unitPricePhp: it.unitPricePaidPhp ?? 0,
+              totalPricePhp: (it.unitPricePaidPhp ?? 0) * (it.quantity ?? 1),
             })),
             subtotalPhp: reprintTx.totalPhp - ((reprintTx as any).convenienceFeePhp ?? 0),
             convenienceFeePhp: (reprintTx as any).convenienceFeePhp ?? 0,
             totalAmountPhp: reprintTx.totalPhp,
             paymentReference: reprintTx.paymentReference || (reprintTx as any).gcashRef,
-            tenderedAmountPhp: reprintTx.tenderType === 'CASH' ? reprintTx.totalPhp : undefined,
+            tenderedAmountPhp: reprintTx.tenderType === 'CASH' ? reprintTx.amountTenderedPhp || reprintTx.totalPhp : undefined,
+            changePhp: reprintTx.tenderType === 'CASH' ? reprintTx.changeDuePhp || 0 : undefined,
           }}
           onClose={() => setReprintTx(null)}
         />

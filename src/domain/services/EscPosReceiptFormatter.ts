@@ -21,15 +21,16 @@ export interface ReceiptData {
   storeName: string;
   storeOwner?: string;
   storeAddress?: string;
-  receiptNumber: string;
+  receiptNumber?: string;
   receiptId?: string;
-  timestamp: string; // ISO or formatted
+  timestamp?: string; // ISO or formatted
   cashierName?: string;
   items: ReceiptLineItem[];
   subtotalPhp: number;
   discountPhp?: number;
   convenienceFeePhp?: number;
-  totalAmountPhp: number;
+  totalAmountPhp?: number;
+  totalPhp?: number;
   tenderType: 'CASH' | 'GCASH' | 'UTANG' | 'SPLIT';
   tenderedAmountPhp?: number;
   changePhp?: number;
@@ -71,21 +72,27 @@ export class EscPosReceiptFormatter {
   /**
    * Helper to format a currency amount with two decimal digits.
    */
-  public static formatPhp(amount: number): string {
-    return `P${amount.toFixed(2)}`;
+  public static formatPhp(amount: number | undefined | null): string {
+    return `P${(amount ?? 0).toFixed(2)}`;
   }
 
   /**
    * Formats a line with left text and right text padded with spaces.
    */
-  public static padLine(left: string, right: string, width: number): string {
-    const spaceNeeded = width - left.length - right.length;
+  public static padLine(
+    left: string | undefined | null,
+    right: string | undefined | null,
+    width: number
+  ): string {
+    const l = String(left ?? '');
+    const r = String(right ?? '');
+    const spaceNeeded = width - l.length - r.length;
     if (spaceNeeded <= 0) {
       // If text overflows, truncate left text slightly
-      const maxLeft = Math.max(4, width - right.length - 1);
-      return `${left.substring(0, maxLeft)} ${right}`;
+      const maxLeft = Math.max(4, width - r.length - 1);
+      return `${l.substring(0, maxLeft)} ${r}`;
     }
-    return left + ' '.repeat(spaceNeeded) + right;
+    return l + ' '.repeat(spaceNeeded) + r;
   }
 
   /**
@@ -98,7 +105,7 @@ export class EscPosReceiptFormatter {
     const lines: string[] = [];
 
     // Header
-    lines.push(this.centerText(data.storeName.toUpperCase(), width));
+    lines.push(this.centerText((data.storeName || 'Tindahan').toUpperCase(), width));
     if (data.storeOwner) {
       lines.push(this.centerText(data.storeOwner, width));
     }
@@ -108,8 +115,8 @@ export class EscPosReceiptFormatter {
     lines.push(doubleDivider);
 
     // Metadata
-    lines.push(this.padLine('Resibo #:', data.receiptNumber, width));
-    lines.push(this.padLine('Petsa:', data.timestamp, width));
+    lines.push(this.padLine('Resibo #:', data.receiptNumber || data.receiptId || '', width));
+    lines.push(this.padLine('Petsa:', data.timestamp || '', width));
     if (data.cashierName) {
       lines.push(this.padLine('Kahera:', data.cashierName, width));
     }
@@ -121,7 +128,7 @@ export class EscPosReceiptFormatter {
     // Line Items
     lines.push(this.padLine('AYTEM / KANTIDAD', 'HALAGA', width));
     lines.push(divider);
-    for (const item of data.items) {
+    for (const item of data.items || []) {
       const itemHeader = `${item.quantity}x ${item.name}`;
       const itemTotal = this.formatPhp(item.totalPricePhp);
       lines.push(this.padLine(itemHeader, itemTotal, width));
@@ -139,7 +146,7 @@ export class EscPosReceiptFormatter {
     if (data.convenienceFeePhp && data.convenienceFeePhp > 0) {
       lines.push(this.padLine('Convenience Fee:', `+${this.formatPhp(data.convenienceFeePhp)}`, width));
     }
-    lines.push(this.padLine('KABUUANG HALAGA:', this.formatPhp(data.totalAmountPhp), width));
+    lines.push(this.padLine('KABUUANG HALAGA:', this.formatPhp(data.totalAmountPhp ?? data.totalPhp ?? 0), width));
     lines.push(divider);
 
     // Settlement
@@ -199,10 +206,11 @@ export class EscPosReceiptFormatter {
     return new Uint8Array(bytes);
   }
 
-  private static centerText(text: string, width: number): string {
-    if (text.length >= width) return text.substring(0, width);
-    const totalPadding = width - text.length;
+  private static centerText(text: string | undefined | null, width: number): string {
+    const t = String(text ?? '');
+    if (t.length >= width) return t.substring(0, width);
+    const totalPadding = width - t.length;
     const padLeft = Math.floor(totalPadding / 2);
-    return ' '.repeat(padLeft) + text;
+    return ' '.repeat(padLeft) + t;
   }
 }
