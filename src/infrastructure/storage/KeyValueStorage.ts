@@ -15,6 +15,22 @@ export interface IKeyValueStorage {
   saveSettings(settings: StoreSettingsState): void;
   loadCategories(defaultCategories: string[]): string[];
   saveCategories(categories: string[]): void;
+  getOwnerPinHash(): string | undefined;
+  getOwnerPinSalt(): string | undefined;
+  setOwnerPin(hash: string, salt: string): void;
+  getPinLockoutUntil(): number;
+  setPinLockoutUntil(timestamp: number): void;
+  getFailedPinAttempts(): number;
+  setFailedPinAttempts(count: number): void;
+  getOperatingMode(): 'OWNER' | 'CASHIER';
+  setOperatingMode(mode: 'OWNER' | 'CASHIER'): void;
+  isBrownoutSaverActive(): boolean;
+  setBrownoutSaverActive(active: boolean): void;
+  getGcashConvenienceFee(): number;
+  setGcashConvenienceFee(fee: number, enabled: boolean): void;
+  isGcashConvenienceFeeEnabled(): boolean;
+  getQrPhImageUri(): string | undefined;
+  setQrPhImageUri(uri: string): void;
 }
 
 /**
@@ -219,6 +235,84 @@ class SynchronousKeyValueStorage implements IKeyValueStorage {
 
   public saveCategories(categories: string[]): void {
     this.setString('app_categories', JSON.stringify(categories));
+  }
+
+  public getOwnerPinHash(): string | undefined {
+    this.ensureInitialized();
+    return this.getString('store_owner_pin_hash');
+  }
+
+  public getOwnerPinSalt(): string | undefined {
+    this.ensureInitialized();
+    return this.getString('store_owner_pin_salt');
+  }
+
+  public setOwnerPin(hash: string, salt: string): void {
+    this.setString('store_owner_pin_hash', hash);
+    this.setString('store_owner_pin_salt', salt);
+    this.setFailedPinAttempts(0);
+    this.setPinLockoutUntil(0);
+  }
+
+  public getPinLockoutUntil(): number {
+    this.ensureInitialized();
+    return this.getNumber('store_pin_lockout_until', 0) ?? 0;
+  }
+
+  public setPinLockoutUntil(timestamp: number): void {
+    this.setNumber('store_pin_lockout_until', timestamp);
+  }
+
+  public getFailedPinAttempts(): number {
+    this.ensureInitialized();
+    return this.getNumber('store_pin_failed_attempts', 0) ?? 0;
+  }
+
+  public setFailedPinAttempts(count: number): void {
+    this.setNumber('store_pin_failed_attempts', count);
+  }
+
+  public getOperatingMode(): 'OWNER' | 'CASHIER' {
+    this.ensureInitialized();
+    const mode = this.getString('store_active_operating_mode');
+    return mode === 'OWNER' ? 'OWNER' : 'CASHIER';
+  }
+
+  public setOperatingMode(mode: 'OWNER' | 'CASHIER'): void {
+    this.setString('store_active_operating_mode', mode);
+  }
+
+  public isBrownoutSaverActive(): boolean {
+    this.ensureInitialized();
+    return this.getBoolean('store_brownout_battery_saver', false) ?? false;
+  }
+
+  public setBrownoutSaverActive(active: boolean): void {
+    this.setBoolean('store_brownout_battery_saver', active);
+  }
+
+  public getGcashConvenienceFee(): number {
+    this.ensureInitialized();
+    return this.getNumber('store_gcash_fee_php', 2.0) ?? 2.0;
+  }
+
+  public setGcashConvenienceFee(fee: number, enabled: boolean): void {
+    this.setNumber('store_gcash_fee_php', fee);
+    this.setBoolean('store_gcash_fee_enabled', enabled);
+  }
+
+  public isGcashConvenienceFeeEnabled(): boolean {
+    this.ensureInitialized();
+    return this.getBoolean('store_gcash_fee_enabled', false) ?? false;
+  }
+
+  public getQrPhImageUri(): string | undefined {
+    this.ensureInitialized();
+    return this.getString('store_qr_ph_image_uri');
+  }
+
+  public setQrPhImageUri(uri: string): void {
+    this.setString('store_qr_ph_image_uri', uri);
   }
 }
 

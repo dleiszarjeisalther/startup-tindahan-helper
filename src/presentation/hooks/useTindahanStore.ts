@@ -90,6 +90,18 @@ const recordStockMovement = (params: Parameters<typeof tindahanStoreService.reco
   tindahanStoreService.recordStockMovement(params);
 const clearAllDatabaseData = () => tindahanStoreService.clearAllDatabaseData();
 const notifyCatalogChanged = () => tindahanStoreService.notifyCatalogChanged();
+const setOwnerMasterPin = (pin: string) => tindahanStoreService.setOwnerMasterPin(pin);
+const verifyOwnerMasterPin = (pin: string) => tindahanStoreService.verifyOwnerMasterPin(pin);
+const switchOperatingMode = (pin: string) => tindahanStoreService.switchOperatingMode(pin);
+const quickLockToCashierMode = () => tindahanStoreService.quickLockToCashierMode();
+const setOperatingMode = (mode: 'OWNER' | 'CASHIER') =>
+  tindahanStoreService.setOperatingMode(mode);
+const isPrivilegeAllowed = (
+  action: Parameters<typeof tindahanStoreService.isPrivilegeAllowed>[0]
+) => tindahanStoreService.isPrivilegeAllowed(action);
+const toggleBrownoutBatterySaver = () => tindahanStoreService.toggleBrownoutBatterySaver();
+const getExpiringProducts = (daysThreshold?: number) =>
+  tindahanStoreService.getExpiringProducts(daysThreshold);
 
 export function useTindahanStore() {
   const store = useTindahanStoreService();
@@ -105,6 +117,10 @@ export function useTindahanStore() {
     version: snapshot.revision,
     cartRevision: snapshot.cartRevision,
     isSqliteActive: snapshot.isSqliteActive,
+    operatingMode: snapshot.operatingMode,
+    isBrownoutSaverActive: snapshot.isBrownoutSaverActive,
+    hasOwnerPinSet: snapshot.hasOwnerPinSet,
+    pinLockoutUntil: snapshot.pinLockoutUntil,
     products: snapshot.products,
     cartSummary: snapshot.cartSummary,
     heldCarts: snapshot.heldCarts,
@@ -150,5 +166,13 @@ export function useTindahanStore() {
     updateSettings,
     clearAllDatabaseData,
     notifyCatalogChanged,
+    setOwnerMasterPin,
+    verifyOwnerMasterPin,
+    switchOperatingMode,
+    quickLockToCashierMode,
+    setOperatingMode,
+    isPrivilegeAllowed,
+    toggleBrownoutBatterySaver,
+    getExpiringProducts,
   };
 }

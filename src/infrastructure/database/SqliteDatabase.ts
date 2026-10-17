@@ -59,7 +59,8 @@ export class SqliteDatabase {
         visual_json TEXT,
         image_uri TEXT,
         default_price_php REAL DEFAULT 0,
-        unit_of_measure TEXT DEFAULT 'pc'
+        unit_of_measure TEXT DEFAULT 'pc',
+        expiry_date TEXT
       );
 
       CREATE TABLE IF NOT EXISTS cart_items (
@@ -76,6 +77,8 @@ export class SqliteDatabase {
         amount_tendered_php REAL NOT NULL DEFAULT 0,
         change_due_php REAL NOT NULL DEFAULT 0,
         gcash_ref TEXT,
+        payment_reference TEXT,
+        convenience_fee_php REAL NOT NULL DEFAULT 0,
         refunded_php REAL NOT NULL DEFAULT 0,
         item_count INTEGER NOT NULL DEFAULT 0,
         tender_type TEXT NOT NULL,
@@ -186,6 +189,24 @@ export class SqliteDatabase {
 
     try {
       this.db.execSync("ALTER TABLE products ADD COLUMN unit_of_measure TEXT DEFAULT 'pc';");
+    } catch {
+      // Column already exists
+    }
+
+    try {
+      this.db.execSync('ALTER TABLE products ADD COLUMN expiry_date TEXT;');
+    } catch {
+      // Column already exists
+    }
+
+    try {
+      this.db.execSync('ALTER TABLE sales_transactions ADD COLUMN convenience_fee_php REAL NOT NULL DEFAULT 0;');
+    } catch {
+      // Column already exists
+    }
+
+    try {
+      this.db.execSync('ALTER TABLE sales_transactions ADD COLUMN payment_reference TEXT;');
     } catch {
       // Column already exists
     }

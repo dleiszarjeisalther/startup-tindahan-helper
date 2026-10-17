@@ -47,6 +47,9 @@ export interface ProductDTO {
   unitOfMeasure: UnitOfMeasure;
   formattedUnit: string;
   formattedStock: string;
+  expiryDate?: string | null;
+  expiryStatus?: 'SAFE' | 'NEAR_EXPIRY' | 'EXPIRED' | 'NONE';
+  daysUntilExpiry?: number | null;
 }
 
 export class Product {
@@ -63,7 +66,8 @@ export class Product {
     private _outOfStockDays = 0,
     private _visual?: ProductVisual,
     private _imageUri?: string,
-    private _unitOfMeasure: UnitOfMeasure = 'pc'
+    private _unitOfMeasure: UnitOfMeasure = 'pc',
+    private _expiryDate?: string | null
   ) {
     if (!_name.trim()) {
       throw new Error('Product name is required.');
@@ -71,6 +75,33 @@ export class Product {
     if (_sellingTiers.length === 0) {
       throw new Error('Product must have at least one selling unit tier.');
     }
+  }
+
+  public get expiryDate(): string | null | undefined {
+    return this._expiryDate;
+  }
+
+  public get daysUntilExpiry(): number | null {
+    if (!this._expiryDate) return null;
+    const expiry = new Date(this._expiryDate);
+    if (isNaN(expiry.getTime())) return null;
+    const now = new Date();
+    const dExpiry = new Date(expiry.getFullYear(), expiry.getMonth(), expiry.getDate());
+    const dNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffTime = dExpiry.getTime() - dNow.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  public getExpiryStatus(currentDate: Date = new Date()): 'SAFE' | 'NEAR_EXPIRY' | 'EXPIRED' | 'NONE' {
+    if (!this._expiryDate) return 'NONE';
+    const expiry = new Date(this._expiryDate);
+    if (isNaN(expiry.getTime())) return 'NONE';
+    const dExpiry = new Date(expiry.getFullYear(), expiry.getMonth(), expiry.getDate());
+    const dNow = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    const diffDays = Math.ceil((dExpiry.getTime() - dNow.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays <= 0) return 'EXPIRED';
+    if (diffDays <= 30) return 'NEAR_EXPIRY';
+    return 'SAFE';
   }
 
   public get barcode(): Barcode {
@@ -161,7 +192,8 @@ export class Product {
       nextOosDays,
       this._visual,
       this._imageUri,
-      this._unitOfMeasure
+      this._unitOfMeasure,
+      this._expiryDate
     );
   }
 
@@ -173,6 +205,7 @@ export class Product {
     baseStockCount?: number;
     lowStockThreshold?: number;
     unitOfMeasure?: UnitOfMeasure;
+    expiryDate?: string | null;
   }): Product {
     const nextName = updates.name !== undefined && updates.name.trim() ? updates.name.trim() : this._name;
     const nextCategory = updates.category !== undefined && updates.category.trim() ? updates.category.trim() : this._category;
@@ -181,6 +214,7 @@ export class Product {
     const nextCost = updates.unitCostPhp !== undefined && updates.unitCostPhp >= 0 ? updates.unitCostPhp : this._unitCostPhp;
     const nextOosDays = nextStock === 0 ? Math.max(1, this._outOfStockDays) : (this._baseStockCount === 0 && nextStock > 0 ? 0 : this._outOfStockDays);
     const nextUnitOfMeasure = updates.unitOfMeasure ?? this._unitOfMeasure;
+    const nextExpiry = updates.expiryDate !== undefined ? updates.expiryDate : this._expiryDate;
     let nextTiers = this._sellingTiers;
     if (updates.pricePhp !== undefined && updates.pricePhp >= 0) {
       const pieceIdx = this._sellingTiers.findIndex((t) => t.unitName === 'piece');
@@ -205,7 +239,8 @@ export class Product {
       nextOosDays,
       this._visual,
       this._imageUri,
-      nextUnitOfMeasure
+      nextUnitOfMeasure,
+      nextExpiry
     );
   }
 
@@ -223,7 +258,8 @@ export class Product {
       this._outOfStockDays,
       this._visual,
       imageUri,
-      this._unitOfMeasure
+      this._unitOfMeasure,
+      this._expiryDate
     );
   }
 
@@ -244,7 +280,8 @@ export class Product {
       this._outOfStockDays,
       this._visual,
       this._imageUri,
-      this._unitOfMeasure
+      this._unitOfMeasure,
+      this._expiryDate
     );
   }
 
@@ -325,6 +362,9 @@ export class Product {
         this._unitOfMeasure === 'kg'
           ? `${Number(this._baseStockCount.toFixed(3))} kg`
           : `${Math.floor(this._baseStockCount)} pcs`,
+      expiryDate: this._expiryDate,
+      expiryStatus: this.getExpiryStatus(),
+      daysUntilExpiry: this.daysUntilExpiry,
     };
   }
 }

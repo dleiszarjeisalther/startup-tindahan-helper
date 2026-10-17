@@ -9,7 +9,6 @@ import {
   TextInput,
   Modal,
   Share,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -27,6 +26,24 @@ import { Money } from '@/domain/value-objects/Money';
 import { getTranslations } from '@/presentation/localization/i18n';
 
 import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
+import {
+  ConfirmationModal,
+  ConfirmationType,
+  ConfirmationModalDetail,
+} from '@/presentation/components/ConfirmationModal';
+import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
+import { ReceiptPrinterModal } from '@/presentation/components/ReceiptPrinterModal';
+
+interface ConfirmationState {
+  type: ConfirmationType;
+  title: string;
+  message: string;
+  itemName?: string;
+  details?: ConfirmationModalDetail[];
+  confirmText?: string;
+  cancelText?: string | null;
+  onConfirm: () => void | Promise<void>;
+}
 
 const PERIODS = ['Daily', 'Weekly', 'Monthly'] as const;
 
@@ -55,6 +72,7 @@ export default function SalesHistoryScreen() {
     deleteCashAdjustment,
     transactions,
     settings,
+    operatingMode,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
@@ -62,6 +80,8 @@ export default function SalesHistoryScreen() {
   const [selectedPeriod, setSelectedPeriod] =
     useState<(typeof PERIODS)[number]>('Daily');
   const [customDateRange, setCustomDateRange] = useState<DateRangeFilter | null>(null);
+  const [showTuboPinModal, setShowTuboPinModal] = useState(false);
+  const [reprintTx, setReprintTx] = useState<any | null>(null);
 
   // Date Range Filter Modal state
   const [dateFilterModalVisible, setDateFilterModalVisible] = useState(false);
@@ -72,6 +92,9 @@ export default function SalesHistoryScreen() {
   const [tempStartDate, setTempStartDate] = useState<Date | null>(null);
   const [tempEndDate, setTempEndDate] = useState<Date | null>(null);
   const [activeDateField, setActiveDateField] = useState<'START' | 'END'>('START');
+
+  // Styled Confirmation Dialog State
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
 
   // Compute only the years that actually exist in the database (plus current year)
   const availableYears = useMemo(() => {
@@ -287,10 +310,36 @@ export default function SalesHistoryScreen() {
 
     if (activeDateField === 'START') {
       setTempStartDate(dayDate);
-      if (!tempEndDate || dayDate.getTime() > tempEndDate.getTime()) {
-        setTempEndDate(dayDate);
-      }
+      // As requested: jump calendar to current date and default end date to current date
+      setTempEndDate(now);
       setActiveDateField('END');
+      setCalendarMonth(now);
+
+      const formattedStart = dayDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+      const formattedToday = now.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+      setConfirmDialog({
+        type: 'info',
+        title: 'Pumili ng Huling Petsa (End Date)',
+        message: `Naitakda na ang Simulang Petsa: ${formattedStart}.\n\nMangyaring pumili naman ngayon ng Huling Petsa sa kalendaryo. Naka-focus na ang kalendaryo sa Kasalukuyang Petsa (${formattedToday}).`,
+        details: [
+          { label: 'Simulang Petsa', value: formattedStart },
+          { label: 'Kasalukuyang Petsa (Today)', value: formattedToday, highlight: true },
+        ],
+        confirmText: 'Piliin ang End Date',
+        cancelText: null,
+        onConfirm: () => {
+          setConfirmDialog(null);
+        },
+      });
     } else {
       if (tempStartDate && dayDate.getTime() < tempStartDate.getTime()) {
         setTempStartDate(dayDate);
@@ -399,7 +448,16 @@ export default function SalesHistoryScreen() {
   const handleSaveDrawerAdjustment = () => {
     const val = parseFloat(adjAmount);
     if (isNaN(val) || val <= 0) {
-      Alert.alert('Halaga', 'Mangyaring maglagay ng wastong halaga ng pera.');
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Maling Halaga ng Pera',
+        message: 'Mangyaring maglagay ng wastong halaga ng pera bago itala sa kahon.',
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => {
+          setConfirmDialog(null);
+        },
+      });
       return;
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
@@ -673,11 +731,15 @@ export default function SalesHistoryScreen() {
                 onPress={(e) => {
                   e.stopPropagation();
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                  setShowProfit(!showProfit);
+                  if (operatingMode === 'CASHIER') {
+                    setShowTuboPinModal(true);
+                  } else {
+                    setShowProfit(!showProfit);
+                  }
                 }}
               >
                 <Ionicons
-                  name={showProfit ? 'eye-outline' : 'eye-off-outline'}
+                  name={showProfit && operatingMode === 'OWNER' ? 'eye-outline' : 'eye-off-outline'}
                   size={14}
                   color="#0D7A52"
                 />
@@ -687,7 +749,7 @@ export default function SalesHistoryScreen() {
 
             <View style={styles.kpiCardFooter}>
               <Text style={styles.tuboValue} numberOfLines={1}>
-                {t.tuboLabel || 'Tubo'}: {showProfit ? `${summary.formattedTubo} (${summary.profitMarginPercent}%)` : t.tuboHidden}
+                {t.tuboLabel || 'Tubo'}: {operatingMode === 'CASHIER' ? '🔒 Owner Mode Only' : showProfit ? `${summary.formattedTubo} (${summary.profitMarginPercent}%)` : t.tuboHidden}
               </Text>
               <Text style={styles.kahaTapHint} numberOfLines={1}>{t.salesOverviewBtnHint || 'Buong Buod ›'}</Text>
             </View>
@@ -926,27 +988,30 @@ export default function SalesHistoryScreen() {
                         <Pressable
                           style={styles.voidSaleBtn}
                           onPress={() => {
-                            Alert.alert(
-                              'Kumpirmahin ang Pag-Void ng Bayad',
-                              `Sigurado ka bang nais mong i-void ang bayad utang na ito? Ibabalik ang halagang ${Money.fromPhp(tx.totalPhp).format()} sa natitirang utang ni ${tx.customerName || 'Customer'}.`,
-                              [
-                                { text: 'Bumalik', style: 'cancel' },
-                                {
-                                  text: 'Oo, I-Void ang Bayad',
-                                  style: 'destructive',
-                                  onPress: async () => {
-                                    Haptics.notificationAsync(
-                                      Haptics.NotificationFeedbackType.Warning
-                                    ).catch(() => {});
-                                    await voidEntireTransaction(tx.id, 'Pambawi ng Bayad Utang');
-                                    showActionToast(
-                                      `✓ Na-void ang bayad utang ni ${tx.customerName || 'Customer'} at naibalik ang balanse`,
-                                      'warning'
-                                    );
-                                  },
-                                },
-                              ]
-                            );
+                            setConfirmDialog({
+                              type: 'warning',
+                              title: 'Kumpirmahin ang Pag-Void ng Bayad',
+                              itemName: `Bayad Utang: ${tx.customerName || 'Customer'}`,
+                              message: `Sigurado ka bang nais mong i-void ang bayad utang na ito? Ibabalik ang halagang ${Money.fromPhp(tx.totalPhp).format()} sa natitirang utang ni ${tx.customerName || 'Customer'}.`,
+                              details: [
+                                { label: 'Halagang Ibabalik sa Utang', value: Money.fromPhp(tx.totalPhp).format(), highlight: true },
+                                { label: 'Customer', value: tx.customerName || 'Customer' },
+                                { label: 'Paraan ng Pagbayad', value: tx.tenderType },
+                              ],
+                              confirmText: 'Oo, I-Void ang Bayad',
+                              cancelText: 'Bumalik',
+                              onConfirm: async () => {
+                                setConfirmDialog(null);
+                                Haptics.notificationAsync(
+                                  Haptics.NotificationFeedbackType.Warning
+                                ).catch(() => {});
+                                await voidEntireTransaction(tx.id, 'Pambawi ng Bayad Utang');
+                                showActionToast(
+                                  `✓ Na-void ang bayad utang ni ${tx.customerName || 'Customer'} at naibalik ang balanse`,
+                                  'warning'
+                                );
+                              },
+                            });
                           }}
                         >
                           <Text style={styles.voidSaleBtnText}>
@@ -1003,6 +1068,16 @@ export default function SalesHistoryScreen() {
                       >
                         {tx.tenderType}
                       </Text>
+                      {(tx.paymentReference || (tx as any).gcashRef) ? (
+                        <Text style={[styles.txMethodTag, styles.tagGcashRef]}>
+                          Ref: {tx.paymentReference || (tx as any).gcashRef}
+                        </Text>
+                      ) : null}
+                      {((tx as any).convenienceFeePhp ?? 0) > 0 ? (
+                        <Text style={[styles.txMethodTag, styles.tagFeeBadge]}>
+                          +₱{(tx as any).convenienceFeePhp} Fee
+                        </Text>
+                      ) : null}
                     </View>
                   </View>
 
@@ -1175,33 +1250,62 @@ export default function SalesHistoryScreen() {
                                       styles.refundBtn,
                                       isUtangSale ? styles.utangDeductBtn : null,
                                     ]}
-                                    onPress={async () => {
-                                      Haptics.notificationAsync(
-                                        Haptics.NotificationFeedbackType.Success
-                                      ).catch(() => {});
-                                      const res = await processReturnOrExchange({
-                                        txId: tx.id,
-                                        productId: item.productId,
-                                        returnQty: 1,
-                                        reason: returnReason,
-                                        disposition,
-                                        resolution: isUtangSale
-                                          ? 'UTANG_DEDUCTION'
-                                          : 'CASH_REFUND',
+                                    onPress={() => {
+                                      const amountFormatted = `₱${item.unitPricePaidPhp.toFixed(2)}`;
+                                      setConfirmDialog({
+                                        type: isUtangSale ? 'warning' : 'danger',
+                                        title: isUtangSale
+                                          ? 'Kumpirmahin ang Bawas Utang'
+                                          : 'Kumpirmahin ang Refund',
+                                        itemName: `1× ${item.name}`,
+                                        message: isUtangSale
+                                          ? `Ibabawas ang ${amountFormatted} sa natitirang utang ni ${tx.customerName || 'Customer'}.`
+                                          : `Sigurado ka bang ibabalik ang bayad (${amountFormatted}) ng customer para sa 1× "${item.name}"?`,
+                                        details: [
+                                          { label: 'Halagang Babawiin', value: amountFormatted, highlight: true },
+                                          {
+                                            label: 'Kalagayan ng Paninda',
+                                            value: disposition === 'SELLABLE'
+                                              ? 'Maibebenta Pa (Restock sa Inventory)'
+                                              : 'Sira / Expired (Quarantine)',
+                                          },
+                                          {
+                                            label: 'Paraan ng Pagbalik',
+                                            value: isUtangSale ? 'Bawas Utang (Walang Cash)' : 'Cash Refund sa Kahon',
+                                          },
+                                        ],
+                                        confirmText: isUtangSale ? 'I-bawas sa Utang' : 'I-refund ang Pera',
+                                        cancelText: 'Kanselahin',
+                                        onConfirm: async () => {
+                                          setConfirmDialog(null);
+                                          Haptics.notificationAsync(
+                                            Haptics.NotificationFeedbackType.Success
+                                          ).catch(() => {});
+                                          const res = await processReturnOrExchange({
+                                            txId: tx.id,
+                                            productId: item.productId,
+                                            returnQty: 1,
+                                            reason: returnReason,
+                                            disposition,
+                                            resolution: isUtangSale
+                                              ? 'UTANG_DEDUCTION'
+                                              : 'CASH_REFUND',
+                                          });
+                                          showActionToast(
+                                            isUtangSale
+                                              ? `✓ Nabawas ang ₱${res.creditPhp.toFixed(2)} sa utang ni ${
+                                                  tx.customerName || 'Customer'
+                                                } para sa 1× ${item.name}`
+                                              : `✓ Refunded ₱${res.creditPhp.toFixed(2)} for 1× ${
+                                                  item.name
+                                                } (${
+                                                  disposition === 'SELLABLE'
+                                                    ? 'Restocked to Inventory'
+                                                    : 'Quarantined as Damaged'
+                                                })`
+                                          );
+                                        },
                                       });
-                                      showActionToast(
-                                        isUtangSale
-                                          ? `✓ Nabawas ang ₱${res.creditPhp.toFixed(2)} sa utang ni ${
-                                              tx.customerName || 'Customer'
-                                            } para sa 1× ${item.name}`
-                                          : `✓ Refunded ₱${res.creditPhp.toFixed(2)} for 1× ${
-                                              item.name
-                                            } (${
-                                              disposition === 'SELLABLE'
-                                                ? 'Restocked to Inventory'
-                                                : 'Quarantined as Damaged'
-                                            })`
-                                      );
                                     }}
                                   >
                                     <Text
@@ -1216,24 +1320,45 @@ export default function SalesHistoryScreen() {
 
                                   <Pressable
                                     style={styles.exchangeBtn}
-                                    onPress={async () => {
-                                      Haptics.notificationAsync(
-                                        Haptics.NotificationFeedbackType.Success
-                                      ).catch(() => {});
-                                      const res = await processReturnOrExchange({
-                                        txId: tx.id,
-                                        productId: item.productId,
-                                        returnQty: 1,
-                                        reason: returnReason,
-                                        disposition,
-                                        resolution: 'EXCHANGE_CREDIT',
+                                    onPress={() => {
+                                      const creditFormatted = `₱${item.unitPricePaidPhp.toFixed(2)}`;
+                                      setConfirmDialog({
+                                        type: 'info',
+                                        title: 'Kumpirmahin ang Palit Paninda',
+                                        itemName: `1× ${item.name}`,
+                                        message: `Ilalapat ang kredito na ${creditFormatted} ng panindang ito sa bagong bentahan sa checkout.`,
+                                        details: [
+                                          { label: 'Exchange Credit', value: creditFormatted, highlight: true },
+                                          {
+                                            label: 'Kalagayan ng Paninda',
+                                            value: disposition === 'SELLABLE'
+                                              ? 'Maibebenta Pa (Restock)'
+                                              : 'Sira / Expired',
+                                          },
+                                        ],
+                                        confirmText: 'Pumunta sa Checkout',
+                                        cancelText: 'Kanselahin',
+                                        onConfirm: async () => {
+                                          setConfirmDialog(null);
+                                          Haptics.notificationAsync(
+                                            Haptics.NotificationFeedbackType.Success
+                                          ).catch(() => {});
+                                          const res = await processReturnOrExchange({
+                                            txId: tx.id,
+                                            productId: item.productId,
+                                            returnQty: 1,
+                                            reason: returnReason,
+                                            disposition,
+                                            resolution: 'EXCHANGE_CREDIT',
+                                          });
+                                          showActionToast(
+                                            `✓ Applied ₱${res.creditPhp.toFixed(
+                                              2
+                                            )} Exchange Credit to New Sale`
+                                          );
+                                          router.push('/checkout');
+                                        },
                                       });
-                                      showActionToast(
-                                        `✓ Applied ₱${res.creditPhp.toFixed(
-                                          2
-                                        )} Exchange Credit to New Sale`
-                                      );
-                                      router.push('/checkout');
                                     }}
                                   >
                                     <Text style={styles.exchangeBtnText}>
@@ -1248,31 +1373,47 @@ export default function SalesHistoryScreen() {
                           );
                         })}
 
+                        {/* Thermal Receipt Reprint Button */}
+                        <Pressable
+                          style={styles.reprintReceiptBtn}
+                          onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                            setReprintTx(tx);
+                          }}
+                        >
+                          <Text style={styles.reprintReceiptBtnText}>
+                            🖨️ Thermal Receipt Slip (58mm / 80mm)
+                          </Text>
+                        </Pressable>
+
                         {/* Owner Same-Day Void Button */}
                         <Pressable
                           style={styles.voidSaleBtn}
                           onPress={() => {
-                            Alert.alert(
-                              'Kumpirmahin ang Pag-Void ng Resibo',
-                              `Sigurado ka bang nais mong i-void ang Resibo #${tx.id}? Mababawi ang benta at maibabalik ang mga paninda sa imbentaryo.`,
-                              [
-                                { text: 'Huwag', style: 'cancel' },
-                                {
-                                  text: 'Oo, I-Void ang Resibo',
-                                  style: 'destructive',
-                                  onPress: async () => {
-                                    Haptics.notificationAsync(
-                                      Haptics.NotificationFeedbackType.Warning
-                                    ).catch(() => {});
-                                    await voidEntireTransaction(tx.id, 'Owner Entry Correction');
-                                    showActionToast(
-                                      `✓ Na-void ang Resibo #${tx.id} at naibalik ang paninda sa imbentaryo`,
-                                      'warning'
-                                    );
-                                  },
-                                },
-                              ]
-                            );
+                            setConfirmDialog({
+                              type: 'delete',
+                              title: 'Kumpirmahin ang Pag-Void ng Resibo',
+                              itemName: `Resibo #${tx.id}`,
+                              message: `Sigurado ka bang nais mong i-void ang Resibo #${tx.id}? Mababawi ang benta at maibabalik ang mga paninda sa imbentaryo.`,
+                              details: [
+                                { label: 'Kabuuang Halaga', value: Money.fromPhp(tx.totalPhp).format(), highlight: true },
+                                { label: 'Customer', value: tx.customerName || 'Walk-in' },
+                                { label: 'Paraan ng Pagbayad', value: tx.tenderType },
+                              ],
+                              confirmText: 'Oo, I-Void ang Resibo',
+                              cancelText: 'Huwag',
+                              onConfirm: async () => {
+                                setConfirmDialog(null);
+                                Haptics.notificationAsync(
+                                  Haptics.NotificationFeedbackType.Warning
+                                ).catch(() => {});
+                                await voidEntireTransaction(tx.id, 'Owner Entry Correction');
+                                showActionToast(
+                                  `✓ Na-void ang Resibo #${tx.id} at naibalik ang paninda sa imbentaryo`,
+                                  'warning'
+                                );
+                              },
+                            });
                           }}
                         >
                           <Text style={styles.voidSaleBtnText}>
@@ -1566,29 +1707,32 @@ export default function SalesHistoryScreen() {
                         <Pressable
                           style={styles.deleteAdjBtn}
                           onPress={() => {
-                            Alert.alert(
-                              'Alisin ang Tala sa Kahon?',
-                              `Sigurado ka bang nais mong alisin ang ${
+                            setConfirmDialog({
+                              type: 'delete',
+                              title: 'Alisin ang Tala sa Kahon?',
+                              itemName: `${item.type === 'PANUKLI' ? '+ Panukli' : '- Gastos'}: ${Money.fromPhp(item.amountPhp).format()}`,
+                              message: `Sigurado ka bang nais mong alisin ang ${
                                 item.type === 'PANUKLI' ? '+ Panukli' : '- Gastos'
-                              } na ${Money.fromPhp(item.amountPhp).format()}?`,
-                              [
-                                { text: 'Bumalik', style: 'cancel' },
-                                {
-                                  text: 'Oo, Alisin',
-                                  style: 'destructive',
-                                  onPress: () => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-                                    deleteCashAdjustment(item.id);
-                                    const delMsg = `🗑️ Naalis ang tala (${Money.fromPhp(item.amountPhp).format()}) sa kahon.`;
-                                    setDrawerSavedMsg(delMsg);
-                                    setTimeout(() => {
-                                      setDrawerSavedMsg((prev) => (prev === delMsg ? null : prev));
-                                    }, 3000);
-                                    showActionToast(delMsg, 'warning');
-                                  },
-                                },
-                              ]
-                            );
+                              } na ${Money.fromPhp(item.amountPhp).format()} sa kahon?`,
+                              details: [
+                                { label: 'Uri', value: item.type === 'PANUKLI' ? 'Panukli (Cash In)' : 'Gastos (Cash Out)' },
+                                { label: 'Halaga', value: Money.fromPhp(item.amountPhp).format(), highlight: true },
+                                { label: 'Kategorya', value: item.category },
+                              ],
+                              confirmText: 'Oo, Alisin',
+                              cancelText: 'Bumalik',
+                              onConfirm: () => {
+                                setConfirmDialog(null);
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+                                deleteCashAdjustment(item.id);
+                                const delMsg = `🗑️ Naalis ang tala (${Money.fromPhp(item.amountPhp).format()}) sa kahon.`;
+                                setDrawerSavedMsg(delMsg);
+                                setTimeout(() => {
+                                  setDrawerSavedMsg((prev) => (prev === delMsg ? null : prev));
+                                }, 3000);
+                                showActionToast(delMsg, 'warning');
+                              },
+                            });
                           }}
                         >
                           <Ionicons name="trash-outline" size={14} color="#EF4444" />
@@ -2047,6 +2191,7 @@ export default function SalesHistoryScreen() {
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                     setActiveDateField('END');
+                    setCalendarMonth(new Date());
                   }}
                 >
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
@@ -2531,6 +2676,62 @@ export default function SalesHistoryScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Styled Confirmation Modal */}
+      {confirmDialog ? (
+        <ConfirmationModal
+          visible={true}
+          type={confirmDialog.type}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          itemName={confirmDialog.itemName}
+          details={confirmDialog.details}
+          confirmText={confirmDialog.confirmText}
+          cancelText={confirmDialog.cancelText}
+          onConfirm={confirmDialog.onConfirm}
+          onCancel={() => setConfirmDialog(null)}
+        />
+      ) : null}
+
+      {/* Owner Master PIN Challenge Modal for Tubo / Profit Confidentiality */}
+      <PinChallengeModal
+        visible={showTuboPinModal}
+        title="Owner Master PIN"
+        subtitle="I-enter ang 4-digit PIN upang makita ang Tubo at Puhunan"
+        onSuccess={() => {
+          setShowTuboPinModal(false);
+          setShowProfit(true);
+          showActionToast('🔓 Nabuksan ang Tubo at Puhunan');
+        }}
+        onCancel={() => setShowTuboPinModal(false)}
+      />
+
+      {/* 58mm / 80mm ESC/POS Thermal Receipt Reprint Modal */}
+      {reprintTx ? (
+        <ReceiptPrinterModal
+          visible={reprintTx !== null}
+          receiptData={{
+            storeName: settings?.storeName || 'Tindahan Helper POS',
+            receiptNumber: reprintTx.id,
+            receiptId: reprintTx.id,
+            timestamp: reprintTx.timestamp,
+            tenderType: reprintTx.tenderType as any,
+            customerName: reprintTx.customerName,
+            items: (reprintTx.items || []).map((it: any) => ({
+              name: it.name,
+              quantity: it.quantity,
+              unitPricePhp: it.unitPricePaidPhp,
+              totalPricePhp: it.unitPricePaidPhp * it.quantity,
+            })),
+            subtotalPhp: reprintTx.totalPhp - ((reprintTx as any).convenienceFeePhp ?? 0),
+            convenienceFeePhp: (reprintTx as any).convenienceFeePhp ?? 0,
+            totalAmountPhp: reprintTx.totalPhp,
+            paymentReference: reprintTx.paymentReference || (reprintTx as any).gcashRef,
+            tenderedAmountPhp: reprintTx.tenderType === 'CASH' ? reprintTx.totalPhp : undefined,
+          }}
+          onClose={() => setReprintTx(null)}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -3052,6 +3253,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF3C7',
     color: '#B45309',
   },
+  tagGcashRef: {
+    backgroundColor: '#EFF6FF',
+    color: '#2563EB',
+    fontWeight: '700',
+  },
+  tagFeeBadge: {
+    backgroundColor: '#ECFDF5',
+    color: '#059669',
+    fontWeight: '700',
+  },
   txAmountCol: {
     flex: 1,
     alignItems: 'center',
@@ -3272,6 +3483,21 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     color: '#94A3B8',
+  },
+  reprintReceiptBtn: {
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#86EFAC',
+    borderRadius: 8,
+    paddingVertical: 8,
+    alignItems: 'center',
+    marginTop: 6,
+    marginBottom: 4,
+  },
+  reprintReceiptBtnText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#15803D',
   },
   voidSaleBtn: {
     backgroundColor: '#FEF2F2',

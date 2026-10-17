@@ -22,6 +22,13 @@ export const Colors = {
     backgroundSelected: '#2E3135',
     textSecondary: '#B0B4BA',
   },
+  amoled: {
+    text: '#ffffff',
+    background: '#000000',
+    backgroundElement: '#121212',
+    backgroundSelected: '#1E1E1E',
+    textSecondary: '#94A3B8',
+  },
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;

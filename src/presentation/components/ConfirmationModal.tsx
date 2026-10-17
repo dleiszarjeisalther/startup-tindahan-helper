@@ -17,6 +17,7 @@ export type ConfirmationType =
   | 'home_use'
   | 'damaged'
   | 'delete'
+  | 'danger'
   | 'warning'
   | 'info';
 
@@ -77,6 +78,12 @@ const THEMES: Record<ConfirmationType, TypeTheme> = {
     primaryLight: '#FEF2F2',
     icon: 'trash-outline',
     badgeLabel: 'BURAHIN',
+  },
+  danger: {
+    primary: '#DC2626',
+    primaryLight: '#FEF2F2',
+    icon: 'alert-circle-outline',
+    badgeLabel: 'BABALA',
   },
   warning: {
     primary: '#D97706',

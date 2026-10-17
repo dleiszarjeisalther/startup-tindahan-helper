@@ -17,11 +17,24 @@ import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScannerViewfinder';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/components/WeightQuantityModal';
+import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 
 export default function PosScanProductScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
-  const { products, addToCart, setCartItemQuantity, cartSummary, settings, version } = useTindahanStore();
+  const {
+    products,
+    addToCart,
+    setCartItemQuantity,
+    cartSummary,
+    settings,
+    version,
+    operatingMode,
+    isBrownoutSaverActive,
+    toggleBrownoutBatterySaver,
+    quickLockToCashierMode,
+    setOperatingMode,
+  } = useTindahanStore();
   const t = getTranslations(settings?.language);
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyTingi, setOnlyTingi] = useState(false);
@@ -30,6 +43,7 @@ export default function PosScanProductScreen() {
   const [unknownBarcode, setUnknownBarcode] = useState<string | null>(null);
   const [lastScannedProductId, setLastScannedProductId] = useState<string | null>(null);
   const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
+  const [showPinModal, setShowPinModal] = useState(false);
 
   useEffect(() => {
     if (__DEV__) console.debug('[StoreRender]', { surface: 'Scan', version, cartCount: cartSummary.totalCount });
@@ -48,6 +62,21 @@ export default function PosScanProductScreen() {
 
   const tryAddToCart = (productId: string, successMessage: string) => {
     try {
+      const prod = products.find((p) => p.id === productId);
+      if (prod && prod.expiryDate) {
+        const expDate = new Date(prod.expiryDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diffDays = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        if (diffDays < 0) {
+          triggerScanToast(`⚠️ HALA! EXPIRED NA (${prod.expiryDate})! Huwag ibenta sa suki.`);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+          return false;
+        } else if (diffDays <= 7) {
+          triggerScanToast(`⏳ FEFO: Malapit nang mag-expire (${diffDays} araw)!`);
+        }
+      }
+
       addToCart(productId, 1);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       triggerScanToast(successMessage);
@@ -134,12 +163,46 @@ export default function PosScanProductScreen() {
         onBarcodeScanned={handleBarcodeDetected}
         toastMessage={scanToast}
         topCenterAction={
-          <Pressable
-            style={styles.addDbQuickBtn}
-            onPress={() => router.push('/inventory')}
-          >
-            <Text style={styles.addDbQuickText}>{t.addProductToDb}</Text>
-          </Pressable>
+          <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
+            <Pressable
+              style={[
+                styles.rolePill,
+                operatingMode === 'OWNER' ? styles.rolePillOwner : styles.rolePillCashier,
+              ]}
+              onPress={() => {
+                if (operatingMode === 'CASHIER') {
+                  setShowPinModal(true);
+                } else {
+                  quickLockToCashierMode();
+                  triggerScanToast('🔒 Locked to Tindera / Cashier Mode');
+                }
+              }}
+            >
+              <Text style={styles.rolePillText}>
+                {operatingMode === 'OWNER' ? '👑 Owner' : '🔒 Tindera'}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[
+                styles.brownoutBtn,
+                isBrownoutSaverActive && styles.brownoutBtnActive,
+              ]}
+              onPress={() => {
+                const next = toggleBrownoutBatterySaver();
+                triggerScanToast(next ? '⚡ Brownout Saver Active' : '💡 Normal Display');
+              }}
+            >
+              <Text style={styles.brownoutBtnText}>
+                {isBrownoutSaverActive ? '⚡ Eco' : '💡'}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={styles.addDbQuickBtn}
+              onPress={() => router.push('/inventory')}
+            >
+              <Text style={styles.addDbQuickText}>{t.addProductToDb}</Text>
+            </Pressable>
+          </View>
         }
         bottomBanner={
           unknownBarcode ? (
@@ -364,6 +427,18 @@ export default function PosScanProductScreen() {
             triggerScanToast(error instanceof Error ? error.message : 'Could not update cart.');
           }
         }}
+      />
+
+      <PinChallengeModal
+        visible={showPinModal}
+        title="Owner Mode Authorization"
+        subtitle="Enter 4-digit Master PIN to unlock Owner Mode"
+        onSuccess={() => {
+          setShowPinModal(false);
+          setOperatingMode('OWNER');
+          triggerScanToast('👑 Switched to Owner Mode');
+        }}
+        onCancel={() => setShowPinModal(false)}
       />
     </SafeAreaView>
   );
@@ -811,5 +886,40 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
     lineHeight: 20,
+  },
+  rolePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 12,
+  },
+  rolePillOwner: {
+    backgroundColor: '#0D7A52',
+  },
+  rolePillCashier: {
+    backgroundColor: '#475569',
+  },
+  rolePillText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  brownoutBtn: {
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#64748B',
+  },
+  brownoutBtnActive: {
+    backgroundColor: '#EAB308',
+    borderColor: '#CA8A04',
+  },
+  brownoutBtnText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
   },
 });

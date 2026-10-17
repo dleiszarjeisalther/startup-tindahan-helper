@@ -10,6 +10,10 @@ import {
 import { SqliteDatabase } from '../infrastructure/database/SqliteDatabase';
 import { MonthlySalesRecord } from '../domain/strategies/SeasonalForecastEngine';
 import { appKeyValueStorage } from '../infrastructure/storage/KeyValueStorage';
+import {
+  PinSecurityEngine,
+  PinVerificationOutcome,
+} from '../domain/services/PinSecurityEngine';
 
 export interface CartItemDTO {
   productId: string;
@@ -112,6 +116,8 @@ export interface SaleTransactionRecord {
   amountTenderedPhp: number;
   changeDuePhp: number;
   gcashRef?: string;
+  paymentReference?: string;
+  convenienceFeePhp?: number;
   refundedPhp: number;
   itemCount: number;
   tenderType: PaymentTenderType;
@@ -165,6 +171,10 @@ export interface StoreSnapshot {
   revision: number;
   cartRevision: number;
   isSqliteActive: boolean;
+  operatingMode: 'OWNER' | 'CASHIER';
+  isBrownoutSaverActive: boolean;
+  hasOwnerPinSet: boolean;
+  pinLockoutUntil: number | null;
   products: ProductDTO[];
   cartSummary: CartSummaryDTO;
   heldCarts: HeldCartRecord[];
@@ -216,11 +226,15 @@ export class TindahanStoreService {
   private categories: string[] = DEFAULT_CATEGORIES;
   private cashDrawerAdjustments: CashDrawerAdjustmentRecord[] = [];
   private stockMovements: StockMovementRecord[] = [];
+  private operatingMode: 'OWNER' | 'CASHIER' = 'OWNER';
+  private isBrownoutSaverActive = false;
 
   constructor(
     private readonly productRepo: IProductRepository,
     public readonly onboardingService: ProductOnboardingService
   ) {
+    this.operatingMode = appKeyValueStorage.getOperatingMode();
+    this.isBrownoutSaverActive = appKeyValueStorage.isBrownoutSaverActive();
     this.hydrateAllFromSqlite(true);
     this.snapshot = this.createSnapshot();
     this.trace('initialized');
@@ -304,6 +318,8 @@ export class TindahanStoreService {
         amount_tendered_php: number;
         change_due_php: number;
         gcash_ref: string | null;
+        payment_reference?: string | null;
+        convenience_fee_php?: number | null;
         refunded_php: number;
         item_count: number;
         tender_type: PaymentTenderType;
@@ -326,6 +342,8 @@ export class TindahanStoreService {
         amountTenderedPhp: r.amount_tendered_php,
         changeDuePhp: r.change_due_php,
         gcashRef: r.gcash_ref ?? undefined,
+        paymentReference: r.payment_reference ?? r.gcash_ref ?? undefined,
+        convenienceFeePhp: Number(r.convenience_fee_php) || 0,
         refundedPhp: r.refunded_php,
         itemCount: r.item_count,
         tenderType: r.tender_type,
@@ -625,8 +643,8 @@ export class TindahanStoreService {
         amount_tendered_php, change_due_php, gcash_ref,
         refunded_php, item_count, tender_type, customer_name,
         is_one_time_bulk_order, status, void_or_return_note, items_json, sort_order,
-        transaction_type
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        transaction_type, payment_reference, convenience_fee_php
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         tx.id,
         tx.timeLabel,
@@ -646,6 +664,8 @@ export class TindahanStoreService {
         JSON.stringify(tx.items),
         finalSortOrder,
         tx.transactionType ?? 'SALE',
+        tx.paymentReference ?? tx.gcashRef ?? null,
+        tx.convenienceFeePhp ?? 0,
       ]
     );
   }
@@ -712,6 +732,10 @@ export class TindahanStoreService {
       revision: this.version,
       cartRevision: this.cartRevision,
       isSqliteActive: this.isSqliteActive,
+      operatingMode: this.operatingMode,
+      isBrownoutSaverActive: this.isBrownoutSaverActive,
+      hasOwnerPinSet: !!appKeyValueStorage.getOwnerPinHash(),
+      pinLockoutUntil: appKeyValueStorage.getPinLockoutUntil(),
       products: Object.freeze([...products]) as ProductDTO[],
       cartSummary: Object.freeze({
         ...cartSummary,
@@ -934,6 +958,7 @@ export class TindahanStoreService {
       baseStockCount?: number;
       lowStockThreshold?: number;
       unitOfMeasure?: 'pc' | 'kg';
+      expiryDate?: string | null;
     }
   ): Promise<void> {
     const all = await this.productRepo.getAll();
@@ -1299,6 +1324,8 @@ export class TindahanStoreService {
     amountTenderedPhp: number;
     expectedCartRevision: number;
     gcashRef?: string;
+    paymentReference?: string;
+    convenienceFeePhp?: number;
     customerName?: string;
     chargeShortfallToUtang?: boolean;
     isOneTimeBulkOrder?: boolean;
@@ -1399,7 +1426,9 @@ export class TindahanStoreService {
       formattedTotal: summary.formattedTotal,
       amountTenderedPhp,
       changeDuePhp,
-      gcashRef: options.gcashRef,
+      gcashRef: options.gcashRef ?? options.paymentReference,
+      paymentReference: options.paymentReference ?? options.gcashRef,
+      convenienceFeePhp: options.convenienceFeePhp ?? 0,
       refundedPhp: 0,
       itemCount: summary.totalCount,
       tenderType: options.chargeShortfallToUtang && shortfallPhp > 0 ? 'SPLIT' : tenderType,
@@ -2718,5 +2747,127 @@ export class TindahanStoreService {
       repo.hydrateFromSqlite();
     }
     this.notify();
+  }
+
+  /**
+   * Enforces Owner Master PIN setup (FR-SEC-001, NFR-SEC-006).
+   */
+  public async setOwnerMasterPin(pin: string): Promise<boolean> {
+    if (!PinSecurityEngine.isValidPinFormat(pin)) {
+      throw new Error('PIN must be exactly 4 numeric digits.');
+    }
+    const salt = PinSecurityEngine.generateSalt();
+    const hash = PinSecurityEngine.hashPin(pin, salt);
+    appKeyValueStorage.setOwnerPin(hash, salt);
+    this.operatingMode = 'OWNER';
+    appKeyValueStorage.setOperatingMode('OWNER');
+    this.notify();
+    return true;
+  }
+
+  /**
+   * Verifies Owner Master PIN against progressive 5-try lockout engine.
+   */
+  public verifyOwnerMasterPin(pin: string): PinVerificationOutcome {
+    const storedHash = appKeyValueStorage.getOwnerPinHash();
+    const storedSalt = appKeyValueStorage.getOwnerPinSalt();
+    if (!storedHash || !storedSalt) {
+      return {
+        success: true,
+        remainingAttempts: 5,
+        lockoutStatus: { isLocked: false, remainingSeconds: 0, failedAttempts: 0 },
+      };
+    }
+    const lockoutUntil = appKeyValueStorage.getPinLockoutUntil() || 0;
+    const failedAttempts = appKeyValueStorage.getFailedPinAttempts() || 0;
+    const outcome = PinSecurityEngine.verifyPin(
+      pin,
+      storedHash,
+      storedSalt,
+      failedAttempts,
+      lockoutUntil
+    );
+    if (outcome.success) {
+      appKeyValueStorage.setFailedPinAttempts(0);
+      appKeyValueStorage.setPinLockoutUntil(0);
+    } else {
+      const nextFailed = failedAttempts + 1;
+      appKeyValueStorage.setFailedPinAttempts(nextFailed);
+      if (outcome.lockoutStatus.isLocked) {
+        const lockoutTimestamp = Date.now() + outcome.lockoutStatus.remainingSeconds * 1000;
+        appKeyValueStorage.setPinLockoutUntil(lockoutTimestamp);
+      }
+    }
+    this.notify();
+    return outcome;
+  }
+
+  /**
+   * Toggles operating role between OWNER and CASHIER mode via PIN authorization.
+   */
+  public switchOperatingMode(pin: string): boolean {
+    const outcome = this.verifyOwnerMasterPin(pin);
+    if (!outcome.success) {
+      return false;
+    }
+    this.operatingMode = this.operatingMode === 'OWNER' ? 'CASHIER' : 'OWNER';
+    appKeyValueStorage.setOperatingMode(this.operatingMode);
+    this.notify();
+    return true;
+  }
+
+  /**
+   * Quick locks session back to Cashier Mode without requiring PIN entry.
+   */
+  public quickLockToCashierMode(): void {
+    this.operatingMode = 'CASHIER';
+    appKeyValueStorage.setOperatingMode('CASHIER');
+    this.notify();
+  }
+
+  public setOperatingMode(mode: 'OWNER' | 'CASHIER'): void {
+    this.operatingMode = mode;
+    appKeyValueStorage.setOperatingMode(mode);
+    this.notify();
+  }
+
+  /**
+   * Checks whether the current operating mode has permission for sensitive actions.
+   */
+  public isPrivilegeAllowed(
+    action:
+      | 'VIEW_MARGINS'
+      | 'EDIT_PRICE'
+      | 'SHRINKAGE_WRITE_OFF'
+      | 'CLEAR_DATA'
+      | 'STORE_SETTINGS'
+  ): boolean {
+    if (this.operatingMode === 'OWNER') return true;
+    return false;
+  }
+
+  /**
+   * Toggles extended brownout battery saver mode (NFR-ENV-003).
+   */
+  public toggleBrownoutBatterySaver(): boolean {
+    this.isBrownoutSaverActive = !this.isBrownoutSaverActive;
+    appKeyValueStorage.setBrownoutSaverActive(this.isBrownoutSaverActive);
+    this.notify();
+    return this.isBrownoutSaverActive;
+  }
+
+  /**
+   * Queries products expiring within threshold days for FEFO clearance (FR-INV-005).
+   */
+  public getExpiringProducts(daysThreshold = 7): ProductDTO[] {
+    return this.snapshot.products.filter((p) => {
+      if (!p.expiryDate) return false;
+      const expDate = new Date(p.expiryDate);
+      if (isNaN(expDate.getTime())) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const diffDays = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      return diffDays <= daysThreshold;
+    });
   }
 }

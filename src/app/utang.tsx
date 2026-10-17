@@ -8,7 +8,6 @@ import {
   ScrollView,
   StyleSheet,
   Modal,
-  Alert,
   Share,
   KeyboardAvoidingView,
   Platform,
@@ -22,6 +21,22 @@ import { getTranslations } from '@/presentation/localization/i18n';
 import { Money } from '@/domain/value-objects/Money';
 import { UtangCustomerRecord } from '@/application/TindahanStoreService';
 import { FloatingToast } from '@/presentation/components/FloatingToast';
+import {
+  ConfirmationModal,
+  ConfirmationType,
+  ConfirmationModalDetail,
+} from '@/presentation/components/ConfirmationModal';
+
+interface ConfirmationState {
+  type: ConfirmationType;
+  title: string;
+  message: string;
+  itemName?: string;
+  details?: ConfirmationModalDetail[];
+  confirmText?: string;
+  cancelText?: string | null;
+  onConfirm: () => void | Promise<void>;
+}
 
 type FilterType = 'ALL' | 'WITH_DEBT' | 'PAID' | 'OVER_LIMIT';
 
@@ -50,6 +65,9 @@ export default function SukiUtangLedgerScreen() {
   const [newCustLimit, setNewCustLimit] = useState('500');
   const [newCustInitial, setNewCustInitial] = useState('0');
   const [addModalError, setAddModalError] = useState<string | null>(null);
+
+  // Styled Confirmation Dialog State
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
 
   // Selected Suki for Ledger/Statement
   const [selectedCustomer, setSelectedCustomer] = useState<UtangCustomerRecord | null>(null);
@@ -228,33 +246,45 @@ export default function SukiUtangLedgerScreen() {
   // Delete Customer Handler
   const handleDeleteCustomer = (cust: UtangCustomerRecord) => {
     if (cust.balancePhp > 0) {
-      Alert.alert(
-        'May Utang Pa ang Suki',
-        `May natitirang utang pa si ${cust.name} na ₱${cust.balancePhp.toFixed(2)}. Kailangang mabayaran muna ang utang bago mabura sa talaan.`,
-        [{ text: 'OK' }]
-      );
+      setConfirmDialog({
+        type: 'warning',
+        title: 'May Utang Pa ang Suki',
+        itemName: cust.name,
+        message: `May natitirang utang pa si ${cust.name} na ₱${cust.balancePhp.toFixed(2)}. Kailangang mabayaran muna ang utang bago mabura sa talaan.`,
+        details: [
+          { label: 'Suki', value: cust.name },
+          { label: 'Natitirang Utang', value: `₱${cust.balancePhp.toFixed(2)}`, highlight: true },
+        ],
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => {
+          setConfirmDialog(null);
+        },
+      });
       return;
     }
 
-    Alert.alert(
-      'Kumpirmahin ang Pagbura',
-      `Nais mo bang burahin si "${cust.name}" mula sa iyong listahan ng mga suki?`,
-      [
-        { text: 'Kanselahin', style: 'cancel' },
-        {
-          text: '✓ Oo, Burahin',
-          style: 'destructive',
-          onPress: () => {
-            deleteUtangCustomer(cust.id);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-            showToast(`✓ Nabura na si ${cust.name}`);
-            if (selectedCustomer?.id === cust.id) {
-              setSelectedCustomer(null);
-            }
-          },
-        },
-      ]
-    );
+    setConfirmDialog({
+      type: 'delete',
+      title: 'Kumpirmahin ang Pagbura',
+      itemName: cust.name,
+      message: `Nais mo bang burahin si "${cust.name}" mula sa iyong listahan ng mga suki?`,
+      details: [
+        { label: 'Suki', value: cust.name },
+        { label: 'Kasalukuyang Balanse', value: '₱0.00' },
+      ],
+      confirmText: '✓ Oo, Burahin',
+      cancelText: 'Kanselahin',
+      onConfirm: () => {
+        setConfirmDialog(null);
+        deleteUtangCustomer(cust.id);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        showToast(`✓ Nabura na si ${cust.name}`);
+        if (selectedCustomer?.id === cust.id) {
+          setSelectedCustomer(null);
+        }
+      },
+    });
   };
 
   // Share Friendly Reminder via SMS / Messenger
@@ -1132,6 +1162,22 @@ export default function SukiUtangLedgerScreen() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      {/* Styled Confirmation Modal */}
+      {confirmDialog ? (
+        <ConfirmationModal
+          visible={true}
+          type={confirmDialog.type}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          itemName={confirmDialog.itemName}
+          details={confirmDialog.details}
+          confirmText={confirmDialog.confirmText}
+          cancelText={confirmDialog.cancelText}
+          onConfirm={confirmDialog.onConfirm}
+          onCancel={() => setConfirmDialog(null)}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }

@@ -20,6 +20,7 @@ interface ProductRow {
   image_uri: string | null;
   default_price_php?: number | null;
   unit_of_measure?: 'pc' | 'kg' | null;
+  expiry_date?: string | null;
 }
 
 /**
@@ -94,7 +95,8 @@ export class InMemoryProductRepository implements IProductRepository {
       Number(row.out_of_stock_days) || 0,
       visual,
       row.image_uri ?? visual?.imageUri ?? undefined,
-      unitOfMeasure
+      unitOfMeasure,
+      row.expiry_date ?? undefined
     );
   }
 
@@ -110,8 +112,8 @@ export class InMemoryProductRepository implements IProductRepository {
       `INSERT OR REPLACE INTO products (
         id, name, category, barcode, barcode_source,
         base_stock_count, ordinary_low_stock_threshold, unit_cost_php,
-        selling_tiers_json, quarantine_stock_count, out_of_stock_days, visual_json, image_uri, default_price_php, unit_of_measure
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        selling_tiers_json, quarantine_stock_count, out_of_stock_days, visual_json, image_uri, default_price_php, unit_of_measure, expiry_date
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         dto.id,
         dto.name,
@@ -128,6 +130,7 @@ export class InMemoryProductRepository implements IProductRepository {
         dto.imageUri ?? null,
         dto.defaultPricePhp,
         dto.unitOfMeasure ?? 'pc',
+        dto.expiryDate ?? null,
       ]
     );
   }

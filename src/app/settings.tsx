@@ -8,7 +8,7 @@ import {
   Switch,
   ScrollView,
   StyleSheet,
-  Alert,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -17,17 +17,53 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
+import {
+  ConfirmationModal,
+  ConfirmationType,
+  ConfirmationModalDetail,
+} from '@/presentation/components/ConfirmationModal';
+import { appKeyValueStorage } from '@/infrastructure/storage/KeyValueStorage';
+import { PinSecurityEngine } from '@/domain/services/PinSecurityEngine';
+
+interface ConfirmationState {
+  type: ConfirmationType;
+  title: string;
+  message: string;
+  itemName?: string;
+  details?: ConfirmationModalDetail[];
+  confirmText?: string;
+  cancelText?: string | null;
+  onConfirm: () => void | Promise<void>;
+}
 
 export default function StoreSettingsScreen() {
   const router = useRouter();
-  const { settings, updateSettings, clearAllDatabaseData } =
-    useTindahanStore();
+  const {
+    settings,
+    updateSettings,
+    clearAllDatabaseData,
+    hasOwnerPinSet,
+    operatingMode,
+    setOwnerMasterPin,
+    quickLockToCashierMode,
+    isBrownoutSaverActive,
+    toggleBrownoutBatterySaver,
+  } = useTindahanStore();
   const t = getTranslations(settings.language);
   const [editingField, setEditingField] = useState<'NONE' | 'NAME' | 'ADDRESS'>('NONE');
   const [draftName, setDraftName] = useState(settings.storeName);
   const [draftAddress, setDraftAddress] = useState(settings.address);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
+
+  const [defaultGcashFee, setDefaultGcashFee] = useState<number>(() =>
+    appKeyValueStorage.getGcashConvenienceFee()
+  );
+  const [pinModalVisible, setPinModalVisible] = useState(false);
+  const [newPin, setNewPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
+  const [pinError, setPinError] = useState<string | null>(null);
 
   const showToast = (msg: string, type: ToastType = 'success') => {
     setToastMsg(msg);
@@ -239,7 +275,7 @@ export default function StoreSettingsScreen() {
           </Pressable>
 
           {/* Notifications Switch */}
-          <View style={styles.settingRow}>
+          <View style={[styles.settingRow, styles.rowBorder]}>
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>{t.notifications}</Text>
               <Text style={styles.rowValue}>{t.notificationsSub}</Text>
@@ -254,6 +290,158 @@ export default function StoreSettingsScreen() {
               trackColor={{ false: '#D1D5DB', true: '#0D7A52' }}
               thumbColor="#FFFFFF"
             />
+          </View>
+
+          {/* AMOLED True-Black Brownout Battery Saver (NFR-ENV-003) */}
+          <View style={styles.settingRow}>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>⚡ Brownout Battery Saver (AMOLED)</Text>
+              <Text style={styles.rowValue}>
+                True-black (#000000) mode para sa matagalang bentahan kapag brownout
+              </Text>
+            </View>
+            <Switch
+              value={isBrownoutSaverActive}
+              onValueChange={() => {
+                toggleBrownoutBatterySaver();
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                showToast(
+                  !isBrownoutSaverActive
+                    ? '⚡ Naka-on ang Brownout Battery Saver (#000000)'
+                    : 'Bumalik sa karaniwang tema',
+                  'info'
+                );
+              }}
+              trackColor={{ false: '#D1D5DB', true: '#0D7A52' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+        </View>
+
+        {/* Section: Security & Cashier Mode (FR-SEC-001 / NFR-SEC-006) */}
+        <Text style={styles.sectionHeader}>Seguridad at Cashier Mode</Text>
+        <View style={styles.cardGroup}>
+          <View style={[styles.settingRow, styles.rowBorder]}>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>Kasalukuyang Antas</Text>
+              <Text style={styles.rowValue}>
+                {operatingMode === 'OWNER'
+                  ? '👑 May-ari (Owner Mode) - Buong Akses'
+                  : '🔒 Tindera (Cashier Mode) - Limitadong Akses'}
+              </Text>
+            </View>
+            <View
+              style={[
+                styles.roleBadge,
+                operatingMode === 'OWNER' ? styles.roleBadgeOwner : styles.roleBadgeCashier,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.roleBadgeText,
+                  operatingMode === 'OWNER' ? styles.roleBadgeTextOwner : styles.roleBadgeTextCashier,
+                ]}
+              >
+                {operatingMode === 'OWNER' ? 'OWNER' : 'CASHIER'}
+              </Text>
+            </View>
+          </View>
+
+          <Pressable
+            style={[styles.settingRow, hasOwnerPinSet && operatingMode === 'OWNER' ? styles.rowBorder : null]}
+            onPress={() => {
+              setPinError(null);
+              setNewPin('');
+              setConfirmPin('');
+              setPinModalVisible(true);
+            }}
+          >
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>
+                {hasOwnerPinSet ? 'Palitan ang Master PIN' : 'Magtakda ng Master PIN'}
+              </Text>
+              <Text style={styles.rowValue}>
+                {hasOwnerPinSet
+                  ? 'Protektado ang Tubo, Puhunan, at mga sensitibong ulat'
+                  : '⚠️ Walang PIN: Bukas ang lahat ng datos'}
+              </Text>
+            </View>
+            <Ionicons name="key-outline" size={20} color="#0D7A52" />
+          </Pressable>
+
+          {hasOwnerPinSet && operatingMode === 'OWNER' ? (
+            <Pressable
+              style={styles.settingRow}
+              onPress={() => {
+                quickLockToCashierMode();
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                showToast('🔒 Naka-lock na sa Cashier Mode (Tindera)');
+              }}
+            >
+              <View style={styles.rowTextCol}>
+                <Text style={styles.rowTitle}>I-lock sa Cashier Mode</Text>
+                <Text style={styles.rowValue}>
+                  Itago agad ang tubo kapag iniwan ang tindahan sa bantay
+                </Text>
+              </View>
+              <Ionicons name="lock-closed" size={20} color="#D97706" />
+            </Pressable>
+          ) : null}
+        </View>
+
+        {/* Section: GCash & Digital Payments (FR-TND-007) */}
+        <Text style={styles.sectionHeader}>Digital Payments & QR Ph</Text>
+        <View style={styles.cardGroup}>
+          <View style={[styles.settingRow, styles.rowBorder]}>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>GCash Convenience Fee (Patong)</Text>
+              <Text style={styles.rowValue}>
+                Dagdag singil sa customer pantakip sa cashout / transfer fee
+              </Text>
+            </View>
+            <Ionicons name="wallet-outline" size={20} color="#0D7A52" />
+          </View>
+
+          {/* Surcharge Option Pills */}
+          <View style={[styles.feeButtonGroup, styles.rowBorder]}>
+            {[0, 2, 5].map((fee) => (
+              <Pressable
+                key={fee}
+                style={[
+                  styles.feeChip,
+                  defaultGcashFee === fee ? styles.feeChipActive : null,
+                ]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setDefaultGcashFee(fee);
+                  appKeyValueStorage.setGcashConvenienceFee(fee, fee > 0);
+                  showToast(
+                    fee === 0
+                      ? 'Naka-set sa Walang Dagdag (+₱0)'
+                      : `Default GCash Convenience Fee: +₱${fee}`
+                  );
+                }}
+              >
+                <Text
+                  style={[
+                    styles.feeChipText,
+                    defaultGcashFee === fee ? styles.feeChipTextActive : null,
+                  ]}
+                >
+                  {fee === 0 ? 'Walang Dagdag (+₱0)' : `+₱${fee} Fee`}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+
+          <View style={styles.settingRow}>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>Static QR Ph Standee Support</Text>
+              <Text style={styles.rowValue}>
+                Tumatanggap ng GCash at Maya via counter QR standee na may Reference Number audit
+              </Text>
+            </View>
+            <Ionicons name="qr-code-outline" size={20} color="#6B7280" />
           </View>
         </View>
 
@@ -293,26 +481,23 @@ export default function StoreSettingsScreen() {
           <Pressable
             style={styles.settingRow}
             onPress={() => {
-              Alert.alert(
-                t.clearDataConfirmTitle,
-                t.clearDataConfirmMessage,
-                [
-                  { text: t.cancelBtn, style: 'cancel' },
-                  {
-                    text: t.clearDataConfirmBtn,
-                    style: 'destructive',
-                    onPress: () => {
-                      clearAllDatabaseData();
-                      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                      showToast(t.resetSuccess, 'warning');
-                      Alert.alert(
-                        t.resetSuccess,
-                        t.clearDataConfirmMessage
-                      );
-                    },
-                  },
-                ]
-              );
+              setConfirmDialog({
+                type: 'danger',
+                title: t.clearDataConfirmTitle,
+                itemName: 'Lahat ng Datos sa Tindahan (Factory Reset)',
+                message: t.clearDataConfirmMessage,
+                details: [
+                  { label: 'Aksyon', value: 'Buburahin ang lahat ng paninda, resibo, at talaan', highlight: true },
+                ],
+                confirmText: t.clearDataConfirmBtn,
+                cancelText: t.cancelBtn,
+                onConfirm: () => {
+                  setConfirmDialog(null);
+                  clearAllDatabaseData();
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  showToast(t.resetSuccess, 'warning');
+                },
+              });
             }}
           >
             <View style={styles.rowTextCol}>
@@ -323,6 +508,134 @@ export default function StoreSettingsScreen() {
           </Pressable>
         </View>
       </ScrollView>
+
+      {/* Styled Confirmation Modal */}
+      {confirmDialog ? (
+        <ConfirmationModal
+          visible={true}
+          type={confirmDialog.type}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          itemName={confirmDialog.itemName}
+          details={confirmDialog.details}
+          confirmText={confirmDialog.confirmText}
+          cancelText={confirmDialog.cancelText}
+          onConfirm={confirmDialog.onConfirm}
+          onCancel={() => setConfirmDialog(null)}
+        />
+      ) : null}
+      {/* Master PIN Configuration Modal (FR-SEC-001) */}
+      <Modal
+        visible={pinModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPinModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.pinModalContainer}>
+            <View style={styles.pinModalHeader}>
+              <Ionicons name="shield-checkmark" size={32} color="#0D7A52" />
+              <Text style={styles.pinModalTitle}>
+                {hasOwnerPinSet ? 'Palitan ang Master PIN' : 'Magtakda ng Master PIN'}
+              </Text>
+              <Text style={styles.pinModalSubtitle}>
+                Mag-enter ng 4-digit PIN upang protektahan ang puhunan, tubo, at cashier mode.
+              </Text>
+            </View>
+
+            {pinError ? (
+              <View style={styles.pinErrorBox}>
+                <Ionicons name="alert-circle" size={16} color="#DC2626" />
+                <Text style={styles.pinErrorText}>{pinError}</Text>
+              </View>
+            ) : null}
+
+            <View style={styles.pinInputGroup}>
+              <Text style={styles.pinInputLabel}>Bagong 4-Digit PIN</Text>
+              <TextInput
+                style={styles.pinTextInput}
+                value={newPin}
+                onChangeText={(val) => {
+                  const cleaned = val.replace(/[^0-9]/g, '').slice(0, 4);
+                  setNewPin(cleaned);
+                  setPinError(null);
+                }}
+                keyboardType="number-pad"
+                secureTextEntry
+                maxLength={4}
+                placeholder="••••"
+                placeholderTextColor="#9CA3AF"
+                textAlign="center"
+              />
+            </View>
+
+            <View style={styles.pinInputGroup}>
+              <Text style={styles.pinInputLabel}>Ulitin ang 4-Digit PIN</Text>
+              <TextInput
+                style={styles.pinTextInput}
+                value={confirmPin}
+                onChangeText={(val) => {
+                  const cleaned = val.replace(/[^0-9]/g, '').slice(0, 4);
+                  setConfirmPin(cleaned);
+                  setPinError(null);
+                }}
+                keyboardType="number-pad"
+                secureTextEntry
+                maxLength={4}
+                placeholder="••••"
+                placeholderTextColor="#9CA3AF"
+                textAlign="center"
+              />
+            </View>
+
+            <View style={styles.pinModalActions}>
+              <Pressable
+                style={styles.pinCancelBtn}
+                onPress={() => {
+                  setPinModalVisible(false);
+                  setNewPin('');
+                  setConfirmPin('');
+                  setPinError(null);
+                }}
+              >
+                <Text style={styles.pinCancelBtnText}>Kanselahin</Text>
+              </Pressable>
+
+              <Pressable
+                style={[
+                  styles.pinSaveBtn,
+                  newPin.length !== 4 || confirmPin.length !== 4
+                    ? styles.pinSaveBtnDisabled
+                    : null,
+                ]}
+                disabled={newPin.length !== 4 || confirmPin.length !== 4}
+                onPress={() => {
+                  if (!PinSecurityEngine.isValidPinFormat(newPin)) {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+                    setPinError('Dapat eksaktong 4 na numero ang PIN (0-9)');
+                    return;
+                  }
+                  if (newPin !== confirmPin) {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+                    setPinError('Hindi magkatugma ang dalawang PIN');
+                    return;
+                  }
+
+                  setOwnerMasterPin(newPin);
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  setPinModalVisible(false);
+                  setNewPin('');
+                  setConfirmPin('');
+                  setPinError(null);
+                  showToast('✅ Matagumpay na naitakda ang Owner Master PIN');
+                }}
+              >
+                <Text style={styles.pinSaveBtnText}>I-save ang PIN</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -484,5 +797,158 @@ const styles = StyleSheet.create({
   langChipTextActive: {
     color: '#0D7A52',
     fontWeight: '800',
+  },
+  roleBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  roleBadgeOwner: {
+    backgroundColor: '#DCFCE7',
+  },
+  roleBadgeCashier: {
+    backgroundColor: '#FEF3C7',
+  },
+  roleBadgeText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  roleBadgeTextOwner: {
+    color: '#15803D',
+  },
+  roleBadgeTextCashier: {
+    color: '#B45309',
+  },
+  feeButtonGroup: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingVertical: 10,
+  },
+  feeChip: {
+    flex: 1,
+    paddingVertical: 9,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  feeChipActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#0D7A52',
+  },
+  feeChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#4B5563',
+  },
+  feeChipTextActive: {
+    color: '#0D7A52',
+    fontWeight: '800',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  pinModalContainer: {
+    width: '100%',
+    maxWidth: 380,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+  },
+  pinModalHeader: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  pinModalTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#111827',
+    marginTop: 8,
+  },
+  pinModalSubtitle: {
+    fontSize: 12,
+    color: '#6B7280',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  pinErrorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#FEE2E2',
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 12,
+  },
+  pinErrorText: {
+    fontSize: 12,
+    color: '#B91C1C',
+    fontWeight: '600',
+    flex: 1,
+  },
+  pinInputGroup: {
+    marginBottom: 14,
+  },
+  pinInputLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#374151',
+    marginBottom: 6,
+  },
+  pinTextInput: {
+    height: 48,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1.5,
+    borderColor: '#D1D5DB',
+    borderRadius: 10,
+    fontSize: 22,
+    letterSpacing: 8,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  pinModalActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
+  },
+  pinCancelBtn: {
+    flex: 1,
+    height: 46,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pinCancelBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#4B5563',
+  },
+  pinSaveBtn: {
+    flex: 1,
+    height: 46,
+    backgroundColor: '#0D7A52',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pinSaveBtnDisabled: {
+    opacity: 0.4,
+  },
+  pinSaveBtnText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
 });

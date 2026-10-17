@@ -29,6 +29,7 @@ import {
   ConfirmationType,
   ConfirmationModalDetail,
 } from '@/presentation/components/ConfirmationModal';
+import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -41,7 +42,7 @@ interface ConfirmationState {
   onConfirm: () => void | Promise<void>;
 }
 
-const STOCK_FILTERS = ['All', 'In Stock', 'Low Stock', 'Out of Stock'] as const;
+const STOCK_FILTERS = ['All', 'In Stock', 'Low Stock', 'Out of Stock', 'Expiring Soon'] as const;
 
 export default function InventoryManagementScreen() {
   const router = useRouter();
@@ -60,6 +61,8 @@ export default function InventoryManagementScreen() {
     adjustInventoryStock,
     lookupOnlineCatalog,
     settings,
+    operatingMode,
+    setOperatingMode,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
@@ -67,6 +70,15 @@ export default function InventoryManagementScreen() {
   // Stock count computations for filter badges
   const lowStockCount = products.filter((p) => p.stockStatus === 'LOW_STOCK').length;
   const outOfStockCount = products.filter((p) => p.stockStatus === 'OUT_OF_STOCK').length;
+  const expiringSoonCount = products.filter((p) => {
+    if (!p.expiryDate) return false;
+    const exp = new Date(p.expiryDate);
+    if (isNaN(exp.getTime())) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diff = Math.ceil((exp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return diff <= 7;
+  }).length;
 
   const [selectedFilter, setSelectedFilter] =
     useState<(typeof STOCK_FILTERS)[number]>('All');
@@ -76,6 +88,9 @@ export default function InventoryManagementScreen() {
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
   const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
   const [customRestockQty, setCustomRestockQty] = useState<string>('10');
+  const [newExpiryDate, setNewExpiryDate] = useState<string>('');
+  const [editExpiryDate, setEditExpiryDate] = useState<string>('');
+  const [pinChallengeAction, setPinChallengeAction] = useState<(() => void) | null>(null);
 
   // Pagination state (12 items per page)
   const [currentPage, setCurrentPage] = useState(1);
@@ -302,6 +317,7 @@ export default function InventoryManagementScreen() {
     const cost = item.unitCostPhp > 0 ? item.unitCostPhp : 0;
     setEditCostPhp(cost > 0 ? cost.toString() : '');
     setEditTuboMode('PESO');
+    setEditExpiryDate(item.expiryDate || '');
 
     if (item.defaultPricePhp > 0 && cost > 0) {
       const markup = Math.max(0, item.defaultPricePhp - cost);
@@ -363,6 +379,7 @@ export default function InventoryManagementScreen() {
         { label: 'Stock', value: `${stock} ${editUnitOfMeasure === 'kg' ? 'kg' : 'piraso'}`, highlight: true },
         { label: 'Low Stock Alert', value: `${threshold} ${editUnitOfMeasure === 'kg' ? 'kg' : 'piraso'}` },
         { label: 'Kategorya', value: editCategory },
+        { label: 'Petsa ng Expiry', value: editExpiryDate.trim() || 'Walang Expiry' },
       ],
       confirmText: '✓ I-save',
       cancelText: 'Bumalik',
@@ -379,6 +396,7 @@ export default function InventoryManagementScreen() {
             baseStockCount: stock,
             lowStockThreshold: threshold,
             unitOfMeasure: editUnitOfMeasure,
+            expiryDate: editExpiryDate.trim() || null,
           });
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
           showToast(`✓ Na-save ang pagbabago sa "${editName.trim()}"`, 'success');
@@ -778,6 +796,7 @@ export default function InventoryManagementScreen() {
         unitPricePhp: Number.isFinite(parsedPrice) ? parsedPrice : 0,
         imageUri: newImageUri ?? undefined,
         unitOfMeasure: newUnitOfMeasure,
+        expiryDate: newExpiryDate.trim() || undefined,
       });
 
       if (result.status === 'DUPLICATE_BARCODE_FOUND') {
@@ -804,6 +823,7 @@ export default function InventoryManagementScreen() {
       setNewCostPhp('');
       setNewStock('');
       setNewLowThreshold('5');
+      setNewExpiryDate('');
       setNewUnitOfMeasure('pc');
       setCostInputMode('PIECE');
       setBundleCostPhp('');
@@ -824,6 +844,15 @@ export default function InventoryManagementScreen() {
     if (selectedFilter === 'Low Stock' && p.stockStatus !== 'LOW_STOCK') return false;
     if (selectedFilter === 'Out of Stock' && p.stockStatus !== 'OUT_OF_STOCK')
       return false;
+    if (selectedFilter === 'Expiring Soon') {
+      if (!p.expiryDate) return false;
+      const exp = new Date(p.expiryDate);
+      if (isNaN(exp.getTime())) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const diff = Math.ceil((exp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      if (diff > 7) return false;
+    }
 
     if (!searchQuery.trim()) return true;
     const q = searchQuery.trim().toLowerCase();
@@ -975,12 +1004,16 @@ export default function InventoryManagementScreen() {
                 ? t.inStock
                 : filter === 'Low Stock'
                 ? t.lowStock
-                : t.outOfStock;
+                : filter === 'Out of Stock'
+                ? t.outOfStock
+                : '⏳ Expiring Soon';
             const badgeCount =
               filter === 'Low Stock'
                 ? lowStockCount
                 : filter === 'Out of Stock'
                 ? outOfStockCount
+                : filter === 'Expiring Soon'
+                ? expiringSoonCount
                 : null;
 
             return (
@@ -1576,6 +1609,19 @@ export default function InventoryManagementScreen() {
               ) : null}
             </View>
 
+            {/* Expiry Date (FEFO Tracking) */}
+            <View style={{ marginBottom: 12 }}>
+              <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal - YYYY-MM-DD):</Text>
+              <TextInput
+                style={styles.textInput}
+                value={newExpiryDate}
+                onChangeText={setNewExpiryDate}
+                placeholder="Hal. 2026-12-31"
+                placeholderTextColor="#9CA3AF"
+                maxLength={10}
+              />
+            </View>
+
             {errorMsg ? (
               <View style={styles.formErrorBox}>
                 <Text style={styles.formErrorText}>⚠️ {errorMsg}</Text>
@@ -1663,6 +1709,24 @@ export default function InventoryManagementScreen() {
                       Quarantined (Damaged/B.O.): {item.quarantineStockCount}
                     </Text>
                   ) : null}
+                  {item.expiryDate ? (
+                    <Text
+                      style={[
+                        styles.quarantineNote,
+                        item.daysUntilExpiry != null && item.daysUntilExpiry < 0
+                          ? { color: '#DC2626', fontWeight: '700' }
+                          : item.daysUntilExpiry != null && item.daysUntilExpiry <= 7
+                          ? { color: '#D97706', fontWeight: '700' }
+                          : { color: '#0D7A52', fontWeight: '600' },
+                      ]}
+                    >
+                      {item.daysUntilExpiry != null && item.daysUntilExpiry < 0
+                        ? `🔴 EXPIRED (${item.expiryDate})`
+                        : item.daysUntilExpiry != null && item.daysUntilExpiry <= 7
+                        ? `⏳ FEFO: Expiring in ${item.daysUntilExpiry}d (${item.expiryDate})`
+                        : `📅 Expiry: ${item.expiryDate}`}
+                    </Text>
+                  ) : null}
                 </View>
 
                 <View
@@ -1704,7 +1768,13 @@ export default function InventoryManagementScreen() {
                     <View style={styles.topDrawerActions}>
                       <Pressable
                         style={styles.editProductBtn}
-                        onPress={() => handleOpenEditModal(item)}
+                        onPress={() => {
+                          if (operatingMode === 'CASHIER') {
+                            setPinChallengeAction(() => () => handleOpenEditModal(item));
+                          } else {
+                            handleOpenEditModal(item);
+                          }
+                        }}
                       >
                         <Ionicons name="pencil" size={13} color="#0D7A52" style={{ marginRight: 3 }} />
                         <Text style={styles.editProductBtnText}>Edit</Text>
@@ -2420,6 +2490,19 @@ export default function InventoryManagementScreen() {
                 })}
               </View>
 
+              {/* Petsa ng Expiry */}
+              <View style={{ marginTop: 12 }}>
+                <Text style={styles.modalInputLabel}>Petsa ng Expiry (YYYY-MM-DD):</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={editExpiryDate}
+                  onChangeText={setEditExpiryDate}
+                  placeholder="Hal. 2026-12-31"
+                  placeholderTextColor="#9CA3AF"
+                  maxLength={10}
+                />
+              </View>
+
               {editError ? (
                 <View style={styles.modalErrorContainer}>
                   <Ionicons name="alert-circle" size={16} color="#DC2626" />
@@ -2638,6 +2721,19 @@ export default function InventoryManagementScreen() {
           onCancel={() => setConfirmDialog(null)}
         />
       ) : null}
+
+      <PinChallengeModal
+        visible={pinChallengeAction !== null}
+        title="Owner PIN Required"
+        subtitle="Only the Tindahan Owner can edit catalog prices and stock details"
+        onSuccess={() => {
+          const action = pinChallengeAction;
+          setPinChallengeAction(null);
+          setOperatingMode('OWNER');
+          if (action) action();
+        }}
+        onCancel={() => setPinChallengeAction(null)}
+      />
     </SafeAreaView>
   );
 }

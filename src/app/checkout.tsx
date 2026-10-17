@@ -7,7 +7,6 @@ import {
   ScrollView,
   StyleSheet,
   Modal,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -23,6 +22,23 @@ import { Money } from '@/domain/value-objects/Money';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
 import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/components/WeightQuantityModal';
+import {
+  ConfirmationModal,
+  ConfirmationType,
+  ConfirmationModalDetail,
+} from '@/presentation/components/ConfirmationModal';
+import { ReceiptPrinterModal } from '@/presentation/components/ReceiptPrinterModal';
+
+interface ConfirmationState {
+  type: ConfirmationType;
+  title: string;
+  message: string;
+  itemName?: string;
+  details?: ConfirmationModalDetail[];
+  confirmText?: string;
+  cancelText?: string | null;
+  onConfirm: () => void | Promise<void>;
+}
 
 interface CartItemStepperProps {
   productId: string;
@@ -183,10 +199,13 @@ export default function CheckoutNewSaleScreen() {
   const [holdCustomerName, setHoldCustomerName] = useState('');
   const [heldCartsModalVisible, setHeldCartsModalVisible] = useState(false);
   const [completedTx, setCompletedTx] = useState<SaleTransactionRecord | null>(null);
+  const [convenienceFeePhp, setConvenienceFeePhp] = useState<number>(0);
+  const [showPrinterModal, setShowPrinterModal] = useState<boolean>(false);
   const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
   const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
 
   const showToast = useCallback((msg: string, type: ToastType = 'success') => {
     setToastMsg(msg);
@@ -295,6 +314,8 @@ export default function CheckoutNewSaleScreen() {
         amountTenderedPhp: tenderType === 'UTANG' ? 0 : effectivePaymentPhp,
         expectedCartRevision: cartRevision,
         gcashRef: tenderType === 'GCASH' ? gcashRefInput.trim() || undefined : undefined,
+        paymentReference: tenderType === 'GCASH' ? gcashRefInput.trim() || undefined : undefined,
+        convenienceFeePhp: tenderType === 'GCASH' ? convenienceFeePhp : 0,
         customerName:
           tenderType === 'UTANG' || chargeShortfallToUtang
             ? selectedCustomer.trim()
@@ -308,6 +329,7 @@ export default function CheckoutNewSaleScreen() {
       setPaymentInputText('');
       setDiscountInputText('0.00');
       setGcashRefInput('');
+      setConvenienceFeePhp(0);
       setChargeShortfallToUtang(false);
       setPaymentErrorMsg(null);
     } catch (err) {
@@ -661,17 +683,46 @@ export default function CheckoutNewSaleScreen() {
                 })}
               </ScrollView>
 
-              {/* GCash Reference Input (Mitigates Fake GCash Screenshot Scams) */}
+              {/* GCash Reference & Surcharge Selector */}
               {tenderType === 'GCASH' ? (
                 <View style={styles.gcashRefBox}>
                   <Text style={styles.paymentFieldLabel}>
-                    GCash Ref # (Last 4 digits):
+                    Convenience Surcharge (GCash Cash-In / Surcharge):
+                  </Text>
+                  <View style={{ flexDirection: 'row', gap: 8, marginVertical: 6 }}>
+                    {[0, 2, 5].map((fee) => (
+                      <Pressable
+                        key={fee}
+                        style={[
+                          styles.billPill,
+                          convenienceFeePhp === fee ? styles.billPillActive : null,
+                        ]}
+                        onPress={() => setConvenienceFeePhp(fee)}
+                      >
+                        <Text
+                          style={[
+                            styles.billPillText,
+                            convenienceFeePhp === fee ? styles.billPillTextActive : null,
+                          ]}
+                        >
+                          {fee === 0 ? 'Walang Dagdag (+₱0)' : `+₱${fee}`}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                  {convenienceFeePhp > 0 && (
+                    <Text style={{ fontSize: 12, color: '#0D7A52', fontWeight: '700', marginBottom: 6 }}>
+                      Total na sisingilin sa GCash: ₱{(cartSummary.totalPhp + convenienceFeePhp).toFixed(2)}
+                    </Text>
+                  )}
+                  <Text style={styles.paymentFieldLabel}>
+                    GCash Ref # (Last 4 to 13 digits):
                   </Text>
                   <TextInput
                     style={styles.gcashRefInput}
                     value={gcashRefInput}
                     onChangeText={setGcashRefInput}
-                    placeholder="e.g. 4829"
+                    placeholder="e.g. 4829 or 100234829"
                     placeholderTextColor="#9CA3AF"
                     keyboardType="number-pad"
                     maxLength={13}
@@ -872,6 +923,14 @@ export default function CheckoutNewSaleScreen() {
                 <Text style={styles.receiptSecondaryBtnText}>{t.viewSalesHistoryBtn}</Text>
               </Pressable>
             </View>
+
+            <Pressable
+              style={styles.receiptPrintSlipBtn}
+              onPress={() => setShowPrinterModal(true)}
+            >
+              <Ionicons name="print-outline" size={18} color="#0D7A52" style={{ marginRight: 6 }} />
+              <Text style={styles.receiptPrintSlipBtnText}>🖨️ Print Thermal Slip (58mm / 80mm)</Text>
+            </Pressable>
           </View>
         </View>
       ) : null}
@@ -994,22 +1053,25 @@ export default function CheckoutNewSaleScreen() {
                       <Pressable
                         style={styles.heldDeleteBtn}
                         onPress={() => {
-                          Alert.alert(
-                            t.deleteHeldCartTitle,
-                            `Burahin ang nakatabing cart ni ${hc.customerName}?`,
-                            [
-                              { text: t.cancel, style: 'cancel' },
-                              {
-                                text: t.delete,
-                                style: 'destructive',
-                                onPress: () => {
-                                  deleteHeldCart(hc.id);
-                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-                                  showToast('✓ Nabura ang nakatabing cart', 'warning');
-                                },
-                              },
-                            ]
-                          );
+                          setConfirmDialog({
+                            type: 'delete',
+                            title: t.deleteHeldCartTitle,
+                            itemName: `Nakatabing Cart: ${hc.customerName}`,
+                            message: `Sigurado ka bang nais mong burahin ang nakatabing cart ni ${hc.customerName}?`,
+                            details: [
+                              { label: 'Customer', value: hc.customerName },
+                              { label: 'Bilang ng Paninda', value: `${hc.totalCount} items` },
+                              { label: 'Kabuuang Halaga', value: Money.fromPhp(hc.totalPhp).format(), highlight: true },
+                            ],
+                            confirmText: t.delete,
+                            cancelText: t.cancel,
+                            onConfirm: () => {
+                              setConfirmDialog(null);
+                              deleteHeldCart(hc.id);
+                              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                              showToast('✓ Nabura ang nakatabing cart', 'warning');
+                            },
+                          });
                         }}
                       >
                         <Ionicons name="trash-outline" size={14} color="#DC2626" style={{ marginRight: 4 }} />
@@ -1028,14 +1090,22 @@ export default function CheckoutNewSaleScreen() {
                           };
 
                           if (cartSummary.totalCount > 0) {
-                            Alert.alert(
-                              'Palitan ang Cart?',
-                              `May laman ang kasalukuyang cart (${cartSummary.totalCount} paninda). Papalitan ito ng cart ni ${hc.customerName}. Nais mo bang magpatuloy?`,
-                              [
-                                { text: t.cancel, style: 'cancel' },
-                                { text: 'Palitan & I-restore', onPress: doRestore },
-                              ]
-                            );
+                            setConfirmDialog({
+                              type: 'warning',
+                              title: 'Palitan ang Cart?',
+                              itemName: `Cart ni ${hc.customerName}`,
+                              message: `May laman ang kasalukuyang cart (${cartSummary.totalCount} paninda). Papalitan ito ng cart ni ${hc.customerName}. Nais mo bang magpatuloy?`,
+                              details: [
+                                { label: 'Kasalukuyang Cart', value: `${cartSummary.totalCount} items (${cartSummary.formattedTotal})` },
+                                { label: 'Ipapalit na Cart', value: `${hc.totalCount} items (${Money.fromPhp(hc.totalPhp).format()})`, highlight: true },
+                              ],
+                              confirmText: 'Palitan & I-restore',
+                              cancelText: t.cancel,
+                              onConfirm: () => {
+                                setConfirmDialog(null);
+                                doRestore();
+                              },
+                            });
                           } else {
                             doRestore();
                           }
@@ -1065,6 +1135,53 @@ export default function CheckoutNewSaleScreen() {
         onConfirm={(productId, qty) => {
           runCartAction(() => setCartItemQuantity(productId, qty));
         }}
+      />
+
+      {/* Styled Confirmation Modal */}
+      {confirmDialog ? (
+        <ConfirmationModal
+          visible={true}
+          type={confirmDialog.type}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          itemName={confirmDialog.itemName}
+          details={confirmDialog.details}
+          confirmText={confirmDialog.confirmText}
+          cancelText={confirmDialog.cancelText}
+          onConfirm={confirmDialog.onConfirm}
+          onCancel={() => setConfirmDialog(null)}
+        />
+      ) : null}
+
+      <ReceiptPrinterModal
+        visible={showPrinterModal}
+        receiptData={
+          completedTx
+            ? {
+                storeName: settings.storeName || 'Tindahan Helper',
+                storeAddress: settings.address,
+                receiptNumber: completedTx.id,
+                timestamp: `${completedTx.dateLabel} ${completedTx.timeLabel}`,
+                customerName: completedTx.customerName,
+                items: completedTx.items.map((i) => ({
+                  name: i.name,
+                  quantity: i.quantity,
+                  unitPricePhp: i.unitPricePaidPhp,
+                  totalPricePhp: i.lineTotalPhp,
+                  unitName: i.unitOfMeasure,
+                })),
+                subtotalPhp: completedTx.totalPhp,
+                discountPhp: 0,
+                totalAmountPhp: completedTx.totalPhp,
+                tenderType: completedTx.tenderType,
+                tenderedAmountPhp: completedTx.amountTenderedPhp,
+                changePhp: completedTx.changeDuePhp,
+                paymentReference: completedTx.paymentReference ?? completedTx.gcashRef,
+                convenienceFeePhp: completedTx.convenienceFeePhp ?? 0,
+              }
+            : null
+        }
+        onClose={() => setShowPrinterModal(false)}
       />
     </SafeAreaView>
   );
@@ -1915,6 +2032,22 @@ const styles = StyleSheet.create({
   },
   receiptSecondaryBtnText: {
     color: '#334155',
+    fontWeight: '800',
+    fontSize: 13,
+  },
+  receiptPrintSlipBtn: {
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1.5,
+    borderColor: '#0D7A52',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  receiptPrintSlipBtnText: {
+    color: '#0D7A52',
     fontWeight: '800',
     fontSize: 13,
   },
