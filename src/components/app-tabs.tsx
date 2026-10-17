@@ -13,6 +13,15 @@ function CustomTindahanTabBar(props: any) {
   const { cartSummary, settings, version, products } = useTindahanStore();
   const outOfStockCount = products.filter((p) => p.stockStatus === 'OUT_OF_STOCK').length;
   const lowStockCount = products.filter((p) => p.stockStatus === 'LOW_STOCK').length;
+  const expiringSoonCount = products.filter((p) => {
+    if (!p.expiryDate) return false;
+    const exp = new Date(p.expiryDate);
+    if (isNaN(exp.getTime())) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diffDays = Math.ceil((exp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays <= 14;
+  }).length;
 
   // React 19 & Expo SDK 57 Safe Render Rule: Use useState initializer instead of useRef.current
   const heartbeatAnim = React.useState(() => new Animated.Value(1))[0];
@@ -163,7 +172,7 @@ function CustomTindahanTabBar(props: any) {
               size={22}
               color={isInventory ? '#0D7A52' : '#6B7280'}
             />
-            {outOfStockCount > 0 || lowStockCount > 0 ? (
+            {outOfStockCount > 0 || lowStockCount > 0 || expiringSoonCount > 0 ? (
               <View style={styles.inventoryBadgesCluster} pointerEvents="none">
                 {outOfStockCount > 0 ? (
                   <View style={styles.invBadgeRed}>
@@ -173,6 +182,11 @@ function CustomTindahanTabBar(props: any) {
                 {lowStockCount > 0 ? (
                   <View style={styles.invBadgeAmber}>
                     <Text style={styles.invBadgeText}>{lowStockCount}</Text>
+                  </View>
+                ) : null}
+                {expiringSoonCount > 0 ? (
+                  <View style={styles.invBadgePurple}>
+                    <Text style={styles.invBadgeText}>{expiringSoonCount}</Text>
                   </View>
                 ) : null}
               </View>
@@ -347,11 +361,12 @@ const styles = StyleSheet.create({
   },
   inventoryBadgesCluster: {
     position: 'absolute',
-    top: -5,
-    right: -14,
+    top: -6,
+    right: -16,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
+    zIndex: 10,
   },
   invBadgeRed: {
     backgroundColor: '#EF4444',
@@ -366,6 +381,17 @@ const styles = StyleSheet.create({
   },
   invBadgeAmber: {
     backgroundColor: '#F59E0B',
+    minWidth: 15,
+    height: 15,
+    borderRadius: 7.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  invBadgePurple: {
+    backgroundColor: '#8B5CF6',
     minWidth: 15,
     height: 15,
     borderRadius: 7.5,

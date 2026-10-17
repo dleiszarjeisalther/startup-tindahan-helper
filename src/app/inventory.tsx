@@ -1036,6 +1036,8 @@ export default function InventoryManagementScreen() {
                       styles.filterBadgePill,
                       filter === 'Out of Stock'
                         ? styles.filterBadgeRed
+                        : filter === 'Expiring Soon'
+                        ? styles.filterBadgePurple
                         : styles.filterBadgeAmber,
                     ]}
                   >
@@ -1716,7 +1718,7 @@ export default function InventoryManagementScreen() {
                         item.daysUntilExpiry != null && item.daysUntilExpiry < 0
                           ? { color: '#DC2626', fontWeight: '700' }
                           : item.daysUntilExpiry != null && item.daysUntilExpiry <= 7
-                          ? { color: '#D97706', fontWeight: '700' }
+                          ? { color: '#7C3AED', fontWeight: '700' }
                           : { color: '#0D7A52', fontWeight: '600' },
                       ]}
                     >
@@ -2794,7 +2796,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 19,
     fontWeight: '800',
     color: '#111827',
   },
@@ -3377,6 +3379,9 @@ const styles = StyleSheet.create({
   },
   filterBadgeAmber: {
     backgroundColor: '#F59E0B',
+  },
+  filterBadgePurple: {
+    backgroundColor: '#8B5CF6',
   },
   filterBadgeText: {
     color: '#FFFFFF',

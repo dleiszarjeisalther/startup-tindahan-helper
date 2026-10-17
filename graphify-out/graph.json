@@ -4331,7 +4331,7 @@
       "file_type": "code",
       "norm_label": "apptabs()",
       "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L208"
+      "source_location": "L222"
     },
     {
       "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_constructor",
@@ -8535,7 +8535,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2741"
+      "source_location": "L2743"
     },
     {
       "id": "src_presentation_components_barcodeinputfield",
@@ -12614,7 +12614,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L229"
+      "source_location": "L243"
     },
     {
       "id": "ref_expo_router",
@@ -13156,7 +13156,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L1818",
+      "source_location": "L1820",
       "weight": 1.0
     },
     {
@@ -13168,7 +13168,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L1957",
+      "source_location": "L1959",
       "weight": 1.0
     },
     {
@@ -13180,7 +13180,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2732",
+      "source_location": "L2734",
       "weight": 1.0
     },
     {
@@ -15208,7 +15208,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L66",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -27095,7 +27095,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2741",
+      "source_location": "L2743",
       "weight": 1.0
     },
     {
@@ -27733,7 +27733,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L208",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -27744,7 +27744,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L229",
+      "source_location": "L243",
       "weight": 1.0
     },
     {
@@ -33224,5 +33224,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6505c76c19b9c43d795de603068c42419ea43653"
+  "built_at_commit": "080308a66c6150ce252999691c5a55e336934d7f"
 }

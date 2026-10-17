@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {
-    "mtime": 1792270974.325331,
-    "seen": 1792271616.766729,
-    "ast_hash": "8a7e0a88e770226c014e931ed28cad69",
+    "mtime": 1792272801.950661,
+    "seen": 1792272960.1498125,
+    "ast_hash": "27d0c6d0e05747480b7450094125074e",
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
@@ -588,9 +588,9 @@
     "semantic_hash": ""
   },
   "src/domain/services/EscPosReceiptFormatter.ts": {
-    "mtime": 1792269101.8433542,
-    "seen": 1792269459.5677311,
-    "ast_hash": "aaadc4da6d358ade09624821a830b5aa",
+    "mtime": 1792272784.2790897,
+    "seen": 1792272960.1499012,
+    "ast_hash": "67e168f7731417fdb7be52331acba95c",
     "semantic_hash": ""
   },
   "src/domain/services/PinSecurityEngine.ts": {
