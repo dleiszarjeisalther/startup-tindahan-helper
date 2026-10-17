@@ -26,6 +26,7 @@ import {
   ConfirmationType,
   ConfirmationModalDetail,
 } from '@/presentation/components/ConfirmationModal';
+import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -51,9 +52,14 @@ export default function SukiUtangLedgerScreen() {
     addManualUtangEntry,
     deleteUtangCustomer,
     recordUtangPayment,
+    isStoreSecurityEnabled,
+    isStoreLocked,
+    unlockStore,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
+
+  const [showSecurityChallenge, setShowSecurityChallenge] = useState(true);
 
   // Filter & Search State
   const [searchQuery, setSearchQuery] = useState('');
@@ -346,6 +352,25 @@ export default function SukiUtangLedgerScreen() {
         </View>
       ) : null}
 
+      {isStoreSecurityEnabled && isStoreLocked ? (
+        <View style={styles.lockedContainer}>
+          <Ionicons name="lock-closed" size={56} color="#D97706" style={{ marginBottom: 16 }} />
+          <Text style={styles.lockedTitle}>Protektado ang Suki Utang Ledger</Text>
+          <Text style={styles.lockedSubtitle}>
+            Naka-lock ang listahan ng pautang at talaan ng mga suki para mapanatiling ligtas at pribado ang inyong datos.
+          </Text>
+          <Pressable
+            style={styles.unlockBtn}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              setShowSecurityChallenge(true);
+            }}
+          >
+            <Ionicons name="finger-print" size={20} color="#FFFFFF" />
+            <Text style={styles.unlockBtnText}>I-unlock gamit ang Biometrics / PIN</Text>
+          </Pressable>
+        </View>
+      ) : (
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -588,6 +613,7 @@ export default function SukiUtangLedgerScreen() {
           )}
         </View>
       </ScrollView>
+      )}
 
       {/* 1. STATEMENT & LEDGER TIMELINE MODAL */}
       <Modal
@@ -1178,6 +1204,26 @@ export default function SukiUtangLedgerScreen() {
           onCancel={() => setConfirmDialog(null)}
         />
       ) : null}
+
+      {/* Security Pin / Biometric Challenge Modal */}
+      <PinChallengeModal
+        visible={isStoreSecurityEnabled && isStoreLocked && showSecurityChallenge}
+        title="Proteksyon sa Suki Utang Ledger"
+        subtitle="I-scan ang Fingerprint/Face ID o i-enter ang PIN upang buksan ang utang"
+        onSuccess={() => {
+          setShowSecurityChallenge(false);
+          unlockStore();
+          showToast('🔓 Nabuksan ang Suki Utang Ledger');
+        }}
+        onCancel={() => {
+          setShowSecurityChallenge(false);
+          if (router.canGoBack()) {
+            router.back();
+          } else {
+            router.replace('/more');
+          }
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -1937,6 +1983,49 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   modalCommitBtnText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  lockedContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    backgroundColor: '#F8FAFC',
+  },
+  lockedTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#0F172A',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  lockedSubtitle: {
+    fontSize: 13,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  unlockBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#0D7A52',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 14,
+    width: '100%',
+    maxWidth: 320,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  unlockBtnText: {
     fontSize: 14,
     fontWeight: '800',
     color: '#FFFFFF',

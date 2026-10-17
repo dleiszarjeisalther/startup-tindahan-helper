@@ -102,6 +102,10 @@ const isPrivilegeAllowed = (
 const toggleBrownoutBatterySaver = () => tindahanStoreService.toggleBrownoutBatterySaver();
 const getExpiringProducts = (daysThreshold?: number) =>
   tindahanStoreService.getExpiringProducts(daysThreshold);
+const unlockStore = (durationMs?: number) => tindahanStoreService.unlockStore(durationMs);
+const lockStore = () => tindahanStoreService.lockStore();
+const enableStoreSecurity = (enabled: boolean) => tindahanStoreService.enableStoreSecurity(enabled);
+const isStoreUnlocked = () => tindahanStoreService.isStoreUnlocked();
 
 export function useTindahanStore() {
   const store = useTindahanStoreService();
@@ -118,6 +122,9 @@ export function useTindahanStore() {
     cartRevision: snapshot.cartRevision,
     isSqliteActive: snapshot.isSqliteActive,
     operatingMode: snapshot.operatingMode,
+    isStoreSecurityEnabled: snapshot.isStoreSecurityEnabled,
+    isStoreLocked: snapshot.isStoreLocked,
+    unlockedUntil: snapshot.unlockedUntil,
     isBrownoutSaverActive: snapshot.isBrownoutSaverActive,
     hasOwnerPinSet: snapshot.hasOwnerPinSet,
     pinLockoutUntil: snapshot.pinLockoutUntil,
@@ -174,5 +181,9 @@ export function useTindahanStore() {
     isPrivilegeAllowed,
     toggleBrownoutBatterySaver,
     getExpiringProducts,
+    unlockStore,
+    lockStore,
+    enableStoreSecurity,
+    isStoreUnlocked,
   };
 }

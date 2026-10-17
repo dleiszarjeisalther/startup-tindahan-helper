@@ -29,11 +29,12 @@ export default function PosScanProductScreen() {
     cartSummary,
     settings,
     version,
-    operatingMode,
+    isStoreSecurityEnabled,
+    isStoreLocked,
     isBrownoutSaverActive,
     toggleBrownoutBatterySaver,
-    quickLockToCashierMode,
-    setOperatingMode,
+    lockStore,
+    unlockStore,
   } = useTindahanStore();
   const t = getTranslations(settings?.language);
   const [searchQuery, setSearchQuery] = useState('');
@@ -164,24 +165,26 @@ export default function PosScanProductScreen() {
         toastMessage={scanToast}
         topCenterAction={
           <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
-            <Pressable
-              style={[
-                styles.rolePill,
-                operatingMode === 'OWNER' ? styles.rolePillOwner : styles.rolePillCashier,
-              ]}
-              onPress={() => {
-                if (operatingMode === 'CASHIER') {
-                  setShowPinModal(true);
-                } else {
-                  quickLockToCashierMode();
-                  triggerScanToast('🔒 Locked to Tindera / Cashier Mode');
-                }
-              }}
-            >
-              <Text style={styles.rolePillText}>
-                {operatingMode === 'OWNER' ? '👑 Owner' : '🔒 Tindera'}
-              </Text>
-            </Pressable>
+            {isStoreSecurityEnabled ? (
+              <Pressable
+                style={[
+                  styles.rolePill,
+                  !isStoreLocked ? styles.rolePillOwner : styles.rolePillCashier,
+                ]}
+                onPress={() => {
+                  if (isStoreLocked) {
+                    setShowPinModal(true);
+                  } else {
+                    lockStore();
+                    triggerScanToast('🔒 Naka-lock na ang tindahan');
+                  }
+                }}
+              >
+                <Text style={styles.rolePillText}>
+                  {!isStoreLocked ? '🔓 Bukas' : '🔒 Naka-lock'}
+                </Text>
+              </Pressable>
+            ) : null}
             <Pressable
               style={[
                 styles.brownoutBtn,
@@ -431,12 +434,12 @@ export default function PosScanProductScreen() {
 
       <PinChallengeModal
         visible={showPinModal}
-        title="Owner Mode Authorization"
-        subtitle="Enter 4-digit Master PIN to unlock Owner Mode"
+        title="Proteksyon ng Tindahan"
+        subtitle="I-scan ang Fingerprint/Face ID o i-enter ang 4-digit PIN"
         onSuccess={() => {
           setShowPinModal(false);
-          setOperatingMode('OWNER');
-          triggerScanToast('👑 Switched to Owner Mode');
+          unlockStore();
+          triggerScanToast('🔓 Na-unlock ang tindahan');
         }}
         onCancel={() => setShowPinModal(false)}
       />

@@ -172,6 +172,9 @@ export interface StoreSnapshot {
   cartRevision: number;
   isSqliteActive: boolean;
   operatingMode: 'OWNER' | 'CASHIER';
+  isStoreSecurityEnabled: boolean;
+  isStoreLocked: boolean;
+  unlockedUntil: number;
   isBrownoutSaverActive: boolean;
   hasOwnerPinSet: boolean;
   pinLockoutUntil: number | null;
@@ -227,6 +230,7 @@ export class TindahanStoreService {
   private cashDrawerAdjustments: CashDrawerAdjustmentRecord[] = [];
   private stockMovements: StockMovementRecord[] = [];
   private operatingMode: 'OWNER' | 'CASHIER' = 'OWNER';
+  private unlockedUntil = appKeyValueStorage.getUnlockedUntil();
   private isBrownoutSaverActive = false;
 
   constructor(
@@ -732,7 +736,10 @@ export class TindahanStoreService {
       revision: this.version,
       cartRevision: this.cartRevision,
       isSqliteActive: this.isSqliteActive,
-      operatingMode: this.operatingMode,
+      operatingMode: this.isStoreUnlocked() ? 'OWNER' : 'CASHIER',
+      isStoreSecurityEnabled: appKeyValueStorage.isStoreSecurityEnabled(),
+      isStoreLocked: !this.isStoreUnlocked(),
+      unlockedUntil: this.unlockedUntil,
       isBrownoutSaverActive: this.isBrownoutSaverActive,
       hasOwnerPinSet: !!appKeyValueStorage.getOwnerPinHash(),
       pinLockoutUntil: appKeyValueStorage.getPinLockoutUntil(),
@@ -2817,18 +2824,62 @@ export class TindahanStoreService {
   }
 
   /**
-   * Quick locks session back to Cashier Mode without requiring PIN entry.
+   * Checks whether the store is currently unlocked within its active grace period.
    */
-  public quickLockToCashierMode(): void {
+  public isStoreUnlocked(): boolean {
+    if (!appKeyValueStorage.isStoreSecurityEnabled()) {
+      return true;
+    }
+    return Date.now() < this.unlockedUntil;
+  }
+
+  /**
+   * Unlocks the store for a 5-minute session grace period (or custom ms).
+   */
+  public unlockStore(durationMs: number = 5 * 60 * 1000): void {
+    this.unlockedUntil = Date.now() + durationMs;
+    this.operatingMode = 'OWNER';
+    appKeyValueStorage.setUnlockedUntil(this.unlockedUntil);
+    appKeyValueStorage.setOperatingMode('OWNER');
+    this.notify();
+  }
+
+  /**
+   * Immediately locks the store back to protected state.
+   */
+  public lockStore(): void {
+    this.unlockedUntil = 0;
     this.operatingMode = 'CASHIER';
+    appKeyValueStorage.setUnlockedUntil(0);
     appKeyValueStorage.setOperatingMode('CASHIER');
     this.notify();
   }
 
+  /**
+   * Enables or disables store security protection app-wide.
+   */
+  public enableStoreSecurity(enabled: boolean): void {
+    appKeyValueStorage.setStoreSecurityEnabled(enabled);
+    if (!enabled) {
+      this.unlockStore();
+    } else {
+      this.lockStore();
+    }
+  }
+
+  /**
+   * Quick locks session back to protected state without requiring PIN entry.
+   */
+  public quickLockToCashierMode(): void {
+    this.lockStore();
+  }
+
   public setOperatingMode(mode: 'OWNER' | 'CASHIER'): void {
-    this.operatingMode = mode;
-    appKeyValueStorage.setOperatingMode(mode);
-    this.notify();
+    if (mode === 'OWNER') {
+      this.unlockStore();
+    } else {
+      this.lockStore();
+    }
   }
 
   /**
@@ -2842,8 +2893,8 @@ export class TindahanStoreService {
       | 'CLEAR_DATA'
       | 'STORE_SETTINGS'
   ): boolean {
-    if (this.operatingMode === 'OWNER') return true;
-    return false;
+    if (!appKeyValueStorage.isStoreSecurityEnabled()) return true;
+    return this.isStoreUnlocked();
   }
 
   /**

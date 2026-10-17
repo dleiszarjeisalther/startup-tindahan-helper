@@ -24,6 +24,12 @@ export interface IKeyValueStorage {
   setFailedPinAttempts(count: number): void;
   getOperatingMode(): 'OWNER' | 'CASHIER';
   setOperatingMode(mode: 'OWNER' | 'CASHIER'): void;
+  isStoreSecurityEnabled(): boolean;
+  setStoreSecurityEnabled(enabled: boolean): void;
+  isBiometricsEnabled(): boolean;
+  setBiometricsEnabled(enabled: boolean): void;
+  getUnlockedUntil(): number;
+  setUnlockedUntil(timestamp: number): void;
   isBrownoutSaverActive(): boolean;
   setBrownoutSaverActive(active: boolean): void;
   getGcashConvenienceFee(): number;
@@ -280,6 +286,33 @@ class SynchronousKeyValueStorage implements IKeyValueStorage {
 
   public setOperatingMode(mode: 'OWNER' | 'CASHIER'): void {
     this.setString('store_active_operating_mode', mode);
+  }
+
+  public isStoreSecurityEnabled(): boolean {
+    this.ensureInitialized();
+    return this.getBoolean('store_security_enabled', false) ?? false;
+  }
+
+  public setStoreSecurityEnabled(enabled: boolean): void {
+    this.setBoolean('store_security_enabled', enabled);
+  }
+
+  public isBiometricsEnabled(): boolean {
+    this.ensureInitialized();
+    return this.getBoolean('store_biometrics_enabled', true) ?? true;
+  }
+
+  public setBiometricsEnabled(enabled: boolean): void {
+    this.setBoolean('store_biometrics_enabled', enabled);
+  }
+
+  public getUnlockedUntil(): number {
+    this.ensureInitialized();
+    return this.getNumber('store_unlocked_until', 0) ?? 0;
+  }
+
+  public setUnlockedUntil(timestamp: number): void {
+    this.setNumber('store_unlocked_until', timestamp);
   }
 
   public isBrownoutSaverActive(): boolean {

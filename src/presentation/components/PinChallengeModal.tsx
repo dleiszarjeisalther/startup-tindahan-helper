@@ -1,5 +1,5 @@
 // src/presentation/components/PinChallengeModal.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Modal,
   View,
@@ -9,7 +9,9 @@ import {
   Pressable,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '../hooks/useTindahanStore';
+import { BiometricAuthService } from '@/infrastructure/services/BiometricAuthService';
 
 interface PinChallengeModalProps {
   visible: boolean;
@@ -21,22 +23,51 @@ interface PinChallengeModalProps {
 
 export function PinChallengeModal({
   visible,
-  title = 'Owner Master PIN Required',
-  subtitle = 'Enter 4-digit PIN to authenticate sensitive store action',
+  title = 'Proteksyon ng Tindahan',
+  subtitle = 'I-scan ang Fingerprint/Face ID o i-enter ang 4-digit PIN',
   onSuccess,
   onCancel,
 }: PinChallengeModalProps) {
-  const { verifyOwnerMasterPin } = useTindahanStore();
+  const { verifyOwnerMasterPin, unlockStore } = useTindahanStore();
   const [pin, setPin] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lockoutRemainingSec, setLockoutRemainingSec] = useState<number>(0);
+  const [hasBiometrics, setHasBiometrics] = useState<boolean>(false);
   const [prevVisible, setPrevVisible] = useState(visible);
+
+  const triggerBiometrics = useCallback(async () => {
+    try {
+      const auth = await BiometricAuthService.authenticate(
+        'I-scan ang fingerprint o Face ID upang magpatuloy'
+      );
+      if (auth.success) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        unlockStore();
+        onSuccess();
+      }
+    } catch {
+      // User can still fallback to PIN
+    }
+  }, [unlockStore, onSuccess]);
+
+  useEffect(() => {
+    BiometricAuthService.checkCapabilities().then((cap) => {
+      setHasBiometrics(cap.hasHardware && cap.isEnrolled);
+    });
+  }, []);
 
   if (visible !== prevVisible) {
     setPrevVisible(visible);
     if (visible) {
       setPin('');
       setErrorMessage(null);
+      // Auto-trigger biometric prompt on modal presentation
+      BiometricAuthService.checkCapabilities().then((cap) => {
+        if (cap.hasHardware && cap.isEnrolled) {
+          setHasBiometrics(true);
+          triggerBiometrics();
+        }
+      });
     }
   }
 
@@ -65,7 +96,6 @@ export function PinChallengeModal({
     setErrorMessage(null);
 
     if (nextPin.length === 4) {
-      // Automatically verify when 4 digits are entered
       submitPin(nextPin);
     }
   };
@@ -82,6 +112,7 @@ export function PinChallengeModal({
     if (outcome.success) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       setPin('');
+      unlockStore();
       onSuccess();
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
@@ -89,11 +120,11 @@ export function PinChallengeModal({
       if (outcome.lockoutStatus.isLocked) {
         setLockoutRemainingSec(outcome.lockoutStatus.remainingSeconds);
         setErrorMessage(
-          `Security Lockout: Too many failed attempts. Wait ${outcome.lockoutStatus.remainingSeconds}s.`
+          `Security Lockout: Masyadong maraming mali. Maghintay ng ${outcome.lockoutStatus.remainingSeconds}s.`
         );
       } else {
         setErrorMessage(
-          `Incorrect PIN. ${outcome.remainingAttempts} attempt(s) remaining.`
+          `Maling PIN. May ${outcome.remainingAttempts} pagsubok na natitira.`
         );
       }
     }
@@ -105,8 +136,21 @@ export function PinChallengeModal({
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <Pressable style={styles.backdrop} onPress={onCancel}>
         <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
+          <Ionicons name="shield-checkmark" size={36} color="#0D7A52" style={styles.headerIcon} />
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
+
+          {/* Biometrics Quick Action Button */}
+          {hasBiometrics ? (
+            <Pressable
+              style={styles.biometricBtn}
+              onPress={triggerBiometrics}
+              hitSlop={6}
+            >
+              <Ionicons name="finger-print" size={20} color="#0D7A52" />
+              <Text style={styles.biometricBtnText}>I-scan ang Fingerprint / Face ID</Text>
+            </Pressable>
+          ) : null}
 
           {/* 4-Dot PIN Indicator */}
           <View style={styles.dotsRow}>
@@ -126,7 +170,7 @@ export function PinChallengeModal({
             <Text style={styles.errorText}>{errorMessage}</Text>
           ) : (
             <Text style={styles.hintText}>
-              {isLocked ? `Locked for ${lockoutRemainingSec}s` : 'Tap keypad to enter PIN'}
+              {isLocked ? `Naka-lock ng ${lockoutRemainingSec}s` : 'I-type ang 4-digit PIN sa ibaba'}
             </Text>
           )}
 
@@ -151,7 +195,7 @@ export function PinChallengeModal({
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.actionKeyText}>Cancel</Text>
+                        <Text style={styles.actionKeyText}>Kansela</Text>
                       </TouchableOpacity>
                     );
                   }
@@ -212,9 +256,12 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 8,
   },
+  headerIcon: {
+    marginBottom: 8,
+  },
   title: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#0F172A',
     textAlign: 'center',
     marginBottom: 6,
@@ -223,13 +270,32 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#64748B',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
     lineHeight: 18,
+  },
+  biometricBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1.5,
+    borderColor: '#A7F3D0',
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    width: '100%',
+  },
+  biometricBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0D7A52',
   },
   dotsRow: {
     flexDirection: 'row',
     gap: 16,
-    marginBottom: 16,
+    marginBottom: 12,
     alignItems: 'center',
   },
   dot: {
@@ -241,8 +307,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   dotFilled: {
-    backgroundColor: '#0F172A',
-    borderColor: '#0F172A',
+    backgroundColor: '#0D7A52',
+    borderColor: '#0D7A52',
   },
   dotLocked: {
     borderColor: '#EF4444',
@@ -251,16 +317,16 @@ const styles = StyleSheet.create({
   hintText: {
     fontSize: 12,
     color: '#94A3B8',
-    marginBottom: 16,
+    marginBottom: 14,
     height: 20,
   },
   errorText: {
     fontSize: 12,
     color: '#DC2626',
     fontWeight: '600',
-    marginBottom: 16,
+    marginBottom: 14,
     textAlign: 'center',
-    height: 32,
+    height: 28,
   },
   keypad: {
     width: '100%',
@@ -273,7 +339,7 @@ const styles = StyleSheet.create({
   },
   keyBtn: {
     flex: 1,
-    height: 54,
+    height: 52,
     backgroundColor: '#F1F5F9',
     borderRadius: 14,
     justifyContent: 'center',
@@ -295,8 +361,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#E2E8F0',
   },
   actionKeyText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
     color: '#475569',
   },
 });

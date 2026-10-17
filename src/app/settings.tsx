@@ -1,5 +1,5 @@
 // src/app/settings.tsx — Screen 7: Store Settings
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -24,6 +24,7 @@ import {
 } from '@/presentation/components/ConfirmationModal';
 import { appKeyValueStorage } from '@/infrastructure/storage/KeyValueStorage';
 import { PinSecurityEngine } from '@/domain/services/PinSecurityEngine';
+import { BiometricAuthService } from '@/infrastructure/services/BiometricAuthService';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -43,9 +44,11 @@ export default function StoreSettingsScreen() {
     updateSettings,
     clearAllDatabaseData,
     hasOwnerPinSet,
-    operatingMode,
+    isStoreSecurityEnabled,
+    isStoreLocked,
     setOwnerMasterPin,
-    quickLockToCashierMode,
+    enableStoreSecurity,
+    lockStore,
     isBrownoutSaverActive,
     toggleBrownoutBatterySaver,
   } = useTindahanStore();
@@ -56,6 +59,26 @@ export default function StoreSettingsScreen() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
+
+  const [biometricInfo, setBiometricInfo] = useState<{
+    hasHardware: boolean;
+    isEnrolled: boolean;
+    typeNames: string[];
+  }>({
+    hasHardware: false,
+    isEnrolled: false,
+    typeNames: [],
+  });
+
+  useEffect(() => {
+    BiometricAuthService.checkCapabilities().then((cap) => {
+      setBiometricInfo({
+        hasHardware: cap.hasHardware,
+        isEnrolled: cap.isEnrolled,
+        typeNames: cap.typeNames,
+      });
+    });
+  }, []);
 
   const [defaultGcashFee, setDefaultGcashFee] = useState<number>(() =>
     appKeyValueStorage.getGcashConvenienceFee()
@@ -318,37 +341,56 @@ export default function StoreSettingsScreen() {
           </View>
         </View>
 
-        {/* Section: Security & Cashier Mode (FR-SEC-001 / NFR-SEC-006) */}
-        <Text style={styles.sectionHeader}>Seguridad at Cashier Mode</Text>
+        {/* Section: Store Security & Biometrics (Single Storekeeper Model) */}
+        <Text style={styles.sectionHeader}>Seguridad ng Tindahan</Text>
         <View style={styles.cardGroup}>
+          {/* Main Security Lock Toggle */}
           <View style={[styles.settingRow, styles.rowBorder]}>
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Kasalukuyang Antas</Text>
+              <Text style={styles.rowTitle}>Proteksyon ng Tindahan (Security Lock)</Text>
               <Text style={styles.rowValue}>
-                {operatingMode === 'OWNER'
-                  ? '👑 May-ari (Owner Mode) - Buong Akses'
-                  : '🔒 Tindera (Cashier Mode) - Limitadong Akses'}
+                I-lock ang Tubo, Utang Ledger, at Settings gamit ang Fingerprint o PIN
               </Text>
             </View>
-            <View
-              style={[
-                styles.roleBadge,
-                operatingMode === 'OWNER' ? styles.roleBadgeOwner : styles.roleBadgeCashier,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.roleBadgeText,
-                  operatingMode === 'OWNER' ? styles.roleBadgeTextOwner : styles.roleBadgeTextCashier,
-                ]}
-              >
-                {operatingMode === 'OWNER' ? 'OWNER' : 'CASHIER'}
-              </Text>
-            </View>
+            <Switch
+              value={isStoreSecurityEnabled}
+              onValueChange={(val) => {
+                enableStoreSecurity(val);
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                showToast(
+                  val
+                    ? '🔒 Naka-on ang Proteksyon ng Tindahan'
+                    : 'Bukas ang lahat ng bahagi ng tindahan',
+                  'info'
+                );
+              }}
+              trackColor={{ false: '#D1D5DB', true: '#0D7A52' }}
+              thumbColor="#FFFFFF"
+            />
           </View>
 
+          {/* Biometrics Status Row */}
+          <View style={[styles.settingRow, styles.rowBorder]}>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>Phone Security & Biometrics</Text>
+              <Text style={styles.rowValue}>
+                {biometricInfo.hasHardware && biometricInfo.isEnrolled
+                  ? `✅ Suportado ang ${biometricInfo.typeNames.join(' / ') || 'Biometrics'} at Device Lock`
+                  : biometricInfo.hasHardware
+                  ? '⚠️ Walang nakarehistrong fingerprint/face sa phone settings'
+                  : 'ℹ️ Walang biometric hardware; 4-digit PIN ang gagamitin'}
+              </Text>
+            </View>
+            <Ionicons
+              name={biometricInfo.hasHardware && biometricInfo.isEnrolled ? 'finger-print' : 'hardware-chip-outline'}
+              size={22}
+              color={biometricInfo.hasHardware && biometricInfo.isEnrolled ? '#0D7A52' : '#6B7280'}
+            />
+          </View>
+
+          {/* Backup 4-Digit PIN Row */}
           <Pressable
-            style={[styles.settingRow, hasOwnerPinSet && operatingMode === 'OWNER' ? styles.rowBorder : null]}
+            style={[styles.settingRow, isStoreSecurityEnabled && !isStoreLocked ? styles.rowBorder : null]}
             onPress={() => {
               setPinError(null);
               setNewPin('');
@@ -358,30 +400,31 @@ export default function StoreSettingsScreen() {
           >
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>
-                {hasOwnerPinSet ? 'Palitan ang Master PIN' : 'Magtakda ng Master PIN'}
+                {hasOwnerPinSet ? 'Palitan ang 4-Digit Backup PIN' : 'Magtakda ng 4-Digit Backup PIN'}
               </Text>
               <Text style={styles.rowValue}>
                 {hasOwnerPinSet
-                  ? 'Protektado ang Tubo, Puhunan, at mga sensitibong ulat'
-                  : '⚠️ Walang PIN: Bukas ang lahat ng datos'}
+                  ? 'Naitakda na ang PIN bilang fallback sakaling mag-fail ang fingerprint'
+                  : '⚠️ Walang backup PIN: Magtakda para sa dagdag proteksyon'}
               </Text>
             </View>
             <Ionicons name="key-outline" size={20} color="#0D7A52" />
           </Pressable>
 
-          {hasOwnerPinSet && operatingMode === 'OWNER' ? (
+          {/* Quick Lock Action (when currently unlocked) */}
+          {isStoreSecurityEnabled && !isStoreLocked ? (
             <Pressable
               style={styles.settingRow}
               onPress={() => {
-                quickLockToCashierMode();
+                lockStore();
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                showToast('🔒 Naka-lock na sa Cashier Mode (Tindera)');
+                showToast('🔒 Naka-lock na muli ang tindahan');
               }}
             >
               <View style={styles.rowTextCol}>
-                <Text style={styles.rowTitle}>I-lock sa Cashier Mode</Text>
+                <Text style={styles.rowTitle}>I-lock Agad ang Tindahan</Text>
                 <Text style={styles.rowValue}>
-                  Itago agad ang tubo kapag iniwan ang tindahan sa bantay
+                  Tapusin ang 5-minutong bukas na sesyon at itago ang sensitibong datos
                 </Text>
               </View>
               <Ionicons name="lock-closed" size={20} color="#D97706" />

@@ -72,7 +72,9 @@ export default function SalesHistoryScreen() {
     deleteCashAdjustment,
     transactions,
     settings,
-    operatingMode,
+    isStoreSecurityEnabled,
+    isStoreLocked,
+    unlockStore,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
@@ -731,7 +733,7 @@ export default function SalesHistoryScreen() {
                 onPress={(e) => {
                   e.stopPropagation();
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                  if (operatingMode === 'CASHIER') {
+                  if (isStoreSecurityEnabled && isStoreLocked) {
                     setShowTuboPinModal(true);
                   } else {
                     setShowProfit(!showProfit);
@@ -739,7 +741,7 @@ export default function SalesHistoryScreen() {
                 }}
               >
                 <Ionicons
-                  name={showProfit && operatingMode === 'OWNER' ? 'eye-outline' : 'eye-off-outline'}
+                  name={showProfit && (!isStoreSecurityEnabled || !isStoreLocked) ? 'eye-outline' : 'eye-off-outline'}
                   size={14}
                   color="#0D7A52"
                 />
@@ -749,7 +751,7 @@ export default function SalesHistoryScreen() {
 
             <View style={styles.kpiCardFooter}>
               <Text style={styles.tuboValue} numberOfLines={1}>
-                {t.tuboLabel || 'Tubo'}: {operatingMode === 'CASHIER' ? '🔒 Owner Mode Only' : showProfit ? `${summary.formattedTubo} (${summary.profitMarginPercent}%)` : t.tuboHidden}
+                {t.tuboLabel || 'Tubo'}: {isStoreSecurityEnabled && isStoreLocked ? '🔒 Protektado' : showProfit ? `${summary.formattedTubo} (${summary.profitMarginPercent}%)` : t.tuboHidden}
               </Text>
               <Text style={styles.kahaTapHint} numberOfLines={1}>{t.salesOverviewBtnHint || 'Buong Buod ›'}</Text>
             </View>
@@ -2693,14 +2695,15 @@ export default function SalesHistoryScreen() {
         />
       ) : null}
 
-      {/* Owner Master PIN Challenge Modal for Tubo / Profit Confidentiality */}
+      {/* Store Security Challenge Modal for Tubo / Profit Confidentiality */}
       <PinChallengeModal
         visible={showTuboPinModal}
-        title="Owner Master PIN"
-        subtitle="I-enter ang 4-digit PIN upang makita ang Tubo at Puhunan"
+        title="Proteksyon sa Tubo at Puhunan"
+        subtitle="I-scan ang Fingerprint/Face ID o i-enter ang 4-digit PIN upang makita ang tubo"
         onSuccess={() => {
           setShowTuboPinModal(false);
           setShowProfit(true);
+          unlockStore();
           showActionToast('🔓 Nabuksan ang Tubo at Puhunan');
         }}
         onCancel={() => setShowTuboPinModal(false)}
