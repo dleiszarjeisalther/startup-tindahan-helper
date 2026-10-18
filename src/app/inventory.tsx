@@ -63,6 +63,9 @@ export default function InventoryManagementScreen() {
     settings,
     operatingMode,
     setOperatingMode,
+    isStoreSecurityEnabled,
+    isStoreLocked,
+    lockStore,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
@@ -931,6 +934,28 @@ export default function InventoryManagementScreen() {
         </View>
 
         <View style={styles.headerRightActions}>
+          {isStoreSecurityEnabled ? (
+            <Pressable
+              style={[
+                styles.rolePill,
+                !isStoreLocked ? styles.rolePillOwner : styles.rolePillCashier,
+              ]}
+              onPress={() => {
+                if (isStoreLocked) {
+                  setPinChallengeAction(() => () => {
+                    showToast('🔓 Na-unlock ang tindahan', 'success');
+                  });
+                } else {
+                  lockStore();
+                  showToast('🔒 Naka-lock na muli ang tindahan', 'info');
+                }
+              }}
+            >
+              <Text style={styles.rolePillText}>
+                {!isStoreLocked ? '🔓 Bukas' : '🔒 Naka-lock'}
+              </Text>
+            </Pressable>
+          ) : null}
           <Pressable
             style={styles.manageCatHeaderBtn}
             onPress={() => router.push('/history')}
@@ -1836,7 +1861,7 @@ export default function InventoryManagementScreen() {
                       <Pressable
                         style={styles.editProductBtn}
                         onPress={() => {
-                          if (operatingMode === 'CASHIER') {
+                          if (operatingMode === 'CASHIER' || (isStoreSecurityEnabled && isStoreLocked)) {
                             setPinChallengeAction(() => () => handleOpenEditModal(item));
                           } else {
                             handleOpenEditModal(item);
@@ -2880,6 +2905,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 8,
+  },
+  rolePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 12,
+  },
+  rolePillOwner: {
+    backgroundColor: '#0D7A52',
+  },
+  rolePillCashier: {
+    backgroundColor: '#475569',
+  },
+  rolePillText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 11,
   },
   headerTitle: {
     fontSize: 19,

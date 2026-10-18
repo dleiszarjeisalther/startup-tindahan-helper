@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1792282382.816956,
-    "seen": 1792282586.1886528,
-    "ast_hash": "69f5a5cd63b50b1d8189ba9aed94f0e5",
+    "mtime": 1792283981.2723396,
+    "seen": 1792284285.4673028,
+    "ast_hash": "835e8925129f7a344efdfcdc35b29d66",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
@@ -114,15 +114,15 @@
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {
-    "mtime": 1792272801.950661,
-    "seen": 1792272960.1498125,
-    "ast_hash": "27d0c6d0e05747480b7450094125074e",
+    "mtime": 1792283998.672074,
+    "seen": 1792284285.4673424,
+    "ast_hash": "4468b323d3f713cb1f9c74a4983803aa",
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
-    "mtime": 1792271497.9272895,
-    "seen": 1792271616.7667367,
-    "ast_hash": "7d467ec6a33be924e1f3a65be0379b0c",
+    "mtime": 1792283813.375543,
+    "seen": 1792284285.467354,
+    "ast_hash": "5938123a6fc06d655eecdcbd84b6c83c",
     "semantic_hash": ""
   },
   "src/application/ProductOnboardingService.ts": {
@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "src/application/TindahanStoreService.ts": {
-    "mtime": 1792270738.1795604,
-    "seen": 1792271616.7667613,
-    "ast_hash": "4b83a52ea47c3afdcf8f876d3a3d929a",
+    "mtime": 1792283715.2309847,
+    "seen": 1792284285.467392,
+    "ast_hash": "df57cc73d82a78cfce2fc15ab9a4446c",
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
@@ -606,9 +606,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/PinChallengeModal.tsx": {
-    "mtime": 1792270872.3716767,
-    "seen": 1792271616.7670283,
-    "ast_hash": "0b0ea4cfd120a1afac30747726c3bf88",
+    "mtime": 1792284155.7697716,
+    "seen": 1792284285.4678497,
+    "ast_hash": "4eaedb7549bb062e708b6bd07d214388",
     "semantic_hash": ""
   },
   "src/presentation/components/ReceiptPrinterModal.tsx": {

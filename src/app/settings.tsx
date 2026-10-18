@@ -22,6 +22,7 @@ import {
   ConfirmationType,
   ConfirmationModalDetail,
 } from '@/presentation/components/ConfirmationModal';
+import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 import { appKeyValueStorage } from '@/infrastructure/storage/KeyValueStorage';
 import { PinSecurityEngine } from '@/domain/services/PinSecurityEngine';
 import { BiometricAuthService } from '@/infrastructure/services/BiometricAuthService';
@@ -59,6 +60,7 @@ export default function StoreSettingsScreen() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
+  const [pinChallengeAction, setPinChallengeAction] = useState<(() => void) | null>(null);
 
   const [biometricInfo, setBiometricInfo] = useState<{
     hasHardware: boolean;
@@ -355,6 +357,21 @@ export default function StoreSettingsScreen() {
             <Switch
               value={isStoreSecurityEnabled}
               onValueChange={(val) => {
+                if (val && !hasOwnerPinSet) {
+                  setPinError(null);
+                  setNewPin('');
+                  setConfirmPin('');
+                  setPinModalVisible(true);
+                  showToast('Magtakda muna ng 4-digit Master PIN para i-on ang proteksyon', 'info');
+                  return;
+                }
+                if (!val && hasOwnerPinSet) {
+                  setPinChallengeAction(() => () => {
+                    enableStoreSecurity(false);
+                    showToast('Bukas na ang lahat ng bahagi ng tindahan', 'info');
+                  });
+                  return;
+                }
                 enableStoreSecurity(val);
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                 showToast(
@@ -390,7 +407,7 @@ export default function StoreSettingsScreen() {
 
           {/* Backup 4-Digit PIN Row */}
           <Pressable
-            style={[styles.settingRow, isStoreSecurityEnabled && !isStoreLocked ? styles.rowBorder : null]}
+            style={[styles.settingRow, isStoreSecurityEnabled ? styles.rowBorder : null]}
             onPress={() => {
               setPinError(null);
               setNewPin('');
@@ -411,23 +428,37 @@ export default function StoreSettingsScreen() {
             <Ionicons name="key-outline" size={20} color="#0D7A52" />
           </Pressable>
 
-          {/* Quick Lock Action (when currently unlocked) */}
-          {isStoreSecurityEnabled && !isStoreLocked ? (
+          {/* Quick Lock / Unlock Action */}
+          {isStoreSecurityEnabled ? (
             <Pressable
               style={styles.settingRow}
               onPress={() => {
-                lockStore();
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                showToast('🔒 Naka-lock na muli ang tindahan');
+                if (isStoreLocked) {
+                  setPinChallengeAction(() => () => {
+                    showToast('🔓 Na-unlock ang tindahan', 'success');
+                  });
+                } else {
+                  lockStore();
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  showToast('🔒 Naka-lock na muli ang tindahan', 'info');
+                }
               }}
             >
               <View style={styles.rowTextCol}>
-                <Text style={styles.rowTitle}>I-lock Agad ang Tindahan</Text>
+                <Text style={styles.rowTitle}>
+                  {isStoreLocked ? 'I-unlock ang Tindahan (Gamitin ang PIN)' : 'I-lock Agad ang Tindahan'}
+                </Text>
                 <Text style={styles.rowValue}>
-                  Tapusin ang 5-minutong bukas na sesyon at itago ang sensitibong datos
+                  {isStoreLocked
+                    ? 'Naka-lock ang tubo, utang, at inventory. I-enter ang PIN para buksan'
+                    : 'Tapusin ang 5-minutong bukas na sesyon at itago ang sensitibong datos'}
                 </Text>
               </View>
-              <Ionicons name="lock-closed" size={20} color="#D97706" />
+              <Ionicons
+                name={isStoreLocked ? 'lock-open-outline' : 'lock-closed'}
+                size={20}
+                color={isStoreLocked ? '#0D7A52' : '#D97706'}
+              />
             </Pressable>
           ) : null}
         </View>
@@ -670,7 +701,7 @@ export default function StoreSettingsScreen() {
                   setNewPin('');
                   setConfirmPin('');
                   setPinError(null);
-                  showToast('✅ Matagumpay na naitakda ang Owner Master PIN');
+                  showToast('✅ Matagumpay na naitakda ang Owner Master PIN (Naka-lock)');
                 }}
               >
                 <Text style={styles.pinSaveBtnText}>I-save ang PIN</Text>
@@ -679,6 +710,18 @@ export default function StoreSettingsScreen() {
           </View>
         </View>
       </Modal>
+
+      <PinChallengeModal
+        visible={pinChallengeAction !== null}
+        title="I-verify ang Owner PIN"
+        subtitle="I-enter ang 4-digit PIN upang magpatuloy"
+        onSuccess={() => {
+          const action = pinChallengeAction;
+          setPinChallengeAction(null);
+          action?.();
+        }}
+        onCancel={() => setPinChallengeAction(null)}
+      />
     </SafeAreaView>
   );
 }

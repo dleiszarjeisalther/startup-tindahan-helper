@@ -33,7 +33,6 @@ export function PinChallengeModal({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lockoutRemainingSec, setLockoutRemainingSec] = useState<number>(0);
   const [hasBiometrics, setHasBiometrics] = useState<boolean>(false);
-  const [prevVisible, setPrevVisible] = useState(visible);
 
   const triggerBiometrics = useCallback(async () => {
     try {
@@ -50,26 +49,18 @@ export function PinChallengeModal({
     }
   }, [unlockStore, onSuccess]);
 
-  useEffect(() => {
+  const handleModalShow = useCallback(() => {
+    setPin('');
+    setErrorMessage(null);
+    setLockoutRemainingSec(0);
     BiometricAuthService.checkCapabilities().then((cap) => {
-      setHasBiometrics(cap.hasHardware && cap.isEnrolled);
+      const canBio = cap.hasHardware && cap.isEnrolled;
+      setHasBiometrics(canBio);
+      if (canBio) {
+        triggerBiometrics();
+      }
     });
-  }, []);
-
-  if (visible !== prevVisible) {
-    setPrevVisible(visible);
-    if (visible) {
-      setPin('');
-      setErrorMessage(null);
-      // Auto-trigger biometric prompt on modal presentation
-      BiometricAuthService.checkCapabilities().then((cap) => {
-        if (cap.hasHardware && cap.isEnrolled) {
-          setHasBiometrics(true);
-          triggerBiometrics();
-        }
-      });
-    }
-  }
+  }, [triggerBiometrics]);
 
   // Lockout countdown timer
   useEffect(() => {
@@ -133,7 +124,13 @@ export function PinChallengeModal({
   const isLocked = lockoutRemainingSec > 0;
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+    <Modal
+      visible={visible}
+      onShow={handleModalShow}
+      transparent
+      animationType="fade"
+      onRequestClose={onCancel}
+    >
       <Pressable style={styles.backdrop} onPress={onCancel}>
         <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
           <Ionicons name="shield-checkmark" size={36} color="#0D7A52" style={styles.headerIcon} />

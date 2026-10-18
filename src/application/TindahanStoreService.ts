@@ -2766,9 +2766,8 @@ export class TindahanStoreService {
     const salt = PinSecurityEngine.generateSalt();
     const hash = PinSecurityEngine.hashPin(pin, salt);
     appKeyValueStorage.setOwnerPin(hash, salt);
-    this.operatingMode = 'OWNER';
-    appKeyValueStorage.setOperatingMode('OWNER');
-    this.notify();
+    appKeyValueStorage.setStoreSecurityEnabled(true);
+    this.lockStore();
     return true;
   }
 

@@ -720,7 +720,11 @@ export default function SalesHistoryScreen() {
             style={[styles.kpiCard, styles.kpiCardInteractive]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-              setSalesOverviewModalVisible(true);
+              if (isStoreSecurityEnabled && isStoreLocked) {
+                setShowTuboPinModal(true);
+              } else {
+                setSalesOverviewModalVisible(true);
+              }
             }}
           >
             <View style={styles.kpiHeaderRow}>
