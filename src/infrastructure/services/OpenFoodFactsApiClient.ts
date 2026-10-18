@@ -203,7 +203,13 @@ export class OpenFoodFactsApiClient implements IExternalCatalogLookupService {
       const safeBarcode = barcode.replace(/[^a-zA-Z0-9_-]/g, '_');
       const destinationFile = new File(targetDir, `${safeBarcode}.jpg`);
 
-      const downloaded = await File.downloadFileAsync(remoteUrl, destinationFile);
+      if (destinationFile.exists) {
+        return destinationFile.uri;
+      }
+
+      const downloaded = await File.downloadFileAsync(remoteUrl, destinationFile, {
+        idempotent: true,
+      });
       return downloaded.uri;
     } catch (err) {
       console.warn('Image local download fallback:', err);

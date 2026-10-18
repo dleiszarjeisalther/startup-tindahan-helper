@@ -456,9 +456,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/OpenFoodFactsApiClient.ts": {
-    "mtime": 1792282518.479369,
-    "seen": 1792282586.189047,
-    "ast_hash": "768de21f9fd160c17a679c543acfd7b9",
+    "mtime": 1792282918.7974913,
+    "seen": 1792283017.761311,
+    "ast_hash": "f8e7dfcdb345a2dddb8fa615ce490569",
     "semantic_hash": ""
   },
   "src/infrastructure/services/SoundFeedbackService.ts": {

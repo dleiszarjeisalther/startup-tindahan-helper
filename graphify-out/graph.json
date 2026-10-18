@@ -4742,7 +4742,7 @@
       "file_type": "code",
       "norm_label": ".infercategory()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L214"
+      "source_location": "L220"
     },
     {
       "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
@@ -33042,7 +33042,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L214",
+      "source_location": "L220",
       "weight": 1.0
     },
     {
@@ -34760,5 +34760,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "e9d5dc4914c9cde7de3ba7ba132638180a5c5799"
+  "built_at_commit": "9e543a4f2cc9f268b7c2c1b9a688d1a85389b825"
 }
