@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1792283981.2723396,
-    "seen": 1792284285.4673028,
-    "ast_hash": "835e8925129f7a344efdfcdc35b29d66",
+    "mtime": 1792285055.4056082,
+    "seen": 1792285176.6038496,
+    "ast_hash": "36257ea5f978f4f1784b8b448c984b57",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {

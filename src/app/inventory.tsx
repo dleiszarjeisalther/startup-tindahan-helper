@@ -71,6 +71,7 @@ export default function InventoryManagementScreen() {
   const t = getTranslations(settings?.language);
 
   // Stock count computations for filter badges
+  const inStockCount = products.filter((p) => p.stockStatus === 'IN_STOCK').length;
   const lowStockCount = products.filter((p) => p.stockStatus === 'LOW_STOCK').length;
   const outOfStockCount = products.filter((p) => p.stockStatus === 'OUT_OF_STOCK').length;
   const expiringSoonCount = products.filter((p) => {
@@ -924,38 +925,34 @@ export default function InventoryManagementScreen() {
         type={toastType}
         onDismiss={() => setToastMsg(null)}
       />
-      {/* Header: Inventory | Manage Categories & Circular Green '+' Button */}
+      {/* Header: Security Role Pill on Left, Action Buttons on Right */}
       <View style={styles.headerRow}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.headerTitle}>{t.inventoryTitle}</Text>
-          <Text style={styles.headerSub}>
-            {products.length} {products.length === 1 ? 'paninda' : 'mga paninda'} sa tindahan
-          </Text>
-        </View>
+        {isStoreSecurityEnabled ? (
+          <Pressable
+            style={[
+              styles.rolePill,
+              !isStoreLocked ? styles.rolePillOwner : styles.rolePillCashier,
+            ]}
+            onPress={() => {
+              if (isStoreLocked) {
+                setPinChallengeAction(() => () => {
+                  showToast('🔓 Na-unlock ang tindahan', 'success');
+                });
+              } else {
+                lockStore();
+                showToast('🔒 Naka-lock na muli ang tindahan', 'info');
+              }
+            }}
+          >
+            <Text style={styles.rolePillText}>
+              {!isStoreLocked ? '🔓 Bukas' : '🔒 Naka-lock'}
+            </Text>
+          </Pressable>
+        ) : (
+          <View />
+        )}
 
         <View style={styles.headerRightActions}>
-          {isStoreSecurityEnabled ? (
-            <Pressable
-              style={[
-                styles.rolePill,
-                !isStoreLocked ? styles.rolePillOwner : styles.rolePillCashier,
-              ]}
-              onPress={() => {
-                if (isStoreLocked) {
-                  setPinChallengeAction(() => () => {
-                    showToast('🔓 Na-unlock ang tindahan', 'success');
-                  });
-                } else {
-                  lockStore();
-                  showToast('🔒 Naka-lock na muli ang tindahan', 'info');
-                }
-              }}
-            >
-              <Text style={styles.rolePillText}>
-                {!isStoreLocked ? '🔓 Bukas' : '🔒 Naka-lock'}
-              </Text>
-            </Pressable>
-          ) : null}
           <Pressable
             style={styles.manageCatHeaderBtn}
             onPress={() => router.push('/history')}
@@ -1077,7 +1074,11 @@ export default function InventoryManagementScreen() {
                 ? t.outOfStock
                 : '⏳ Expiring Soon';
             const badgeCount =
-              filter === 'Low Stock'
+              filter === 'All'
+                ? products.length
+                : filter === 'In Stock'
+                ? inStockCount
+                : filter === 'Low Stock'
                 ? lowStockCount
                 : filter === 'Out of Stock'
                 ? outOfStockCount
@@ -1099,7 +1100,7 @@ export default function InventoryManagementScreen() {
                 >
                   {filterLabel}
                 </Text>
-                {badgeCount !== null && badgeCount > 0 ? (
+                {badgeCount !== null && (filter === 'All' || filter === 'In Stock' || badgeCount > 0) ? (
                   <View
                     style={[
                       styles.filterBadgePill,
@@ -1107,7 +1108,11 @@ export default function InventoryManagementScreen() {
                         ? styles.filterBadgeRed
                         : filter === 'Expiring Soon'
                         ? styles.filterBadgePurple
-                        : styles.filterBadgeAmber,
+                        : filter === 'Low Stock'
+                        ? styles.filterBadgeAmber
+                        : filter === 'In Stock'
+                        ? styles.filterBadgeGreen
+                        : styles.filterBadgeNeutral,
                     ]}
                   >
                     <Text style={styles.filterBadgeText}>{badgeCount}</Text>
@@ -3511,6 +3516,12 @@ const styles = StyleSheet.create({
   },
   filterBadgePurple: {
     backgroundColor: '#8B5CF6',
+  },
+  filterBadgeGreen: {
+    backgroundColor: '#10B981',
+  },
+  filterBadgeNeutral: {
+    backgroundColor: '#0D7A52',
   },
   filterBadgeText: {
     color: '#FFFFFF',
