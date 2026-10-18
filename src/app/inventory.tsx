@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -535,12 +535,75 @@ export default function InventoryManagementScreen() {
     return list;
   }, [currentEnteredPrice, effectiveUnitCost]);
 
+  const lookupSeqRef = useRef(0);
+  const lookupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const performOnlineLookup = useCallback(
+    async (codeToLookup: string) => {
+      const clean = codeToLookup.replace(/[\s-]/g, '').trim();
+      if (!clean || clean.length < 6) return;
+
+      const currentSeq = ++lookupSeqRef.current;
+      setIsLookingUpOnline(true);
+      setOnlineNotice(null);
+
+      try {
+        const res = await lookupOnlineCatalog(clean);
+        // Stale response guard: ensure this is still the active lookup request
+        if (lookupSeqRef.current !== currentSeq) return;
+
+        if (res?.found) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+          if (res.productName) {
+            setNewName(res.productName);
+          }
+          if (res.imageUrl) {
+            setNewImageUri(res.imageUrl);
+          }
+          if (res.inferredCategory) {
+            setNewCategory(res.inferredCategory);
+          }
+          const srcTag = res.source ? ` [${res.source}]` : '';
+          const foundLabel =
+            settings?.language === 'Taglish'
+              ? `✓ Nahanap ang paninda online${srcTag}: "${res.productName ?? 'Paninda'}" (Nailagay na ang litrato at pangalan)`
+              : `✓ Product found online${srcTag}: "${res.productName ?? 'Product'}" (Photo & Name autofilled)`;
+          setOnlineNotice(foundLabel);
+        } else {
+          const notFoundLabel =
+            settings?.language === 'Taglish'
+              ? 'ℹ️ Hindi nahanap online. Maaari mong ilagay ang pangalan at litrato nang mano-mano o i-tap ang "Maghanap Online".'
+              : 'ℹ️ Not found online. You can enter name and photo manually or tap "Search Online".';
+          setOnlineNotice(notFoundLabel);
+        }
+      } catch {
+        if (lookupSeqRef.current === currentSeq) {
+          const errLabel =
+            settings?.language === 'Taglish'
+              ? 'ℹ️ Hindi makakonekta online. I-tap ang "Maghanap Online" para subukan ulit.'
+              : 'ℹ️ Could not connect online. Tap "Search Online" to retry.';
+          setOnlineNotice(errLabel);
+        }
+      } finally {
+        if (lookupSeqRef.current === currentSeq) {
+          setIsLookingUpOnline(false);
+        }
+      }
+    },
+    [lookupOnlineCatalog, settings, setNewName, setNewImageUri, setNewCategory]
+  );
+
   const handleBarcodeChange = useCallback(
-    async (code: string, mode: 'SCAN' | 'MANUAL' | 'GENERATE_TINGI') => {
+    (code: string, mode: 'SCAN' | 'MANUAL' | 'GENERATE_TINGI') => {
       setErrorMsg(null);
       setFeedbackMsg(null);
       setOnlineNotice(null);
       setBarcodeMode(mode);
+
+      if (lookupTimerRef.current) {
+        clearTimeout(lookupTimerRef.current);
+        lookupTimerRef.current = null;
+      }
 
       if (mode === 'GENERATE_TINGI') {
         setNewBarcode('AUTO-TINGI-CODE');
@@ -549,7 +612,7 @@ export default function InventoryManagementScreen() {
 
       setNewBarcode(code);
 
-      const clean = code.trim();
+      const clean = code.replace(/[\s-]/g, '').trim();
       if (!clean) return;
 
       // 1. If barcode already exists in database, act like it was searched using barcode search!
@@ -565,53 +628,34 @@ export default function InventoryManagementScreen() {
         return;
       }
 
-      // 2. Automated online catalog lookup when barcode is scanned or has at least 8 digits
-      if (clean.length >= 8) {
-        setIsLookingUpOnline(true);
-        try {
-          const res = await lookupOnlineCatalog(clean);
-          if (res?.found) {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-            if (res.productName) {
-              setNewName(res.productName);
-            }
-            if (res.imageUrl) {
-              setNewImageUri(res.imageUrl);
-            }
-            if (res.inferredCategory) {
-              setNewCategory(res.inferredCategory);
-            }
-            const foundLabel =
-              settings?.language === 'Taglish'
-                ? `✓ Nahanap ang paninda online: "${res.productName ?? 'Paninda'}" (Nailagay na ang litrato at pangalan)`
-                : `✓ Product found online: "${res.productName ?? 'Product'}" (Photo & Name autofilled)`;
-            setOnlineNotice(foundLabel);
-          } else {
-            const notFoundLabel =
-              settings?.language === 'Taglish'
-                ? 'ℹ️ Hindi nahanap online. Maaari mong ilagay ang pangalan at litrato nang mano-mano.'
-                : 'ℹ️ Not found online. You can enter name and photo manually.';
-            setOnlineNotice(notFoundLabel);
-          }
-        } catch {
-          // Seamless fallback
-        } finally {
-          setIsLookingUpOnline(false);
-        }
+      // 2. Automated online catalog lookup: immediate on camera scan, debounced 450ms on typing
+      if (mode === 'SCAN') {
+        performOnlineLookup(clean);
+      } else if (clean.length >= 8) {
+        lookupTimerRef.current = setTimeout(() => {
+          performOnlineLookup(clean);
+        }, 450);
       }
     },
     [
       products,
-      lookupOnlineCatalog,
-      settings,
+      performOnlineLookup,
       setBarcodeMode,
       setNewBarcode,
-      setNewName,
-      setNewImageUri,
-      setNewCategory,
       setFeedbackMsg,
+      setSearchQuery,
+      setExpandedProductId,
+      setShowAddForm,
     ]
   );
+
+  useEffect(() => {
+    return () => {
+      if (lookupTimerRef.current) {
+        clearTimeout(lookupTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (params.autoBarcode) {
@@ -1181,32 +1225,53 @@ export default function InventoryManagementScreen() {
               errorMessage={null}
             />
 
-            {/* Online Lookup Status Badge */}
+            {/* Online Lookup Status Badge & Action */}
             {isLookingUpOnline ? (
               <View style={styles.onlineBadgeLoading}>
                 <Text style={styles.onlineBadgeTextLoading}>
                   {t.searchingOnline}
                 </Text>
               </View>
-            ) : onlineNotice ? (
-              <View
-                style={
-                  onlineNotice.startsWith('✓')
-                    ? styles.onlineBadgeSuccess
-                    : styles.onlineBadgeNeutral
-                }
-              >
-                <Text
-                  style={
-                    onlineNotice.startsWith('✓')
-                      ? styles.onlineBadgeTextSuccess
-                      : styles.onlineBadgeTextNeutral
-                  }
-                >
-                  {onlineNotice}
-                </Text>
+            ) : (
+              <View style={styles.onlineNoticeContainer}>
+                {onlineNotice ? (
+                  <View
+                    style={
+                      onlineNotice.startsWith('✓')
+                        ? styles.onlineBadgeSuccess
+                        : styles.onlineBadgeNeutral
+                    }
+                  >
+                    <Text
+                      style={
+                        onlineNotice.startsWith('✓')
+                          ? styles.onlineBadgeTextSuccess
+                          : styles.onlineBadgeTextNeutral
+                      }
+                    >
+                      {onlineNotice}
+                    </Text>
+                  </View>
+                ) : null}
+
+                {newBarcode.trim().length >= 6 &&
+                newBarcode !== 'AUTO-TINGI-CODE' &&
+                (!onlineNotice || !onlineNotice.startsWith('✓')) ? (
+                  <Pressable
+                    style={styles.retryOnlineBtn}
+                    onPress={() => performOnlineLookup(newBarcode)}
+                    hitSlop={8}
+                  >
+                    <Ionicons name="search" size={13} color="#0D7A52" />
+                    <Text style={styles.retryOnlineBtnText}>
+                      {settings?.language === 'Taglish'
+                        ? 'Maghanap Online (Search Catalog)'
+                        : 'Search Online Catalog'}
+                    </Text>
+                  </Pressable>
+                ) : null}
               </View>
-            ) : null}
+            )}
 
             <Text style={styles.fieldLabel}>Product Name *</Text>
             <TextInput
@@ -2786,6 +2851,27 @@ const styles = StyleSheet.create({
     color: '#475569',
     fontSize: 11,
     fontWeight: '600',
+  },
+  onlineNoticeContainer: {
+    gap: 6,
+    marginBottom: 8,
+  },
+  retryOnlineBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'flex-start',
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  retryOnlineBtnText: {
+    color: '#065F46',
+    fontSize: 12,
+    fontWeight: '700',
   },
   headerRow: {
     flexDirection: 'row',

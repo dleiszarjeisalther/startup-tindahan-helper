@@ -30,45 +30,6 @@
       "source_location": "L30"
     },
     {
-      "id": "src_infrastructure_services_biometricauthservice_biometricauthservice",
-      "label": "BiometricAuthService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "biometricauthservice",
-      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_infrastructure_services_biometricauthservice_biometriccapability",
-      "label": "BiometricCapability",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "biometriccapability",
-      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_presentation_components_pinchallengemodal_pinchallengemodalprops",
-      "label": "PinChallengeModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "pinchallengemodalprops",
-      "source_file": "src/presentation/components/PinChallengeModal.tsx",
-      "source_location": "L16"
-    },
-    {
       "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage",
       "label": "IKeyValueStorage",
       "_callable": true,
@@ -134,6 +95,19 @@
       "source_location": "L3"
     },
     {
+      "id": "src_domain_services_pinsecurityengine_pinlockoutstatus",
+      "label": "PinLockoutStatus",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": "pinlockoutstatus",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L11"
+    },
+    {
       "id": "src_domain_services_pinsecurityengine_pinsecurityengine",
       "label": "PinSecurityEngine",
       "_callable": true,
@@ -145,6 +119,19 @@
       "norm_label": "pinsecurityengine",
       "source_file": "src/domain/services/PinSecurityEngine.ts",
       "source_location": "L24"
+    },
+    {
+      "id": "src_domain_services_pinsecurityengine_pinverificationoutcome",
+      "label": "PinVerificationOutcome",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": "pinverificationoutcome",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L17"
     },
     {
       "id": "src_components_external_link_props",
@@ -236,97 +223,6 @@
       "norm_label": "soundfeedbackservice",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
       "source_location": "L12"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_cashadjustmenttype",
-      "label": "CashAdjustmentType",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "cashadjustmenttype",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L63"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_daterangefilter",
-      "label": "DateRangeFilter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "daterangefilter",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L65"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_returndisposition",
-      "label": "ReturnDisposition",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "returndisposition",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L47"
-    },
-    {
-      "id": "src_presentation_components_floatingtoast_floatingtoastprops",
-      "label": "FloatingToastProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "floatingtoastprops",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_presentation_components_floatingtoast_toasttype",
-      "label": "ToastType",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "toasttype",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_domain_strategies_seasonalforecastengine_seasonalforecastresult",
-      "label": "SeasonalForecastResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "seasonalforecastresult",
-      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_presentation_localization_i18n_supportedlanguage",
-      "label": "SupportedLanguage",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "supportedlanguage",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L2"
     },
     {
       "id": "src_presentation_localization_i18n_translations",
@@ -433,6 +329,19 @@
       "source_location": "L332"
     },
     {
+      "id": "src_domain_strategies_seasonalforecastengine_seasonalforecastresult",
+      "label": "SeasonalForecastResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "SeasonalForecastEngine.ts",
+      "file_type": "code",
+      "norm_label": "seasonalforecastresult",
+      "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
+      "source_location": "L18"
+    },
+    {
       "id": "src_domain_repositories_iproductrepository_iproductrepository",
       "label": "IProductRepository",
       "_callable": true,
@@ -457,32 +366,6 @@
       "norm_label": "barcode",
       "source_file": "src/domain/value-objects/Barcode.ts",
       "source_location": "L5"
-    },
-    {
-      "id": "src_presentation_components_barcodeinputfield_barcodeinputfieldprops",
-      "label": "BarcodeInputFieldProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "barcodeinputfieldprops",
-      "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_presentation_components_barcodescannerviewfinder_barcodescannerviewfinderprops",
-      "label": "BarcodeScannerViewfinderProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "barcodescannerviewfinderprops",
-      "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
-      "source_location": "L18"
     },
     {
       "id": "src_application_productonboardingservice_addproductcommand",
@@ -547,7 +430,33 @@
       "file_type": "code",
       "norm_label": "iexternalcataloglookupservice",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L14"
+      "source_location": "L15"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfactsapiresponse",
+      "label": "OpenFactsApiResponse",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "openfactsapiresponse",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L34"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfactsproductpayload",
+      "label": "OpenFactsProductPayload",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "openfactsproductpayload",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L20"
     },
     {
       "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
@@ -560,7 +469,20 @@
       "file_type": "code",
       "norm_label": "openfoodfactsapiclient",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L27"
+      "source_location": "L67"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_upcitemdbpayload",
+      "label": "UpcItemDbPayload",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "upcitemdbpayload",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L40"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_escposreceiptformatter",
@@ -810,17 +732,30 @@
       "source_location": "L14"
     },
     {
-      "id": "src_app_checkout_cartitemstepperprops",
-      "label": "CartItemStepperProps",
+      "id": "src_presentation_components_barcodeinputfield_barcodeinputfieldprops",
+      "label": "BarcodeInputFieldProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
-      "norm_label": "cartitemstepperprops",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L43"
+      "norm_label": "barcodeinputfieldprops",
+      "source_file": "src/presentation/components/BarcodeInputField.tsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_presentation_components_barcodescannerviewfinder_barcodescannerviewfinderprops",
+      "label": "BarcodeScannerViewfinderProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "products.tsx",
+      "file_type": "code",
+      "norm_label": "barcodescannerviewfinderprops",
+      "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
+      "source_location": "L18"
     },
     {
       "id": "src_presentation_components_weightquantitymodal_weightquantitymodalprops",
@@ -829,7 +764,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodalprops",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -842,7 +777,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "weightquantityproduct",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -855,11 +790,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "weightquantitysheetprops",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
       "source_location": "L50"
+    },
+    {
+      "id": "src_app_checkout_cartitemstepperprops",
+      "label": "CartItemStepperProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cartitemstepperprops",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L43"
     },
     {
       "id": "src_app_checkout_confirmationstate",
@@ -868,7 +816,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/checkout.tsx",
@@ -881,7 +829,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/inventory.tsx",
@@ -894,7 +842,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/sales.tsx",
@@ -907,7 +855,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/settings.tsx",
@@ -920,7 +868,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/utang.tsx",
@@ -933,24 +881,50 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "filtertype",
       "source_file": "src/app/utang.tsx",
       "source_location": "L42"
     },
     {
-      "id": "src_application_tindahanstoreservice_utangcustomerrecord",
-      "label": "UtangCustomerRecord",
+      "id": "src_application_tindahanstoreservice_cashadjustmenttype",
+      "label": "CashAdjustmentType",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
-      "norm_label": "utangcustomerrecord",
+      "norm_label": "cashadjustmenttype",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L136"
+      "source_location": "L63"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_daterangefilter",
+      "label": "DateRangeFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "daterangefilter",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L65"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_returndisposition",
+      "label": "ReturnDisposition",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "returndisposition",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L47"
     },
     {
       "id": "src_presentation_components_confirmationmodal_confirmationmodaldetail",
@@ -959,7 +933,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodaldetail",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -972,7 +946,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodalprops",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -985,7 +959,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationtype",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -998,11 +972,37 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "typetheme",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
       "source_location": "L44"
+    },
+    {
+      "id": "src_presentation_components_floatingtoast_floatingtoastprops",
+      "label": "FloatingToastProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "floatingtoastprops",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_presentation_components_floatingtoast_toasttype",
+      "label": "ToastType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "toasttype",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L11"
     },
     {
       "id": "src_application_tindahanstoreservice_cartitemdto",
@@ -1148,30 +1148,17 @@
       "source_location": "L82"
     },
     {
-      "id": "src_domain_services_pinsecurityengine_pinlockoutstatus",
-      "label": "PinLockoutStatus",
+      "id": "src_application_tindahanstoreservice_utangcustomerrecord",
+      "label": "UtangCustomerRecord",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 8,
       "community_name": "TindahanStoreService.ts",
       "file_type": "code",
-      "norm_label": "pinlockoutstatus",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_domain_services_pinsecurityengine_pinverificationoutcome",
-      "label": "PinVerificationOutcome",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "pinverificationoutcome",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L17"
+      "norm_label": "utangcustomerrecord",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L136"
     },
     {
       "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
@@ -1224,6 +1211,58 @@
       "norm_label": "stockmovementrecord",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L156"
+    },
+    {
+      "id": "src_presentation_localization_i18n_supportedlanguage",
+      "label": "SupportedLanguage",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "supportedlanguage",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L2"
+    },
+    {
+      "id": "src_infrastructure_services_biometricauthservice_biometricauthservice",
+      "label": "BiometricAuthService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": "biometricauthservice",
+      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_infrastructure_services_biometricauthservice_biometriccapability",
+      "label": "BiometricCapability",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": "biometriccapability",
+      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_presentation_components_pinchallengemodal_pinchallengemodalprops",
+      "label": "PinChallengeModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": "pinchallengemodalprops",
+      "source_file": "src/presentation/components/PinChallengeModal.tsx",
+      "source_location": "L16"
     },
     {
       "id": "src_domain_entities_product_product_addquarantinestock",
@@ -1454,6 +1493,18 @@
       "source_location": "L247"
     },
     {
+      "id": "src_domain_value_objects_barcode_barcode_frompersisted",
+      "label": ".fromPersisted()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Product",
+      "file_type": "code",
+      "norm_label": ".frompersisted()",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L17"
+    },
+    {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -1562,18 +1613,6 @@
       "source_location": "L150"
     },
     {
-      "id": "src_app_explore_seasonalforecastscreen",
-      "label": "SeasonalForecastScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "seasonalforecastscreen()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L97"
-    },
-    {
       "id": "src_app_index_posscanproductscreen",
       "label": "PosScanProductScreen()",
       "_callable": true,
@@ -1620,42 +1659,6 @@
       "norm_label": "storesettingsscreen()",
       "source_file": "src/app/settings.tsx",
       "source_location": "L40"
-    },
-    {
-      "id": "src_infrastructure_services_biometricauthservice_biometricauthservice_authenticate",
-      "label": ".authenticate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": ".authenticate()",
-      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
-      "source_location": "L33"
-    },
-    {
-      "id": "src_infrastructure_services_biometricauthservice_biometricauthservice_checkcapabilities",
-      "label": ".checkCapabilities()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": ".checkcapabilities()",
-      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_presentation_components_pinchallengemodal_pinchallengemodal",
-      "label": "PinChallengeModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "pinchallengemodal()",
-      "source_file": "src/presentation/components/PinChallengeModal.tsx",
-      "source_location": "L24"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_addcashadjustment",
@@ -1740,18 +1743,6 @@
       "norm_label": "addutangcustomer()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L54"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_adjustinventorystock",
-      "label": "adjustInventoryStock()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "adjustinventorystock()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L51"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_clearalldatabasedata",
@@ -1872,18 +1863,6 @@
       "norm_label": "getexpiringproducts()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L103"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_getmonthlysaleshistory",
-      "label": "getMonthlySalesHistory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "getmonthlysaleshistory()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L75"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_getsalessummary",
@@ -2186,18 +2165,6 @@
       "source_location": "L19"
     },
     {
-      "id": "src_presentation_hooks_usetindahanstore_updatesettings",
-      "label": "updateSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "updatesettings()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L79"
-    },
-    {
       "id": "src_presentation_hooks_usetindahanstore_updateutangcustomer",
       "label": "updateUtangCustomer()",
       "_callable": true,
@@ -2222,18 +2189,6 @@
       "source_location": "L110"
     },
     {
-      "id": "src_presentation_hooks_usetindahanstore_verifyownermasterpin",
-      "label": "verifyOwnerMasterPin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "verifyownermasterpin()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L94"
-    },
-    {
       "id": "src_presentation_hooks_usetindahanstore_voidentiretransaction",
       "label": "voidEntireTransaction()",
       "_callable": true,
@@ -2244,18 +2199,6 @@
       "norm_label": "voidentiretransaction()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L46"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider_usetindahanstoreservice",
-      "label": "useTindahanStoreService()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "usetindahanstoreservice()",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L15"
     },
     {
       "id": "src_components_animated_icon_animatedicon",
@@ -4058,6 +4001,18 @@
       "source_location": "L2051"
     },
     {
+      "id": "src_domain_entities_product_product_calculatelinetotal",
+      "label": ".calculateLineTotal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".calculatelinetotal()",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L143"
+    },
+    {
       "id": "src_domain_repositories_iproductrepository_iproductrepository_getall",
       "label": ".getAll()",
       "_callable": true,
@@ -4082,6 +4037,42 @@
       "source_location": "L8"
     },
     {
+      "id": "src_domain_value_objects_money_money_fromcentavos",
+      "label": ".fromCentavos()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".fromcentavos()",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_domain_value_objects_money_money_fromphp",
+      "label": ".fromPhp()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".fromphp()",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "src_domain_value_objects_money_money_zero",
+      "label": ".zero()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".zero()",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L37"
+    },
+    {
       "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_getinstance",
       "label": ".getInstance()",
       "_callable": true,
@@ -4092,6 +4083,18 @@
       "norm_label": ".getinstance()",
       "source_file": "src/infrastructure/database/SqliteDatabase.ts",
       "source_location": "L21"
+    },
+    {
+      "id": "src_presentation_components_weightquantitymodal_weightquantitysheet",
+      "label": "WeightQuantitySheet()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": "weightquantitysheet()",
+      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
+      "source_location": "L57"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_setownermasterpin",
@@ -4310,30 +4313,6 @@
       "source_location": "L9"
     },
     {
-      "id": "src_app_layout_tablayout",
-      "label": "TabLayout()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "expo",
-      "file_type": "code",
-      "norm_label": "tablayout()",
-      "source_file": "src/app/_layout.tsx",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_components_app_tabs_apptabs",
-      "label": "AppTabs()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "expo",
-      "file_type": "code",
-      "norm_label": "apptabs()",
-      "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L222"
-    },
-    {
       "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -4370,18 +4349,6 @@
       "source_location": "L80"
     },
     {
-      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstoreprovider",
-      "label": "TindahanStoreProvider()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "expo",
-      "file_type": "code",
-      "norm_label": "tindahanstoreprovider()",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L7"
-    },
-    {
       "id": "src_app_explore_getlocalizedmonths",
       "label": "getLocalizedMonths()",
       "_callable": true,
@@ -4406,16 +4373,52 @@
       "source_location": "L56"
     },
     {
-      "id": "src_presentation_components_floatingtoast_floatingtoast",
-      "label": "FloatingToast()",
+      "id": "src_app_explore_seasonalforecastscreen",
+      "label": "SeasonalForecastScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 59,
       "community_name": "explore.tsx",
       "file_type": "code",
-      "norm_label": "floatingtoast()",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L21"
+      "norm_label": "seasonalforecastscreen()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L97"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_adjustinventorystock",
+      "label": "adjustInventoryStock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "explore.tsx",
+      "file_type": "code",
+      "norm_label": "adjustinventorystock()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L51"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_getmonthlysaleshistory",
+      "label": "getMonthlySalesHistory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "explore.tsx",
+      "file_type": "code",
+      "norm_label": "getmonthlysaleshistory()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L75"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_updatesettings",
+      "label": "updateSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "explore.tsx",
+      "file_type": "code",
+      "norm_label": "updatesettings()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L79"
     },
     {
       "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy_computeuncensorednetdemand",
@@ -4622,18 +4625,6 @@
       "source_location": "L37"
     },
     {
-      "id": "src_domain_value_objects_barcode_barcode_frompersisted",
-      "label": ".fromPersisted()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 60,
-      "community_name": "Barcode",
-      "file_type": "code",
-      "norm_label": ".frompersisted()",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L17"
-    },
-    {
       "id": "src_domain_value_objects_barcode_barcode_generatestorecode",
       "label": ".generateStoreCode()",
       "_callable": true,
@@ -4670,30 +4661,6 @@
       "source_location": "L74"
     },
     {
-      "id": "src_presentation_components_barcodeinputfield_barcodeinputfield",
-      "label": "BarcodeInputField()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "barcodeinputfield()",
-      "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_presentation_components_barcodescannerviewfinder_barcodescannerviewfinder",
-      "label": "BarcodeScannerViewfinder()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "barcodescannerviewfinder()",
-      "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
-      "source_location": "L55"
-    },
-    {
       "id": "src_application_productonboardingservice_productonboardingservice_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -4727,7 +4694,7 @@
       "file_type": "code",
       "norm_label": ".downloadimagelocally()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L16"
+      "source_location": "L17"
     },
     {
       "id": "src_infrastructure_services_openfoodfactsapiclient_iexternalcataloglookupservice_lookupbarcode",
@@ -4739,7 +4706,7 @@
       "file_type": "code",
       "norm_label": ".lookupbarcode()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_downloadimagelocally",
@@ -4751,7 +4718,19 @@
       "file_type": "code",
       "norm_label": ".downloadimagelocally()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L115"
+      "source_location": "L192"
+    },
+    {
+      "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_fetchjsonwithtimeout",
+      "label": ".fetchJsonWithTimeout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": ".fetchjsonwithtimeout()",
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L71"
     },
     {
       "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_infercategory",
@@ -4763,7 +4742,7 @@
       "file_type": "code",
       "norm_label": ".infercategory()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L137"
+      "source_location": "L214"
     },
     {
       "id": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_lookupbarcode",
@@ -4775,7 +4754,7 @@
       "file_type": "code",
       "norm_label": ".lookupbarcode()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L32"
+      "source_location": "L92"
     },
     {
       "id": "src_domain_services_escposreceiptformatter_escposreceiptformatter_centertext",
@@ -5078,18 +5057,6 @@
       "source_location": "L138"
     },
     {
-      "id": "src_domain_entities_product_product_calculatelinetotal",
-      "label": ".calculateLineTotal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "Money",
-      "file_type": "code",
-      "norm_label": ".calculatelinetotal()",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L143"
-    },
-    {
       "id": "src_domain_value_objects_money_money_add",
       "label": ".add()",
       "_callable": true,
@@ -5150,18 +5117,6 @@
       "source_location": "L65"
     },
     {
-      "id": "src_domain_value_objects_money_money_fromcentavos",
-      "label": ".fromCentavos()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "Money",
-      "file_type": "code",
-      "norm_label": ".fromcentavos()",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L21"
-    },
-    {
       "id": "src_domain_value_objects_money_money_multiply",
       "label": ".multiply()",
       "_callable": true,
@@ -5198,40 +5153,28 @@
       "source_location": "L53"
     },
     {
-      "id": "src_domain_value_objects_money_money_zero",
-      "label": ".zero()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "Money",
-      "file_type": "code",
-      "norm_label": ".zero()",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L37"
-    },
-    {
-      "id": "src_presentation_components_weightquantitymodal_weightquantitysheet",
-      "label": "WeightQuantitySheet()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "Money",
-      "file_type": "code",
-      "norm_label": "weightquantitysheet()",
-      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
-      "source_location": "L57"
-    },
-    {
-      "id": "src_app_checkout_cartitemstepper",
-      "label": "CartItemStepper()",
+      "id": "src_presentation_components_barcodeinputfield_barcodeinputfield",
+      "label": "BarcodeInputField()",
       "_callable": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
-      "norm_label": "cartitemstepper()",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L53"
+      "norm_label": "barcodeinputfield()",
+      "source_file": "src/presentation/components/BarcodeInputField.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_presentation_components_barcodescannerviewfinder_barcodescannerviewfinder",
+      "label": "BarcodeScannerViewfinder()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "products.tsx",
+      "file_type": "code",
+      "norm_label": "barcodescannerviewfinder()",
+      "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
+      "source_location": "L55"
     },
     {
       "id": "src_presentation_components_productthumbnail_productthumbnail",
@@ -5239,7 +5182,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "productthumbnail()",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
@@ -5251,23 +5194,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodal()",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
       "source_location": "L380"
-    },
-    {
-      "id": "src_presentation_hooks_useidempotentsubmit_useidempotentsubmit",
-      "label": "useIdempotentSubmit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "useidempotentsubmit()",
-      "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
-      "source_location": "L8"
     },
     {
       "id": "scripts_generate_rtm_excel_build_rtm_excel",
@@ -5282,16 +5213,88 @@
       "source_location": "L7"
     },
     {
+      "id": "src_app_checkout_cartitemstepper",
+      "label": "CartItemStepper()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cartitemstepper()",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L53"
+    },
+    {
+      "id": "src_app_checkout_checkoutnewsalescreen",
+      "label": "CheckoutNewSaleScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "checkoutnewsalescreen()",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L162"
+    },
+    {
+      "id": "src_app_sales_saleshistoryscreen",
+      "label": "SalesHistoryScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "saleshistoryscreen()",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L65"
+    },
+    {
+      "id": "src_app_utang_sukiutangledgerscreen",
+      "label": "SukiUtangLedgerScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "sukiutangledgerscreen()",
+      "source_file": "src/app/utang.tsx",
+      "source_location": "L44"
+    },
+    {
       "id": "src_presentation_components_confirmationmodal_confirmationmodal",
       "label": "ConfirmationModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodal()",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
       "source_location": "L102"
+    },
+    {
+      "id": "src_presentation_components_floatingtoast_floatingtoast",
+      "label": "FloatingToast()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "floatingtoast()",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_presentation_hooks_useidempotentsubmit_useidempotentsubmit",
+      "label": "useIdempotentSubmit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "useidempotentsubmit()",
+      "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
+      "source_location": "L8"
     },
     {
       "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_clearalltablesforreset",
@@ -5354,18 +5357,6 @@
       "source_location": "L28"
     },
     {
-      "id": "src_app_checkout_checkoutnewsalescreen",
-      "label": "CheckoutNewSaleScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "getTranslations",
-      "file_type": "code",
-      "norm_label": "checkoutnewsalescreen()",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L162"
-    },
-    {
       "id": "src_app_history_stockmovementhistoryscreen",
       "label": "StockMovementHistoryScreen()",
       "_callable": true,
@@ -5376,6 +5367,18 @@
       "norm_label": "stockmovementhistoryscreen()",
       "source_file": "src/app/history.tsx",
       "source_location": "L35"
+    },
+    {
+      "id": "src_app_layout_tablayout",
+      "label": "TabLayout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "tablayout()",
+      "source_file": "src/app/_layout.tsx",
+      "source_location": "L16"
     },
     {
       "id": "src_app_more_menuprofilescreen",
@@ -5390,28 +5393,16 @@
       "source_location": "L16"
     },
     {
-      "id": "src_app_sales_saleshistoryscreen",
-      "label": "SalesHistoryScreen()",
+      "id": "src_components_app_tabs_apptabs",
+      "label": "AppTabs()",
       "_callable": true,
       "_origin": "ast",
       "community": 80,
       "community_name": "getTranslations",
       "file_type": "code",
-      "norm_label": "saleshistoryscreen()",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L65"
-    },
-    {
-      "id": "src_app_utang_sukiutangledgerscreen",
-      "label": "SukiUtangLedgerScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "getTranslations",
-      "file_type": "code",
-      "norm_label": "sukiutangledgerscreen()",
-      "source_file": "src/app/utang.tsx",
-      "source_location": "L44"
+      "norm_label": "apptabs()",
+      "source_file": "src/components/app-tabs.tsx",
+      "source_location": "L222"
     },
     {
       "id": "src_components_app_tabs_customtindahantabbar",
@@ -5426,18 +5417,6 @@
       "source_location": "L10"
     },
     {
-      "id": "src_domain_value_objects_money_money_fromphp",
-      "label": ".fromPhp()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "getTranslations",
-      "file_type": "code",
-      "norm_label": ".fromphp()",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L29"
-    },
-    {
       "id": "src_presentation_localization_i18n_gettranslations",
       "label": "getTranslations()",
       "_callable": true,
@@ -5450,6 +5429,78 @@
       "source_location": "L991"
     },
     {
+      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstoreprovider",
+      "label": "TindahanStoreProvider()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "tindahanstoreprovider()",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider_usetindahanstoreservice",
+      "label": "useTindahanStoreService()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "usetindahanstoreservice()",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_infrastructure_services_biometricauthservice_biometricauthservice_authenticate",
+      "label": ".authenticate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": ".authenticate()",
+      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "src_infrastructure_services_biometricauthservice_biometricauthservice_checkcapabilities",
+      "label": ".checkCapabilities()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": ".checkcapabilities()",
+      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_presentation_components_pinchallengemodal_pinchallengemodal",
+      "label": "PinChallengeModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": "pinchallengemodal()",
+      "source_file": "src/presentation/components/PinChallengeModal.tsx",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_verifyownermasterpin",
+      "label": "verifyOwnerMasterPin()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": "verifyownermasterpin()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L94"
+    },
+    {
       "id": "scripts_reset_project_movedirectories",
       "label": "moveDirectories()",
       "_callable": true,
@@ -5460,39 +5511,6 @@
       "norm_label": "movedirectories()",
       "source_file": "scripts/reset-project.js",
       "source_location": "L50"
-    },
-    {
-      "id": "src_infrastructure_services_biometricauthservice",
-      "label": "BiometricAuthService.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "biometricauthservice.ts",
-      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_pinchallengemodal",
-      "label": "PinChallengeModal.tsx",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "pinchallengemodal.tsx",
-      "source_file": "src/presentation/components/PinChallengeModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_pinchallengemodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/PinChallengeModal.tsx",
-      "source_location": "L238"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore",
@@ -6779,6 +6797,17 @@
       "source_location": "L26"
     },
     {
+      "id": "src_domain_services_pinsecurityengine",
+      "label": "PinSecurityEngine.ts",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": "pinsecurityengine.ts",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "package_dependencies_expo_font",
       "label": "expo-font",
       "_origin": "ast",
@@ -7650,28 +7679,6 @@
       "source_location": "L23"
     },
     {
-      "id": "src_app_layout",
-      "label": "_layout.tsx",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "expo",
-      "file_type": "code",
-      "norm_label": "_layout.tsx",
-      "source_file": "src/app/_layout.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_container_tindahanstoreservice",
-      "label": "tindahanStoreService",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "expo",
-      "file_type": "code",
-      "norm_label": "tindahanstoreservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L14"
-    },
-    {
       "id": "src_infrastructure_services_soundfeedbackservice",
       "label": "SoundFeedbackService.ts",
       "_origin": "ast",
@@ -7692,28 +7699,6 @@
       "norm_label": "soundsource",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
       "source_location": "L4"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider",
-      "label": "TindahanStoreProvider.tsx",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "expo",
-      "file_type": "code",
-      "norm_label": "tindahanstoreprovider.tsx",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstorecontext",
-      "label": "TindahanStoreContext",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "expo",
-      "file_type": "code",
-      "norm_label": "tindahanstorecontext",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L5"
     },
     {
       "id": "ref_expo_asset",
@@ -8351,81 +8336,172 @@
       "source_location": "L36"
     },
     {
-      "id": "src_app_sales",
-      "label": "sales.tsx",
+      "id": "marketing_campaigns_grassroots_barangay_playbook",
+      "label": "grassroots-barangay-playbook.md",
       "_origin": "ast",
       "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "sales.tsx",
-      "source_file": "src/app/sales.tsx",
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "grassroots-barangay-playbook.md",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
       "source_location": "L1"
     },
     {
-      "id": "src_app_sales_gastos_categories",
-      "label": "GASTOS_CATEGORIES",
+      "id": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_1_the_wholesaler_corridors_puregold_super8_lines",
+      "label": "\ud83c\udfec Activation Channel 1: The Wholesaler Corridors (Puregold & Super8 Lines)",
       "_origin": "ast",
       "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "gastos_categories",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L57"
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udfec activation channel 1: the wholesaler corridors (puregold & super8 lines)",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L12"
     },
     {
-      "id": "src_app_sales_panukli_categories",
-      "label": "PANUKLI_CATEGORIES",
+      "id": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_2_barangay_negosyo_roadshow",
+      "label": "\ud83c\udfd8\ufe0f Activation Channel 2: Barangay Negosyo Roadshow",
       "_origin": "ast",
       "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "panukli_categories",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L50"
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udfd8\ufe0f activation channel 2: barangay negosyo roadshow",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L27"
     },
     {
-      "id": "src_app_sales_periods",
-      "label": "PERIODS",
+      "id": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_3_point_of_sale_counter_sticking_strategy",
+      "label": "\ud83c\udff7\ufe0f Activation Channel 3: Point-of-Sale Counter Sticking Strategy",
       "_origin": "ast",
       "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "periods",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L48"
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udff7\ufe0f activation channel 3: point-of-sale counter sticking strategy",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L41"
     },
     {
-      "id": "src_app_sales_styles",
-      "label": "styles",
+      "id": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_4_suki_to_suki_merchant_referral_mechanics",
+      "label": "\ud83e\udd1d Activation Channel 4: \"Suki-to-Suki\" Merchant Referral Mechanics",
       "_origin": "ast",
       "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L2743"
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83e\udd1d activation channel 4: \"suki-to-suki\" merchant referral mechanics",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L62"
     },
     {
-      "id": "src_presentation_components_floatingtoast",
-      "label": "FloatingToast.tsx",
+      "id": "marketing_campaigns_grassroots_barangay_playbook_dito_malinaw_ang_listahan_store_counter_badges",
+      "label": "\"Dito, Malinaw ang Listahan!\" Store Counter Badges",
       "_origin": "ast",
       "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "floatingtoast.tsx",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\"dito, malinaw ang listahan!\" store counter badges",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "marketing_campaigns_grassroots_barangay_playbook_execution_strategy",
+      "label": "Execution Strategy",
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "execution strategy",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "marketing_campaigns_grassroots_barangay_playbook_execution_strategy_32",
+      "label": "Execution Strategy",
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "execution strategy",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "marketing_campaigns_grassroots_barangay_playbook_grassroots_barangay_ground_activation_playbook",
+      "label": "Grassroots & Barangay Ground Activation Playbook",
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "grassroots & barangay ground activation playbook",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_components_floatingtoast_styles",
-      "label": "styles",
+      "id": "marketing_campaigns_grassroots_barangay_playbook_ground_activation_kpi_scorecard",
+      "label": "\ud83d\udcca Ground Activation KPI Scorecard",
       "_origin": "ast",
       "community": 58,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L162"
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcca ground activation kpi scorecard",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "marketing_campaigns_grassroots_barangay_playbook_program_name_kasosyo_referral_circle",
+      "label": "Program Name: *\"Kasosyo Referral Circle\"*",
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "program name: *\"kasosyo referral circle\"*",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "marketing_campaigns_grassroots_barangay_playbook_psychological_impact",
+      "label": "Psychological Impact:",
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "psychological impact:",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "marketing_campaigns_grassroots_barangay_playbook_target_environment",
+      "label": "Target Environment",
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "target environment",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "marketing_campaigns_grassroots_barangay_playbook_target_environment_29",
+      "label": "Target Environment",
+      "_origin": "ast",
+      "community": 58,
+      "community_name": "Grassroots & Barangay Ground Activation Playbook",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "target environment",
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L29"
     },
     {
       "id": "src_app_explore",
@@ -8450,50 +8526,6 @@
       "source_location": "L629"
     },
     {
-      "id": "src_presentation_localization_i18n",
-      "label": "i18n.ts",
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "i18n.ts",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_localization_i18n_dictionaries",
-      "label": "dictionaries",
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "dictionaries",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L985"
-    },
-    {
-      "id": "src_presentation_localization_i18n_en",
-      "label": "en",
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "en",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L339"
-    },
-    {
-      "id": "src_presentation_localization_i18n_taglish",
-      "label": "taglish",
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "explore.tsx",
-      "file_type": "code",
-      "norm_label": "taglish",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L662"
-    },
-    {
       "id": "src_domain_strategies_seasonalforecastengine",
       "label": "SeasonalForecastEngine.ts",
       "_origin": "ast",
@@ -8505,81 +8537,148 @@
       "source_location": "L1"
     },
     {
-      "id": "src_app_inventory",
-      "label": "inventory.tsx",
+      "id": "marketing_sales_pitches_merchant_onboarding_script",
+      "label": "merchant-onboarding-script.md",
       "_origin": "ast",
       "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "inventory.tsx",
-      "source_file": "src/app/inventory.tsx",
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "merchant-onboarding-script.md",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
       "source_location": "L1"
     },
     {
-      "id": "src_app_inventory_stock_filters",
-      "label": "STOCK_FILTERS",
+      "id": "marketing_sales_pitches_merchant_onboarding_script_1_the_approach_warm_greeting_rapport",
+      "label": "1. The Approach (Warm Greeting & Rapport)",
       "_origin": "ast",
       "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "stock_filters",
-      "source_file": "src/app/inventory.tsx",
-      "source_location": "L45"
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1. the approach (warm greeting & rapport)",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L21"
     },
     {
-      "id": "src_app_inventory_styles",
-      "label": "styles",
+      "id": "marketing_sales_pitches_merchant_onboarding_script_2_the_hook_relatable_problem",
+      "label": "2. The Hook (Relatable Problem)",
       "_origin": "ast",
       "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/inventory.tsx",
-      "source_location": "L2743"
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "2. the hook (relatable problem)",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L26"
     },
     {
-      "id": "src_presentation_components_barcodeinputfield",
-      "label": "BarcodeInputField.tsx",
+      "id": "marketing_sales_pitches_merchant_onboarding_script_3_minute_field_merchant_onboarding_script",
+      "label": "3-Minute Field Merchant Onboarding Script",
       "_origin": "ast",
       "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "barcodeinputfield.tsx",
-      "source_file": "src/presentation/components/BarcodeInputField.tsx",
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "3-minute field merchant onboarding script",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_components_barcodeinputfield_styles",
-      "label": "styles",
+      "id": "marketing_sales_pitches_merchant_onboarding_script_3_the_live_demo_show_don_t_tell_10_seconds",
+      "label": "3. The Live Demo (Show, Don't Tell \u2014 10 Seconds)",
       "_origin": "ast",
       "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L90"
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "3. the live demo (show, don't tell \u2014 10 seconds)",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L35"
     },
     {
-      "id": "src_presentation_components_barcodescannerviewfinder",
-      "label": "BarcodeScannerViewfinder.tsx",
+      "id": "marketing_sales_pitches_merchant_onboarding_script_4_overcoming_the_core_objections",
+      "label": "4. Overcoming The Core Objections",
       "_origin": "ast",
       "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "barcodescannerviewfinder.tsx",
-      "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
-      "source_location": "L1"
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4. overcoming the core objections",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L47"
     },
     {
-      "id": "src_presentation_components_barcodescannerviewfinder_styles",
-      "label": "styles",
+      "id": "marketing_sales_pitches_merchant_onboarding_script_5_the_close_onboarding",
+      "label": "5. The Close & Onboarding",
       "_origin": "ast",
       "community": 61,
-      "community_name": "inventory.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
-      "source_location": "L284"
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "5. the close & onboarding",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L60"
+    },
+    {
+      "id": "marketing_sales_pitches_merchant_onboarding_script_objection_a_wala_akong_pambayad_sa_subscription_diyan_magastos_yan",
+      "label": "Objection A: \"Wala akong pambayad sa subscription diyan / Magastos 'yan!\"",
+      "_origin": "ast",
+      "community": 61,
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "objection a: \"wala akong pambayad sa subscription diyan / magastos 'yan!\"",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "marketing_sales_pitches_merchant_onboarding_script_objection_b_mahina_ang_signal_dito_wala_akong_wi_fi_o_data",
+      "label": "Objection B: \"Mahina ang signal dito / Wala akong Wi-Fi o data!\"",
+      "_origin": "ast",
+      "community": 61,
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "objection b: \"mahina ang signal dito / wala akong wi-fi o data!\"",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "marketing_sales_pitches_merchant_onboarding_script_objection_c_matanda_na_ako_hindi_ako_marunong_sa_smartphone",
+      "label": "Objection C: \"Matanda na ako / Hindi ako marunong sa smartphone.\"",
+      "_origin": "ast",
+      "community": 61,
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "objection c: \"matanda na ako / hindi ako marunong sa smartphone.\"",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "marketing_sales_pitches_merchant_onboarding_script_step_by_step_script_conversational_taglish",
+      "label": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "_origin": "ast",
+      "community": 61,
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udf99\ufe0f step-by-step script (conversational taglish)",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "marketing_sales_pitches_merchant_onboarding_script_timeline_overview_under_3_minutes",
+      "label": "\u23f1\ufe0f Timeline Overview (Under 3 Minutes)",
+      "_origin": "ast",
+      "community": 61,
+      "community_name": "\ud83c\udf99\ufe0f Step-by-Step Script (Conversational Taglish)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\u23f1\ufe0f timeline overview (under 3 minutes)",
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L7"
     },
     {
       "id": "src_application_productonboardingservice",
@@ -12139,33 +12238,11 @@
       "source_location": "L17"
     },
     {
-      "id": "src_app_checkout",
-      "label": "checkout.tsx",
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "checkout.tsx",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_checkout_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L1190"
-    },
-    {
       "id": "src_app_index",
       "label": "index.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "index.tsx",
       "source_file": "src/app/index.tsx",
@@ -12176,7 +12253,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/index.tsx",
@@ -12187,7 +12264,7 @@
       "label": "products.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "products.tsx",
       "source_file": "src/app/products.tsx",
@@ -12198,40 +12275,62 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/products.tsx",
       "source_location": "L617"
     },
     {
-      "id": "src_domain_value_objects_money",
-      "label": "Money.ts",
+      "id": "src_presentation_components_barcodeinputfield",
+      "label": "BarcodeInputField.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
-      "norm_label": "money.ts",
-      "source_file": "src/domain/value-objects/Money.ts",
+      "norm_label": "barcodeinputfield.tsx",
+      "source_file": "src/presentation/components/BarcodeInputField.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_domain_value_objects_money_phpcurrencyformatter",
-      "label": "phpCurrencyFormatter",
+      "id": "src_presentation_components_barcodeinputfield_styles",
+      "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
-      "norm_label": "phpcurrencyformatter",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L3"
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/BarcodeInputField.tsx",
+      "source_location": "L90"
+    },
+    {
+      "id": "src_presentation_components_barcodescannerviewfinder",
+      "label": "BarcodeScannerViewfinder.tsx",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "products.tsx",
+      "file_type": "code",
+      "norm_label": "barcodescannerviewfinder.tsx",
+      "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_barcodescannerviewfinder_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "products.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
+      "source_location": "L284"
     },
     {
       "id": "src_presentation_components_productthumbnail",
       "label": "ProductThumbnail.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "productthumbnail.tsx",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
@@ -12242,7 +12341,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
@@ -12253,7 +12352,7 @@
       "label": "WeightQuantityModal.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodal.tsx",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -12264,7 +12363,7 @@
       "label": "PRESET_PESO_AMOUNTS",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "preset_peso_amounts",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -12275,7 +12374,7 @@
       "label": "PRESET_WEIGHTS",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "preset_weights",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -12286,22 +12385,11 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "checkout.tsx",
+      "community_name": "products.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
       "source_location": "L407"
-    },
-    {
-      "id": "src_presentation_hooks_useidempotentsubmit",
-      "label": "useIdempotentSubmit.ts",
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "useidempotentsubmit.ts",
-      "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
-      "source_location": "L1"
     },
     {
       "id": "graphify_out_converted_requirements_traceability_matrix_3b7cd623",
@@ -12375,11 +12463,121 @@
       "source_location": "L1"
     },
     {
+      "id": "src_app_checkout",
+      "label": "checkout.tsx",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "checkout.tsx",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_checkout_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L1190"
+    },
+    {
+      "id": "src_app_inventory",
+      "label": "inventory.tsx",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "inventory.tsx",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_inventory_stock_filters",
+      "label": "STOCK_FILTERS",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "stock_filters",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L45"
+    },
+    {
+      "id": "src_app_inventory_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L2808"
+    },
+    {
+      "id": "src_app_sales",
+      "label": "sales.tsx",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "sales.tsx",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_sales_gastos_categories",
+      "label": "GASTOS_CATEGORIES",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "gastos_categories",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L57"
+    },
+    {
+      "id": "src_app_sales_panukli_categories",
+      "label": "PANUKLI_CATEGORIES",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "panukli_categories",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L50"
+    },
+    {
+      "id": "src_app_sales_periods",
+      "label": "PERIODS",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "periods",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L48"
+    },
+    {
+      "id": "src_app_sales_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L2743"
+    },
+    {
       "id": "src_app_settings",
       "label": "settings.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "settings.tsx",
       "source_file": "src/app/settings.tsx",
@@ -12390,7 +12588,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/settings.tsx",
@@ -12401,7 +12599,7 @@
       "label": "utang.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "utang.tsx",
       "source_file": "src/app/utang.tsx",
@@ -12412,18 +12610,40 @@
       "label": "styles",
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/utang.tsx",
       "source_location": "L1231"
     },
     {
+      "id": "src_domain_value_objects_money",
+      "label": "Money.ts",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "money.ts",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_domain_value_objects_money_phpcurrencyformatter",
+      "label": "phpCurrencyFormatter",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "phpcurrencyformatter",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L3"
+    },
+    {
       "id": "src_presentation_components_confirmationmodal",
       "label": "ConfirmationModal.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodal.tsx",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -12434,7 +12654,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -12445,11 +12665,44 @@
       "label": "THEMES",
       "_origin": "ast",
       "community": 78,
-      "community_name": "settings.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "themes",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
       "source_location": "L51"
+    },
+    {
+      "id": "src_presentation_components_floatingtoast",
+      "label": "FloatingToast.tsx",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "floatingtoast.tsx",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_floatingtoast_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L162"
+    },
+    {
+      "id": "src_presentation_hooks_useidempotentsubmit",
+      "label": "useIdempotentSubmit.ts",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "useidempotentsubmit.ts",
+      "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
+      "source_location": "L1"
     },
     {
       "id": "package_dependencies_expo_local_authentication",
@@ -12494,17 +12747,6 @@
       "norm_label": "default_categories",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L154"
-    },
-    {
-      "id": "src_domain_services_pinsecurityengine",
-      "label": "PinSecurityEngine.ts",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "pinsecurityengine.ts",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L1"
     },
     {
       "id": "src_infrastructure_database_sqlitedatabase",
@@ -12573,6 +12815,17 @@
       "source_location": "L547"
     },
     {
+      "id": "src_app_layout",
+      "label": "_layout.tsx",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "_layout.tsx",
+      "source_file": "src/app/_layout.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_app_more",
       "label": "more.tsx",
       "_origin": "ast",
@@ -12617,6 +12870,83 @@
       "source_location": "L243"
     },
     {
+      "id": "src_infrastructure_container_tindahanstoreservice",
+      "label": "tindahanStoreService",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "tindahanstoreservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_presentation_localization_i18n",
+      "label": "i18n.ts",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "i18n.ts",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_localization_i18n_dictionaries",
+      "label": "dictionaries",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "dictionaries",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L985"
+    },
+    {
+      "id": "src_presentation_localization_i18n_en",
+      "label": "en",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "en",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L339"
+    },
+    {
+      "id": "src_presentation_localization_i18n_taglish",
+      "label": "taglish",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "taglish",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L662"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider",
+      "label": "TindahanStoreProvider.tsx",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "tindahanstoreprovider.tsx",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstorecontext",
+      "label": "TindahanStoreContext",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "tindahanstorecontext",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L5"
+    },
+    {
       "id": "ref_expo_router",
       "label": "expo-router",
       "_origin": "ast",
@@ -12648,6 +12978,519 @@
       "norm_label": "@expo/ui",
       "source_file": "package.json",
       "source_location": "L6"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan",
+      "label": "social-media-content-plan.md",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "social-media-content-plan.md",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan_4_week_social_media_content_calendar",
+      "label": "\ud83d\udcc5 4-Week Social Media Content Calendar",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcc5 4-week social media content calendar",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan_facebook_group_seeding_organic_strategy",
+      "label": "\ud83d\udcf1 Facebook Group Seeding & Organic Strategy",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcf1 facebook group seeding & organic strategy",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan_key_target_communities",
+      "label": "Key Target Communities",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "key target communities",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L97"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan_script_1_ang_misteryo_ng_nawawalang_utang_relatable_drama_comedy",
+      "label": "Script 1: \"Ang Misteryo ng Nawawalang Utang\" (Relatable Drama / Comedy)",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "script 1: \"ang misteryo ng nawawalang utang\" (relatable drama / comedy)",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan_script_2_bakit_walang_tubo_ang_tindahan_mo_educational_reality_check",
+      "label": "Script 2: \"Bakit Walang Tubo ang Tindahan Mo?\" (Educational & Reality Check)",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "script 2: \"bakit walang tubo ang tindahan mo?\" (educational & reality check)",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L46"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan_script_3_si_ate_joy_at_ang_nakalilitong_sukli_speed_accuracy",
+      "label": "Script 3: \"Si Ate Joy at ang Nakalilitong Sukli\" (Speed & Accuracy)",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "script 3: \"si ate joy at ang nakalilitong sukli\" (speed & accuracy)",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L73"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan_social_media_content_strategy_viral_video_scripts",
+      "label": "Social Media Content Strategy & Viral Video Scripts",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "social media content strategy & viral video scripts",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan_value_first_post_templates_no_spamming",
+      "label": "Value-First Post Templates (No Spamming)",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "value-first post templates (no spamming)",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "marketing_campaigns_social_media_content_plan_viral_tiktok_reels_short_form_video_scripts",
+      "label": "\ud83c\udfac Viral TikTok / Reels Short-Form Video Scripts",
+      "_origin": "ast",
+      "community": 82,
+      "community_name": "Social Media Content Strategy & Viral Video Scripts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udfac viral tiktok / reels short-form video scripts",
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_infrastructure_services_biometricauthservice",
+      "label": "BiometricAuthService.ts",
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": "biometricauthservice.ts",
+      "source_file": "src/infrastructure/services/BiometricAuthService.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_pinchallengemodal",
+      "label": "PinChallengeModal.tsx",
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": "pinchallengemodal.tsx",
+      "source_file": "src/presentation/components/PinChallengeModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_pinchallengemodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "PinChallengeModal.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/PinChallengeModal.tsx",
+      "source_location": "L238"
+    },
+    {
+      "id": "marketing_brand_and_positioning",
+      "label": "brand-and-positioning.md",
+      "_origin": "ast",
+      "community": 84,
+      "community_name": "Brand Identity & Positioning Guide",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "brand-and-positioning.md",
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_brand_and_positioning_1_brand_mission_vision",
+      "label": "1. Brand Mission & Vision",
+      "_origin": "ast",
+      "community": 84,
+      "community_name": "Brand Identity & Positioning Guide",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1. brand mission & vision",
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "marketing_brand_and_positioning_2_positioning_statement",
+      "label": "2. Positioning Statement",
+      "_origin": "ast",
+      "community": 84,
+      "community_name": "Brand Identity & Positioning Guide",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "2. positioning statement",
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "marketing_brand_and_positioning_3_brand_personality_tone_of_voice",
+      "label": "3. Brand Personality & Tone of Voice",
+      "_origin": "ast",
+      "community": 84,
+      "community_name": "Brand Identity & Positioning Guide",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "3. brand personality & tone of voice",
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "marketing_brand_and_positioning_4_brand_taglines_slogans",
+      "label": "4. Brand Taglines & Slogans",
+      "_origin": "ast",
+      "community": 84,
+      "community_name": "Brand Identity & Positioning Guide",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4. brand taglines & slogans",
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "marketing_brand_and_positioning_5_visual_design_language_standards",
+      "label": "5. Visual & Design Language Standards",
+      "_origin": "ast",
+      "community": 84,
+      "community_name": "Brand Identity & Positioning Guide",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "5. visual & design language standards",
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "marketing_brand_and_positioning_brand_identity_positioning_guide",
+      "label": "Brand Identity & Positioning Guide",
+      "_origin": "ast",
+      "community": 84,
+      "community_name": "Brand Identity & Positioning Guide",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "brand identity & positioning guide",
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_brand_and_positioning_primary_taglines",
+      "label": "Primary Taglines",
+      "_origin": "ast",
+      "community": 84,
+      "community_name": "Brand Identity & Positioning Guide",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "primary taglines",
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "marketing_brand_and_positioning_secondary_campaign_specific_hooks",
+      "label": "Secondary & Campaign-Specific Hooks",
+      "_origin": "ast",
+      "community": 84,
+      "community_name": "Brand Identity & Positioning Guide",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "secondary & campaign-specific hooks",
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "marketing_app_store_store_listing",
+      "label": "store-listing.md",
+      "_origin": "ast",
+      "community": 85,
+      "community_name": "App Store Optimization (ASO) & Store Listing Copy",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "store-listing.md",
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_app_store_store_listing_app_store_optimization_aso_store_listing_copy",
+      "label": "App Store Optimization (ASO) & Store Listing Copy",
+      "_origin": "ast",
+      "community": 85,
+      "community_name": "App Store Optimization (ASO) & Store Listing Copy",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "app store optimization (aso) & store listing copy",
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_app_store_store_listing_app_store_screenshot_concepts_6_slides",
+      "label": "\ud83d\uddbc\ufe0f App Store Screenshot Concepts (6 Slides)",
+      "_origin": "ast",
+      "community": 85,
+      "community_name": "App Store Optimization (ASO) & Store Listing Copy",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\uddbc\ufe0f app store screenshot concepts (6 slides)",
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L72"
+    },
+    {
+      "id": "marketing_app_store_store_listing_app_title_short_metadata",
+      "label": "\ud83d\udcf1 App Title & Short Metadata",
+      "_origin": "ast",
+      "community": 85,
+      "community_name": "App Store Optimization (ASO) & Store Listing Copy",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcf1 app title & short metadata",
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "marketing_app_store_store_listing_aso_keyword_bank_philippines_localization",
+      "label": "\ud83d\udd0d ASO Keyword Bank (Philippines Localization)",
+      "_origin": "ast",
+      "community": 85,
+      "community_name": "App Store Optimization (ASO) & Store Listing Copy",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udd0d aso keyword bank (philippines localization)",
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "marketing_app_store_store_listing_long_description_taglish_vernacular_high_converting",
+      "label": "\ud83d\udcdd Long Description (Taglish / Vernacular - High Converting)",
+      "_origin": "ast",
+      "community": 85,
+      "community_name": "App Store Optimization (ASO) & Store Listing Copy",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcdd long description (taglish / vernacular - high converting)",
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "marketing_app_store_store_listing_primary_high_volume_search_keywords",
+      "label": "Primary High-Volume Search Keywords",
+      "_origin": "ast",
+      "community": 85,
+      "community_name": "App Store Optimization (ASO) & Store Listing Copy",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "primary high-volume search keywords",
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "marketing_app_store_store_listing_secondary_long_tail_keywords",
+      "label": "Secondary & Long-Tail Keywords",
+      "_origin": "ast",
+      "community": 85,
+      "community_name": "App Store Optimization (ASO) & Store Listing Copy",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "secondary & long-tail keywords",
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "marketing_collateral_flyer_and_poster_copy",
+      "label": "flyer-and-poster-copy.md",
+      "_origin": "ast",
+      "community": 86,
+      "community_name": "Marketing Collateral: Flyers, Tarpaulins & Counter Signs",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "flyer-and-poster-copy.md",
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_collateral_flyer_and_poster_copy_back_side",
+      "label": "[BACK SIDE]",
+      "_origin": "ast",
+      "community": 86,
+      "community_name": "Marketing Collateral: Flyers, Tarpaulins & Counter Signs",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[back side]",
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "marketing_collateral_flyer_and_poster_copy_collateral_item_1_half_page_a5_wholesaler_handout_flyer",
+      "label": "\ud83d\udcc4 Collateral Item 1: Half-Page (A5) Wholesaler Handout Flyer",
+      "_origin": "ast",
+      "community": 86,
+      "community_name": "Marketing Collateral: Flyers, Tarpaulins & Counter Signs",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcc4 collateral item 1: half-page (a5) wholesaler handout flyer",
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "marketing_collateral_flyer_and_poster_copy_collateral_item_2_wholesale_bay_tarpaulin_banner_2ft_x_5ft_3ft_x_6ft",
+      "label": "\ud83d\udea9 Collateral Item 2: Wholesale Bay Tarpaulin Banner (2ft x 5ft / 3ft x 6ft)",
+      "_origin": "ast",
+      "community": 86,
+      "community_name": "Marketing Collateral: Flyers, Tarpaulins & Counter Signs",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udea9 collateral item 2: wholesale bay tarpaulin banner (2ft x 5ft / 3ft x 6ft)",
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "marketing_collateral_flyer_and_poster_copy_collateral_item_3_weather_proof_counter_window_stickers_4in_x_6in",
+      "label": "\ud83c\udff7\ufe0f Collateral Item 3: Weather-Proof Counter Window Stickers (4in x 6in)",
+      "_origin": "ast",
+      "community": 86,
+      "community_name": "Marketing Collateral: Flyers, Tarpaulins & Counter Signs",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udff7\ufe0f collateral item 3: weather-proof counter window stickers (4in x 6in)",
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "marketing_collateral_flyer_and_poster_copy_front_side",
+      "label": "[FRONT SIDE]",
+      "_origin": "ast",
+      "community": 86,
+      "community_name": "Marketing Collateral: Flyers, Tarpaulins & Counter Signs",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[front side]",
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "marketing_collateral_flyer_and_poster_copy_marketing_collateral_flyers_tarpaulins_counter_signs",
+      "label": "Marketing Collateral: Flyers, Tarpaulins & Counter Signs",
+      "_origin": "ast",
+      "community": 86,
+      "community_name": "Marketing Collateral: Flyers, Tarpaulins & Counter Signs",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "marketing collateral: flyers, tarpaulins & counter signs",
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_readme",
+      "label": "marketing/README.md",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "Startup Tindahan Helper \u2014 Marketing Kit & Strategy Hub",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "marketing/readme.md",
+      "source_file": "marketing/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_readme_acquisition_milestones_growth_goals",
+      "label": "\ud83d\uddd3\ufe0f Acquisition Milestones & Growth Goals",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "Startup Tindahan Helper \u2014 Marketing Kit & Strategy Hub",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\uddd3\ufe0f acquisition milestones & growth goals",
+      "source_file": "marketing/README.md",
+      "source_location": "L51"
+    },
+    {
+      "id": "marketing_readme_core_value_propositions_the_5_pillars",
+      "label": "\ud83d\udc8e Core Value Propositions (The 5 Pillars)",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "Startup Tindahan Helper \u2014 Marketing Kit & Strategy Hub",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udc8e core value propositions (the 5 pillars)",
+      "source_file": "marketing/README.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "marketing_readme_marketing_directory_map",
+      "label": "\ud83d\udcc1 Marketing Directory Map",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "Startup Tindahan Helper \u2014 Marketing Kit & Strategy Hub",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcc1 marketing directory map",
+      "source_file": "marketing/README.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "marketing_readme_startup_tindahan_helper_marketing_kit_strategy_hub",
+      "label": "Startup Tindahan Helper \u2014 Marketing Kit & Strategy Hub",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "Startup Tindahan Helper \u2014 Marketing Kit & Strategy Hub",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "startup tindahan helper \u2014 marketing kit & strategy hub",
+      "source_file": "marketing/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "marketing_readme_target_audience_snapshot",
+      "label": "\ud83c\udfaf Target Audience Snapshot",
+      "_origin": "ast",
+      "community": 87,
+      "community_name": "Startup Tindahan Helper \u2014 Marketing Kit & Strategy Hub",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udfaf target audience snapshot",
+      "source_file": "marketing/README.md",
+      "source_location": "L26"
     },
     {
       "id": "scripts_reset_project",
@@ -13156,7 +13999,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L1820",
+      "source_location": "L1885",
       "weight": 1.0
     },
     {
@@ -13168,7 +14011,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L1959",
+      "source_location": "L2024",
       "weight": 1.0
     },
     {
@@ -13180,7 +14023,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2734",
+      "source_location": "L2799",
       "weight": 1.0
     },
     {
@@ -13204,7 +14047,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L572",
+      "source_location": "L551",
       "weight": 1.0
     },
     {
@@ -13240,7 +14083,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L710",
+      "source_location": "L754",
       "weight": 1.0
     },
     {
@@ -13252,7 +14095,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L719",
+      "source_location": "L763",
       "weight": 1.0
     },
     {
@@ -13264,7 +14107,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L785",
+      "source_location": "L829",
       "weight": 1.0
     },
     {
@@ -15856,7 +16699,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L80",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -21976,7 +22819,7 @@
       "confidence_score": 1.0,
       "context": "type",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L27",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -24357,6 +25200,655 @@
       "confidence_score": 1.0,
       "source_file": "graphify-out/converted/REQUIREMENTS_TRACEABILITY_MATRIX_3b7cd623.md",
       "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_app_store_store_listing",
+      "target": "marketing_app_store_store_listing_app_store_optimization_aso_store_listing_copy",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_app_store_store_listing_app_store_optimization_aso_store_listing_copy",
+      "target": "marketing_app_store_store_listing_long_description_taglish_vernacular_high_converting",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_app_store_store_listing_app_store_optimization_aso_store_listing_copy",
+      "target": "marketing_app_store_store_listing_aso_keyword_bank_philippines_localization",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_app_store_store_listing_app_store_optimization_aso_store_listing_copy",
+      "target": "marketing_app_store_store_listing_app_title_short_metadata",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_app_store_store_listing_app_store_optimization_aso_store_listing_copy",
+      "target": "marketing_app_store_store_listing_app_store_screenshot_concepts_6_slides",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_app_store_store_listing_aso_keyword_bank_philippines_localization",
+      "target": "marketing_app_store_store_listing_primary_high_volume_search_keywords",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_app_store_store_listing_aso_keyword_bank_philippines_localization",
+      "target": "marketing_app_store_store_listing_secondary_long_tail_keywords",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/app-store/store-listing.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_brand_and_positioning",
+      "target": "marketing_brand_and_positioning_brand_identity_positioning_guide",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_brand_and_positioning_4_brand_taglines_slogans",
+      "target": "marketing_brand_and_positioning_primary_taglines",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_brand_and_positioning_4_brand_taglines_slogans",
+      "target": "marketing_brand_and_positioning_secondary_campaign_specific_hooks",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_brand_and_positioning_brand_identity_positioning_guide",
+      "target": "marketing_brand_and_positioning_2_positioning_statement",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_brand_and_positioning_brand_identity_positioning_guide",
+      "target": "marketing_brand_and_positioning_3_brand_personality_tone_of_voice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_brand_and_positioning_brand_identity_positioning_guide",
+      "target": "marketing_brand_and_positioning_1_brand_mission_vision",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_brand_and_positioning_brand_identity_positioning_guide",
+      "target": "marketing_brand_and_positioning_4_brand_taglines_slogans",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_brand_and_positioning_brand_identity_positioning_guide",
+      "target": "marketing_brand_and_positioning_5_visual_design_language_standards",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/brand-and-positioning.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_grassroots_barangay_ground_activation_playbook",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_1_the_wholesaler_corridors_puregold_super8_lines",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_target_environment",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_1_the_wholesaler_corridors_puregold_super8_lines",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_execution_strategy",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_2_barangay_negosyo_roadshow",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_target_environment_29",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_2_barangay_negosyo_roadshow",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_execution_strategy_32",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_3_point_of_sale_counter_sticking_strategy",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_dito_malinaw_ang_listahan_store_counter_badges",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_3_point_of_sale_counter_sticking_strategy",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_psychological_impact",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_4_suki_to_suki_merchant_referral_mechanics",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_program_name_kasosyo_referral_circle",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_grassroots_barangay_ground_activation_playbook",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_1_the_wholesaler_corridors_puregold_super8_lines",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_grassroots_barangay_ground_activation_playbook",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_2_barangay_negosyo_roadshow",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_grassroots_barangay_ground_activation_playbook",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_3_point_of_sale_counter_sticking_strategy",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_grassroots_barangay_ground_activation_playbook",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_activation_channel_4_suki_to_suki_merchant_referral_mechanics",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_grassroots_barangay_playbook_grassroots_barangay_ground_activation_playbook",
+      "target": "marketing_campaigns_grassroots_barangay_playbook_ground_activation_kpi_scorecard",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/grassroots-barangay-playbook.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_social_media_content_plan",
+      "target": "marketing_campaigns_social_media_content_plan_social_media_content_strategy_viral_video_scripts",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_social_media_content_plan_facebook_group_seeding_organic_strategy",
+      "target": "marketing_campaigns_social_media_content_plan_value_first_post_templates_no_spamming",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_social_media_content_plan_facebook_group_seeding_organic_strategy",
+      "target": "marketing_campaigns_social_media_content_plan_key_target_communities",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_social_media_content_plan_social_media_content_strategy_viral_video_scripts",
+      "target": "marketing_campaigns_social_media_content_plan_viral_tiktok_reels_short_form_video_scripts",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_social_media_content_plan_social_media_content_strategy_viral_video_scripts",
+      "target": "marketing_campaigns_social_media_content_plan_4_week_social_media_content_calendar",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_social_media_content_plan_social_media_content_strategy_viral_video_scripts",
+      "target": "marketing_campaigns_social_media_content_plan_facebook_group_seeding_organic_strategy",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_social_media_content_plan_viral_tiktok_reels_short_form_video_scripts",
+      "target": "marketing_campaigns_social_media_content_plan_script_1_ang_misteryo_ng_nawawalang_utang_relatable_drama_comedy",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_social_media_content_plan_viral_tiktok_reels_short_form_video_scripts",
+      "target": "marketing_campaigns_social_media_content_plan_script_2_bakit_walang_tubo_ang_tindahan_mo_educational_reality_check",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_campaigns_social_media_content_plan_viral_tiktok_reels_short_form_video_scripts",
+      "target": "marketing_campaigns_social_media_content_plan_script_3_si_ate_joy_at_ang_nakalilitong_sukli_speed_accuracy",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/campaigns/social-media-content-plan.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_collateral_flyer_and_poster_copy",
+      "target": "marketing_collateral_flyer_and_poster_copy_marketing_collateral_flyers_tarpaulins_counter_signs",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_collateral_flyer_and_poster_copy_collateral_item_1_half_page_a5_wholesaler_handout_flyer",
+      "target": "marketing_collateral_flyer_and_poster_copy_front_side",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_collateral_flyer_and_poster_copy_collateral_item_1_half_page_a5_wholesaler_handout_flyer",
+      "target": "marketing_collateral_flyer_and_poster_copy_back_side",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_collateral_flyer_and_poster_copy_marketing_collateral_flyers_tarpaulins_counter_signs",
+      "target": "marketing_collateral_flyer_and_poster_copy_collateral_item_3_weather_proof_counter_window_stickers_4in_x_6in",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_collateral_flyer_and_poster_copy_marketing_collateral_flyers_tarpaulins_counter_signs",
+      "target": "marketing_collateral_flyer_and_poster_copy_collateral_item_1_half_page_a5_wholesaler_handout_flyer",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_collateral_flyer_and_poster_copy_marketing_collateral_flyers_tarpaulins_counter_signs",
+      "target": "marketing_collateral_flyer_and_poster_copy_collateral_item_2_wholesale_bay_tarpaulin_banner_2ft_x_5ft_3ft_x_6ft",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/collateral/flyer-and-poster-copy.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_readme",
+      "target": "marketing_readme_startup_tindahan_helper_marketing_kit_strategy_hub",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_readme_startup_tindahan_helper_marketing_kit_strategy_hub",
+      "target": "marketing_readme_target_audience_snapshot",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/README.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_readme_startup_tindahan_helper_marketing_kit_strategy_hub",
+      "target": "marketing_readme_core_value_propositions_the_5_pillars",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/README.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_readme_startup_tindahan_helper_marketing_kit_strategy_hub",
+      "target": "marketing_readme_acquisition_milestones_growth_goals",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/README.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_readme_startup_tindahan_helper_marketing_kit_strategy_hub",
+      "target": "marketing_readme_marketing_directory_map",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/README.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_3_minute_field_merchant_onboarding_script",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_3_minute_field_merchant_onboarding_script",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_step_by_step_script_conversational_taglish",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_3_minute_field_merchant_onboarding_script",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_timeline_overview_under_3_minutes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_4_overcoming_the_core_objections",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_objection_a_wala_akong_pambayad_sa_subscription_diyan_magastos_yan",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_4_overcoming_the_core_objections",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_objection_b_mahina_ang_signal_dito_wala_akong_wi_fi_o_data",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_4_overcoming_the_core_objections",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_objection_c_matanda_na_ako_hindi_ako_marunong_sa_smartphone",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_step_by_step_script_conversational_taglish",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_1_the_approach_warm_greeting_rapport",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_step_by_step_script_conversational_taglish",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_2_the_hook_relatable_problem",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_step_by_step_script_conversational_taglish",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_3_the_live_demo_show_don_t_tell_10_seconds",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_step_by_step_script_conversational_taglish",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_4_overcoming_the_core_objections",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "marketing_sales_pitches_merchant_onboarding_script_step_by_step_script_conversational_taglish",
+      "target": "marketing_sales_pitches_merchant_onboarding_script_5_the_close_onboarding",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -27095,7 +28587,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2743",
+      "source_location": "L2808",
       "weight": 1.0
     },
     {
@@ -28525,18 +30017,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
       "source": "src_infrastructure_services_openfoodfactsapiclient",
-      "target": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfactsproductpayload",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L27",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfactsapiresponse",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -28548,6 +30051,28 @@
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_upcitemdbpayload",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -31484,7 +33009,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -31495,7 +33020,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -31506,7 +33031,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L115",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -31517,7 +33042,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L137",
+      "source_location": "L214",
+      "weight": 1.0
+    },
+    {
+      "source": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient",
+      "target": "src_infrastructure_services_openfoodfactsapiclient_openfoodfactsapiclient_fetchjsonwithtimeout",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
@@ -31528,7 +33064,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
-      "source_location": "L32",
+      "source_location": "L92",
       "weight": 1.0
     },
     {
@@ -33224,5 +34760,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "080308a66c6150ce252999691c5a55e336934d7f"
+  "built_at_commit": "e9d5dc4914c9cde7de3ba7ba132638180a5c5799"
 }

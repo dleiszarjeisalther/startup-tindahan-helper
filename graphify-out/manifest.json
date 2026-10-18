@@ -60,9 +60,9 @@
     "semantic_hash": "b713dd66aa3ad59ed5098d7b9f8dc202"
   },
   "package.json": {
-    "mtime": 1792270518.0187335,
-    "seen": 1792271616.766617,
-    "ast_hash": "6af64770202af9b16be47c91b3d32f22",
+    "mtime": 1792275369.4194021,
+    "seen": 1792282586.1885731,
+    "ast_hash": "35e1d1078b4c6e36c9a6e9ae0cc5d8e9",
     "semantic_hash": ""
   },
   "scripts/reset-project.js": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1792274119.6389205,
-    "seen": 1792274234.8635995,
-    "ast_hash": "df113da95ba85d2486dbd47010c06f49",
+    "mtime": 1792282382.816956,
+    "seen": 1792282586.1886528,
+    "ast_hash": "69f5a5cd63b50b1d8189ba9aed94f0e5",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
@@ -456,9 +456,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/OpenFoodFactsApiClient.ts": {
-    "mtime": 1791881197.8002622,
-    "seen": 1791881424.7537265,
-    "ast_hash": "790db631fa2393cf938d8e6ab79164c8",
+    "mtime": 1792282518.479369,
+    "seen": 1792282586.189047,
+    "ast_hash": "768de21f9fd160c17a679c543acfd7b9",
     "semantic_hash": ""
   },
   "src/infrastructure/services/SoundFeedbackService.ts": {
@@ -621,6 +621,48 @@
     "mtime": 1792271379.6703904,
     "seen": 1792271616.7669563,
     "ast_hash": "556aae841e17a8f2e0c3fe0bfbfd3f1b",
+    "semantic_hash": ""
+  },
+  "marketing/README.md": {
+    "mtime": 1792275437.2050085,
+    "seen": 1792282586.1894095,
+    "ast_hash": "e91672381db3afff973cec2e2f4b3b92",
+    "semantic_hash": ""
+  },
+  "marketing/app-store/store-listing.md": {
+    "mtime": 1792275515.8755927,
+    "seen": 1792282586.18942,
+    "ast_hash": "de2059eed7353c69846bfee716766b77",
+    "semantic_hash": ""
+  },
+  "marketing/brand-and-positioning.md": {
+    "mtime": 1792275448.8122792,
+    "seen": 1792282586.189432,
+    "ast_hash": "3d5c58b75b0afe3356cae7170cd95a77",
+    "semantic_hash": ""
+  },
+  "marketing/campaigns/grassroots-barangay-playbook.md": {
+    "mtime": 1792275462.5278294,
+    "seen": 1792282586.18949,
+    "ast_hash": "66220c0d0cf8cd64cf830673c7624fec",
+    "semantic_hash": ""
+  },
+  "marketing/campaigns/social-media-content-plan.md": {
+    "mtime": 1792275483.777902,
+    "seen": 1792282586.1895134,
+    "ast_hash": "d9112f40aba676e2557192e7f2d3f57b",
+    "semantic_hash": ""
+  },
+  "marketing/collateral/flyer-and-poster-copy.md": {
+    "mtime": 1792275500.3857014,
+    "seen": 1792282586.1895208,
+    "ast_hash": "d6e3c3db497952085fe6f962a9cd0f6f",
+    "semantic_hash": ""
+  },
+  "marketing/sales-pitches/merchant-onboarding-script.md": {
+    "mtime": 1792275528.4264874,
+    "seen": 1792282586.1895278,
+    "ast_hash": "3ed41e3148414d274afe3d1e49f6b243",
     "semantic_hash": ""
   }
 }
