@@ -1,11 +1,10 @@
 // src/presentation/components/UnitSelectionModal.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   Modal,
   Pressable,
-  TextInput,
   StyleSheet,
   ScrollView,
 } from 'react-native';
@@ -73,7 +72,6 @@ function UnitSelectionDialogContent({
   currentUnit,
   onClose,
   onSelectUnit,
-  onSaveTierConfig,
 }: UnitSelectionDialogContentProps) {
   // Extract or initialize tiers
   const pieceTier =
@@ -86,25 +84,11 @@ function UnitSelectionDialogContent({
   const existingPackTier = product.sellingTiers.find(
     (t) => t.unitName === 'pack' || t.unitName === 'bundle'
   );
-  const existingBoxTier = product.sellingTiers.find(
-    (t) => t.unitName === 'box' || t.unitName === 'case'
-  );
 
   const packMultiplier = existingPackTier?.baseUnitMultiplier ?? 10;
   const packPrice =
     existingPackTier?.unitPricePhp ??
     Math.round(pieceTier.unitPricePhp * packMultiplier * 100) / 100;
-
-  const [showConfig, setShowConfig] = useState(false);
-  const [customPackPieces, setCustomPackPieces] = useState(() =>
-    String(existingPackTier?.baseUnitMultiplier ?? 10)
-  );
-  const [customPackPrice, setCustomPackPrice] = useState(() =>
-    String(
-      existingPackTier?.unitPricePhp ??
-        Math.round(pieceTier.unitPricePhp * (existingPackTier?.baseUnitMultiplier ?? 10) * 100) / 100
-    )
-  );
 
   const totalStock = product.stockCount ?? 0;
   const availablePacks = Math.floor(totalStock / packMultiplier);
@@ -121,289 +105,129 @@ function UnitSelectionDialogContent({
     onClose();
   };
 
-  const handleSavePackConfig = () => {
-    const pcs = parseInt(customPackPieces.replace(/[^0-9]/g, ''), 10) || 10;
-    const pr = parseFloat(customPackPrice.replace(/[^0-9.]/g, '')) || (pieceTier.unitPricePhp * pcs);
-
-    const updatedTiers: SellingUnitTier[] = [
-      pieceTier,
-      {
-        unitName: 'pack',
-        baseUnitMultiplier: pcs,
-        unitPricePhp: pr,
-        ...(existingPackTier?.unitBarcode ? { unitBarcode: existingPackTier.unitBarcode } : {}),
-      },
-    ];
-
-    if (existingBoxTier) {
-      updatedTiers.push(existingBoxTier);
-    }
-
-    onSaveTierConfig?.(updatedTiers);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    setShowConfig(false);
-  };
-
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <ProductThumbnail visual={product.visual} imageUri={product.imageUri} size="md" />
-              <View style={styles.headerTextCol}>
-                <Text style={styles.productName} numberOfLines={1}>
-                  {product.name}
-                </Text>
-                <Text style={styles.stockSubtitle}>
-                  Kabuuang Stock: <Text style={styles.stockHighlight}>{product.formattedStock}</Text>
-                </Text>
-              </View>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <ProductThumbnail visual={product.visual} imageUri={product.imageUri} size="md" />
+            <View style={styles.headerTextCol}>
+              <Text style={styles.productName} numberOfLines={1}>
+                {product.name}
+              </Text>
+              <Text style={styles.stockSubtitle}>
+                Kabuuang Stock: <Text style={styles.stockHighlight}>{product.formattedStock}</Text>
+              </Text>
             </View>
-            <Pressable onPress={onClose} hitSlop={10} style={styles.closeBtn}>
-              <Ionicons name="close" size={20} color="#6B7280" />
-            </Pressable>
           </View>
-
-          <Text style={styles.instructionText}>
-            Piliin kung <Text style={styles.instructionBold}>Whole Pack</Text> ba o <Text style={styles.instructionBold}>Per Piece</Text>:
-          </Text>
-
-          <ScrollView style={styles.optionsScroll} showsVerticalScrollIndicator={false}>
-            {/* OPTION 1: PER PIECE (TINGI) */}
-            <Pressable
-              disabled={isPieceOutOfStock}
-              style={[
-                styles.optionCard,
-                currentUnit === 'piece' ? styles.optionCardActive : null,
-                isPieceOutOfStock ? styles.optionCardDisabled : null,
-              ]}
-              onPress={() => handleSelect('piece', 1, pieceTier.unitPricePhp)}
-            >
-              <View style={styles.optionLeft}>
-                <View style={[styles.iconWrap, currentUnit === 'piece' ? styles.iconWrapActive : null]}>
-                  <Ionicons
-                    name="pricetag-outline"
-                    size={20}
-                    color={currentUnit === 'piece' ? '#0D7A52' : '#4B5563'}
-                  />
-                </View>
-                <View>
-                  <View style={styles.titleBadgeRow}>
-                    <Text style={styles.optionTitle}>Per Piece (Tingi)</Text>
-                    {currentUnit === 'piece' ? (
-                      <View style={styles.activePill}>
-                        <Text style={styles.activePillText}>✓ Kasalukuyan</Text>
-                      </View>
-                    ) : null}
-                  </View>
-                  <Text style={styles.optionDetail}>1 piraso lamang</Text>
-                  <Text style={styles.optionStock}>
-                    {isPieceOutOfStock ? '⚠️ Walang stock' : `May ${totalStock} piraso magagamit`}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.optionRight}>
-                <Text style={styles.optionPrice}>₱{pieceTier.unitPricePhp.toFixed(2)}</Text>
-                <View style={[styles.selectBtn, isPieceOutOfStock ? styles.selectBtnDisabled : null]}>
-                  <Text style={styles.selectBtnText}>{isPieceOutOfStock ? 'Ubos' : '+ Piliin'}</Text>
-                </View>
-              </View>
-            </Pressable>
-
-            {/* OPTION 2: WHOLE PACK (BUONG PACK) */}
-            <Pressable
-              disabled={isPackOutOfStock}
-              style={[
-                styles.optionCard,
-                currentUnit === 'pack' ? styles.optionCardActive : null,
-                isPackOutOfStock ? styles.optionCardDisabled : null,
-              ]}
-              onPress={() => handleSelect('pack', packMultiplier, packPrice)}
-            >
-              <View style={styles.optionLeft}>
-                <View style={[styles.iconWrap, currentUnit === 'pack' ? styles.iconWrapActive : null]}>
-                  <Ionicons
-                    name="layers-outline"
-                    size={20}
-                    color={currentUnit === 'pack' ? '#0D7A52' : '#4B5563'}
-                  />
-                </View>
-                <View>
-                  <View style={styles.titleBadgeRow}>
-                    <Text style={styles.optionTitle}>Whole Pack (Buong Pack)</Text>
-                    {currentUnit === 'pack' ? (
-                      <View style={styles.activePill}>
-                        <Text style={styles.activePillText}>✓ Kasalukuyan</Text>
-                      </View>
-                    ) : null}
-                  </View>
-                  <Text style={styles.optionDetail}>
-                    {packMultiplier} piraso bawat pack (₱{(packPrice / packMultiplier).toFixed(2)}/pc)
-                  </Text>
-                  <Text style={styles.optionStock}>
-                    {isPackOutOfStock
-                      ? `⚠️ Kulang ang stock para sa 1 pack (${packMultiplier} pcs kailangan)`
-                      : `May ${availablePacks} pack magagamit`}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.optionRight}>
-                <Text style={styles.optionPrice}>₱{packPrice.toFixed(2)}</Text>
-                <View style={[styles.selectBtn, isPackOutOfStock ? styles.selectBtnDisabled : null]}>
-                  <Text style={styles.selectBtnText}>{isPackOutOfStock ? 'Kulang' : '+ Piliin'}</Text>
-                </View>
-              </View>
-            </Pressable>
-
-            {/* OPTION 3: WHOLE BOX (IF AVAILABLE) */}
-            {existingBoxTier ? (
-              <Pressable
-                disabled={Math.floor(totalStock / existingBoxTier.baseUnitMultiplier) <= 0}
-                style={[
-                  styles.optionCard,
-                  currentUnit === 'box' ? styles.optionCardActive : null,
-                ]}
-                onPress={() =>
-                  handleSelect('box', existingBoxTier.baseUnitMultiplier, existingBoxTier.unitPricePhp)
-                }
-              >
-                <View style={styles.optionLeft}>
-                  <View style={[styles.iconWrap, currentUnit === 'box' ? styles.iconWrapActive : null]}>
-                    <Ionicons
-                      name="cube-outline"
-                      size={20}
-                      color={currentUnit === 'box' ? '#0D7A52' : '#4B5563'}
-                    />
-                  </View>
-                  <View>
-                    <View style={styles.titleBadgeRow}>
-                      <Text style={styles.optionTitle}>Whole Box (Kaha / Kahon)</Text>
-                      {currentUnit === 'box' ? (
-                        <View style={styles.activePill}>
-                          <Text style={styles.activePillText}>✓ Kasalukuyan</Text>
-                        </View>
-                      ) : null}
-                    </View>
-                    <Text style={styles.optionDetail}>
-                      {existingBoxTier.baseUnitMultiplier} piraso bawat kahon
-                    </Text>
-                    <Text style={styles.optionStock}>
-                      May {Math.floor(totalStock / existingBoxTier.baseUnitMultiplier)} box magagamit
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.optionRight}>
-                  <Text style={styles.optionPrice}>₱{existingBoxTier.unitPricePhp.toFixed(2)}</Text>
-                  <View style={styles.selectBtn}>
-                    <Text style={styles.selectBtnText}>+ Piliin</Text>
-                  </View>
-                </View>
-              </Pressable>
-            ) : null}
-
-            {/* Quick Pack Size & Price Editor */}
-            <View style={styles.configAccordion}>
-              <Pressable
-                style={styles.configToggleBtn}
-                onPress={() => setShowConfig((prev) => !prev)}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Ionicons name="settings-outline" size={14} color="#0D7A52" />
-                  <Text style={styles.configToggleText}>
-                    {showConfig ? 'Itago ang Pack Settings' : '⚙️ Baguhin ang Pack Size o Presyo'}
-                  </Text>
-                </View>
-                <Ionicons
-                  name={showConfig ? 'chevron-up' : 'chevron-down'}
-                  size={14}
-                  color="#6B7280"
-                />
-              </Pressable>
-
-              {showConfig ? (
-                <View style={styles.configBody}>
-                  <Text style={styles.configHint}>
-                    Itakda kung ilang piraso ang nasa 1 pack at magkano ang benta nito:
-                  </Text>
-
-                  {/* Preset Pills */}
-                  <View style={styles.presetPillsRow}>
-                    <Text style={styles.presetLabel}>Karaniwang pack:</Text>
-                    {[6, 10, 12, 20].map((num) => (
-                      <Pressable
-                        key={num}
-                        style={[
-                          styles.presetPill,
-                          customPackPieces === String(num) ? styles.presetPillActive : null,
-                        ]}
-                        onPress={() => {
-                          setCustomPackPieces(String(num));
-                          setCustomPackPrice(String(pieceTier.unitPricePhp * num));
-                        }}
-                      >
-                        <Text
-                          style={[
-                            styles.presetPillText,
-                            customPackPieces === String(num) ? styles.presetPillTextActive : null,
-                          ]}
-                        >
-                          {num} pcs
-                        </Text>
-                      </Pressable>
-                    ))}
-                  </View>
-
-                  <View style={styles.inputsRow}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.inputFieldLabel}>Piraso sa Pack:</Text>
-                      <TextInput
-                        value={customPackPieces}
-                        onChangeText={(val) => {
-                          setCustomPackPieces(val);
-                          const num = parseInt(val.replace(/[^0-9]/g, ''), 10);
-                          if (num > 0) {
-                            setCustomPackPrice(String(pieceTier.unitPricePhp * num));
-                          }
-                        }}
-                        keyboardType="number-pad"
-                        style={styles.textInput}
-                        placeholder="10"
-                      />
-                    </View>
-
-                    <View style={{ flex: 1.2 }}>
-                      <Text style={styles.inputFieldLabel}>Presyo ng Pack (₱):</Text>
-                      <TextInput
-                        value={customPackPrice}
-                        onChangeText={setCustomPackPrice}
-                        keyboardType="decimal-pad"
-                        style={styles.textInput}
-                        placeholder="0.00"
-                      />
-                    </View>
-                  </View>
-
-                  <Pressable style={styles.saveConfigBtn} onPress={handleSavePackConfig}>
-                    <Ionicons name="checkmark-circle-outline" size={15} color="#FFFFFF" />
-                    <Text style={styles.saveConfigBtnText}>I-save ang Pack Settings</Text>
-                  </Pressable>
-                </View>
-              ) : null}
-            </View>
-          </ScrollView>
-
-          {/* Footer Dismiss */}
-          <Pressable style={styles.dismissBtn} onPress={onClose}>
-            <Text style={styles.dismissBtnText}>Isara</Text>
+          <Pressable onPress={onClose} hitSlop={10} style={styles.closeBtn}>
+            <Ionicons name="close" size={20} color="#6B7280" />
           </Pressable>
         </View>
+
+        <Text style={styles.instructionText}>
+          Piliin kung <Text style={styles.instructionBold}>Whole Pack</Text> ba o <Text style={styles.instructionBold}>Per Piece</Text>:
+        </Text>
+
+        <ScrollView style={styles.optionsScroll} showsVerticalScrollIndicator={false}>
+          {/* OPTION 1: PER PIECE (TINGI) */}
+          <Pressable
+            disabled={isPieceOutOfStock}
+            style={[
+              styles.optionCard,
+              currentUnit === 'piece' ? styles.optionCardActive : null,
+              isPieceOutOfStock ? styles.optionCardDisabled : null,
+            ]}
+            onPress={() => handleSelect('piece', 1, pieceTier.unitPricePhp)}
+          >
+            <View style={styles.optionLeft}>
+              <View style={[styles.iconWrap, currentUnit === 'piece' ? styles.iconWrapActive : null]}>
+                <Ionicons
+                  name="pricetag-outline"
+                  size={20}
+                  color={currentUnit === 'piece' ? '#0D7A52' : '#4B5563'}
+                />
+              </View>
+              <View>
+                <View style={styles.titleBadgeRow}>
+                  <Text style={styles.optionTitle}>Per Piece (Tingi)</Text>
+                  {currentUnit === 'piece' ? (
+                    <View style={styles.activePill}>
+                      <Text style={styles.activePillText}>✓ Kasalukuyan</Text>
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={styles.optionDetail}>1 piraso lamang</Text>
+                <Text style={styles.optionStock}>
+                  {isPieceOutOfStock ? '⚠️ Walang stock' : `May ${totalStock} piraso magagamit`}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.optionRight}>
+              <Text style={styles.optionPrice}>₱{pieceTier.unitPricePhp.toFixed(2)}</Text>
+              <View style={[styles.selectBtn, isPieceOutOfStock ? styles.selectBtnDisabled : null]}>
+                <Text style={styles.selectBtnText}>{isPieceOutOfStock ? 'Ubos' : '+ Piliin'}</Text>
+              </View>
+            </View>
+          </Pressable>
+
+          {/* OPTION 2: WHOLE PACK (BUONG PACK) */}
+          <Pressable
+            disabled={isPackOutOfStock}
+            style={[
+              styles.optionCard,
+              currentUnit === 'pack' ? styles.optionCardActive : null,
+              isPackOutOfStock ? styles.optionCardDisabled : null,
+            ]}
+            onPress={() => handleSelect('pack', packMultiplier, packPrice)}
+          >
+            <View style={styles.optionLeft}>
+              <View style={[styles.iconWrap, currentUnit === 'pack' ? styles.iconWrapActive : null]}>
+                <Ionicons
+                  name="layers-outline"
+                  size={20}
+                  color={currentUnit === 'pack' ? '#0D7A52' : '#4B5563'}
+                />
+              </View>
+              <View>
+                <View style={styles.titleBadgeRow}>
+                  <Text style={styles.optionTitle}>Whole Pack (Buong Pack)</Text>
+                  {currentUnit === 'pack' ? (
+                    <View style={styles.activePill}>
+                      <Text style={styles.activePillText}>✓ Kasalukuyan</Text>
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={styles.optionDetail}>
+                  {packMultiplier} piraso bawat pack (₱{(packPrice / packMultiplier).toFixed(2)}/pc)
+                </Text>
+                <Text style={styles.optionStock}>
+                  {isPackOutOfStock
+                    ? `⚠️ Kulang ang stock para sa 1 pack (${packMultiplier} pcs kailangan)`
+                    : `May ${availablePacks} pack magagamit`}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.optionRight}>
+              <Text style={styles.optionPrice}>₱{packPrice.toFixed(2)}</Text>
+              <View style={[styles.selectBtn, isPackOutOfStock ? styles.selectBtnDisabled : null]}>
+                <Text style={styles.selectBtnText}>{isPackOutOfStock ? 'Kulang' : '+ Piliin'}</Text>
+              </View>
+            </View>
+          </Pressable>
+        </ScrollView>
+
+        {/* Footer Dismiss */}
+        <Pressable style={styles.dismissBtn} onPress={onClose}>
+          <Text style={styles.dismissBtnText}>Isara</Text>
+        </Pressable>
       </View>
-    );
-  }
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   backdrop: {
@@ -565,102 +389,6 @@ const styles = StyleSheet.create({
   selectBtnText: {
     color: '#FFFFFF',
     fontSize: 11,
-    fontWeight: '700',
-  },
-  configAccordion: {
-    marginTop: 4,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#F9FAFB',
-  },
-  configToggleBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
-  },
-  configToggleText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#0D7A52',
-  },
-  configBody: {
-    padding: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    backgroundColor: '#FFFFFF',
-    gap: 10,
-  },
-  configHint: {
-    fontSize: 11,
-    color: '#6B7280',
-  },
-  presetPillsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    flexWrap: 'wrap',
-  },
-  presetLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#4B5563',
-  },
-  presetPill: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    backgroundColor: '#F3F4F6',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  presetPillActive: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981',
-  },
-  presetPillText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#4B5563',
-  },
-  presetPillTextActive: {
-    color: '#0D7A52',
-  },
-  inputsRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  inputFieldLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#4B5563',
-    marginBottom: 4,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    fontSize: 13,
-    backgroundColor: '#FFFFFF',
-    color: '#111827',
-  },
-  saveConfigBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    backgroundColor: '#0D7A52',
-    paddingVertical: 8,
-    borderRadius: 8,
-    marginTop: 4,
-  },
-  saveConfigBtnText: {
-    color: '#FFFFFF',
-    fontSize: 12,
     fontWeight: '700',
   },
   dismissBtn: {

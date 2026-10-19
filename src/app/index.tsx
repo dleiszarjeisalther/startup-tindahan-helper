@@ -346,9 +346,41 @@ export default function PosScanProductScreen() {
           ) : (
             <View style={styles.gridContainer}>
               {filteredProducts.map((item) => {
-                const inCartQty = cartSummary.items
-                  .filter((c) => c.productId === item.id)
+                const productCartItems = cartSummary.items.filter((c) => c.productId === item.id);
+                const pieceQty = productCartItems
+                  .filter((c) => !c.unit || c.unit === 'piece')
                   .reduce((sum, c) => sum + c.quantity, 0);
+                const packQty = productCartItems
+                  .filter((c) => c.unit === 'pack' || c.unit === 'bundle')
+                  .reduce((sum, c) => sum + c.quantity, 0);
+                const boxQty = productCartItems
+                  .filter((c) => c.unit === 'box' || c.unit === 'case')
+                  .reduce((sum, c) => sum + c.quantity, 0);
+                const hasInCart = productCartItems.length > 0;
+
+                let inCartBadgeLabel = '';
+                if (hasInCart) {
+                  if (item.unitOfMeasure === 'kg') {
+                    const totalKg = productCartItems.reduce((sum, c) => sum + c.quantity, 0);
+                    inCartBadgeLabel = `${totalKg}kg`;
+                  } else if (packQty > 0 && pieceQty > 0) {
+                    inCartBadgeLabel = `${pieceQty}+${packQty}📦`;
+                  } else if (packQty > 0) {
+                    inCartBadgeLabel = `×${packQty}📦`;
+                  } else if (boxQty > 0 && pieceQty > 0) {
+                    inCartBadgeLabel = `${pieceQty}+${boxQty}📫`;
+                  } else if (boxQty > 0) {
+                    inCartBadgeLabel = `×${boxQty}📫`;
+                  } else {
+                    inCartBadgeLabel = `×${pieceQty}`;
+                  }
+                }
+
+                const hasPackTier = Boolean(
+                  item.sellingTiers?.some(
+                    (t) => (t.unitName === 'pack' || t.unitName === 'bundle') && t.baseUnitMultiplier > 1
+                  )
+                );
 
                 return (
                   <Pressable
@@ -378,8 +410,15 @@ export default function PosScanProductScreen() {
                         });
                         return;
                       }
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      setUnitModalProduct(item);
+                      if (item.sellingTiers && item.sellingTiers.length > 1) {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        setUnitModalProduct(item);
+                        return;
+                      }
+                      tryAddToCart(
+                        item.id,
+                        `✓ +1 ${item.name} (${item.formattedPrice}) idinagdag sa New Sale`
+                      );
                     }}
                   >
                     <View style={styles.cardThumbArea}>
@@ -393,11 +432,9 @@ export default function PosScanProductScreen() {
                           <Text style={styles.scannedBadgeText}>⚡ Scanned</Text>
                         </View>
                       ) : null}
-                      {inCartQty > 0 ? (
+                      {hasInCart ? (
                         <View style={styles.inCartBadge}>
-                          <Text style={styles.inCartBadgeText}>
-                            {item.unitOfMeasure === 'kg' ? `${inCartQty}kg` : `×${inCartQty}`}
-                          </Text>
+                          <Text style={styles.inCartBadgeText}>{inCartBadgeLabel}</Text>
                         </View>
                       ) : null}
                       {item.stockCount <= 0 ? (
@@ -410,6 +447,12 @@ export default function PosScanProductScreen() {
                     <Text style={styles.cardTitle} numberOfLines={1}>
                       {item.name}
                     </Text>
+
+                    {hasPackTier ? (
+                      <View style={styles.packBadge}>
+                        <Text style={styles.packBadgeText}>📦 May Pack</Text>
+                      </View>
+                    ) : null}
 
                     <View style={styles.cardFooterRow}>
                       <View>
@@ -917,6 +960,21 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1E293B',
     marginBottom: 4,
+  },
+  packBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
+    borderWidth: 1,
+    paddingHorizontal: 5,
+    paddingVertical: 1.5,
+    borderRadius: 6,
+    marginBottom: 4,
+  },
+  packBadgeText: {
+    fontSize: 9.5,
+    fontWeight: '700',
+    color: '#065F46',
   },
   cardFooterRow: {
     flexDirection: 'row',

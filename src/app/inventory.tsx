@@ -348,7 +348,7 @@ export default function InventoryManagementScreen() {
       setEditPackEnabled(true);
       setEditPackMultiplier(String(packTier.baseUnitMultiplier || 6));
       setEditPackPricePhp(String(packTier.unitPricePhp || ''));
-      setEditPackBarcode(packTier.barcode || '');
+      setEditPackBarcode(packTier.unitBarcode?.value || packTier.barcode || '');
     } else {
       setEditPackEnabled(false);
       setEditPackMultiplier('6');
@@ -361,7 +361,7 @@ export default function InventoryManagementScreen() {
       setEditBoxEnabled(true);
       setEditBoxMultiplier(String(boxTier.baseUnitMultiplier || 24));
       setEditBoxPricePhp(String(boxTier.unitPricePhp || ''));
-      setEditBoxBarcode(boxTier.barcode || '');
+      setEditBoxBarcode(boxTier.unitBarcode?.value || boxTier.barcode || '');
     } else {
       setEditBoxEnabled(false);
       setEditBoxMultiplier('24');
