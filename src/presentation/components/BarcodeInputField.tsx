@@ -1,6 +1,6 @@
 // src/presentation/components/BarcodeInputField.tsx
 import React, { useState } from 'react';
-import { View, TextInput, Pressable, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Pressable, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { BarcodeScannerViewfinder } from './BarcodeScannerViewfinder';
 
 interface BarcodeInputFieldProps {
@@ -8,6 +8,12 @@ interface BarcodeInputFieldProps {
   onChangeBarcode: (code: string, mode: 'SCAN' | 'MANUAL' | 'GENERATE_TINGI') => void;
   onDuplicateCheck?: (code: string) => void;
   errorMessage?: string | null;
+  label?: string;
+  placeholder?: string;
+  showTingiButton?: boolean;
+  helperText?: string;
+  scannerHintText?: string;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
@@ -15,6 +21,12 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
   onChangeBarcode,
   onDuplicateCheck,
   errorMessage,
+  label = 'Product Barcode (Input Digits or Scan) *',
+  placeholder = 'Type e.g. 6800056520709 or Scan',
+  showTingiButton = true,
+  helperText,
+  scannerHintText = 'Align barcode inside animated laser reticle',
+  containerStyle,
 }) => {
   const [scannerOpen, setScannerOpen] = useState(false);
 
@@ -26,13 +38,14 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Product Barcode (Input Digits or Scan) *</Text>
+    <View style={[styles.container, containerStyle]}>
+      <Text style={styles.label}>{label}</Text>
+      {helperText ? <Text style={styles.helperText}>{helperText}</Text> : null}
       <View style={styles.inputRow}>
         <TextInput
           style={[styles.input, errorMessage ? styles.inputError : null]}
           value={value}
-          placeholder="Type e.g. 6800056520709 or Scan"
+          placeholder={placeholder}
           placeholderTextColor="#9CA3AF"
           autoCapitalize="characters"
           autoCorrect={false}
@@ -49,13 +62,15 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
             {scannerOpen ? '✕ Close' : '📷 Scan'}
           </Text>
         </Pressable>
-        <Pressable
-          style={styles.tingiButton}
-          hitSlop={8}
-          onPress={() => onChangeBarcode('', 'GENERATE_TINGI')}
-        >
-          <Text style={styles.tingiButtonText}>Tingi Code</Text>
-        </Pressable>
+        {showTingiButton ? (
+          <Pressable
+            style={styles.tingiButton}
+            hitSlop={8}
+            onPress={() => onChangeBarcode('', 'GENERATE_TINGI')}
+          >
+            <Text style={styles.tingiButtonText}>Tingi Code</Text>
+          </Pressable>
+        ) : null}
       </View>
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
@@ -70,7 +85,7 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
             reticleWidth={240}
             reticleHeight={120}
             containerHeight={210}
-            hintText="Align barcode inside animated laser reticle"
+            hintText={scannerHintText}
             topRightAction={
               <Pressable
                 style={styles.closeCamBtn}
@@ -90,6 +105,7 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
 const styles = StyleSheet.create({
   container: { marginVertical: 8 },
   label: { fontWeight: '700', fontSize: 14, marginBottom: 6, color: '#111827' },
+  helperText: { fontSize: 12, color: '#4B5563', marginBottom: 6, lineHeight: 16 },
   inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   input: {
     flex: 1,
