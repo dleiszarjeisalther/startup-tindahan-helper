@@ -202,19 +202,17 @@ export default function InventoryManagementScreen() {
   const [editLowThreshold, setEditLowThreshold] = useState('');
   const [editCategory, setEditCategory] = useState(categories[0] ?? 'Snacks');
   const [editUnitOfMeasure, setEditUnitOfMeasure] = useState<'pc' | 'kg'>('pc');
+  const [editPackagingType, setEditPackagingType] = useState<'PACK' | 'PIECE' | 'KG'>('PACK');
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
   // Edit Receipt-First Workflow States & Math
-  const [editCostInputMode, setEditCostInputMode] = useState<'PIECE' | 'BUNDLE'>('PIECE');
   const [editCostPhp, setEditCostPhp] = useState('');
   const [editBundleCostPhp, setEditBundleCostPhp] = useState('');
   const [editTuboMode, setEditTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
   const [editTuboValue, setEditTuboValue] = useState('');
 
   // Multi-unit Selling Tiers (Pack) for Edit Product
-  const [editHasPackBoxTier, setEditHasPackBoxTier] = useState(false);
-  const [editPackEnabled, setEditPackEnabled] = useState(false);
   const [editPackMultiplier, setEditPackMultiplier] = useState('10');
   const [editPackPricePhp, setEditPackPricePhp] = useState('');
   const [editPackBarcode, setEditPackBarcode] = useState('');
@@ -226,20 +224,15 @@ export default function InventoryManagementScreen() {
   const editPieceCostParsed = parseFloat(editCostPhp.replace(/[^0-9.]/g, '') || '0');
 
   const editEffectiveUnitCost = useMemo(() => {
-    if (editCostInputMode === 'BUNDLE') {
-      if (editBundleCostParsed <= 0) return 0;
-      const divisor = editParsedStock > 0 ? editParsedStock : 1;
-      return Number((editBundleCostParsed / divisor).toFixed(2));
+    if (editPackagingType === 'PACK') {
+      if (editBundleCostParsed > 0) {
+        const pMult = parseInt(editPackMultiplier.replace(/[^0-9]/g, '') || '10', 10);
+        return Number((editBundleCostParsed / (pMult > 0 ? pMult : 10)).toFixed(2));
+      }
+      return editPieceCostParsed > 0 ? editPieceCostParsed : 0;
     }
     return editPieceCostParsed > 0 ? editPieceCostParsed : 0;
-  }, [editCostInputMode, editBundleCostParsed, editPieceCostParsed, editParsedStock]);
-
-  const editTotalCapitalSpent = useMemo(() => {
-    if (editCostInputMode === 'BUNDLE' && editBundleCostParsed > 0) {
-      return editBundleCostParsed;
-    }
-    return Number((editEffectiveUnitCost * (editParsedStock > 0 ? editParsedStock : 1)).toFixed(2));
-  }, [editCostInputMode, editBundleCostParsed, editEffectiveUnitCost, editParsedStock]);
+  }, [editPackagingType, editBundleCostParsed, editPackMultiplier, editPieceCostParsed]);
 
   const editCurrentEnteredPrice = parseFloat(editPricePhp.replace(/[^0-9.]/g, '') || '0');
 
@@ -323,7 +316,6 @@ export default function InventoryManagementScreen() {
     setEditError(null);
 
     // Initialize Receipt-First fields for Edit
-    setEditCostInputMode('PIECE');
     setEditBundleCostPhp('');
     const cost = item.unitCostPhp > 0 ? item.unitCostPhp : 0;
     setEditCostPhp(cost > 0 ? cost.toString() : '');
@@ -339,19 +331,25 @@ export default function InventoryManagementScreen() {
 
     // Multi-unit Selling Tiers (Pack) for Edit
     const packTier = item.sellingTiers?.find((t) => t.unitName === 'pack' || t.unitName === 'bundle');
-    if (packTier) {
-      setEditPackEnabled(true);
+    if (item.unitOfMeasure === 'kg') {
+      setEditPackagingType('KG');
+      setEditUnitOfMeasure('kg');
+    } else if (packTier) {
+      setEditPackagingType('PACK');
+      setEditUnitOfMeasure('pc');
       setEditPackMultiplier(String(packTier.baseUnitMultiplier || 10));
       setEditPackPricePhp(String(packTier.unitPricePhp || ''));
       setEditPackBarcode(packTier.unitBarcode?.value || packTier.barcode || '');
+      if (cost > 0) {
+        setEditBundleCostPhp((cost * (packTier.baseUnitMultiplier || 10)).toFixed(2));
+      }
     } else {
-      setEditPackEnabled(false);
+      setEditPackagingType('PIECE');
+      setEditUnitOfMeasure('pc');
       setEditPackMultiplier('10');
       setEditPackPricePhp('');
       setEditPackBarcode('');
     }
-
-    setEditHasPackBoxTier(Boolean(packTier));
   };
 
   const handleSaveEditProduct = async () => {
@@ -387,12 +385,11 @@ export default function InventoryManagementScreen() {
     }
 
     let tiers: SellingUnitTier[] | undefined;
-    if (editHasPackBoxTier && editPackEnabled) {
-      const pMult = parseInt(editPackMultiplier.replace(/[^0-9]/g, '') || '0', 10);
-      const pPrice = parseFloat(editPackPricePhp.replace(/[^0-9.]/g, '') || '0');
-      if (pMult <= 1 || pPrice <= 0) {
-        setEditError('Maglagay ng wastong piraso bawat pack at presyo ng pack.');
-        return;
+    if (editPackagingType === 'PACK') {
+      const pMult = parseInt(editPackMultiplier.replace(/[^0-9]/g, '') || '10', 10);
+      let pPrice = parseFloat(editPackPricePhp.replace(/[^0-9.]/g, '') || '0');
+      if (pPrice <= 0) {
+        pPrice = price * pMult;
       }
       tiers = [
         { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: price },
@@ -430,7 +427,7 @@ export default function InventoryManagementScreen() {
         { label: 'Low Stock Alert', value: `${threshold} ${editUnitOfMeasure === 'kg' ? 'kg' : 'piraso'}` },
         { label: 'Kategorya', value: editCategory },
         { label: 'Petsa ng Expiry', value: editExpiryDate.trim() || 'Walang Expiry' },
-        ...(editHasPackBoxTier && editPackEnabled
+        ...(editPackagingType === 'PACK'
           ? [
               {
                 label: 'Pack Unit',
@@ -481,7 +478,7 @@ export default function InventoryManagementScreen() {
   const [newCostPhp, setNewCostPhp] = useState('');
   const [newStock, setNewStock] = useState('');
   const [newLowThreshold, setNewLowThreshold] = useState('5');
-  const [newUnitOfMeasure, setNewUnitOfMeasure] = useState<'pc' | 'kg'>('pc');
+  const [packagingType, setPackagingType] = useState<'PACK' | 'PIECE' | 'KG'>('PACK');
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
@@ -496,7 +493,6 @@ export default function InventoryManagementScreen() {
   const [onlineNotice, setOnlineNotice] = useState<string | null>(null);
 
   // Receipt-First Workflow States & Math
-  const [costInputMode, setCostInputMode] = useState<'PIECE' | 'BUNDLE'>('PIECE');
   const [bundleCostPhp, setBundleCostPhp] = useState('');
   const [tuboMode, setTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
   const [tuboValue, setTuboValue] = useState('');
@@ -504,8 +500,6 @@ export default function InventoryManagementScreen() {
   const [bundlePacksCount, setBundlePacksCount] = useState('1');
 
   // Multi-unit Selling Tiers (Pack) for Add Product
-  const [hasPackBoxTier, setHasPackBoxTier] = useState(false);
-  const [packEnabled, setPackEnabled] = useState(false);
   const [packMultiplier, setPackMultiplier] = useState('10');
   const [packPricePhp, setPackPricePhp] = useState('');
   const [packBarcode, setPackBarcode] = useState('');
@@ -516,30 +510,30 @@ export default function InventoryManagementScreen() {
   const pieceCostParsed = parseFloat(newCostPhp.replace(/[^0-9.]/g, '') || '0');
 
   const parsedStock = useMemo(() => {
-    if (newUnitOfMeasure === 'kg') {
+    if (packagingType === 'KG') {
       return parseFloat(newStock.replace(/[^0-9.]/g, '') || '0');
     }
-    if (costInputMode === 'BUNDLE') {
+    if (packagingType === 'PACK') {
       return (bundlePacksCountNum > 0 ? bundlePacksCountNum : 1) * (packPiecesCountNum > 0 ? packPiecesCountNum : 10);
     }
     return parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
-  }, [newUnitOfMeasure, newStock, costInputMode, bundlePacksCountNum, packPiecesCountNum]);
+  }, [packagingType, newStock, bundlePacksCountNum, packPiecesCountNum]);
 
   const effectiveUnitCost = useMemo(() => {
-    if (costInputMode === 'BUNDLE') {
+    if (packagingType === 'PACK') {
       if (bundleCostParsed <= 0) return 0;
-      const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 1;
+      const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
       return Number((bundleCostParsed / pcs).toFixed(2));
     }
     return pieceCostParsed > 0 ? pieceCostParsed : 0;
-  }, [costInputMode, bundleCostParsed, pieceCostParsed, packPiecesCountNum]);
+  }, [packagingType, bundleCostParsed, pieceCostParsed, packPiecesCountNum]);
 
   const totalCapitalSpent = useMemo(() => {
-    if (costInputMode === 'BUNDLE' && bundleCostParsed > 0) {
+    if (packagingType === 'PACK' && bundleCostParsed > 0) {
       return Number((bundleCostParsed * (bundlePacksCountNum > 0 ? bundlePacksCountNum : 1)).toFixed(2));
     }
     return Number((effectiveUnitCost * (parsedStock > 0 ? parsedStock : 1)).toFixed(2));
-  }, [costInputMode, bundleCostParsed, bundlePacksCountNum, effectiveUnitCost, parsedStock]);
+  }, [packagingType, bundleCostParsed, bundlePacksCountNum, effectiveUnitCost, parsedStock]);
 
   const currentEnteredPrice = parseFloat(newPricePhp.replace(/[^0-9.]/g, '') || '0');
 
@@ -898,19 +892,22 @@ export default function InventoryManagementScreen() {
         return;
       }
 
-      const parsedStock = newUnitOfMeasure === 'kg'
-        ? parseFloat(newStock.replace(/[^0-9.]/g, '') || '0')
-        : parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+      let finalStock = 0;
+      if (packagingType === 'KG') {
+        finalStock = parseFloat(newStock.replace(/[^0-9.]/g, '') || '0');
+      } else if (packagingType === 'PACK') {
+        finalStock = (bundlePacksCountNum > 0 ? bundlePacksCountNum : 1) * (packPiecesCountNum > 0 ? packPiecesCountNum : 10);
+      } else {
+        finalStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+      }
       const parsedLow = parseInt(newLowThreshold.replace(/[^0-9]/g, '') || '5', 10);
 
       let tiers: SellingUnitTier[] | undefined;
-      if (hasPackBoxTier && packEnabled) {
-        const pMult = parseInt(packMultiplier.replace(/[^0-9]/g, '') || '0', 10);
-        const pPrice = parseFloat(packPricePhp.replace(/[^0-9.]/g, '') || '0');
-        if (pMult <= 1 || pPrice <= 0) {
-          setErrorMsg('Maglagay ng wastong piraso bawat pack at presyo ng pack.');
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-          return;
+      if (packagingType === 'PACK') {
+        const pMult = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
+        let pPrice = parseFloat(packPricePhp.replace(/[^0-9.]/g, '') || '0');
+        if (pPrice <= 0) {
+          pPrice = parsedPrice * pMult;
         }
         tiers = [
           { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: parsedPrice },
@@ -928,7 +925,7 @@ export default function InventoryManagementScreen() {
         category: newCategory,
         barcodeInputMode: barcodeMode,
         rawBarcodeValue: newBarcode,
-        initialStock: Number.isFinite(parsedStock) ? parsedStock : 0,
+        initialStock: Number.isFinite(finalStock) ? finalStock : 0,
         lowStockThreshold: Number.isFinite(parsedLow) ? parsedLow : 5,
         unitCostPhp:
           Number.isFinite(effectiveUnitCost) && effectiveUnitCost > 0
@@ -936,7 +933,7 @@ export default function InventoryManagementScreen() {
             : Math.max(0.5, (Number.isFinite(parsedPrice) ? parsedPrice : 1) * 0.75),
         unitPricePhp: Number.isFinite(parsedPrice) ? parsedPrice : 0,
         imageUri: newImageUri ?? undefined,
-        unitOfMeasure: newUnitOfMeasure,
+        unitOfMeasure: packagingType === 'KG' ? 'kg' : 'pc',
         expiryDate: newExpiryDate.trim() || undefined,
         sellingTiers: tiers,
       });
@@ -966,15 +963,12 @@ export default function InventoryManagementScreen() {
       setNewStock('');
       setNewLowThreshold('5');
       setNewExpiryDate('');
-      setNewUnitOfMeasure('pc');
-      setCostInputMode('PIECE');
+      setPackagingType('PACK');
       setBundleCostPhp('');
       setPackPiecesCount('10');
       setBundlePacksCount('1');
       setTuboValue('');
       setTuboMode('PESO');
-      setHasPackBoxTier(false);
-      setPackEnabled(false);
       setPackMultiplier('10');
       setPackPricePhp('');
       setPackBarcode('');
@@ -1450,47 +1444,533 @@ export default function InventoryManagementScreen() {
               </Pressable>
             </ScrollView>
 
-            {/* Unit of Measure Selector (Piraso vs. Kilo) */}
-            <Text style={styles.fieldLabel}>Uri ng Paninda (Unit) *</Text>
+            {/* 1. URI NG PANINDA & PAGBENTA (3 Unified Modes) */}
+            <Text style={styles.fieldLabel}>Uri ng Paninda at Pagbenta *</Text>
             <View style={styles.unitSelectorRow}>
               <Pressable
-                style={[styles.unitToggleBtn, newUnitOfMeasure === 'pc' && styles.unitToggleBtnActive]}
+                style={[styles.unitToggleBtn, packagingType === 'PACK' && styles.unitToggleBtnActive]}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                  setNewUnitOfMeasure('pc');
+                  setPackagingType('PACK');
+                  if (!packMultiplier || packMultiplier === '0') setPackMultiplier(packPiecesCount || '10');
+                }}
+              >
+                <Ionicons
+                  name="layers-outline"
+                  size={15}
+                  color={packagingType === 'PACK' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={[styles.unitToggleText, packagingType === 'PACK' && styles.unitToggleTextActive]}>
+                  📦 Naka-Pack
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.unitToggleBtn, packagingType === 'PIECE' && styles.unitToggleBtnActive]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setPackagingType('PIECE');
                 }}
               >
                 <Ionicons
                   name="cube-outline"
-                  size={16}
-                  color={newUnitOfMeasure === 'pc' ? '#0D7A52' : '#64748B'}
-                  style={{ marginRight: 6 }}
+                  size={15}
+                  color={packagingType === 'PIECE' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 4 }}
                 />
-                <Text style={[styles.unitToggleText, newUnitOfMeasure === 'pc' && styles.unitToggleTextActive]}>
-                  📦 Bawat Piraso (pc)
+                <Text style={[styles.unitToggleText, packagingType === 'PIECE' && styles.unitToggleTextActive]}>
+                  🏷️ Tingi Lang
                 </Text>
               </Pressable>
+
               <Pressable
-                style={[styles.unitToggleBtn, newUnitOfMeasure === 'kg' && styles.unitToggleBtnActive]}
+                style={[styles.unitToggleBtn, packagingType === 'KG' && styles.unitToggleBtnActive]}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                  setNewUnitOfMeasure('kg');
+                  setPackagingType('KG');
                 }}
               >
                 <Ionicons
                   name="scale"
-                  size={16}
-                  color={newUnitOfMeasure === 'kg' ? '#0D7A52' : '#64748B'}
-                  style={{ marginRight: 6 }}
+                  size={15}
+                  color={packagingType === 'KG' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 4 }}
                 />
-                <Text style={[styles.unitToggleText, newUnitOfMeasure === 'kg' && styles.unitToggleTextActive]}>
-                  ⚖️ Bawat Kilo (kg / Bigas)
+                <Text style={[styles.unitToggleText, packagingType === 'KG' && styles.unitToggleTextActive]}>
+                  ⚖️ Kilo (kg)
                 </Text>
               </Pressable>
             </View>
 
-            {/* KG MODE: Stock & Cost per KG */}
-            {newUnitOfMeasure === 'kg' ? (
+            {/* 2. DYNAMIC INPUTS ACCORDING TO PACKAGING TYPE */}
+            {packagingType === 'PACK' ? (
+              /* PACK MODE: Auto-fill from Wholesale Pack Cost & Count */
+              <View style={{ gap: 10 }}>
+                <View style={styles.costSectionCard}>
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#166534', marginBottom: 2 }}>
+                    🧾 Puhunan sa Resibo (Wholesale Pack)
+                  </Text>
+                  <View style={styles.twoColRow}>
+                    <View style={{ flex: 1.2 }}>
+                      <Text style={styles.fieldLabel}>Presyo ng 1 Pack (₱) *</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        value={bundleCostPhp}
+                        onChangeText={(val) => {
+                          setBundleCostPhp(val);
+                          const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                          const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
+                          const costNum = bCost > 0 ? bCost / pcs : 0;
+                          if (tuboValue && costNum > 0) {
+                            const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
+                            const nextPrice =
+                              tuboMode === 'PESO'
+                                ? costNum + tuboNum
+                                : costNum * (1 + tuboNum / 100);
+                            setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                          }
+                        }}
+                        placeholder="Hal. 100.00"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="decimal-pad"
+                      />
+                    </View>
+                    <View style={{ flex: 0.9 }}>
+                      <Text style={styles.fieldLabel}>Piraso sa 1 Pack *</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        value={packPiecesCount}
+                        onChangeText={(val) => {
+                          setPackPiecesCount(val);
+                          setPackMultiplier(val);
+                          const bCost = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
+                          const pcs = parseInt(val.replace(/[^0-9]/g, '') || '10', 10);
+                          const costNum = bCost > 0 && pcs > 0 ? bCost / pcs : 0;
+                          if (tuboValue && costNum > 0) {
+                            const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
+                            const nextPrice =
+                              tuboMode === 'PESO'
+                                ? costNum + tuboNum
+                                : costNum * (1 + tuboNum / 100);
+                            setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                          }
+                        }}
+                        placeholder="10"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="number-pad"
+                      />
+                    </View>
+                    <View style={{ flex: 0.9 }}>
+                      <Text style={styles.fieldLabel}>Ilang Pack Binili? *</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        value={bundlePacksCount}
+                        onChangeText={(val) => setBundlePacksCount(val)}
+                        placeholder="5"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="number-pad"
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.twoColRow}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.fieldLabel}>Mababang Stock Alert (piraso):</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        value={newLowThreshold}
+                        onChangeText={setNewLowThreshold}
+                        placeholder="5"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="number-pad"
+                      />
+                    </View>
+                  </View>
+
+                  {/* Auto-Compute Sneak Peek Banner */}
+                  {effectiveUnitCost > 0 ? (
+                    <View style={styles.sneakPeekBanner}>
+                      <View style={styles.sneakPeekHeader}>
+                        <Ionicons name="calculator-outline" size={14} color="#065F46" />
+                        <Text style={styles.sneakPeekTitle}>⚡ Kusa Nang Kinalkula ng App:</Text>
+                      </View>
+                      <View style={styles.sneakPeekMetrics}>
+                        <View style={styles.sneakPeekItem}>
+                          <Text style={styles.sneakPeekLabel}>Puhunan / Piraso</Text>
+                          <Text style={styles.sneakPeekValue}>₱{effectiveUnitCost.toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.sneakPeekDivider} />
+                        <View style={styles.sneakPeekItem}>
+                          <Text style={styles.sneakPeekLabel}>Kabuuang Stock</Text>
+                          <Text style={styles.sneakPeekValue}>{parsedStock} pcs</Text>
+                        </View>
+                        <View style={styles.sneakPeekDivider} />
+                        <View style={styles.sneakPeekItem}>
+                          <Text style={styles.sneakPeekLabel}>Kabuuang Puhunan</Text>
+                          <Text style={styles.sneakPeekValue}>₱{totalCapitalSpent.toFixed(2)}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  ) : null}
+                </View>
+
+                {/* Tubo / Markup & Tingi Selling Price */}
+                <View style={styles.tuboSectionCard}>
+                  <View style={styles.tuboHeaderRow}>
+                    <Text style={styles.fieldLabel}>Tubo sa Bawat Piraso (Tingi):</Text>
+                    <View style={styles.modeSegmentRow}>
+                      <Pressable
+                        style={[styles.modeSegmentBtn, tuboMode === 'PESO' ? styles.modeSegmentBtnActive : null]}
+                        onPress={() => {
+                          setTuboMode('PESO');
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          if (tuboValue && effectiveUnitCost > 0) handleTuboChange(tuboValue, 'PESO');
+                        }}
+                      >
+                        <Text style={[styles.modeSegmentText, tuboMode === 'PESO' ? styles.modeSegmentTextActive : null]}>₱ Peso</Text>
+                      </Pressable>
+                      <Pressable
+                        style={[styles.modeSegmentBtn, tuboMode === 'PERCENT' ? styles.modeSegmentBtnActive : null]}
+                        onPress={() => {
+                          setTuboMode('PERCENT');
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          if (tuboValue && effectiveUnitCost > 0) handleTuboChange(tuboValue, 'PERCENT');
+                        }}
+                      >
+                        <Text style={[styles.modeSegmentText, tuboMode === 'PERCENT' ? styles.modeSegmentTextActive : null]}>% Percent</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+
+                  <View style={styles.quickChipsRow}>
+                    {[
+                      { label: '+₱1.00', amount: 1, isPercent: false },
+                      { label: '+₱2.00', amount: 2, isPercent: false },
+                      { label: '+₱3.00', amount: 3, isPercent: false },
+                      { label: '+₱5.00', amount: 5, isPercent: false },
+                      { label: '+20%', amount: 20, isPercent: true },
+                    ].map((chip) => {
+                      const isSelected =
+                        (chip.isPercent && tuboMode === 'PERCENT' && tuboValue === chip.amount.toString()) ||
+                        (!chip.isPercent && tuboMode === 'PESO' && tuboValue === chip.amount.toString());
+                      return (
+                        <Pressable
+                          key={chip.label}
+                          style={[styles.quickTuboChip, isSelected ? styles.quickTuboChipActive : null]}
+                          onPress={() => handleQuickTubo(chip.amount, chip.isPercent)}
+                        >
+                          <Text style={[styles.quickTuboChipText, isSelected ? styles.quickTuboChipTextActive : null]}>
+                            {chip.label}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+
+                  <TextInput
+                    style={styles.textInput}
+                    value={tuboValue}
+                    onChangeText={(val) => handleTuboChange(val, tuboMode)}
+                    placeholder={tuboMode === 'PESO' ? '0.00' : '20%'}
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="decimal-pad"
+                  />
+                </View>
+
+                {/* Selling Price Tingi */}
+                <View style={styles.sellingPriceSectionCard}>
+                  <Text style={styles.fieldLabel}>Presyo ng Benta sa Tingi (₱ bawat piraso) *</Text>
+                  <TextInput
+                    style={[styles.textInput, styles.sellingPriceInput]}
+                    value={newPricePhp}
+                    onChangeText={handlePriceChange}
+                    placeholder="0.00"
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="decimal-pad"
+                  />
+
+                  {roundingSuggestions.length > 0 ? (
+                    <View style={styles.roundingBox}>
+                      <Text style={styles.roundingTitle}>🪙 Walang Barya Helper:</Text>
+                      <View style={styles.roundingChipsRow}>
+                        {roundingSuggestions.map((roundPrice: number) => (
+                          <Pressable
+                            key={roundPrice}
+                            style={styles.roundingChip}
+                            onPress={() => {
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                              handlePriceChange(roundPrice.toFixed(2));
+                            }}
+                          >
+                            <Text style={styles.roundingChipText}>{t.roundToLabel(roundPrice.toString())}</Text>
+                          </Pressable>
+                        ))}
+                      </View>
+                    </View>
+                  ) : null}
+
+                  {currentEnteredPrice > 0 ? (
+                    <View style={styles.profitSummaryBox}>
+                      <View style={styles.profitSummaryRow}>
+                        <Text style={styles.profitSummaryLabel}>{t.profitPerPiece}</Text>
+                        <Text style={styles.profitSummaryVal}>₱{profitPerPiece.toFixed(2)}</Text>
+                      </View>
+                      <View style={styles.profitSummaryRow}>
+                        <Text style={styles.profitSummaryLabel}>{t.totalBatchProfit}</Text>
+                        <Text style={[styles.profitSummaryVal, { color: '#0D7A52', fontWeight: '800' }]}>
+                          ₱{totalBatchProfit.toFixed(2)}
+                        </Text>
+                      </View>
+                    </View>
+                  ) : null}
+                </View>
+
+                {/* Whole Pack Selling Tier Card */}
+                <View style={[styles.costSectionCard, { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' }]}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Ionicons name="gift-outline" size={16} color="#0D7A52" />
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#166534' }}>
+                      📦 Presyo ng Benta sa Buong Pack ({packPiecesCountNum} piraso)
+                    </Text>
+                  </View>
+                  <Text style={{ fontSize: 11, color: '#4B5563', lineHeight: 16 }}>
+                    Iisang barcode lang ang gagamitin by default. Kapag binili ng buo ng suki sa New Sale, awtomatikong ibabawas ang {packPiecesCountNum} piraso sa stock.
+                  </Text>
+
+                  {currentEnteredPrice > 0 ? (
+                    <View style={{ marginTop: 2 }}>
+                      <Text style={{ fontSize: 11, color: '#374151', marginBottom: 4, fontWeight: '600' }}>
+                        💡 Mungkahing Presyo ng Pack (Tingi: ₱{currentEnteredPrice.toFixed(2)} × {packPiecesCountNum} pcs = ₱{(currentEnteredPrice * packPiecesCountNum).toFixed(2)}):
+                      </Text>
+                      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                        {[
+                          {
+                            label: `₱${(currentEnteredPrice * packPiecesCountNum).toFixed(2)} (Walang Bawas)`,
+                            val: (currentEnteredPrice * packPiecesCountNum).toFixed(2),
+                          },
+                          {
+                            label: `₱${Math.max(1, currentEnteredPrice * packPiecesCountNum - 5).toFixed(2)} (-₱5 Suki Bawas)`,
+                            val: Math.max(1, currentEnteredPrice * packPiecesCountNum - 5).toFixed(2),
+                          },
+                          {
+                            label: `₱${Math.max(1, currentEnteredPrice * packPiecesCountNum - 10).toFixed(2)} (-₱10 Suki Bawas)`,
+                            val: Math.max(1, currentEnteredPrice * packPiecesCountNum - 10).toFixed(2),
+                          },
+                        ].map((chip) => (
+                          <Pressable
+                            key={chip.label}
+                            style={[
+                              styles.quickTuboChip,
+                              packPricePhp === chip.val ? styles.quickTuboChipActive : null,
+                            ]}
+                            onPress={() => {
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                              setPackPricePhp(chip.val);
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.quickTuboChipText,
+                                packPricePhp === chip.val ? styles.quickTuboChipTextActive : null,
+                              ]}
+                            >
+                              {chip.label}
+                            </Text>
+                          </Pressable>
+                        ))}
+                      </View>
+                    </View>
+                  ) : null}
+
+                  <View style={{ marginTop: 4 }}>
+                    <Text style={styles.fieldLabel}>Presyo ng Buong Pack (₱) *</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      value={packPricePhp}
+                      onChangeText={setPackPricePhp}
+                      placeholder={
+                        currentEnteredPrice > 0
+                          ? (currentEnteredPrice * packPiecesCountNum).toFixed(2)
+                          : 'Hal. 115.00'
+                      }
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
+
+                  <View style={{ marginTop: 4 }}>
+                    <Text style={styles.fieldLabel}>Hiwalay na Barcode sa Pack (Opsyonal):</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      value={packBarcode}
+                      onChangeText={setPackBarcode}
+                      placeholder="Iwanang blangko kung pareho lang ang barcode"
+                      placeholderTextColor="#9CA3AF"
+                    />
+                  </View>
+                </View>
+
+                {/* Expiry Date */}
+                <View>
+                  <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal - YYYY-MM-DD):</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={newExpiryDate}
+                    onChangeText={setNewExpiryDate}
+                    placeholder="Hal. 2026-12-31"
+                    placeholderTextColor="#9CA3AF"
+                    maxLength={10}
+                  />
+                </View>
+              </View>
+            ) : packagingType === 'PIECE' ? (
+              /* PIECE MODE: Tingi Lamang */
+              <View style={{ gap: 10 }}>
+                <View style={styles.costSectionCard}>
+                  <View style={styles.twoColRow}>
+                    <View style={styles.halfCol}>
+                      <Text style={styles.fieldLabel}>Puhunan bawat Piraso (₱) *</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        value={newCostPhp}
+                        onChangeText={(val) => {
+                          setNewCostPhp(val);
+                          const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                          if (tuboValue && costNum > 0) {
+                            const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
+                            const nextPrice =
+                              tuboMode === 'PESO'
+                                ? costNum + tuboNum
+                                : costNum * (1 + tuboNum / 100);
+                            setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                          }
+                        }}
+                        placeholder={t.autoCostHint}
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="decimal-pad"
+                      />
+                    </View>
+                    <View style={styles.halfCol}>
+                      <Text style={styles.fieldLabel}>Kasalukuyang Stock (piraso) *</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        value={newStock}
+                        onChangeText={(val) => {
+                          setErrorMsg(null);
+                          setNewStock(val);
+                        }}
+                        placeholder="0"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="number-pad"
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.twoColRow}>
+                    <View style={styles.halfCol}>
+                      <Text style={styles.fieldLabel}>Mababang Stock Alert (piraso):</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        value={newLowThreshold}
+                        onChangeText={setNewLowThreshold}
+                        placeholder="5"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="number-pad"
+                      />
+                    </View>
+                  </View>
+                </View>
+
+                {/* Tubo & Selling Price */}
+                <View style={styles.tuboSectionCard}>
+                  <View style={styles.tuboHeaderRow}>
+                    <Text style={styles.fieldLabel}>{t.desiredProfitLabel}</Text>
+                    <View style={styles.modeSegmentRow}>
+                      <Pressable
+                        style={[styles.modeSegmentBtn, tuboMode === 'PESO' ? styles.modeSegmentBtnActive : null]}
+                        onPress={() => {
+                          setTuboMode('PESO');
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          if (tuboValue && effectiveUnitCost > 0) handleTuboChange(tuboValue, 'PESO');
+                        }}
+                      >
+                        <Text style={[styles.modeSegmentText, tuboMode === 'PESO' ? styles.modeSegmentTextActive : null]}>₱ Peso</Text>
+                      </Pressable>
+                      <Pressable
+                        style={[styles.modeSegmentBtn, tuboMode === 'PERCENT' ? styles.modeSegmentBtnActive : null]}
+                        onPress={() => {
+                          setTuboMode('PERCENT');
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          if (tuboValue && effectiveUnitCost > 0) handleTuboChange(tuboValue, 'PERCENT');
+                        }}
+                      >
+                        <Text style={[styles.modeSegmentText, tuboMode === 'PERCENT' ? styles.modeSegmentTextActive : null]}>% Percent</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+
+                  <View style={styles.quickChipsRow}>
+                    {[
+                      { label: '+₱1.00', amount: 1, isPercent: false },
+                      { label: '+₱2.00', amount: 2, isPercent: false },
+                      { label: '+₱3.00', amount: 3, isPercent: false },
+                      { label: '+₱5.00', amount: 5, isPercent: false },
+                      { label: '+20%', amount: 20, isPercent: true },
+                    ].map((chip) => {
+                      const isSelected =
+                        (chip.isPercent && tuboMode === 'PERCENT' && tuboValue === chip.amount.toString()) ||
+                        (!chip.isPercent && tuboMode === 'PESO' && tuboValue === chip.amount.toString());
+                      return (
+                        <Pressable
+                          key={chip.label}
+                          style={[styles.quickTuboChip, isSelected ? styles.quickTuboChipActive : null]}
+                          onPress={() => handleQuickTubo(chip.amount, chip.isPercent)}
+                        >
+                          <Text style={[styles.quickTuboChipText, isSelected ? styles.quickTuboChipTextActive : null]}>
+                            {chip.label}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+
+                  <TextInput
+                    style={styles.textInput}
+                    value={tuboValue}
+                    onChangeText={(val) => handleTuboChange(val, tuboMode)}
+                    placeholder={tuboMode === 'PESO' ? '0.00' : '20%'}
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="decimal-pad"
+                  />
+                </View>
+
+                <View style={styles.sellingPriceSectionCard}>
+                  <Text style={styles.fieldLabel}>{t.sellingPriceLabel}</Text>
+                  <TextInput
+                    style={[styles.textInput, styles.sellingPriceInput]}
+                    value={newPricePhp}
+                    onChangeText={handlePriceChange}
+                    placeholder="0.00"
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="decimal-pad"
+                  />
+                </View>
+
+                {/* Expiry Date */}
+                <View>
+                  <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal - YYYY-MM-DD):</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={newExpiryDate}
+                    onChangeText={setNewExpiryDate}
+                    placeholder="Hal. 2026-12-31"
+                    placeholderTextColor="#9CA3AF"
+                    maxLength={10}
+                  />
+                </View>
+              </View>
+            ) : (
+              /* KG MODE: Bigas / Asukal */
               <View style={{ gap: 10 }}>
                 <View style={styles.twoColRow}>
                   <View style={styles.halfCol}>
@@ -1542,532 +2022,33 @@ export default function InventoryManagementScreen() {
                     keyboardType="decimal-pad"
                   />
                 </View>
-              </View>
-            ) : (
-              /* PIECE MODE: Karga-Resibo Flow */
-              <View style={styles.costSectionCard}>
-                <View style={styles.costModeHeader}>
-                  <Text style={styles.fieldLabel}>Paraan ng Pagbili sa Grocery (Puhunan & Stock)</Text>
-                  <View style={styles.modeSegmentRow}>
-                    <Pressable
-                      style={[
-                        styles.modeSegmentBtn,
-                        costInputMode === 'BUNDLE' ? styles.modeSegmentBtnActive : null,
-                      ]}
-                      onPress={() => {
-                        setCostInputMode('BUNDLE');
-                        setHasPackBoxTier(true);
-                        setPackEnabled(true);
-                        setPackMultiplier(packPiecesCount);
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.modeSegmentText,
-                          costInputMode === 'BUNDLE' ? styles.modeSegmentTextActive : null,
-                        ]}
-                      >
-                        📦 Naka-Pack / Balot
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      style={[
-                        styles.modeSegmentBtn,
-                        costInputMode === 'PIECE' ? styles.modeSegmentBtnActive : null,
-                      ]}
-                      onPress={() => {
-                        setCostInputMode('PIECE');
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.modeSegmentText,
-                          costInputMode === 'PIECE' ? styles.modeSegmentTextActive : null,
-                        ]}
-                      >
-                        🔖 Paisa-isa / Tingi
-                      </Text>
-                    </Pressable>
-                  </View>
+
+                <View style={styles.sellingPriceSectionCard}>
+                  <Text style={styles.fieldLabel}>Presyo ng Benta bawat Kilo (₱) *</Text>
+                  <TextInput
+                    style={[styles.textInput, styles.sellingPriceInput]}
+                    value={newPricePhp}
+                    onChangeText={handlePriceChange}
+                    placeholder="Hal. 52.00"
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="decimal-pad"
+                  />
                 </View>
 
-                {costInputMode === 'BUNDLE' ? (
-                  <View style={{ gap: 8 }}>
-                    <View style={styles.twoColRow}>
-                      <View style={{ flex: 1.2 }}>
-                        <Text style={styles.fieldLabel}>Presyo ng 1 Balot sa Resibo (₱) *</Text>
-                        <TextInput
-                          style={styles.textInput}
-                          value={bundleCostPhp}
-                          onChangeText={(val) => {
-                            setBundleCostPhp(val);
-                            const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
-                            const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
-                            const costNum = bCost > 0 ? bCost / pcs : 0;
-                            if (tuboValue && costNum > 0) {
-                              const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
-                              const nextPrice =
-                                tuboMode === 'PESO'
-                                  ? costNum + tuboNum
-                                  : costNum * (1 + tuboNum / 100);
-                              setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
-                            }
-                          }}
-                          placeholder="Hal. 100.00"
-                          placeholderTextColor="#9CA3AF"
-                          keyboardType="decimal-pad"
-                        />
-                      </View>
-                      <View style={{ flex: 0.9 }}>
-                        <Text style={styles.fieldLabel}>Piraso sa 1 Balot *</Text>
-                        <TextInput
-                          style={styles.textInput}
-                          value={packPiecesCount}
-                          onChangeText={(val) => {
-                            setPackPiecesCount(val);
-                            setPackMultiplier(val);
-                            const bCost = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
-                            const pcs = parseInt(val.replace(/[^0-9]/g, '') || '10', 10);
-                            const costNum = bCost > 0 && pcs > 0 ? bCost / pcs : 0;
-                            if (tuboValue && costNum > 0) {
-                              const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
-                              const nextPrice =
-                                tuboMode === 'PESO'
-                                  ? costNum + tuboNum
-                                  : costNum * (1 + tuboNum / 100);
-                              setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
-                            }
-                          }}
-                          placeholder="10"
-                          placeholderTextColor="#9CA3AF"
-                          keyboardType="number-pad"
-                        />
-                      </View>
-                      <View style={{ flex: 0.9 }}>
-                        <Text style={styles.fieldLabel}>Ilang Balot Binili? *</Text>
-                        <TextInput
-                          style={styles.textInput}
-                          value={bundlePacksCount}
-                          onChangeText={(val) => setBundlePacksCount(val)}
-                          placeholder="5"
-                          placeholderTextColor="#9CA3AF"
-                          keyboardType="number-pad"
-                        />
-                      </View>
-                    </View>
-
-                    <View style={styles.twoColRow}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.fieldLabel}>Mababang Stock Alert (piraso):</Text>
-                        <TextInput
-                          style={styles.textInput}
-                          value={newLowThreshold}
-                          onChangeText={setNewLowThreshold}
-                          placeholder="5"
-                          placeholderTextColor="#9CA3AF"
-                          keyboardType="number-pad"
-                        />
-                      </View>
-                    </View>
-                  </View>
-                ) : (
-                  <View style={{ gap: 8 }}>
-                    <View style={styles.twoColRow}>
-                      <View style={styles.halfCol}>
-                        <Text style={styles.fieldLabel}>Puhunan bawat Piraso (₱) *</Text>
-                        <TextInput
-                          style={styles.textInput}
-                          value={newCostPhp}
-                          onChangeText={(val) => {
-                            setNewCostPhp(val);
-                            const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
-                            if (tuboValue && costNum > 0) {
-                              const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
-                              const nextPrice =
-                                tuboMode === 'PESO'
-                                  ? costNum + tuboNum
-                                  : costNum * (1 + tuboNum / 100);
-                              setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
-                            }
-                          }}
-                          placeholder={t.autoCostHint}
-                          placeholderTextColor="#9CA3AF"
-                          keyboardType="decimal-pad"
-                        />
-                      </View>
-                      <View style={styles.halfCol}>
-                        <Text style={styles.fieldLabel}>Kasalukuyang Stock (piraso) *</Text>
-                        <TextInput
-                          style={styles.textInput}
-                          value={newStock}
-                          onChangeText={(val) => {
-                            setErrorMsg(null);
-                            setNewStock(val);
-                          }}
-                          placeholder="0"
-                          placeholderTextColor="#9CA3AF"
-                          keyboardType="number-pad"
-                        />
-                      </View>
-                    </View>
-                    <View style={styles.twoColRow}>
-                      <View style={styles.halfCol}>
-                        <Text style={styles.fieldLabel}>Mababang Stock Alert (piraso):</Text>
-                        <TextInput
-                          style={styles.textInput}
-                          value={newLowThreshold}
-                          onChangeText={setNewLowThreshold}
-                          placeholder="5"
-                          placeholderTextColor="#9CA3AF"
-                          keyboardType="number-pad"
-                        />
-                      </View>
-                    </View>
-                  </View>
-                )}
-
-                {/* Sneak Peek Banner */}
-                {effectiveUnitCost > 0 ? (
-                  <View style={styles.sneakPeekBanner}>
-                    <View style={styles.sneakPeekHeader}>
-                      <Ionicons name="pricetag-outline" size={14} color="#065F46" />
-                      <Text style={styles.sneakPeekTitle}>Awtomatikong Kwenta ng Puhunan & Stock</Text>
-                    </View>
-                    <View style={styles.sneakPeekMetrics}>
-                      <View style={styles.sneakPeekItem}>
-                        <Text style={styles.sneakPeekLabel}>Puhunan bawat Piraso</Text>
-                        <Text style={styles.sneakPeekValue}>₱{effectiveUnitCost.toFixed(2)}</Text>
-                      </View>
-                      <View style={styles.sneakPeekDivider} />
-                      <View style={styles.sneakPeekItem}>
-                        <Text style={styles.sneakPeekLabel}>Kabuuang Stock</Text>
-                        <Text style={styles.sneakPeekValue}>{parsedStock} pcs</Text>
-                      </View>
-                      <View style={styles.sneakPeekDivider} />
-                      <View style={styles.sneakPeekItem}>
-                        <Text style={styles.sneakPeekLabel}>Kabuuang Puhunan</Text>
-                        <Text style={styles.sneakPeekValue}>₱{totalCapitalSpent.toFixed(2)}</Text>
-                      </View>
-                    </View>
-                  </View>
-                ) : null}
+                {/* Expiry Date */}
+                <View>
+                  <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal - YYYY-MM-DD):</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={newExpiryDate}
+                    onChangeText={setNewExpiryDate}
+                    placeholder="Hal. 2026-12-31"
+                    placeholderTextColor="#9CA3AF"
+                    maxLength={10}
+                  />
+                </View>
               </View>
             )}
-
-            {/* ROW 4: Gustong Tubo (Markup) with Quick-Add Buttons */}
-            <View style={styles.tuboSectionCard}>
-              <View style={styles.tuboHeaderRow}>
-                <Text style={styles.fieldLabel}>{t.desiredProfitLabel}</Text>
-                <View style={styles.modeSegmentRow}>
-                  <Pressable
-                    style={[
-                      styles.modeSegmentBtn,
-                      tuboMode === 'PESO' ? styles.modeSegmentBtnActive : null,
-                    ]}
-                    onPress={() => {
-                      setTuboMode('PESO');
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      if (tuboValue && effectiveUnitCost > 0) {
-                        handleTuboChange(tuboValue, 'PESO');
-                      }
-                    }}
-                  >
-                    <Text
-                      style={[
-                        styles.modeSegmentText,
-                        tuboMode === 'PESO' ? styles.modeSegmentTextActive : null,
-                      ]}
-                    >
-                      ₱ Peso
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    style={[
-                      styles.modeSegmentBtn,
-                      tuboMode === 'PERCENT' ? styles.modeSegmentBtnActive : null,
-                    ]}
-                    onPress={() => {
-                      setTuboMode('PERCENT');
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      if (tuboValue && effectiveUnitCost > 0) {
-                        handleTuboChange(tuboValue, 'PERCENT');
-                      }
-                    }}
-                  >
-                    <Text
-                      style={[
-                        styles.modeSegmentText,
-                        tuboMode === 'PERCENT' ? styles.modeSegmentTextActive : null,
-                      ]}
-                    >
-                      % Percent
-                    </Text>
-                  </Pressable>
-                </View>
-              </View>
-
-              {/* Quick Preset Tubo Chips */}
-              <View style={styles.quickChipsRow}>
-                {[
-                  { label: '+₱1.00', amount: 1, isPercent: false },
-                  { label: '+₱2.00', amount: 2, isPercent: false },
-                  { label: '+₱3.00', amount: 3, isPercent: false },
-                  { label: '+₱5.00', amount: 5, isPercent: false },
-                  { label: '+20%', amount: 20, isPercent: true },
-                ].map((chip) => {
-                  const isSelected =
-                    (chip.isPercent && tuboMode === 'PERCENT' && tuboValue === chip.amount.toString()) ||
-                    (!chip.isPercent && tuboMode === 'PESO' && tuboValue === chip.amount.toString());
-                  return (
-                    <Pressable
-                      key={chip.label}
-                      style={[
-                        styles.quickTuboChip,
-                        isSelected ? styles.quickTuboChipActive : null,
-                      ]}
-                      onPress={() => handleQuickTubo(chip.amount, chip.isPercent)}
-                    >
-                      <Text
-                        style={[
-                          styles.quickTuboChipText,
-                          isSelected ? styles.quickTuboChipTextActive : null,
-                        ]}
-                      >
-                        {chip.label}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-
-              <TextInput
-                style={styles.textInput}
-                value={tuboValue}
-                onChangeText={(val) => handleTuboChange(val, tuboMode)}
-                placeholder={tuboMode === 'PESO' ? '0.00' : '20%'}
-                placeholderTextColor="#9CA3AF"
-                keyboardType="decimal-pad"
-              />
-            </View>
-
-            {/* ROW 5: Selling Price (₱) * with Whole-Peso Rounding & Live Batch Profit Preview */}
-            <View style={styles.sellingPriceSectionCard}>
-              <Text style={styles.fieldLabel}>{t.sellingPriceLabel}</Text>
-              <TextInput
-                style={[styles.textInput, styles.sellingPriceInput]}
-                value={newPricePhp}
-                onChangeText={handlePriceChange}
-                placeholder="0.00"
-                placeholderTextColor="#9CA3AF"
-                keyboardType="decimal-pad"
-              />
-
-              {/* Whole-Peso Rounding ("Walang Barya" Helper) */}
-              {roundingSuggestions.length > 0 ? (
-                <View style={styles.roundingBox}>
-                  <Text style={styles.roundingTitle}>🪙 Walang Barya Helper:</Text>
-                  <View style={styles.roundingChipsRow}>
-                    {roundingSuggestions.map((roundPrice: number) => (
-                      <Pressable
-                        key={roundPrice}
-                        style={styles.roundingChip}
-                        onPress={() => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                          handlePriceChange(roundPrice.toFixed(2));
-                        }}
-                      >
-                        <Text style={styles.roundingChipText}>
-                          {t.roundToLabel(roundPrice.toString())}
-                        </Text>
-                      </Pressable>
-                    ))}
-                  </View>
-                </View>
-              ) : null}
-
-              {/* Profit Preview Summary */}
-              {currentEnteredPrice > 0 ? (
-                <View style={styles.profitSummaryBox}>
-                  <View style={styles.profitSummaryRow}>
-                    <Text style={styles.profitSummaryLabel}>{t.profitPerPiece}</Text>
-                    <Text style={styles.profitSummaryVal}>
-                      {effectiveUnitCost > 0
-                        ? `₱${profitPerPiece.toFixed(2)}`
-                        : `~₱${(currentEnteredPrice * 0.25).toFixed(2)} (est.)`}
-                    </Text>
-                  </View>
-                  <View style={styles.profitSummaryRow}>
-                    <Text style={styles.profitSummaryLabel}>{t.totalBatchProfit}</Text>
-                    <Text style={[styles.profitSummaryVal, { color: '#0D7A52', fontWeight: '800' }]}>
-                      {effectiveUnitCost > 0
-                        ? `₱${totalBatchProfit.toFixed(2)}`
-                        : `~₱${(currentEnteredPrice * 0.25 * (parsedStock > 0 ? parsedStock : 1)).toFixed(2)} (est.)`}
-                    </Text>
-                  </View>
-                </View>
-              ) : null}
-
-              {currentEnteredPrice > 0 && effectiveUnitCost >= currentEnteredPrice ? (
-                <View style={styles.costWarningBox}>
-                  <Ionicons name="warning-outline" size={14} color="#B45309" />
-                  <Text style={styles.costWarningText}>
-                    Puhunan (₱{effectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo (₱{currentEnteredPrice.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-
-            {/* Expiry Date (FEFO Tracking) */}
-            <View style={{ marginBottom: 12 }}>
-              <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal - YYYY-MM-DD):</Text>
-              <TextInput
-                style={styles.textInput}
-                value={newExpiryDate}
-                onChangeText={setNewExpiryDate}
-                placeholder="Hal. 2026-12-31"
-                placeholderTextColor="#9CA3AF"
-                maxLength={10}
-              />
-            </View>
-
-            {/* Multi-unit Pricing & Barcodes (Buong Pack Only — Box Removed) */}
-            {newUnitOfMeasure !== 'kg' ? (
-              <View style={styles.tierSection}>
-                <Pressable
-                  style={styles.tierToggleHeader}
-                  onPress={() => {
-                    const next = !hasPackBoxTier;
-                    setHasPackBoxTier(next);
-                    if (next) setPackEnabled(true);
-                  }}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
-                    <Ionicons name="layers-outline" size={18} color="#0D7A52" />
-                    <Text style={styles.tierToggleTitle}>
-                      📦 Ibenta rin bilang Buong Pack (Whole Pack)
-                    </Text>
-                  </View>
-                  <Ionicons
-                    name={hasPackBoxTier ? 'chevron-up' : 'chevron-down'}
-                    size={18}
-                    color="#0D7A52"
-                  />
-                </Pressable>
-
-                {hasPackBoxTier ? (
-                  <View style={styles.tierContainer}>
-                    <Text style={styles.tierSubtext}>
-                      Puwede itong bilhin ng buo ng suki. Kapag pinili sa New Sale, direktang mababawas ang tamang bilang ng piraso sa stock.
-                    </Text>
-
-                    {/* Pack Tier */}
-                    <Pressable
-                      style={[styles.tierCheckboxRow, packEnabled ? styles.tierCheckboxRowActive : null]}
-                      onPress={() => setPackEnabled(!packEnabled)}
-                    >
-                      <Ionicons
-                        name={packEnabled ? 'checkbox' : 'square-outline'}
-                        size={20}
-                        color={packEnabled ? '#0D7A52' : '#64748B'}
-                      />
-                      <Text style={[styles.tierCheckboxLabel, packEnabled ? styles.tierCheckboxLabelActive : null]}>
-                        Paganahin ang Pagbenta ng Buong Pack
-                      </Text>
-                    </Pressable>
-
-                    {packEnabled ? (
-                      <View style={{ marginTop: 8, paddingLeft: 4 }}>
-                        <View style={styles.modalTwoColGrid}>
-                          <View style={styles.modalCol}>
-                            <Text style={styles.fieldLabel}>Piraso bawat Pack:</Text>
-                            <TextInput
-                              style={styles.textInput}
-                              value={packMultiplier}
-                              onChangeText={setPackMultiplier}
-                              placeholder="10"
-                              keyboardType="number-pad"
-                            />
-                          </View>
-                          <View style={styles.modalCol}>
-                            <Text style={styles.fieldLabel}>Presyo ng Pack (₱):</Text>
-                            <TextInput
-                              style={styles.textInput}
-                              value={packPricePhp}
-                              onChangeText={setPackPricePhp}
-                              placeholder={
-                                currentEnteredPrice > 0
-                                  ? (currentEnteredPrice * (parseInt(packMultiplier, 10) || 10)).toFixed(2)
-                                  : 'Hal. 125.00'
-                              }
-                              keyboardType="decimal-pad"
-                            />
-                          </View>
-                        </View>
-
-                        {/* Suki Discount Quick Suggestion Chips */}
-                        {currentEnteredPrice > 0 ? (
-                          <View style={{ marginTop: 8 }}>
-                            <Text style={{ fontSize: 11, color: '#4B5563', marginBottom: 4, fontWeight: '600' }}>
-                              💡 Mungkahing Presyo ng Pack (Tingi: ₱{currentEnteredPrice.toFixed(2)} × {packMultiplier || '10'} pcs = ₱{(currentEnteredPrice * (parseInt(packMultiplier, 10) || 10)).toFixed(2)}):
-                            </Text>
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-                              {[
-                                {
-                                  label: `₱${(currentEnteredPrice * (parseInt(packMultiplier, 10) || 10)).toFixed(2)} (Walang Bawas)`,
-                                  val: (currentEnteredPrice * (parseInt(packMultiplier, 10) || 10)).toFixed(2),
-                                },
-                                {
-                                  label: `₱${Math.max(1, currentEnteredPrice * (parseInt(packMultiplier, 10) || 10) - 5).toFixed(2)} (-₱5 Suki Bawas)`,
-                                  val: Math.max(1, currentEnteredPrice * (parseInt(packMultiplier, 10) || 10) - 5).toFixed(2),
-                                },
-                                {
-                                  label: `₱${Math.max(1, currentEnteredPrice * (parseInt(packMultiplier, 10) || 10) - 10).toFixed(2)} (-₱10 Suki Bawas)`,
-                                  val: Math.max(1, currentEnteredPrice * (parseInt(packMultiplier, 10) || 10) - 10).toFixed(2),
-                                },
-                              ].map((chip) => (
-                                <Pressable
-                                  key={chip.label}
-                                  style={[
-                                    styles.quickTuboChip,
-                                    packPricePhp === chip.val ? styles.quickTuboChipActive : null,
-                                  ]}
-                                  onPress={() => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                                    setPackPricePhp(chip.val);
-                                  }}
-                                >
-                                  <Text
-                                    style={[
-                                      styles.quickTuboChipText,
-                                      packPricePhp === chip.val ? styles.quickTuboChipTextActive : null,
-                                    ]}
-                                  >
-                                    {chip.label}
-                                  </Text>
-                                </Pressable>
-                              ))}
-                            </View>
-                          </View>
-                        ) : null}
-
-                        <View style={{ marginTop: 8 }}>
-                          <Text style={styles.fieldLabel}>Pack Barcode (Opsyonal):</Text>
-                          <TextInput
-                            style={styles.textInput}
-                            value={packBarcode}
-                            onChangeText={setPackBarcode}
-                            placeholder="I-type o i-scan ang barcode sa labas ng pack"
-                            placeholderTextColor="#9CA3AF"
-                          />
-                        </View>
-                      </View>
-                    ) : null}
-                  </View>
-                ) : null}
-              </View>
-            ) : null}
 
             {errorMsg ? (
               <View style={styles.formErrorBox}>
@@ -2559,154 +2540,414 @@ export default function InventoryManagementScreen() {
                 placeholderTextColor="#9CA3AF"
               />
 
-              {/* Unit of Measure Selector (Piraso vs. Kilo) */}
-              <Text style={styles.modalInputLabel}>Uri ng Paninda (Unit) *</Text>
+              {/* Unit of Measure / Packaging Selector */}
+              <Text style={styles.modalInputLabel}>Uri ng Paninda at Pagbenta *</Text>
               <View style={styles.unitSelectorRow}>
                 <Pressable
-                  style={[styles.unitToggleBtn, editUnitOfMeasure === 'pc' && styles.unitToggleBtnActive]}
+                  style={[styles.unitToggleBtn, editPackagingType === 'PACK' && styles.unitToggleBtnActive]}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setEditPackagingType('PACK');
+                    setEditUnitOfMeasure('pc');
+                  }}
+                >
+                  <Ionicons
+                    name="layers-outline"
+                    size={15}
+                    color={editPackagingType === 'PACK' ? '#0D7A52' : '#64748B'}
+                    style={{ marginRight: 4 }}
+                  />
+                  <Text style={[styles.unitToggleText, editPackagingType === 'PACK' && styles.unitToggleTextActive]}>
+                    📦 Naka-Pack
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  style={[styles.unitToggleBtn, editPackagingType === 'PIECE' && styles.unitToggleBtnActive]}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setEditPackagingType('PIECE');
                     setEditUnitOfMeasure('pc');
                   }}
                 >
                   <Ionicons
                     name="cube-outline"
                     size={15}
-                    color={editUnitOfMeasure === 'pc' ? '#0D7A52' : '#64748B'}
+                    color={editPackagingType === 'PIECE' ? '#0D7A52' : '#64748B'}
                     style={{ marginRight: 4 }}
                   />
-                  <Text style={[styles.unitToggleText, editUnitOfMeasure === 'pc' && styles.unitToggleTextActive]}>
-                    Piraso (pc)
+                  <Text style={[styles.unitToggleText, editPackagingType === 'PIECE' && styles.unitToggleTextActive]}>
+                    🏷️ Tingi Lang
                   </Text>
                 </Pressable>
+
                 <Pressable
-                  style={[styles.unitToggleBtn, editUnitOfMeasure === 'kg' && styles.unitToggleBtnActive]}
+                  style={[styles.unitToggleBtn, editPackagingType === 'KG' && styles.unitToggleBtnActive]}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setEditPackagingType('KG');
                     setEditUnitOfMeasure('kg');
                   }}
                 >
                   <Ionicons
                     name="scale"
                     size={15}
-                    color={editUnitOfMeasure === 'kg' ? '#0D7A52' : '#64748B'}
+                    color={editPackagingType === 'KG' ? '#0D7A52' : '#64748B'}
                     style={{ marginRight: 4 }}
                   />
-                  <Text style={[styles.unitToggleText, editUnitOfMeasure === 'kg' && styles.unitToggleTextActive]}>
-                    Kilo (kg)
+                  <Text style={[styles.unitToggleText, editPackagingType === 'KG' && styles.unitToggleTextActive]}>
+                    ⚖️ Kilo (kg)
                   </Text>
                 </Pressable>
               </View>
 
-              {/* ROW 1: Stock & Paalala (Mababang Stock) */}
-              <View style={[styles.modalTwoColGrid, { marginTop: 10 }]}>
-                <View style={styles.modalCol}>
-                  <Text style={styles.modalInputLabel}>
-                    {editUnitOfMeasure === 'kg' ? 'Kasalukuyang Stock (kg)' : t.initialStockLabel}
-                  </Text>
-                  <TextInput
-                    style={styles.modalInputField}
-                    value={editStock}
-                    onChangeText={(val) => {
-                      setEditError(null);
-                      setEditStock(val);
-                    }}
-                    placeholder={editUnitOfMeasure === 'kg' ? '50.0' : '0'}
-                    placeholderTextColor="#9CA3AF"
-                    keyboardType={editUnitOfMeasure === 'kg' ? 'decimal-pad' : 'number-pad'}
-                  />
-                </View>
-                <View style={styles.modalCol}>
-                  <Text style={styles.modalInputLabel}>
-                    {editUnitOfMeasure === 'kg' ? 'Mababang Stock Alert (kg)' : t.lowStockThresholdLabel}
-                  </Text>
-                  <TextInput
-                    style={styles.modalInputField}
-                    value={editLowThreshold}
-                    onChangeText={setEditLowThreshold}
-                    placeholder={editUnitOfMeasure === 'kg' ? '5.0' : '5'}
-                    placeholderTextColor="#9CA3AF"
-                    keyboardType={editUnitOfMeasure === 'kg' ? 'decimal-pad' : 'number-pad'}
-                  />
-                </View>
-              </View>
-
-              {/* ROW 2: Unit Cost / Puhunan with Per Piraso vs. Buong Balot switch */}
-              <View style={[styles.costSectionCard, { marginTop: 12 }]}>
-                <View style={styles.costModeHeader}>
-                  <Text style={styles.fieldLabel}>{t.unitCostLabel}</Text>
-                  <View style={styles.modeSegmentRow}>
-                    <Pressable
-                      style={[
-                        styles.modeSegmentBtn,
-                        editCostInputMode === 'PIECE' ? styles.modeSegmentBtnActive : null,
-                      ]}
-                      onPress={() => {
-                        setEditCostInputMode('PIECE');
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.modeSegmentText,
-                          editCostInputMode === 'PIECE' ? styles.modeSegmentTextActive : null,
-                        ]}
-                      >
-                        {t.perPieceMode}
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      style={[
-                        styles.modeSegmentBtn,
-                        editCostInputMode === 'BUNDLE' ? styles.modeSegmentBtnActive : null,
-                      ]}
-                      onPress={() => {
-                        setEditCostInputMode('BUNDLE');
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.modeSegmentText,
-                          editCostInputMode === 'BUNDLE' ? styles.modeSegmentTextActive : null,
-                        ]}
-                      >
-                        {t.buongBalotMode}
-                      </Text>
-                    </Pressable>
+              {/* DYNAMIC EDIT INPUTS ACCORDING TO PACKAGING TYPE */}
+              {editPackagingType === 'PACK' ? (
+                /* PACK MODE */
+                <View style={{ gap: 10 }}>
+                  <View style={styles.modalTwoColGrid}>
+                    <View style={styles.modalCol}>
+                      <Text style={styles.modalInputLabel}>Kasalukuyang Stock (piraso) *</Text>
+                      <TextInput
+                        style={styles.modalInputField}
+                        value={editStock}
+                        onChangeText={(val) => {
+                          setEditError(null);
+                          setEditStock(val);
+                        }}
+                        placeholder="0"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="number-pad"
+                      />
+                    </View>
+                    <View style={styles.modalCol}>
+                      <Text style={styles.modalInputLabel}>Mababang Stock Alert *</Text>
+                      <TextInput
+                        style={styles.modalInputField}
+                        value={editLowThreshold}
+                        onChangeText={setEditLowThreshold}
+                        placeholder="5"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="number-pad"
+                      />
+                    </View>
                   </View>
-                </View>
 
-                {editCostInputMode === 'PIECE' ? (
-                  <TextInput
-                    style={styles.textInput}
-                    value={editCostPhp}
-                    onChangeText={(val) => {
-                      setEditCostPhp(val);
-                      const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
-                      if (editTuboValue && costNum > 0) {
-                        const tuboNum = parseFloat(editTuboValue.replace(/[^0-9.]/g, '') || '0');
-                        const nextPrice =
-                          editTuboMode === 'PESO'
-                            ? costNum + tuboNum
-                            : costNum * (1 + tuboNum / 100);
-                        setEditPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
-                      }
-                    }}
-                    placeholder={t.autoCostHint}
-                    placeholderTextColor="#9CA3AF"
-                    keyboardType="decimal-pad"
-                  />
-                ) : (
-                  <View style={{ gap: 4 }}>
+                  {/* Pack Cost & Multiplier */}
+                  <View style={styles.costSectionCard}>
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#166534', marginBottom: 2 }}>
+                      🧾 Puhunan sa Resibo (Wholesale Pack)
+                    </Text>
+                    <View style={styles.twoColRow}>
+                      <View style={{ flex: 1.2 }}>
+                        <Text style={styles.fieldLabel}>Presyo ng 1 Pack (₱):</Text>
+                        <TextInput
+                          style={styles.textInput}
+                          value={editBundleCostPhp}
+                          onChangeText={(val) => {
+                            setEditBundleCostPhp(val);
+                            const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                            const mult = parseInt(editPackMultiplier.replace(/[^0-9]/g, '') || '10', 10);
+                            const costNum = bCost > 0 ? bCost / (mult > 0 ? mult : 10) : 0;
+                            if (editTuboValue && costNum > 0) {
+                              const tuboNum = parseFloat(editTuboValue.replace(/[^0-9.]/g, '') || '0');
+                              const nextPrice =
+                                editTuboMode === 'PESO'
+                                  ? costNum + tuboNum
+                                  : costNum * (1 + tuboNum / 100);
+                              setEditPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                            }
+                          }}
+                          placeholder="Hal. 100.00"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="decimal-pad"
+                        />
+                      </View>
+                      <View style={{ flex: 0.9 }}>
+                        <Text style={styles.fieldLabel}>Piraso sa 1 Pack:</Text>
+                        <TextInput
+                          style={styles.textInput}
+                          value={editPackMultiplier}
+                          onChangeText={(val) => {
+                            setEditPackMultiplier(val);
+                            const bCost = parseFloat(editBundleCostPhp.replace(/[^0-9.]/g, '') || '0');
+                            const mult = parseInt(val.replace(/[^0-9]/g, '') || '10', 10);
+                            const costNum = bCost > 0 && mult > 0 ? bCost / mult : 0;
+                            if (editTuboValue && costNum > 0) {
+                              const tuboNum = parseFloat(editTuboValue.replace(/[^0-9.]/g, '') || '0');
+                              const nextPrice =
+                                editTuboMode === 'PESO'
+                                  ? costNum + tuboNum
+                                  : costNum * (1 + tuboNum / 100);
+                              setEditPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                            }
+                          }}
+                          placeholder="10"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="number-pad"
+                        />
+                      </View>
+                    </View>
+
+                    {/* Auto-Compute Sneak Peek Banner */}
+                    {editEffectiveUnitCost > 0 ? (
+                      <View style={styles.sneakPeekBanner}>
+                        <View style={styles.sneakPeekHeader}>
+                          <Ionicons name="calculator-outline" size={14} color="#065F46" />
+                          <Text style={styles.sneakPeekTitle}>⚡ Kwenta ng Puhunan:</Text>
+                        </View>
+                        <View style={styles.sneakPeekMetrics}>
+                          <View style={styles.sneakPeekItem}>
+                            <Text style={styles.sneakPeekLabel}>Puhunan / Piraso</Text>
+                            <Text style={styles.sneakPeekValue}>₱{editEffectiveUnitCost.toFixed(2)}</Text>
+                          </View>
+                          <View style={styles.sneakPeekDivider} />
+                          <View style={styles.sneakPeekItem}>
+                            <Text style={styles.sneakPeekLabel}>Kabuuang Puhunan</Text>
+                            <Text style={styles.sneakPeekValue}>
+                              ₱{(editEffectiveUnitCost * (editParsedStock > 0 ? editParsedStock : 1)).toFixed(2)}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    ) : null}
+                  </View>
+
+                  {/* Tubo sa Tingi */}
+                  <View style={styles.tuboSectionCard}>
+                    <View style={styles.tuboHeaderRow}>
+                      <Text style={styles.fieldLabel}>Tubo sa Bawat Piraso (Tingi):</Text>
+                      <View style={styles.modeSegmentRow}>
+                        <Pressable
+                          style={[styles.modeSegmentBtn, editTuboMode === 'PESO' ? styles.modeSegmentBtnActive : null]}
+                          onPress={() => {
+                            setEditTuboMode('PESO');
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                            if (editTuboValue && editEffectiveUnitCost > 0) handleEditTuboChange(editTuboValue, 'PESO');
+                          }}
+                        >
+                          <Text style={[styles.modeSegmentText, editTuboMode === 'PESO' ? styles.modeSegmentTextActive : null]}>₱ Peso</Text>
+                        </Pressable>
+                        <Pressable
+                          style={[styles.modeSegmentBtn, editTuboMode === 'PERCENT' ? styles.modeSegmentBtnActive : null]}
+                          onPress={() => {
+                            setEditTuboMode('PERCENT');
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                            if (editTuboValue && editEffectiveUnitCost > 0) handleEditTuboChange(editTuboValue, 'PERCENT');
+                          }}
+                        >
+                          <Text style={[styles.modeSegmentText, editTuboMode === 'PERCENT' ? styles.modeSegmentTextActive : null]}>% Percent</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+
+                    <View style={styles.quickChipsRow}>
+                      {[
+                        { label: '+₱1.00', amount: 1, isPercent: false },
+                        { label: '+₱2.00', amount: 2, isPercent: false },
+                        { label: '+₱3.00', amount: 3, isPercent: false },
+                        { label: '+₱5.00', amount: 5, isPercent: false },
+                        { label: '+20%', amount: 20, isPercent: true },
+                      ].map((chip) => {
+                        const isSelected =
+                          (chip.isPercent && editTuboMode === 'PERCENT' && editTuboValue === chip.amount.toString()) ||
+                          (!chip.isPercent && editTuboMode === 'PESO' && editTuboValue === chip.amount.toString());
+                        return (
+                          <Pressable
+                            key={chip.label}
+                            style={[styles.quickTuboChip, isSelected ? styles.quickTuboChipActive : null]}
+                            onPress={() => handleEditQuickTubo(chip.amount, chip.isPercent)}
+                          >
+                            <Text style={[styles.quickTuboChipText, isSelected ? styles.quickTuboChipTextActive : null]}>
+                              {chip.label}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+
                     <TextInput
                       style={styles.textInput}
-                      value={editBundleCostPhp}
+                      value={editTuboValue}
+                      onChangeText={(val) => handleEditTuboChange(val, editTuboMode)}
+                      placeholder={editTuboMode === 'PESO' ? '0.00' : '20%'}
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
+
+                  {/* Selling Price Tingi */}
+                  <View style={styles.sellingPriceSectionCard}>
+                    <Text style={styles.fieldLabel}>Presyo ng Benta sa Tingi (₱ bawat piraso) *</Text>
+                    <TextInput
+                      style={[styles.textInput, styles.sellingPriceInput]}
+                      value={editPricePhp}
+                      onChangeText={handleEditPriceChange}
+                      placeholder="0.00"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
+
+                    {editRoundingSuggestions.length > 0 ? (
+                      <View style={styles.roundingBox}>
+                        <Text style={styles.roundingTitle}>🪙 Walang Barya Helper:</Text>
+                        <View style={styles.roundingChipsRow}>
+                          {editRoundingSuggestions.map((roundPrice: number) => (
+                            <Pressable
+                              key={roundPrice}
+                              style={styles.roundingChip}
+                              onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                                handleEditPriceChange(roundPrice.toFixed(2));
+                              }}
+                            >
+                              <Text style={styles.roundingChipText}>{t.roundToLabel(roundPrice.toString())}</Text>
+                            </Pressable>
+                          ))}
+                        </View>
+                      </View>
+                    ) : null}
+
+                    {editCurrentEnteredPrice > 0 ? (
+                      <View style={styles.profitSummaryBox}>
+                        <View style={styles.profitSummaryRow}>
+                          <Text style={styles.profitSummaryLabel}>{t.profitPerPiece}</Text>
+                          <Text style={styles.profitSummaryVal}>₱{editProfitPerPiece.toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.profitSummaryRow}>
+                          <Text style={styles.profitSummaryLabel}>{t.totalBatchProfit}</Text>
+                          <Text style={[styles.profitSummaryVal, { color: '#0D7A52', fontWeight: '800' }]}>
+                            ₱{editTotalBatchProfit.toFixed(2)}
+                          </Text>
+                        </View>
+                      </View>
+                    ) : null}
+                  </View>
+
+                  {/* Whole Pack Selling Tier Card */}
+                  <View style={[styles.costSectionCard, { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <Ionicons name="gift-outline" size={16} color="#0D7A52" />
+                      <Text style={{ fontSize: 13, fontWeight: '700', color: '#166534' }}>
+                        📦 Presyo ng Benta sa Buong Pack ({parseInt(editPackMultiplier, 10) || 10} piraso)
+                      </Text>
+                    </View>
+                    <Text style={{ fontSize: 11, color: '#4B5563', lineHeight: 16 }}>
+                      Iisang barcode lang ang gagamitin by default. Kapag binili ng buo ng suki sa New Sale, awtomatikong ibabawas ang {parseInt(editPackMultiplier, 10) || 10} piraso sa stock.
+                    </Text>
+
+                    {editCurrentEnteredPrice > 0 ? (
+                      <View style={{ marginTop: 2 }}>
+                        <Text style={{ fontSize: 11, color: '#374151', marginBottom: 4, fontWeight: '600' }}>
+                          💡 Mungkahing Presyo ng Pack (Tingi: ₱{editCurrentEnteredPrice.toFixed(2)} × {editPackMultiplier || '10'} pcs = ₱{(editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2)}):
+                        </Text>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                          {[
+                            {
+                              label: `₱${(editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2)} (Walang Bawas)`,
+                              val: (editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2),
+                            },
+                            {
+                              label: `₱${Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 5).toFixed(2)} (-₱5 Suki Bawas)`,
+                              val: Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 5).toFixed(2),
+                            },
+                            {
+                              label: `₱${Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 10).toFixed(2)} (-₱10 Suki Bawas)`,
+                              val: Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 10).toFixed(2),
+                            },
+                          ].map((chip) => (
+                            <Pressable
+                              key={chip.label}
+                              style={[
+                                styles.quickTuboChip,
+                                editPackPricePhp === chip.val ? styles.quickTuboChipActive : null,
+                              ]}
+                              onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                                setEditPackPricePhp(chip.val);
+                              }}
+                            >
+                              <Text
+                                style={[
+                                  styles.quickTuboChipText,
+                                  editPackPricePhp === chip.val ? styles.quickTuboChipTextActive : null,
+                                ]}
+                              >
+                                {chip.label}
+                              </Text>
+                            </Pressable>
+                          ))}
+                        </View>
+                      </View>
+                    ) : null}
+
+                    <View style={{ marginTop: 4 }}>
+                      <Text style={styles.fieldLabel}>Presyo ng Buong Pack (₱) *</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        value={editPackPricePhp}
+                        onChangeText={setEditPackPricePhp}
+                        placeholder={
+                          editCurrentEnteredPrice > 0
+                            ? (editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2)
+                            : 'Hal. 115.00'
+                        }
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="decimal-pad"
+                      />
+                    </View>
+
+                    <View style={{ marginTop: 4 }}>
+                      <Text style={styles.fieldLabel}>Hiwalay na Barcode sa Pack (Opsyonal):</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        value={editPackBarcode}
+                        onChangeText={setEditPackBarcode}
+                        placeholder="Iwanang blangko kung pareho lang ang barcode"
+                        placeholderTextColor="#9CA3AF"
+                      />
+                    </View>
+                  </View>
+                </View>
+              ) : editPackagingType === 'PIECE' ? (
+                /* PIECE MODE */
+                <View style={{ gap: 10 }}>
+                  <View style={styles.modalTwoColGrid}>
+                    <View style={styles.modalCol}>
+                      <Text style={styles.modalInputLabel}>Kasalukuyang Stock (piraso) *</Text>
+                      <TextInput
+                        style={styles.modalInputField}
+                        value={editStock}
+                        onChangeText={(val) => {
+                          setEditError(null);
+                          setEditStock(val);
+                        }}
+                        placeholder="0"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="number-pad"
+                      />
+                    </View>
+                    <View style={styles.modalCol}>
+                      <Text style={styles.modalInputLabel}>Mababang Stock Alert *</Text>
+                      <TextInput
+                        style={styles.modalInputField}
+                        value={editLowThreshold}
+                        onChangeText={setEditLowThreshold}
+                        placeholder="5"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="number-pad"
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.costSectionCard}>
+                    <Text style={styles.fieldLabel}>Puhunan bawat Piraso (₱) *</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      value={editCostPhp}
                       onChangeText={(val) => {
-                        setEditBundleCostPhp(val);
-                        const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
-                        const divisor = editParsedStock > 0 ? editParsedStock : 1;
-                        const costNum = bCost > 0 ? bCost / divisor : 0;
+                        setEditCostPhp(val);
+                        const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
                         if (editTuboValue && costNum > 0) {
                           const tuboNum = parseFloat(editTuboValue.replace(/[^0-9.]/g, '') || '0');
                           const nextPrice =
@@ -2716,205 +2957,128 @@ export default function InventoryManagementScreen() {
                           setEditPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
                         }
                       }}
-                      placeholder={t.bundleCostPlaceholder}
+                      placeholder={t.autoCostHint}
                       placeholderTextColor="#9CA3AF"
                       keyboardType="decimal-pad"
                     />
-                    <Text style={styles.bundleHint}>
-                      {editParsedStock > 0
-                        ? `Hahatiin sa ${editParsedStock} piraso = ₱${editEffectiveUnitCost.toFixed(2)} bawat piraso`
-                        : 'Ilagay ang bilang ng paninda sa itaas para makuha ang halaga bawat piraso'}
-                    </Text>
                   </View>
-                )}
-              </View>
 
-              {/* ROW 3: Sneak Peek ng Puhunan Banner */}
-              {editEffectiveUnitCost > 0 ? (
-                <View style={[styles.sneakPeekBanner, { marginTop: 10 }]}>
-                  <View style={styles.sneakPeekHeader}>
-                    <Ionicons name="pricetag-outline" size={14} color="#065F46" />
-                    <Text style={styles.sneakPeekTitle}>{t.costSneakPeekTitle}</Text>
-                  </View>
-                  <View style={styles.sneakPeekMetrics}>
-                    <View style={styles.sneakPeekItem}>
-                      <Text style={styles.sneakPeekLabel}>{t.costPerPiece}</Text>
-                      <Text style={styles.sneakPeekValue}>₱{editEffectiveUnitCost.toFixed(2)}</Text>
-                    </View>
-                    <View style={styles.sneakPeekDivider} />
-                    <View style={styles.sneakPeekItem}>
-                      <Text style={styles.sneakPeekLabel}>{t.totalCapitalSpent}</Text>
-                      <Text style={styles.sneakPeekValue}>
-                        ₱{editTotalCapitalSpent.toFixed(2)}
-                        {editParsedStock > 0 ? ` (${editParsedStock} pcs)` : ''}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              ) : null}
-
-              {/* ROW 4: Gustong Tubo (Markup) with Quick-Add Buttons */}
-              <View style={[styles.tuboSectionCard, { marginTop: 12 }]}>
-                <View style={styles.tuboHeaderRow}>
-                  <Text style={styles.fieldLabel}>{t.desiredProfitLabel}</Text>
-                  <View style={styles.modeSegmentRow}>
-                    <Pressable
-                      style={[
-                        styles.modeSegmentBtn,
-                        editTuboMode === 'PESO' ? styles.modeSegmentBtnActive : null,
-                      ]}
-                      onPress={() => {
-                        setEditTuboMode('PESO');
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                        if (editTuboValue && editEffectiveUnitCost > 0) {
-                          handleEditTuboChange(editTuboValue, 'PESO');
-                        }
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.modeSegmentText,
-                          editTuboMode === 'PESO' ? styles.modeSegmentTextActive : null,
-                        ]}
-                      >
-                        ₱ Peso
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      style={[
-                        styles.modeSegmentBtn,
-                        editTuboMode === 'PERCENT' ? styles.modeSegmentBtnActive : null,
-                      ]}
-                      onPress={() => {
-                        setEditTuboMode('PERCENT');
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                        if (editTuboValue && editEffectiveUnitCost > 0) {
-                          handleEditTuboChange(editTuboValue, 'PERCENT');
-                        }
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.modeSegmentText,
-                          editTuboMode === 'PERCENT' ? styles.modeSegmentTextActive : null,
-                        ]}
-                      >
-                        % Percent
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                {/* Quick Preset Tubo Chips */}
-                <View style={styles.quickChipsRow}>
-                  {[
-                    { label: '+₱1.00', amount: 1, isPercent: false },
-                    { label: '+₱2.00', amount: 2, isPercent: false },
-                    { label: '+₱3.00', amount: 3, isPercent: false },
-                    { label: '+₱5.00', amount: 5, isPercent: false },
-                    { label: '+20%', amount: 20, isPercent: true },
-                  ].map((chip) => {
-                    const isSelected =
-                      (chip.isPercent && editTuboMode === 'PERCENT' && editTuboValue === chip.amount.toString()) ||
-                      (!chip.isPercent && editTuboMode === 'PESO' && editTuboValue === chip.amount.toString());
-                    return (
-                      <Pressable
-                        key={chip.label}
-                        style={[
-                          styles.quickTuboChip,
-                          isSelected ? styles.quickTuboChipActive : null,
-                        ]}
-                        onPress={() => handleEditQuickTubo(chip.amount, chip.isPercent)}
-                      >
-                        <Text
-                          style={[
-                            styles.quickTuboChipText,
-                            isSelected ? styles.quickTuboChipTextActive : null,
-                          ]}
-                        >
-                          {chip.label}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-
-                <TextInput
-                  style={styles.textInput}
-                  value={editTuboValue}
-                  onChangeText={(val) => handleEditTuboChange(val, editTuboMode)}
-                  placeholder={editTuboMode === 'PESO' ? '0.00' : '20%'}
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType="decimal-pad"
-                />
-              </View>
-
-              {/* ROW 5: Presyo ng Benta (Selling Price) with Whole-Peso Rounding & Live Batch Profit Preview */}
-              <View style={[styles.sellingPriceSectionCard, { marginTop: 12 }]}>
-                <Text style={styles.fieldLabel}>{t.sellingPriceLabel}</Text>
-                <TextInput
-                  style={[styles.textInput, styles.sellingPriceInput]}
-                  value={editPricePhp}
-                  onChangeText={handleEditPriceChange}
-                  placeholder="0.00"
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType="decimal-pad"
-                />
-
-                {/* Whole-Peso Rounding ("Walang Barya" Helper) */}
-                {editRoundingSuggestions.length > 0 ? (
-                  <View style={styles.roundingBox}>
-                    <Text style={styles.roundingTitle}>🪙 Walang Barya Helper:</Text>
-                    <View style={styles.roundingChipsRow}>
-                      {editRoundingSuggestions.map((roundPrice: number) => (
+                  <View style={styles.tuboSectionCard}>
+                    <View style={styles.tuboHeaderRow}>
+                      <Text style={styles.fieldLabel}>{t.desiredProfitLabel}</Text>
+                      <View style={styles.modeSegmentRow}>
                         <Pressable
-                          key={roundPrice}
-                          style={styles.roundingChip}
+                          style={[styles.modeSegmentBtn, editTuboMode === 'PESO' ? styles.modeSegmentBtnActive : null]}
                           onPress={() => {
+                            setEditTuboMode('PESO');
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                            handleEditPriceChange(roundPrice.toFixed(2));
+                            if (editTuboValue && editEffectiveUnitCost > 0) handleEditTuboChange(editTuboValue, 'PESO');
                           }}
                         >
-                          <Text style={styles.roundingChipText}>
-                            {t.roundToLabel(roundPrice.toString())}
-                          </Text>
+                          <Text style={[styles.modeSegmentText, editTuboMode === 'PESO' ? styles.modeSegmentTextActive : null]}>₱ Peso</Text>
                         </Pressable>
-                      ))}
+                        <Pressable
+                          style={[styles.modeSegmentBtn, editTuboMode === 'PERCENT' ? styles.modeSegmentBtnActive : null]}
+                          onPress={() => {
+                            setEditTuboMode('PERCENT');
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                            if (editTuboValue && editEffectiveUnitCost > 0) handleEditTuboChange(editTuboValue, 'PERCENT');
+                          }}
+                        >
+                          <Text style={[styles.modeSegmentText, editTuboMode === 'PERCENT' ? styles.modeSegmentTextActive : null]}>% Percent</Text>
+                        </Pressable>
+                      </View>
                     </View>
-                  </View>
-                ) : null}
 
-                {/* Profit Preview Summary */}
-                {editCurrentEnteredPrice > 0 ? (
-                  <View style={styles.profitSummaryBox}>
-                    <View style={styles.profitSummaryRow}>
-                      <Text style={styles.profitSummaryLabel}>{t.profitPerPiece}</Text>
-                      <Text style={styles.profitSummaryVal}>
-                        {editEffectiveUnitCost > 0
-                          ? `₱${editProfitPerPiece.toFixed(2)}`
-                          : `~₱${(editCurrentEnteredPrice * 0.25).toFixed(2)} (est.)`}
-                      </Text>
-                    </View>
-                    <View style={styles.profitSummaryRow}>
-                      <Text style={styles.profitSummaryLabel}>{t.totalBatchProfit}</Text>
-                      <Text style={[styles.profitSummaryVal, { color: '#0D7A52', fontWeight: '800' }]}>
-                        {editEffectiveUnitCost > 0
-                          ? `₱${editTotalBatchProfit.toFixed(2)}`
-                          : `~₱${(editCurrentEnteredPrice * 0.25 * (editParsedStock > 0 ? editParsedStock : 1)).toFixed(2)} (est.)`}
-                      </Text>
-                    </View>
+                    <TextInput
+                      style={styles.textInput}
+                      value={editTuboValue}
+                      onChangeText={(val) => handleEditTuboChange(val, editTuboMode)}
+                      placeholder={editTuboMode === 'PESO' ? '0.00' : '20%'}
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
                   </View>
-                ) : null}
 
-                {editCurrentEnteredPrice > 0 && editEffectiveUnitCost >= editCurrentEnteredPrice ? (
-                  <View style={styles.costWarningBox}>
-                    <Ionicons name="warning-outline" size={14} color="#B45309" />
-                    <Text style={styles.costWarningText}>
-                      Puhunan (₱{editEffectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo (₱{editCurrentEnteredPrice.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.
-                    </Text>
+                  <View style={styles.sellingPriceSectionCard}>
+                    <Text style={styles.fieldLabel}>Presyo ng Benta sa Tingi (₱) *</Text>
+                    <TextInput
+                      style={[styles.textInput, styles.sellingPriceInput]}
+                      value={editPricePhp}
+                      onChangeText={handleEditPriceChange}
+                      placeholder="0.00"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
                   </View>
-                ) : null}
-              </View>
+                </View>
+              ) : (
+                /* KG MODE */
+                <View style={{ gap: 10 }}>
+                  <View style={styles.modalTwoColGrid}>
+                    <View style={styles.modalCol}>
+                      <Text style={styles.modalInputLabel}>Kasalukuyang Stock (kg) *</Text>
+                      <TextInput
+                        style={styles.modalInputField}
+                        value={editStock}
+                        onChangeText={(val) => {
+                          setEditError(null);
+                          setEditStock(val);
+                        }}
+                        placeholder="50.0"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="decimal-pad"
+                      />
+                    </View>
+                    <View style={styles.modalCol}>
+                      <Text style={styles.modalInputLabel}>Mababang Stock Alert (kg) *</Text>
+                      <TextInput
+                        style={styles.modalInputField}
+                        value={editLowThreshold}
+                        onChangeText={setEditLowThreshold}
+                        placeholder="5.0"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="decimal-pad"
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.costSectionCard}>
+                    <Text style={styles.fieldLabel}>Puhunan bawat Kilo (₱) *</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      value={editCostPhp}
+                      onChangeText={(val) => {
+                        setEditCostPhp(val);
+                        const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                        if (editTuboValue && costNum > 0) {
+                          const tuboNum = parseFloat(editTuboValue.replace(/[^0-9.]/g, '') || '0');
+                          const nextPrice =
+                            editTuboMode === 'PESO'
+                              ? costNum + tuboNum
+                              : costNum * (1 + tuboNum / 100);
+                          setEditPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                        }
+                      }}
+                      placeholder="Hal. 42.00"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
+
+                  <View style={styles.sellingPriceSectionCard}>
+                    <Text style={styles.fieldLabel}>Presyo ng Benta bawat Kilo (₱) *</Text>
+                    <TextInput
+                      style={[styles.textInput, styles.sellingPriceInput]}
+                      value={editPricePhp}
+                      onChangeText={handleEditPriceChange}
+                      placeholder="Hal. 52.00"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
+                </View>
+              )}
 
               {/* Kasalukuyang Kategorya */}
               <View style={[styles.modalTwoColGrid, { marginTop: 14 }]}>
@@ -2962,143 +3126,6 @@ export default function InventoryManagementScreen() {
                   maxLength={10}
                 />
               </View>
-
-              {/* Multi-unit Pricing & Barcodes (Buong Pack Only — Box Removed) */}
-              {editUnitOfMeasure !== 'kg' ? (
-                <View style={[styles.tierSection, { marginTop: 12 }]}>
-                  <Pressable
-                    style={styles.tierToggleHeader}
-                    onPress={() => {
-                      const next = !editHasPackBoxTier;
-                      setEditHasPackBoxTier(next);
-                      if (next) setEditPackEnabled(true);
-                    }}
-                  >
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
-                      <Ionicons name="layers-outline" size={18} color="#0D7A52" />
-                      <Text style={styles.tierToggleTitle}>
-                        📦 Ibenta rin bilang Buong Pack (Whole Pack)
-                      </Text>
-                    </View>
-                    <Ionicons
-                      name={editHasPackBoxTier ? 'chevron-up' : 'chevron-down'}
-                      size={18}
-                      color="#0D7A52"
-                    />
-                  </Pressable>
-
-                  {editHasPackBoxTier ? (
-                    <View style={styles.tierContainer}>
-                      <Text style={styles.tierSubtext}>
-                        Puwede itong bilhin ng buo ng suki. Kapag pinili sa New Sale, mababawas ang tamang bilang ng piraso sa stock.
-                      </Text>
-
-                      {/* Pack Tier */}
-                      <Pressable
-                        style={[styles.tierCheckboxRow, editPackEnabled ? styles.tierCheckboxRowActive : null]}
-                        onPress={() => setEditPackEnabled(!editPackEnabled)}
-                      >
-                        <Ionicons
-                          name={editPackEnabled ? 'checkbox' : 'square-outline'}
-                          size={20}
-                          color={editPackEnabled ? '#0D7A52' : '#64748B'}
-                        />
-                        <Text style={[styles.tierCheckboxLabel, editPackEnabled ? styles.tierCheckboxLabelActive : null]}>
-                          Paganahin ang Pagbenta ng Buong Pack
-                        </Text>
-                      </Pressable>
-
-                      {editPackEnabled ? (
-                        <View style={{ marginTop: 8, paddingLeft: 4 }}>
-                          <View style={styles.modalTwoColGrid}>
-                            <View style={styles.modalCol}>
-                              <Text style={styles.fieldLabel}>Piraso bawat Pack:</Text>
-                              <TextInput
-                                style={styles.textInput}
-                                value={editPackMultiplier}
-                                onChangeText={setEditPackMultiplier}
-                                placeholder="10"
-                                keyboardType="number-pad"
-                              />
-                            </View>
-                            <View style={styles.modalCol}>
-                              <Text style={styles.fieldLabel}>Presyo ng Pack (₱):</Text>
-                              <TextInput
-                                style={styles.textInput}
-                                value={editPackPricePhp}
-                                onChangeText={setEditPackPricePhp}
-                                placeholder={
-                                  editCurrentEnteredPrice > 0
-                                    ? (editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2)
-                                    : 'Hal. 125.00'
-                                }
-                                keyboardType="decimal-pad"
-                              />
-                            </View>
-                          </View>
-
-                          {/* Suki Discount Quick Suggestion Chips */}
-                          {editCurrentEnteredPrice > 0 ? (
-                            <View style={{ marginTop: 8 }}>
-                              <Text style={{ fontSize: 11, color: '#4B5563', marginBottom: 4, fontWeight: '600' }}>
-                                💡 Mungkahing Presyo ng Pack (Tingi: ₱{editCurrentEnteredPrice.toFixed(2)} × {editPackMultiplier || '10'} pcs = ₱{(editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2)}):
-                              </Text>
-                              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-                                {[
-                                  {
-                                    label: `₱${(editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2)} (Walang Bawas)`,
-                                    val: (editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2),
-                                  },
-                                  {
-                                    label: `₱${Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 5).toFixed(2)} (-₱5 Suki Bawas)`,
-                                    val: Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 5).toFixed(2),
-                                  },
-                                  {
-                                    label: `₱${Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 10).toFixed(2)} (-₱10 Suki Bawas)`,
-                                    val: Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 10).toFixed(2),
-                                  },
-                                ].map((chip) => (
-                                  <Pressable
-                                    key={chip.label}
-                                    style={[
-                                      styles.quickTuboChip,
-                                      editPackPricePhp === chip.val ? styles.quickTuboChipActive : null,
-                                    ]}
-                                    onPress={() => {
-                                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                                      setEditPackPricePhp(chip.val);
-                                    }}
-                                  >
-                                    <Text
-                                      style={[
-                                        styles.quickTuboChipText,
-                                        editPackPricePhp === chip.val ? styles.quickTuboChipTextActive : null,
-                                      ]}
-                                    >
-                                      {chip.label}
-                                    </Text>
-                                  </Pressable>
-                                ))}
-                              </View>
-                            </View>
-                          ) : null}
-
-                          <View style={{ marginTop: 8 }}>
-                            <Text style={styles.fieldLabel}>Pack Barcode (Opsyonal):</Text>
-                            <TextInput
-                              style={styles.textInput}
-                              value={editPackBarcode}
-                              onChangeText={setEditPackBarcode}
-                              placeholder="I-type o i-scan ang barcode sa pack"
-                              placeholderTextColor="#9CA3AF"
-                            />
-                          </View>
-                        </View>
-                      ) : null}
-                    </View>
-                  ) : null}
-                </View>
-              ) : null}
 
               {editError ? (
                 <View style={styles.modalErrorContainer}>
