@@ -22,7 +22,7 @@ import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScann
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 import { getTranslations } from '@/presentation/localization/i18n';
-import { ProductDTO } from '@/domain/entities/Product';
+import { ProductDTO, SellingUnitTier } from '@/domain/entities/Product';
 import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
 import {
   ConfirmationModal,
@@ -212,6 +212,18 @@ export default function InventoryManagementScreen() {
   const [editTuboMode, setEditTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
   const [editTuboValue, setEditTuboValue] = useState('');
 
+  // Multi-unit Selling Tiers (Pack / Box) for Edit Product
+  const [editHasPackBoxTier, setEditHasPackBoxTier] = useState(false);
+  const [editPackEnabled, setEditPackEnabled] = useState(false);
+  const [editPackMultiplier, setEditPackMultiplier] = useState('6');
+  const [editPackPricePhp, setEditPackPricePhp] = useState('');
+  const [editPackBarcode, setEditPackBarcode] = useState('');
+
+  const [editBoxEnabled, setEditBoxEnabled] = useState(false);
+  const [editBoxMultiplier, setEditBoxMultiplier] = useState('24');
+  const [editBoxPricePhp, setEditBoxPricePhp] = useState('');
+  const [editBoxBarcode, setEditBoxBarcode] = useState('');
+
   const editParsedStock = editUnitOfMeasure === 'kg'
     ? parseFloat(editStock.replace(/[^0-9.]/g, '') || '0')
     : parseInt(editStock.replace(/[^0-9]/g, '') || '0', 10);
@@ -329,6 +341,35 @@ export default function InventoryManagementScreen() {
     } else {
       setEditTuboValue('');
     }
+
+    // Multi-unit Selling Tiers (Pack / Box) for Edit
+    const packTier = item.sellingTiers?.find((t) => t.unitName === 'pack');
+    if (packTier) {
+      setEditPackEnabled(true);
+      setEditPackMultiplier(String(packTier.baseUnitMultiplier || 6));
+      setEditPackPricePhp(String(packTier.unitPricePhp || ''));
+      setEditPackBarcode(packTier.barcode || '');
+    } else {
+      setEditPackEnabled(false);
+      setEditPackMultiplier('6');
+      setEditPackPricePhp('');
+      setEditPackBarcode('');
+    }
+
+    const boxTier = item.sellingTiers?.find((t) => t.unitName === 'box');
+    if (boxTier) {
+      setEditBoxEnabled(true);
+      setEditBoxMultiplier(String(boxTier.baseUnitMultiplier || 24));
+      setEditBoxPricePhp(String(boxTier.unitPricePhp || ''));
+      setEditBoxBarcode(boxTier.barcode || '');
+    } else {
+      setEditBoxEnabled(false);
+      setEditBoxMultiplier('24');
+      setEditBoxPricePhp('');
+      setEditBoxBarcode('');
+    }
+
+    setEditHasPackBoxTier(Boolean(packTier || boxTier));
   };
 
   const handleSaveEditProduct = async () => {
@@ -363,6 +404,45 @@ export default function InventoryManagementScreen() {
       return;
     }
 
+    let tiers: SellingUnitTier[] | undefined;
+    if (editHasPackBoxTier && (editPackEnabled || editBoxEnabled)) {
+      tiers = [
+        { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: price }
+      ];
+      if (editPackEnabled) {
+        const pMult = parseInt(editPackMultiplier.replace(/[^0-9]/g, '') || '0', 10);
+        const pPrice = parseFloat(editPackPricePhp.replace(/[^0-9.]/g, '') || '0');
+        if (pMult <= 1 || pPrice <= 0) {
+          setEditError('Maglagay ng wastong piraso bawat pack at presyo ng pack.');
+          return;
+        }
+        tiers.push({
+          unitName: 'pack',
+          baseUnitMultiplier: pMult,
+          unitPricePhp: pPrice,
+          barcode: editPackBarcode.trim() || undefined,
+        });
+      }
+      if (editBoxEnabled) {
+        const bMult = parseInt(editBoxMultiplier.replace(/[^0-9]/g, '') || '0', 10);
+        const bPrice = parseFloat(editBoxPricePhp.replace(/[^0-9.]/g, '') || '0');
+        if (bMult <= 1 || bPrice <= 0) {
+          setEditError('Maglagay ng wastong piraso bawat box at presyo ng box.');
+          return;
+        }
+        tiers.push({
+          unitName: 'box',
+          baseUnitMultiplier: bMult,
+          unitPricePhp: bPrice,
+          barcode: editBoxBarcode.trim() || undefined,
+        });
+      }
+    } else if (editingProduct.sellingTiers && editingProduct.sellingTiers.length > 1) {
+      tiers = [
+        { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: price }
+      ];
+    }
+
     const finalUnitCost =
       editEffectiveUnitCost > 0
         ? editEffectiveUnitCost
@@ -384,6 +464,22 @@ export default function InventoryManagementScreen() {
         { label: 'Low Stock Alert', value: `${threshold} ${editUnitOfMeasure === 'kg' ? 'kg' : 'piraso'}` },
         { label: 'Kategorya', value: editCategory },
         { label: 'Petsa ng Expiry', value: editExpiryDate.trim() || 'Walang Expiry' },
+        ...(editHasPackBoxTier && editPackEnabled
+          ? [
+              {
+                label: 'Pack Unit',
+                value: `₱${parseFloat(editPackPricePhp.replace(/[^0-9.]/g, '') || '0').toFixed(2)} (${editPackMultiplier} pcs)${editPackBarcode.trim() ? ` • Barcode: ${editPackBarcode.trim()}` : ''}`,
+              },
+            ]
+          : []),
+        ...(editHasPackBoxTier && editBoxEnabled
+          ? [
+              {
+                label: 'Box Unit',
+                value: `₱${parseFloat(editBoxPricePhp.replace(/[^0-9.]/g, '') || '0').toFixed(2)} (${editBoxMultiplier} pcs)${editBoxBarcode.trim() ? ` • Barcode: ${editBoxBarcode.trim()}` : ''}`,
+              },
+            ]
+          : []),
       ],
       confirmText: '✓ I-save',
       cancelText: 'Bumalik',
@@ -401,6 +497,7 @@ export default function InventoryManagementScreen() {
             lowStockThreshold: threshold,
             unitOfMeasure: editUnitOfMeasure,
             expiryDate: editExpiryDate.trim() || null,
+            sellingTiers: tiers,
           });
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
           showToast(`✓ Na-save ang pagbabago sa "${editName.trim()}"`, 'success');
@@ -445,6 +542,18 @@ export default function InventoryManagementScreen() {
   const [bundleCostPhp, setBundleCostPhp] = useState('');
   const [tuboMode, setTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
   const [tuboValue, setTuboValue] = useState('');
+
+  // Multi-unit Selling Tiers (Pack / Box) for Add Product
+  const [hasPackBoxTier, setHasPackBoxTier] = useState(false);
+  const [packEnabled, setPackEnabled] = useState(false);
+  const [packMultiplier, setPackMultiplier] = useState('6');
+  const [packPricePhp, setPackPricePhp] = useState('');
+  const [packBarcode, setPackBarcode] = useState('');
+
+  const [boxEnabled, setBoxEnabled] = useState(false);
+  const [boxMultiplier, setBoxMultiplier] = useState('24');
+  const [boxPricePhp, setBoxPricePhp] = useState('');
+  const [boxBarcode, setBoxBarcode] = useState('');
 
   const parsedStock = newUnitOfMeasure === 'kg'
     ? parseFloat(newStock.replace(/[^0-9.]/g, '') || '0')
@@ -830,6 +939,43 @@ export default function InventoryManagementScreen() {
         : parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
       const parsedLow = parseInt(newLowThreshold.replace(/[^0-9]/g, '') || '5', 10);
 
+      let tiers: SellingUnitTier[] | undefined;
+      if (hasPackBoxTier && (packEnabled || boxEnabled)) {
+        tiers = [
+          { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: parsedPrice }
+        ];
+        if (packEnabled) {
+          const pMult = parseInt(packMultiplier.replace(/[^0-9]/g, '') || '0', 10);
+          const pPrice = parseFloat(packPricePhp.replace(/[^0-9.]/g, '') || '0');
+          if (pMult <= 1 || pPrice <= 0) {
+            setErrorMsg('Maglagay ng wastong piraso bawat pack at presyo ng pack.');
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+            return;
+          }
+          tiers.push({
+            unitName: 'pack',
+            baseUnitMultiplier: pMult,
+            unitPricePhp: pPrice,
+            barcode: packBarcode.trim() || undefined,
+          });
+        }
+        if (boxEnabled) {
+          const bMult = parseInt(boxMultiplier.replace(/[^0-9]/g, '') || '0', 10);
+          const bPrice = parseFloat(boxPricePhp.replace(/[^0-9.]/g, '') || '0');
+          if (bMult <= 1 || bPrice <= 0) {
+            setErrorMsg('Maglagay ng wastong piraso bawat box at presyo ng box.');
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+            return;
+          }
+          tiers.push({
+            unitName: 'box',
+            baseUnitMultiplier: bMult,
+            unitPricePhp: bPrice,
+            barcode: boxBarcode.trim() || undefined,
+          });
+        }
+      }
+
       const result = await addProductToDatabase({
         name: newName,
         category: newCategory,
@@ -845,6 +991,7 @@ export default function InventoryManagementScreen() {
         imageUri: newImageUri ?? undefined,
         unitOfMeasure: newUnitOfMeasure,
         expiryDate: newExpiryDate.trim() || undefined,
+        sellingTiers: tiers,
       });
 
       if (result.status === 'DUPLICATE_BARCODE_FOUND') {
@@ -877,6 +1024,15 @@ export default function InventoryManagementScreen() {
       setBundleCostPhp('');
       setTuboValue('');
       setTuboMode('PESO');
+      setHasPackBoxTier(false);
+      setPackEnabled(false);
+      setPackMultiplier('6');
+      setPackPricePhp('');
+      setPackBarcode('');
+      setBoxEnabled(false);
+      setBoxMultiplier('24');
+      setBoxPricePhp('');
+      setBoxBarcode('');
       setNewImageUri(null);
       setSearchQuery('');
       setSelectedFilter('All');
@@ -1719,6 +1875,140 @@ export default function InventoryManagementScreen() {
               />
             </View>
 
+            {/* Multi-unit Pricing & Barcodes (Pack / Box) */}
+            {newUnitOfMeasure !== 'kg' ? (
+              <View style={styles.tierSection}>
+                <Pressable
+                  style={styles.tierToggleHeader}
+                  onPress={() => setHasPackBoxTier(!hasPackBoxTier)}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
+                    <Ionicons name="cube-outline" size={18} color="#0D7A52" />
+                    <Text style={styles.tierToggleTitle}>
+                      Ibenta rin bilang Pack / Box (Multi-unit)
+                    </Text>
+                  </View>
+                  <Ionicons
+                    name={hasPackBoxTier ? 'chevron-up' : 'chevron-down'}
+                    size={18}
+                    color="#0D7A52"
+                  />
+                </Pressable>
+
+                {hasPackBoxTier ? (
+                  <View style={styles.tierContainer}>
+                    <Text style={styles.tierSubtext}>
+                      Itakda ang presyo at opsyonal na sariling barcode para sa buong Pack o Box. Kapag na-scan ang barcode ng kahon/pack sa POS, direktang mababawas ang tamang bilang ng piraso sa imbentaryo.
+                    </Text>
+
+                    {/* Pack Tier */}
+                    <Pressable
+                      style={[styles.tierCheckboxRow, packEnabled ? styles.tierCheckboxRowActive : null]}
+                      onPress={() => setPackEnabled(!packEnabled)}
+                    >
+                      <Ionicons
+                        name={packEnabled ? 'checkbox' : 'square-outline'}
+                        size={20}
+                        color={packEnabled ? '#0D7A52' : '#64748B'}
+                      />
+                      <Text style={[styles.tierCheckboxLabel, packEnabled ? styles.tierCheckboxLabelActive : null]}>
+                        Ibenta bilang Pack (Hal. 6 pcs o 12 pcs)
+                      </Text>
+                    </Pressable>
+
+                    {packEnabled ? (
+                      <View style={{ marginTop: 8, paddingLeft: 4 }}>
+                        <View style={styles.modalTwoColGrid}>
+                          <View style={styles.modalCol}>
+                            <Text style={styles.fieldLabel}>Piraso bawat Pack:</Text>
+                            <TextInput
+                              style={styles.textInput}
+                              value={packMultiplier}
+                              onChangeText={setPackMultiplier}
+                              placeholder="6"
+                              keyboardType="number-pad"
+                            />
+                          </View>
+                          <View style={styles.modalCol}>
+                            <Text style={styles.fieldLabel}>Presyo ng Pack (₱):</Text>
+                            <TextInput
+                              style={styles.textInput}
+                              value={packPricePhp}
+                              onChangeText={setPackPricePhp}
+                              placeholder="Hal. 55.00"
+                              keyboardType="decimal-pad"
+                            />
+                          </View>
+                        </View>
+                        <View style={{ marginTop: 6 }}>
+                          <Text style={styles.fieldLabel}>Pack Barcode (Opsyonal):</Text>
+                          <TextInput
+                            style={styles.textInput}
+                            value={packBarcode}
+                            onChangeText={setPackBarcode}
+                            placeholder="I-type o i-scan ang barcode ng pack"
+                            placeholderTextColor="#9CA3AF"
+                          />
+                        </View>
+                      </View>
+                    ) : null}
+
+                    {/* Box Tier */}
+                    <Pressable
+                      style={[styles.tierCheckboxRow, boxEnabled ? styles.tierCheckboxRowActive : null, { marginTop: 10 }]}
+                      onPress={() => setBoxEnabled(!boxEnabled)}
+                    >
+                      <Ionicons
+                        name={boxEnabled ? 'checkbox' : 'square-outline'}
+                        size={20}
+                        color={boxEnabled ? '#0D7A52' : '#64748B'}
+                      />
+                      <Text style={[styles.tierCheckboxLabel, boxEnabled ? styles.tierCheckboxLabelActive : null]}>
+                        Ibenta bilang Box / Kahon (Hal. 24 pcs)
+                      </Text>
+                    </Pressable>
+
+                    {boxEnabled ? (
+                      <View style={{ marginTop: 8, paddingLeft: 4 }}>
+                        <View style={styles.modalTwoColGrid}>
+                          <View style={styles.modalCol}>
+                            <Text style={styles.fieldLabel}>Piraso bawat Box:</Text>
+                            <TextInput
+                              style={styles.textInput}
+                              value={boxMultiplier}
+                              onChangeText={setBoxMultiplier}
+                              placeholder="24"
+                              keyboardType="number-pad"
+                            />
+                          </View>
+                          <View style={styles.modalCol}>
+                            <Text style={styles.fieldLabel}>Presyo ng Box (₱):</Text>
+                            <TextInput
+                              style={styles.textInput}
+                              value={boxPricePhp}
+                              onChangeText={setBoxPricePhp}
+                              placeholder="Hal. 200.00"
+                              keyboardType="decimal-pad"
+                            />
+                          </View>
+                        </View>
+                        <View style={{ marginTop: 6 }}>
+                          <Text style={styles.fieldLabel}>Box Barcode (Opsyonal):</Text>
+                          <TextInput
+                            style={styles.textInput}
+                            value={boxBarcode}
+                            onChangeText={setBoxBarcode}
+                            placeholder="I-type o i-scan ang barcode sa labas ng kahon"
+                            placeholderTextColor="#9CA3AF"
+                          />
+                        </View>
+                      </View>
+                    ) : null}
+                  </View>
+                ) : null}
+              </View>
+            ) : null}
+
             {errorMsg ? (
               <View style={styles.formErrorBox}>
                 <Text style={styles.formErrorText}>⚠️ {errorMsg}</Text>
@@ -1884,6 +2174,19 @@ export default function InventoryManagementScreen() {
                       </Pressable>
                     </View>
                   </View>
+
+                  {/* Multi-unit Selling Tiers Summary */}
+                  {item.sellingTiers && item.sellingTiers.length > 1 ? (
+                    <View style={styles.itemTiersSummaryBadge}>
+                      <Text style={styles.itemTierBadgeHeader}>Multi-unit Selling Tiers:</Text>
+                      {item.sellingTiers.map((tier) => (
+                        <Text key={tier.unitName} style={styles.itemTierBadgeText}>
+                          • {tier.unitName.toUpperCase()}: ₱{tier.unitPricePhp.toFixed(2)} ({tier.baseUnitMultiplier} pcs)
+                          {tier.barcode ? ` [Barcode: ${tier.barcode}]` : ''}
+                        </Text>
+                      ))}
+                    </View>
+                  ) : null}
 
                   {/* Custom Restock Input Row */}
                   <View style={styles.customRestockRow}>
@@ -2599,6 +2902,140 @@ export default function InventoryManagementScreen() {
                   maxLength={10}
                 />
               </View>
+
+              {/* Multi-unit Pricing & Barcodes (Pack / Box) */}
+              {editUnitOfMeasure !== 'kg' ? (
+                <View style={[styles.tierSection, { marginTop: 12 }]}>
+                  <Pressable
+                    style={styles.tierToggleHeader}
+                    onPress={() => setEditHasPackBoxTier(!editHasPackBoxTier)}
+                  >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
+                      <Ionicons name="cube-outline" size={18} color="#0D7A52" />
+                      <Text style={styles.tierToggleTitle}>
+                        Ibenta rin bilang Pack / Box (Multi-unit)
+                      </Text>
+                    </View>
+                    <Ionicons
+                      name={editHasPackBoxTier ? 'chevron-up' : 'chevron-down'}
+                      size={18}
+                      color="#0D7A52"
+                    />
+                  </Pressable>
+
+                  {editHasPackBoxTier ? (
+                    <View style={styles.tierContainer}>
+                      <Text style={styles.tierSubtext}>
+                        Itakda ang presyo at sariling barcode para sa buong Pack o Box. Kapag na-scan ang barcode ng box/pack sa POS, mababawas pa rin ang tamang bilang ng piraso sa stock.
+                      </Text>
+
+                      {/* Pack Tier */}
+                      <Pressable
+                        style={[styles.tierCheckboxRow, editPackEnabled ? styles.tierCheckboxRowActive : null]}
+                        onPress={() => setEditPackEnabled(!editPackEnabled)}
+                      >
+                        <Ionicons
+                          name={editPackEnabled ? 'checkbox' : 'square-outline'}
+                          size={20}
+                          color={editPackEnabled ? '#0D7A52' : '#64748B'}
+                        />
+                        <Text style={[styles.tierCheckboxLabel, editPackEnabled ? styles.tierCheckboxLabelActive : null]}>
+                          Ibenta bilang Pack (Hal. 6 pcs o 12 pcs)
+                        </Text>
+                      </Pressable>
+
+                      {editPackEnabled ? (
+                        <View style={{ marginTop: 8, paddingLeft: 4 }}>
+                          <View style={styles.modalTwoColGrid}>
+                            <View style={styles.modalCol}>
+                              <Text style={styles.fieldLabel}>Piraso bawat Pack:</Text>
+                              <TextInput
+                                style={styles.textInput}
+                                value={editPackMultiplier}
+                                onChangeText={setEditPackMultiplier}
+                                placeholder="6"
+                                keyboardType="number-pad"
+                              />
+                            </View>
+                            <View style={styles.modalCol}>
+                              <Text style={styles.fieldLabel}>Presyo ng Pack (₱):</Text>
+                              <TextInput
+                                style={styles.textInput}
+                                value={editPackPricePhp}
+                                onChangeText={setEditPackPricePhp}
+                                placeholder="Hal. 55.00"
+                                keyboardType="decimal-pad"
+                              />
+                            </View>
+                          </View>
+                          <View style={{ marginTop: 6 }}>
+                            <Text style={styles.fieldLabel}>Pack Barcode (Opsyonal):</Text>
+                            <TextInput
+                              style={styles.textInput}
+                              value={editPackBarcode}
+                              onChangeText={setEditPackBarcode}
+                              placeholder="I-type o i-scan ang barcode sa pack"
+                              placeholderTextColor="#9CA3AF"
+                            />
+                          </View>
+                        </View>
+                      ) : null}
+
+                      {/* Box Tier */}
+                      <Pressable
+                        style={[styles.tierCheckboxRow, editBoxEnabled ? styles.tierCheckboxRowActive : null, { marginTop: 10 }]}
+                        onPress={() => setEditBoxEnabled(!editBoxEnabled)}
+                      >
+                        <Ionicons
+                          name={editBoxEnabled ? 'checkbox' : 'square-outline'}
+                          size={20}
+                          color={editBoxEnabled ? '#0D7A52' : '#64748B'}
+                        />
+                        <Text style={[styles.tierCheckboxLabel, editBoxEnabled ? styles.tierCheckboxLabelActive : null]}>
+                          Ibenta bilang Box / Kahon (Hal. 24 pcs)
+                        </Text>
+                      </Pressable>
+
+                      {editBoxEnabled ? (
+                        <View style={{ marginTop: 8, paddingLeft: 4 }}>
+                          <View style={styles.modalTwoColGrid}>
+                            <View style={styles.modalCol}>
+                              <Text style={styles.fieldLabel}>Piraso bawat Box:</Text>
+                              <TextInput
+                                style={styles.textInput}
+                                value={editBoxMultiplier}
+                                onChangeText={setEditBoxMultiplier}
+                                placeholder="24"
+                                keyboardType="number-pad"
+                              />
+                            </View>
+                            <View style={styles.modalCol}>
+                              <Text style={styles.fieldLabel}>Presyo ng Box (₱):</Text>
+                              <TextInput
+                                style={styles.textInput}
+                                value={editBoxPricePhp}
+                                onChangeText={setEditBoxPricePhp}
+                                placeholder="Hal. 200.00"
+                                keyboardType="decimal-pad"
+                              />
+                            </View>
+                          </View>
+                          <View style={{ marginTop: 6 }}>
+                            <Text style={styles.fieldLabel}>Box Barcode (Opsyonal):</Text>
+                            <TextInput
+                              style={styles.textInput}
+                              value={editBoxBarcode}
+                              onChangeText={setEditBoxBarcode}
+                              placeholder="I-type o i-scan ang barcode sa kahon"
+                              placeholderTextColor="#9CA3AF"
+                            />
+                          </View>
+                        </View>
+                      ) : null}
+                    </View>
+                  ) : null}
+                </View>
+              ) : null}
 
               {editError ? (
                 <View style={styles.modalErrorContainer}>
@@ -4174,5 +4611,80 @@ const styles = StyleSheet.create({
     color: '#92400E',
     fontWeight: '600',
     lineHeight: 15,
+  },
+  tierSection: {
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 12,
+    backgroundColor: '#F8FAFC',
+    overflow: 'hidden',
+  },
+  tierToggleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    backgroundColor: '#F1F5F9',
+  },
+  tierToggleTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  tierContainer: {
+    padding: 12,
+  },
+  tierSubtext: {
+    fontSize: 11,
+    color: '#64748B',
+    marginBottom: 10,
+    lineHeight: 16,
+  },
+  tierCheckboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  tierCheckboxRowActive: {
+    borderColor: '#0D7A52',
+    backgroundColor: '#ECFDF5',
+  },
+  tierCheckboxLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#334155',
+  },
+  tierCheckboxLabelActive: {
+    color: '#0D7A52',
+    fontWeight: '700',
+  },
+  itemTiersSummaryBadge: {
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    borderRadius: 8,
+    padding: 8,
+    marginTop: 8,
+    marginBottom: 6,
+    gap: 2,
+  },
+  itemTierBadgeHeader: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#166534',
+    marginBottom: 2,
+  },
+  itemTierBadgeText: {
+    fontSize: 11,
+    color: '#15803D',
+    fontWeight: '600',
   },
 });

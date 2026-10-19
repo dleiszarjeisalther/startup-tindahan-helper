@@ -63,6 +63,7 @@ export class InMemoryProductRepository implements IProductRepository {
             unitName: t.unitName || 'piece',
             baseUnitMultiplier: Number(t.baseUnitMultiplier) || 1,
             unitPricePhp: Number(t.unitPricePhp) || fallbackPrice,
+            barcode: t.barcode ? String(t.barcode).trim() : undefined,
           }));
         }
       }

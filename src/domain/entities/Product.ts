@@ -6,6 +6,7 @@ export interface SellingUnitTier {
   unitName: 'piece' | 'bundle' | 'pack' | 'box' | 'case';
   baseUnitMultiplier: number;
   unitPricePhp: number;
+  barcode?: string;
   unitBarcode?: Barcode;
 }
 
@@ -360,10 +361,24 @@ export class Product {
       visual: this._visual ?? this.getDefaultVisual(),
       unitOfMeasure: this._unitOfMeasure,
       formattedUnit: this._unitOfMeasure === 'kg' ? 'kg' : 'pc',
-      formattedStock:
-        this._unitOfMeasure === 'kg'
-          ? `${Number(this._baseStockCount.toFixed(3))} kg`
-          : `${Math.floor(this._baseStockCount)} pcs`,
+      formattedStock: (() => {
+        if (this._unitOfMeasure === 'kg') {
+          return `${Number(this._baseStockCount.toFixed(3))} kg`;
+        }
+        const basePcs = Math.floor(this._baseStockCount);
+        const parts: string[] = [`${basePcs} pcs`];
+        const boxTier = this._sellingTiers.find((t) => t.unitName === 'box');
+        if (boxTier && boxTier.baseUnitMultiplier > 1) {
+          const boxes = Math.floor(basePcs / boxTier.baseUnitMultiplier);
+          parts.push(`${boxes} box${boxes === 1 ? '' : 'es'}`);
+        }
+        const packTier = this._sellingTiers.find((t) => t.unitName === 'pack');
+        if (packTier && packTier.baseUnitMultiplier > 1) {
+          const packs = Math.floor(basePcs / packTier.baseUnitMultiplier);
+          parts.push(`${packs} pack${packs === 1 ? '' : 's'}`);
+        }
+        return parts.join(' • ');
+      })(),
       expiryDate: this._expiryDate,
       expiryStatus: this.getExpiryStatus(),
       daysUntilExpiry: this.daysUntilExpiry,

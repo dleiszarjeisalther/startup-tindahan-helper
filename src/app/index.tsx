@@ -114,41 +114,75 @@ export default function PosScanProductScreen() {
     lastScanTimestampRef.current = now;
     lastScannedBarcodeRef.current = clean;
 
-    const matched = products.find(
-      (p) =>
+    let matchedProduct: ProductDTO | undefined;
+    let matchedTier: (typeof products)[0]['sellingTiers'][0] | undefined;
+
+    for (const p of products) {
+      // Check specific pack / box tier barcodes first
+      const foundTier = p.sellingTiers?.find(
+        (t) => t.barcode && t.barcode.trim().toUpperCase() === clean
+      );
+      if (foundTier) {
+        matchedProduct = p;
+        matchedTier = foundTier;
+        break;
+      }
+      // Check primary product barcode
+      if (
         p.barcode.toUpperCase() === clean ||
         p.barcode.toUpperCase().endsWith(clean)
-    );
+      ) {
+        matchedProduct = p;
+        matchedTier = p.sellingTiers?.find((t) => t.unitName === 'piece');
+        break;
+      }
+    }
 
-    if (matched) {
-      console.log(`[POS Screen] ✓ Product matched: "${matched.name}" (ID: ${matched.id}, Price: ₱${matched.defaultPricePhp}, Stock: ${matched.stockCount})`);
-      setLastScannedProductId(matched.id);
-      if (matched.stockCount <= 0) {
-        console.log(`[POS Screen] ⚠️ Product "${matched.name}" is OUT OF STOCK.`);
+    if (matchedProduct) {
+      console.log(`[POS Screen] ✓ Product matched: "${matchedProduct.name}" (ID: ${matchedProduct.id}, Unit: ${matchedTier?.unitName ?? 'piece'})`);
+      setLastScannedProductId(matchedProduct.id);
+      if (matchedProduct.stockCount <= 0) {
+        console.log(`[POS Screen] ⚠️ Product "${matchedProduct.name}" is OUT OF STOCK.`);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
         triggerScanToast(`⚠️ Out of Stock — This product is currently unavailable.`);
         return;
       }
-      if (matched.unitOfMeasure === 'kg') {
+      if (matchedProduct.unitOfMeasure === 'kg') {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
         setWeightModalProduct({
-          id: matched.id,
-          name: matched.name,
-          defaultPricePhp: matched.defaultPricePhp,
-          stockCount: matched.stockCount,
-          formattedPrice: matched.formattedPrice,
-          unitOfMeasure: matched.unitOfMeasure,
+          id: matchedProduct.id,
+          name: matchedProduct.name,
+          defaultPricePhp: matchedProduct.defaultPricePhp,
+          stockCount: matchedProduct.stockCount,
+          formattedPrice: matchedProduct.formattedPrice,
+          unitOfMeasure: matchedProduct.unitOfMeasure,
         });
         setUnknownBarcode(null);
         return;
       }
-      if (matched.sellingTiers && matched.sellingTiers.length > 1) {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-        setUnitModalProduct(matched);
-        setUnknownBarcode(null);
+
+      // If outer pack/box barcode was scanned, directly add that pack/box
+      if (matchedTier && matchedTier.unitName !== 'piece') {
+        const tierMultiplier = matchedTier.baseUnitMultiplier || 1;
+        if (matchedProduct.stockCount < tierMultiplier) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+          triggerScanToast(`⚠️ Kulang ang stock para sa 1 ${matchedTier.unitName} (${tierMultiplier} pcs kailangan).`);
+          return;
+        }
+        if (
+          tryAddToCart(
+            matchedProduct.id,
+            `✓ Scanned +1 ${matchedTier.unitName.toUpperCase()} ng ${matchedProduct.name} (₱${matchedTier.unitPricePhp.toFixed(2)})`,
+            matchedTier.unitName
+          )
+        ) {
+          setUnknownBarcode(null);
+        }
         return;
       }
-      if (tryAddToCart(matched.id, `✓ Scanned +1 ${matched.name} (${matched.formattedPrice})`)) {
+
+      // If piece barcode was scanned, add 1 piece directly
+      if (tryAddToCart(matchedProduct.id, `✓ Scanned +1 ${matchedProduct.name} (${matchedProduct.formattedPrice})`, 'piece')) {
         setUnknownBarcode(null);
       }
     } else {

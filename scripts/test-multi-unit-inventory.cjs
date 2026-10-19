@@ -81,12 +81,91 @@ function runMultiUnitTests() {
 
   // Test 6: Pricing calculations
   const boxTier = getTier('box');
-  const packTier = getTier('pack');
-  const pieceTier = getTier('piece');
-
   const lineTotalBox = boxTier.unitPricePhp * 2;
   assert.strictEqual(lineTotalBox, 330.00, 'Expected ₱330.00 for 2 boxes');
   console.log('✓ Test 6: Box unit line total verified (2 × ₱165.00 = ₱330.00)');
+
+  // Test 7: SQLite selling_tiers_json serialization & deserialization with barcodes
+  const originalTiers = [
+    { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: 15.00 },
+    { unitName: 'pack', baseUnitMultiplier: 6, unitPricePhp: 85.00, barcode: 'PACK-4800016644' },
+    { unitName: 'box', baseUnitMultiplier: 24, unitPricePhp: 320.00, barcode: 'BOX-4800016699' },
+  ];
+  const serialized = JSON.stringify(originalTiers);
+  const deserialized = JSON.parse(serialized).map((t) => ({
+    unitName: t.unitName || 'piece',
+    baseUnitMultiplier: Number(t.baseUnitMultiplier) || 1,
+    unitPricePhp: Number(t.unitPricePhp) || 0,
+    barcode: t.barcode ? String(t.barcode).trim() : undefined,
+  }));
+  assert.strictEqual(deserialized.length, 3);
+  assert.strictEqual(deserialized[1].barcode, 'PACK-4800016644');
+  assert.strictEqual(deserialized[2].barcode, 'BOX-4800016699');
+  console.log('✓ Test 7: SQLite selling_tiers_json serialization and barcode restoration verified');
+
+  // Test 8: Barcode scanner matching logic
+  const mockProducts = [
+    {
+      id: 'p1',
+      name: 'Lucky Me Pancit Canton',
+      barcode: '4800016640001',
+      stockCount: 60,
+      sellingTiers: deserialized,
+    },
+  ];
+
+  function matchBarcode(cleanCode) {
+    for (const p of mockProducts) {
+      const foundTier = p.sellingTiers?.find(
+        (t) => t.barcode && t.barcode.trim().toUpperCase() === cleanCode
+      );
+      if (foundTier) return { product: p, tier: foundTier };
+      if (p.barcode.toUpperCase() === cleanCode) {
+        return { product: p, tier: p.sellingTiers?.find((t) => t.unitName === 'piece') };
+      }
+    }
+    return null;
+  }
+
+  // Scanning pack barcode should return pack tier
+  const scanPack = matchBarcode('PACK-4800016644');
+  assert.ok(scanPack);
+  assert.strictEqual(scanPack.tier.unitName, 'pack');
+  assert.strictEqual(scanPack.tier.unitPricePhp, 85.00);
+  console.log('✓ Test 8: Scanning pack tier barcode directly matches pack tier with correct price');
+
+  // Scanning box barcode should return box tier
+  const scanBox = matchBarcode('BOX-4800016699');
+  assert.ok(scanBox);
+  assert.strictEqual(scanBox.tier.unitName, 'box');
+  assert.strictEqual(scanBox.tier.unitPricePhp, 320.00);
+  console.log('✓ Test 9: Scanning box tier barcode directly matches box tier with correct price');
+
+  // Scanning product primary barcode should match piece tier
+  const scanPiece = matchBarcode('4800016640001');
+  assert.ok(scanPiece);
+  assert.strictEqual(scanPiece.tier.unitName, 'piece');
+  console.log('✓ Test 10: Scanning piece primary barcode matches piece tier');
+
+  // Test 11: Dynamic formattedStock calculation
+  function formatStock(basePcs, tiers) {
+    const parts = [`${basePcs} pcs`];
+    const box = tiers.find((t) => t.unitName === 'box');
+    if (box && box.baseUnitMultiplier > 1) {
+      const boxes = Math.floor(basePcs / box.baseUnitMultiplier);
+      parts.push(`${boxes} box${boxes === 1 ? '' : 'es'}`);
+    }
+    const pack = tiers.find((t) => t.unitName === 'pack');
+    if (pack && pack.baseUnitMultiplier > 1) {
+      const packs = Math.floor(basePcs / pack.baseUnitMultiplier);
+      parts.push(`${packs} pack${packs === 1 ? '' : 's'}`);
+    }
+    return parts.join(' • ');
+  }
+
+  const formatted = formatStock(60, originalTiers);
+  assert.strictEqual(formatted, '60 pcs • 2 boxes • 10 packs');
+  console.log(`✓ Test 11: formattedStock calculation verified: "${formatted}"`);
 
   console.log('--- ALL MULTI-UNIT SELLING TESTS PASSED ---');
 }
