@@ -17,7 +17,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
-import { PaymentTenderType, SaleTransactionRecord } from '@/application/TindahanStoreService';
+import { UnitSelectionModal } from '@/presentation/components/UnitSelectionModal';
+import { ProductDTO, SellingUnitTier } from '@/domain/entities/Product';
+import { PaymentTenderType, SaleTransactionRecord, CartItemDTO } from '@/application/TindahanStoreService';
 import { Money } from '@/domain/value-objects/Money';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { FloatingToast, ToastType } from '@/presentation/components/FloatingToast';
@@ -178,6 +180,7 @@ export default function CheckoutNewSaleScreen() {
     completeSale,
     cartRevision,
     version,
+    updateProductDetails,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
@@ -202,6 +205,7 @@ export default function CheckoutNewSaleScreen() {
   const [convenienceFeePhp, setConvenienceFeePhp] = useState<number>(0);
   const [showPrinterModal, setShowPrinterModal] = useState<boolean>(false);
   const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
+  const [unitModalSelection, setUnitModalSelection] = useState<{ product: ProductDTO; item: CartItemDTO } | null>(null);
   const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
@@ -242,6 +246,43 @@ export default function CheckoutNewSaleScreen() {
       );
     }
   }, []);
+
+  const handleUnitSwitch = (
+    newUnit: 'piece' | 'pack' | 'box',
+    _multiplier: number,
+    _price: number
+  ) => {
+    if (!unitModalSelection) return;
+    const { product, item } = unitModalSelection;
+    if (item.unit !== newUnit) {
+      runCartAction(() => {
+        // Reset the old unit cart entry to 0
+        setCartItemQuantity(item.cartKey ?? item.productId, 0);
+        // Add the new unit cart entry with the desired quantity
+        addToCart(product.id, item.quantity, newUnit);
+      });
+      showToast(
+        `✓ Pinalitan sa ${
+          newUnit === 'pack'
+            ? 'Whole Pack'
+            : newUnit === 'box'
+            ? 'Whole Box'
+            : 'Per Piece'
+        } (${product.name})`
+      );
+    }
+    setUnitModalSelection(null);
+  };
+
+  const handleSaveUnitConfig = async (tiers: SellingUnitTier[]) => {
+    if (!unitModalSelection) return;
+    try {
+      await updateProductDetails(unitModalSelection.product.id, { sellingTiers: tiers });
+      showToast(`✓ Na-update ang pack settings para sa ${unitModalSelection.product.name}`);
+    } catch (e) {
+      console.error('[Checkout Screen] Failed to save tiers:', e);
+    }
+  };
 
   useEffect(() => {
     if (
@@ -477,7 +518,14 @@ export default function CheckoutNewSaleScreen() {
                     idx < cartSummary.items.length - 1 ? styles.cartItemBorder : null,
                   ]}
                 >
-                  <View style={styles.thumbBox}>
+                  <Pressable
+                    style={styles.thumbBox}
+                    onPress={() => {
+                      if (prod && prod.unitOfMeasure !== 'kg') {
+                        setUnitModalSelection({ product: prod, item });
+                      }
+                    }}
+                  >
                     {prod ? (
                       <ProductThumbnail
                         visual={prod.visual}
@@ -485,15 +533,49 @@ export default function CheckoutNewSaleScreen() {
                         size="md"
                       />
                     ) : null}
-                  </View>
+                  </Pressable>
 
                   <View style={styles.itemCenterCol}>
-                    <Text style={styles.itemName}>
-                      {item.name}
-                      {item.unit && item.unit !== 'piece'
-                        ? ` [${item.unit.toUpperCase()} of ${item.unitMultiplier ?? 1}]`
-                        : ''}
-                    </Text>
+                    <Pressable
+                      onPress={() => {
+                        if (prod && prod.unitOfMeasure !== 'kg') {
+                          setUnitModalSelection({ product: prod, item });
+                        }
+                      }}
+                    >
+                      <Text style={styles.itemName}>
+                        {item.name}
+                      </Text>
+                      {prod?.unitOfMeasure !== 'kg' ? (
+                        <View style={styles.cartUnitSwitchRow}>
+                          <View
+                            style={[
+                              styles.cartUnitBadge,
+                              item.unit === 'pack' ? styles.cartUnitBadgePack : styles.cartUnitBadgePiece,
+                            ]}
+                          >
+                            <Ionicons
+                              name={item.unit === 'pack' ? 'layers' : item.unit === 'box' ? 'cube' : 'pricetag'}
+                              size={11}
+                              color={item.unit === 'pack' ? '#0D7A52' : '#374151'}
+                            />
+                            <Text
+                              style={[
+                                styles.cartUnitBadgeText,
+                                item.unit === 'pack' ? styles.cartUnitBadgeTextPack : null,
+                              ]}
+                            >
+                              {item.unit === 'pack'
+                                ? `Whole Pack (${item.unitMultiplier ?? 10} pcs)`
+                                : item.unit === 'box'
+                                ? `Whole Box (${item.unitMultiplier ?? 1} pcs)`
+                                : 'Per Piece'}
+                            </Text>
+                            <Text style={styles.cartUnitBadgePalitanText}>• Palitan ›</Text>
+                          </View>
+                        </View>
+                      ) : null}
+                    </Pressable>
                     <View style={styles.unitPriceRow}>
                       <Text style={styles.itemUnitPrice}>
                         {item.formattedUnitPrice}
@@ -1193,6 +1275,15 @@ export default function CheckoutNewSaleScreen() {
         }
         onClose={() => setShowPrinterModal(false)}
       />
+
+      <UnitSelectionModal
+        visible={unitModalSelection !== null}
+        product={unitModalSelection?.product ?? null}
+        currentUnit={unitModalSelection?.item.unit ?? 'piece'}
+        onClose={() => setUnitModalSelection(null)}
+        onSelectUnit={handleUnitSwitch}
+        onSaveTierConfig={handleSaveUnitConfig}
+      />
     </SafeAreaView>
   );
 }
@@ -1431,6 +1522,44 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#111827',
+  },
+  cartUnitSwitchRow: {
+    marginTop: 2,
+    marginBottom: 2,
+    flexDirection: 'row',
+  },
+  cartUnitBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  cartUnitBadgePack: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
+  },
+  cartUnitBadgePiece: {
+    backgroundColor: '#F9FAFB',
+    borderColor: '#E5E7EB',
+  },
+  cartUnitBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#374151',
+  },
+  cartUnitBadgeTextPack: {
+    color: '#0D7A52',
+  },
+  cartUnitBadgePalitanText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#0D7A52',
+    marginLeft: 2,
   },
   unitPriceRow: {
     flexDirection: 'row',
