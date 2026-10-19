@@ -212,17 +212,12 @@ export default function InventoryManagementScreen() {
   const [editTuboMode, setEditTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
   const [editTuboValue, setEditTuboValue] = useState('');
 
-  // Multi-unit Selling Tiers (Pack / Box) for Edit Product
+  // Multi-unit Selling Tiers (Pack) for Edit Product
   const [editHasPackBoxTier, setEditHasPackBoxTier] = useState(false);
   const [editPackEnabled, setEditPackEnabled] = useState(false);
-  const [editPackMultiplier, setEditPackMultiplier] = useState('6');
+  const [editPackMultiplier, setEditPackMultiplier] = useState('10');
   const [editPackPricePhp, setEditPackPricePhp] = useState('');
   const [editPackBarcode, setEditPackBarcode] = useState('');
-
-  const [editBoxEnabled, setEditBoxEnabled] = useState(false);
-  const [editBoxMultiplier, setEditBoxMultiplier] = useState('24');
-  const [editBoxPricePhp, setEditBoxPricePhp] = useState('');
-  const [editBoxBarcode, setEditBoxBarcode] = useState('');
 
   const editParsedStock = editUnitOfMeasure === 'kg'
     ? parseFloat(editStock.replace(/[^0-9.]/g, '') || '0')
@@ -342,34 +337,21 @@ export default function InventoryManagementScreen() {
       setEditTuboValue('');
     }
 
-    // Multi-unit Selling Tiers (Pack / Box) for Edit
-    const packTier = item.sellingTiers?.find((t) => t.unitName === 'pack');
+    // Multi-unit Selling Tiers (Pack) for Edit
+    const packTier = item.sellingTiers?.find((t) => t.unitName === 'pack' || t.unitName === 'bundle');
     if (packTier) {
       setEditPackEnabled(true);
-      setEditPackMultiplier(String(packTier.baseUnitMultiplier || 6));
+      setEditPackMultiplier(String(packTier.baseUnitMultiplier || 10));
       setEditPackPricePhp(String(packTier.unitPricePhp || ''));
       setEditPackBarcode(packTier.unitBarcode?.value || packTier.barcode || '');
     } else {
       setEditPackEnabled(false);
-      setEditPackMultiplier('6');
+      setEditPackMultiplier('10');
       setEditPackPricePhp('');
       setEditPackBarcode('');
     }
 
-    const boxTier = item.sellingTiers?.find((t) => t.unitName === 'box');
-    if (boxTier) {
-      setEditBoxEnabled(true);
-      setEditBoxMultiplier(String(boxTier.baseUnitMultiplier || 24));
-      setEditBoxPricePhp(String(boxTier.unitPricePhp || ''));
-      setEditBoxBarcode(boxTier.unitBarcode?.value || boxTier.barcode || '');
-    } else {
-      setEditBoxEnabled(false);
-      setEditBoxMultiplier('24');
-      setEditBoxPricePhp('');
-      setEditBoxBarcode('');
-    }
-
-    setEditHasPackBoxTier(Boolean(packTier || boxTier));
+    setEditHasPackBoxTier(Boolean(packTier));
   };
 
   const handleSaveEditProduct = async () => {
@@ -405,38 +387,22 @@ export default function InventoryManagementScreen() {
     }
 
     let tiers: SellingUnitTier[] | undefined;
-    if (editHasPackBoxTier && (editPackEnabled || editBoxEnabled)) {
+    if (editHasPackBoxTier && editPackEnabled) {
+      const pMult = parseInt(editPackMultiplier.replace(/[^0-9]/g, '') || '0', 10);
+      const pPrice = parseFloat(editPackPricePhp.replace(/[^0-9.]/g, '') || '0');
+      if (pMult <= 1 || pPrice <= 0) {
+        setEditError('Maglagay ng wastong piraso bawat pack at presyo ng pack.');
+        return;
+      }
       tiers = [
-        { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: price }
-      ];
-      if (editPackEnabled) {
-        const pMult = parseInt(editPackMultiplier.replace(/[^0-9]/g, '') || '0', 10);
-        const pPrice = parseFloat(editPackPricePhp.replace(/[^0-9.]/g, '') || '0');
-        if (pMult <= 1 || pPrice <= 0) {
-          setEditError('Maglagay ng wastong piraso bawat pack at presyo ng pack.');
-          return;
-        }
-        tiers.push({
+        { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: price },
+        {
           unitName: 'pack',
           baseUnitMultiplier: pMult,
           unitPricePhp: pPrice,
           barcode: editPackBarcode.trim() || undefined,
-        });
-      }
-      if (editBoxEnabled) {
-        const bMult = parseInt(editBoxMultiplier.replace(/[^0-9]/g, '') || '0', 10);
-        const bPrice = parseFloat(editBoxPricePhp.replace(/[^0-9.]/g, '') || '0');
-        if (bMult <= 1 || bPrice <= 0) {
-          setEditError('Maglagay ng wastong piraso bawat box at presyo ng box.');
-          return;
-        }
-        tiers.push({
-          unitName: 'box',
-          baseUnitMultiplier: bMult,
-          unitPricePhp: bPrice,
-          barcode: editBoxBarcode.trim() || undefined,
-        });
-      }
+        },
+      ];
     } else if (editingProduct.sellingTiers && editingProduct.sellingTiers.length > 1) {
       tiers = [
         { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: price }
@@ -469,14 +435,6 @@ export default function InventoryManagementScreen() {
               {
                 label: 'Pack Unit',
                 value: `₱${parseFloat(editPackPricePhp.replace(/[^0-9.]/g, '') || '0').toFixed(2)} (${editPackMultiplier} pcs)${editPackBarcode.trim() ? ` • Barcode: ${editPackBarcode.trim()}` : ''}`,
-              },
-            ]
-          : []),
-        ...(editHasPackBoxTier && editBoxEnabled
-          ? [
-              {
-                label: 'Box Unit',
-                value: `₱${parseFloat(editBoxPricePhp.replace(/[^0-9.]/g, '') || '0').toFixed(2)} (${editBoxMultiplier} pcs)${editBoxBarcode.trim() ? ` • Barcode: ${editBoxBarcode.trim()}` : ''}`,
               },
             ]
           : []),
@@ -542,40 +500,46 @@ export default function InventoryManagementScreen() {
   const [bundleCostPhp, setBundleCostPhp] = useState('');
   const [tuboMode, setTuboMode] = useState<'PESO' | 'PERCENT'>('PESO');
   const [tuboValue, setTuboValue] = useState('');
+  const [packPiecesCount, setPackPiecesCount] = useState('10');
+  const [bundlePacksCount, setBundlePacksCount] = useState('1');
 
-  // Multi-unit Selling Tiers (Pack / Box) for Add Product
+  // Multi-unit Selling Tiers (Pack) for Add Product
   const [hasPackBoxTier, setHasPackBoxTier] = useState(false);
   const [packEnabled, setPackEnabled] = useState(false);
-  const [packMultiplier, setPackMultiplier] = useState('6');
+  const [packMultiplier, setPackMultiplier] = useState('10');
   const [packPricePhp, setPackPricePhp] = useState('');
   const [packBarcode, setPackBarcode] = useState('');
 
-  const [boxEnabled, setBoxEnabled] = useState(false);
-  const [boxMultiplier, setBoxMultiplier] = useState('24');
-  const [boxPricePhp, setBoxPricePhp] = useState('');
-  const [boxBarcode, setBoxBarcode] = useState('');
-
-  const parsedStock = newUnitOfMeasure === 'kg'
-    ? parseFloat(newStock.replace(/[^0-9.]/g, '') || '0')
-    : parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+  const packPiecesCountNum = parseInt(packPiecesCount.replace(/[^0-9]/g, '') || '10', 10);
+  const bundlePacksCountNum = parseInt(bundlePacksCount.replace(/[^0-9]/g, '') || '1', 10);
   const bundleCostParsed = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
   const pieceCostParsed = parseFloat(newCostPhp.replace(/[^0-9.]/g, '') || '0');
+
+  const parsedStock = useMemo(() => {
+    if (newUnitOfMeasure === 'kg') {
+      return parseFloat(newStock.replace(/[^0-9.]/g, '') || '0');
+    }
+    if (costInputMode === 'BUNDLE') {
+      return (bundlePacksCountNum > 0 ? bundlePacksCountNum : 1) * (packPiecesCountNum > 0 ? packPiecesCountNum : 10);
+    }
+    return parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+  }, [newUnitOfMeasure, newStock, costInputMode, bundlePacksCountNum, packPiecesCountNum]);
 
   const effectiveUnitCost = useMemo(() => {
     if (costInputMode === 'BUNDLE') {
       if (bundleCostParsed <= 0) return 0;
-      const divisor = parsedStock > 0 ? parsedStock : 1;
-      return Number((bundleCostParsed / divisor).toFixed(2));
+      const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 1;
+      return Number((bundleCostParsed / pcs).toFixed(2));
     }
     return pieceCostParsed > 0 ? pieceCostParsed : 0;
-  }, [costInputMode, bundleCostParsed, pieceCostParsed, parsedStock]);
+  }, [costInputMode, bundleCostParsed, pieceCostParsed, packPiecesCountNum]);
 
   const totalCapitalSpent = useMemo(() => {
     if (costInputMode === 'BUNDLE' && bundleCostParsed > 0) {
-      return bundleCostParsed;
+      return Number((bundleCostParsed * (bundlePacksCountNum > 0 ? bundlePacksCountNum : 1)).toFixed(2));
     }
     return Number((effectiveUnitCost * (parsedStock > 0 ? parsedStock : 1)).toFixed(2));
-  }, [costInputMode, bundleCostParsed, effectiveUnitCost, parsedStock]);
+  }, [costInputMode, bundleCostParsed, bundlePacksCountNum, effectiveUnitCost, parsedStock]);
 
   const currentEnteredPrice = parseFloat(newPricePhp.replace(/[^0-9.]/g, '') || '0');
 
@@ -940,40 +904,23 @@ export default function InventoryManagementScreen() {
       const parsedLow = parseInt(newLowThreshold.replace(/[^0-9]/g, '') || '5', 10);
 
       let tiers: SellingUnitTier[] | undefined;
-      if (hasPackBoxTier && (packEnabled || boxEnabled)) {
+      if (hasPackBoxTier && packEnabled) {
+        const pMult = parseInt(packMultiplier.replace(/[^0-9]/g, '') || '0', 10);
+        const pPrice = parseFloat(packPricePhp.replace(/[^0-9.]/g, '') || '0');
+        if (pMult <= 1 || pPrice <= 0) {
+          setErrorMsg('Maglagay ng wastong piraso bawat pack at presyo ng pack.');
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+          return;
+        }
         tiers = [
-          { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: parsedPrice }
-        ];
-        if (packEnabled) {
-          const pMult = parseInt(packMultiplier.replace(/[^0-9]/g, '') || '0', 10);
-          const pPrice = parseFloat(packPricePhp.replace(/[^0-9.]/g, '') || '0');
-          if (pMult <= 1 || pPrice <= 0) {
-            setErrorMsg('Maglagay ng wastong piraso bawat pack at presyo ng pack.');
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-            return;
-          }
-          tiers.push({
+          { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: parsedPrice },
+          {
             unitName: 'pack',
             baseUnitMultiplier: pMult,
             unitPricePhp: pPrice,
             barcode: packBarcode.trim() || undefined,
-          });
-        }
-        if (boxEnabled) {
-          const bMult = parseInt(boxMultiplier.replace(/[^0-9]/g, '') || '0', 10);
-          const bPrice = parseFloat(boxPricePhp.replace(/[^0-9.]/g, '') || '0');
-          if (bMult <= 1 || bPrice <= 0) {
-            setErrorMsg('Maglagay ng wastong piraso bawat box at presyo ng box.');
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-            return;
-          }
-          tiers.push({
-            unitName: 'box',
-            baseUnitMultiplier: bMult,
-            unitPricePhp: bPrice,
-            barcode: boxBarcode.trim() || undefined,
-          });
-        }
+          },
+        ];
       }
 
       const result = await addProductToDatabase({
@@ -1022,17 +969,15 @@ export default function InventoryManagementScreen() {
       setNewUnitOfMeasure('pc');
       setCostInputMode('PIECE');
       setBundleCostPhp('');
+      setPackPiecesCount('10');
+      setBundlePacksCount('1');
       setTuboValue('');
       setTuboMode('PESO');
       setHasPackBoxTier(false);
       setPackEnabled(false);
-      setPackMultiplier('6');
+      setPackMultiplier('10');
       setPackPricePhp('');
       setPackBarcode('');
-      setBoxEnabled(false);
-      setBoxMultiplier('24');
-      setBoxPricePhp('');
-      setBoxBarcode('');
       setNewImageUri(null);
       setSearchQuery('');
       setSelectedFilter('All');
@@ -1544,115 +1489,45 @@ export default function InventoryManagementScreen() {
               </Pressable>
             </View>
 
-            {/* ROW 1: Stock & Alert Level First */}
-            <View style={styles.twoColRow}>
-              <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>
-                  {newUnitOfMeasure === 'kg' ? 'Kasalukuyang Stock (kg)' : t.initialStockLabel}
-                </Text>
-                <TextInput
-                  style={styles.textInput}
-                  value={newStock}
-                  onChangeText={(val) => {
-                    setErrorMsg(null);
-                    setNewStock(val);
-                  }}
-                  placeholder={newUnitOfMeasure === 'kg' ? '50.0' : '0'}
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType={newUnitOfMeasure === 'kg' ? 'decimal-pad' : 'number-pad'}
-                />
-              </View>
-              <View style={styles.halfCol}>
-                <Text style={styles.fieldLabel}>
-                  {newUnitOfMeasure === 'kg' ? 'Mababang Stock Alert (kg)' : t.lowStockThresholdLabel}
-                </Text>
-                <TextInput
-                  style={styles.textInput}
-                  value={newLowThreshold}
-                  onChangeText={setNewLowThreshold}
-                  placeholder={newUnitOfMeasure === 'kg' ? '5.0' : '5'}
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType={newUnitOfMeasure === 'kg' ? 'decimal-pad' : 'number-pad'}
-                />
-              </View>
-            </View>
-
-            {/* ROW 2: Unit Cost / Puhunan with Per Piraso vs. Buong Balot switch */}
-            <View style={styles.costSectionCard}>
-              <View style={styles.costModeHeader}>
-                <Text style={styles.fieldLabel}>{t.unitCostLabel}</Text>
-                <View style={styles.modeSegmentRow}>
-                  <Pressable
-                    style={[
-                      styles.modeSegmentBtn,
-                      costInputMode === 'PIECE' ? styles.modeSegmentBtnActive : null,
-                    ]}
-                    onPress={() => {
-                      setCostInputMode('PIECE');
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                    }}
-                  >
-                    <Text
-                      style={[
-                        styles.modeSegmentText,
-                        costInputMode === 'PIECE' ? styles.modeSegmentTextActive : null,
-                      ]}
-                    >
-                      {t.perPieceMode}
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    style={[
-                      styles.modeSegmentBtn,
-                      costInputMode === 'BUNDLE' ? styles.modeSegmentBtnActive : null,
-                    ]}
-                    onPress={() => {
-                      setCostInputMode('BUNDLE');
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                    }}
-                  >
-                    <Text
-                      style={[
-                        styles.modeSegmentText,
-                        costInputMode === 'BUNDLE' ? styles.modeSegmentTextActive : null,
-                      ]}
-                    >
-                      {t.buongBalotMode}
-                    </Text>
-                  </Pressable>
+            {/* KG MODE: Stock & Cost per KG */}
+            {newUnitOfMeasure === 'kg' ? (
+              <View style={{ gap: 10 }}>
+                <View style={styles.twoColRow}>
+                  <View style={styles.halfCol}>
+                    <Text style={styles.fieldLabel}>Kasalukuyang Stock (kg) *</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      value={newStock}
+                      onChangeText={(val) => {
+                        setErrorMsg(null);
+                        setNewStock(val);
+                      }}
+                      placeholder="50.0"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
+                  <View style={styles.halfCol}>
+                    <Text style={styles.fieldLabel}>Mababang Stock Alert (kg) *</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      value={newLowThreshold}
+                      onChangeText={setNewLowThreshold}
+                      placeholder="5.0"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
                 </View>
-              </View>
 
-              {costInputMode === 'PIECE' ? (
-                <TextInput
-                  style={styles.textInput}
-                  value={newCostPhp}
-                  onChangeText={(val) => {
-                    setNewCostPhp(val);
-                    const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
-                    if (tuboValue && costNum > 0) {
-                      const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
-                      const nextPrice =
-                        tuboMode === 'PESO'
-                          ? costNum + tuboNum
-                          : costNum * (1 + tuboNum / 100);
-                      setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
-                    }
-                  }}
-                  placeholder={t.autoCostHint}
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType="decimal-pad"
-                />
-              ) : (
-                <View style={{ gap: 4 }}>
+                <View style={styles.costSectionCard}>
+                  <Text style={styles.fieldLabel}>Puhunan bawat Kilo (₱) *</Text>
                   <TextInput
                     style={styles.textInput}
-                    value={bundleCostPhp}
+                    value={newCostPhp}
                     onChangeText={(val) => {
-                      setBundleCostPhp(val);
-                      const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
-                      const divisor = parsedStock > 0 ? parsedStock : 1;
-                      const costNum = bCost > 0 ? bCost / divisor : 0;
+                      setNewCostPhp(val);
+                      const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
                       if (tuboValue && costNum > 0) {
                         const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
                         const nextPrice =
@@ -1662,42 +1537,224 @@ export default function InventoryManagementScreen() {
                         setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
                       }
                     }}
-                    placeholder={t.bundleCostPlaceholder}
+                    placeholder="Hal. 42.00"
                     placeholderTextColor="#9CA3AF"
                     keyboardType="decimal-pad"
                   />
-                  <Text style={styles.bundleHint}>
-                    {parsedStock > 0
-                      ? `Hahatiin sa ${parsedStock} piraso = ₱${effectiveUnitCost.toFixed(2)} bawat piraso`
-                      : 'Ilagay ang bilang ng paninda sa itaas para makuha ang halaga bawat piraso'}
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            {/* ROW 3: Sneak Peek ng Puhunan Banner (Appears when cost > 0) */}
-            {effectiveUnitCost > 0 ? (
-              <View style={styles.sneakPeekBanner}>
-                <View style={styles.sneakPeekHeader}>
-                  <Ionicons name="pricetag-outline" size={14} color="#065F46" />
-                  <Text style={styles.sneakPeekTitle}>{t.costSneakPeekTitle}</Text>
-                </View>
-                <View style={styles.sneakPeekMetrics}>
-                  <View style={styles.sneakPeekItem}>
-                    <Text style={styles.sneakPeekLabel}>{t.costPerPiece}</Text>
-                    <Text style={styles.sneakPeekValue}>₱{effectiveUnitCost.toFixed(2)}</Text>
-                  </View>
-                  <View style={styles.sneakPeekDivider} />
-                  <View style={styles.sneakPeekItem}>
-                    <Text style={styles.sneakPeekLabel}>{t.totalCapitalSpent}</Text>
-                    <Text style={styles.sneakPeekValue}>
-                      ₱{totalCapitalSpent.toFixed(2)}
-                      {parsedStock > 0 ? ` (${parsedStock} pcs)` : ''}
-                    </Text>
-                  </View>
                 </View>
               </View>
-            ) : null}
+            ) : (
+              /* PIECE MODE: Karga-Resibo Flow */
+              <View style={styles.costSectionCard}>
+                <View style={styles.costModeHeader}>
+                  <Text style={styles.fieldLabel}>Paraan ng Pagbili sa Grocery (Puhunan & Stock)</Text>
+                  <View style={styles.modeSegmentRow}>
+                    <Pressable
+                      style={[
+                        styles.modeSegmentBtn,
+                        costInputMode === 'BUNDLE' ? styles.modeSegmentBtnActive : null,
+                      ]}
+                      onPress={() => {
+                        setCostInputMode('BUNDLE');
+                        setHasPackBoxTier(true);
+                        setPackEnabled(true);
+                        setPackMultiplier(packPiecesCount);
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.modeSegmentText,
+                          costInputMode === 'BUNDLE' ? styles.modeSegmentTextActive : null,
+                        ]}
+                      >
+                        📦 Naka-Pack / Balot
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      style={[
+                        styles.modeSegmentBtn,
+                        costInputMode === 'PIECE' ? styles.modeSegmentBtnActive : null,
+                      ]}
+                      onPress={() => {
+                        setCostInputMode('PIECE');
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.modeSegmentText,
+                          costInputMode === 'PIECE' ? styles.modeSegmentTextActive : null,
+                        ]}
+                      >
+                        🔖 Paisa-isa / Tingi
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+
+                {costInputMode === 'BUNDLE' ? (
+                  <View style={{ gap: 8 }}>
+                    <View style={styles.twoColRow}>
+                      <View style={{ flex: 1.2 }}>
+                        <Text style={styles.fieldLabel}>Presyo ng 1 Balot sa Resibo (₱) *</Text>
+                        <TextInput
+                          style={styles.textInput}
+                          value={bundleCostPhp}
+                          onChangeText={(val) => {
+                            setBundleCostPhp(val);
+                            const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                            const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
+                            const costNum = bCost > 0 ? bCost / pcs : 0;
+                            if (tuboValue && costNum > 0) {
+                              const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
+                              const nextPrice =
+                                tuboMode === 'PESO'
+                                  ? costNum + tuboNum
+                                  : costNum * (1 + tuboNum / 100);
+                              setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                            }
+                          }}
+                          placeholder="Hal. 100.00"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="decimal-pad"
+                        />
+                      </View>
+                      <View style={{ flex: 0.9 }}>
+                        <Text style={styles.fieldLabel}>Piraso sa 1 Balot *</Text>
+                        <TextInput
+                          style={styles.textInput}
+                          value={packPiecesCount}
+                          onChangeText={(val) => {
+                            setPackPiecesCount(val);
+                            setPackMultiplier(val);
+                            const bCost = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
+                            const pcs = parseInt(val.replace(/[^0-9]/g, '') || '10', 10);
+                            const costNum = bCost > 0 && pcs > 0 ? bCost / pcs : 0;
+                            if (tuboValue && costNum > 0) {
+                              const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
+                              const nextPrice =
+                                tuboMode === 'PESO'
+                                  ? costNum + tuboNum
+                                  : costNum * (1 + tuboNum / 100);
+                              setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                            }
+                          }}
+                          placeholder="10"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="number-pad"
+                        />
+                      </View>
+                      <View style={{ flex: 0.9 }}>
+                        <Text style={styles.fieldLabel}>Ilang Balot Binili? *</Text>
+                        <TextInput
+                          style={styles.textInput}
+                          value={bundlePacksCount}
+                          onChangeText={(val) => setBundlePacksCount(val)}
+                          placeholder="5"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="number-pad"
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.twoColRow}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.fieldLabel}>Mababang Stock Alert (piraso):</Text>
+                        <TextInput
+                          style={styles.textInput}
+                          value={newLowThreshold}
+                          onChangeText={setNewLowThreshold}
+                          placeholder="5"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="number-pad"
+                        />
+                      </View>
+                    </View>
+                  </View>
+                ) : (
+                  <View style={{ gap: 8 }}>
+                    <View style={styles.twoColRow}>
+                      <View style={styles.halfCol}>
+                        <Text style={styles.fieldLabel}>Puhunan bawat Piraso (₱) *</Text>
+                        <TextInput
+                          style={styles.textInput}
+                          value={newCostPhp}
+                          onChangeText={(val) => {
+                            setNewCostPhp(val);
+                            const costNum = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
+                            if (tuboValue && costNum > 0) {
+                              const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
+                              const nextPrice =
+                                tuboMode === 'PESO'
+                                  ? costNum + tuboNum
+                                  : costNum * (1 + tuboNum / 100);
+                              setNewPricePhp(nextPrice > 0 ? nextPrice.toFixed(2) : '');
+                            }
+                          }}
+                          placeholder={t.autoCostHint}
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="decimal-pad"
+                        />
+                      </View>
+                      <View style={styles.halfCol}>
+                        <Text style={styles.fieldLabel}>Kasalukuyang Stock (piraso) *</Text>
+                        <TextInput
+                          style={styles.textInput}
+                          value={newStock}
+                          onChangeText={(val) => {
+                            setErrorMsg(null);
+                            setNewStock(val);
+                          }}
+                          placeholder="0"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="number-pad"
+                        />
+                      </View>
+                    </View>
+                    <View style={styles.twoColRow}>
+                      <View style={styles.halfCol}>
+                        <Text style={styles.fieldLabel}>Mababang Stock Alert (piraso):</Text>
+                        <TextInput
+                          style={styles.textInput}
+                          value={newLowThreshold}
+                          onChangeText={setNewLowThreshold}
+                          placeholder="5"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="number-pad"
+                        />
+                      </View>
+                    </View>
+                  </View>
+                )}
+
+                {/* Sneak Peek Banner */}
+                {effectiveUnitCost > 0 ? (
+                  <View style={styles.sneakPeekBanner}>
+                    <View style={styles.sneakPeekHeader}>
+                      <Ionicons name="pricetag-outline" size={14} color="#065F46" />
+                      <Text style={styles.sneakPeekTitle}>Awtomatikong Kwenta ng Puhunan & Stock</Text>
+                    </View>
+                    <View style={styles.sneakPeekMetrics}>
+                      <View style={styles.sneakPeekItem}>
+                        <Text style={styles.sneakPeekLabel}>Puhunan bawat Piraso</Text>
+                        <Text style={styles.sneakPeekValue}>₱{effectiveUnitCost.toFixed(2)}</Text>
+                      </View>
+                      <View style={styles.sneakPeekDivider} />
+                      <View style={styles.sneakPeekItem}>
+                        <Text style={styles.sneakPeekLabel}>Kabuuang Stock</Text>
+                        <Text style={styles.sneakPeekValue}>{parsedStock} pcs</Text>
+                      </View>
+                      <View style={styles.sneakPeekDivider} />
+                      <View style={styles.sneakPeekItem}>
+                        <Text style={styles.sneakPeekLabel}>Kabuuang Puhunan</Text>
+                        <Text style={styles.sneakPeekValue}>₱{totalCapitalSpent.toFixed(2)}</Text>
+                      </View>
+                    </View>
+                  </View>
+                ) : null}
+              </View>
+            )}
 
             {/* ROW 4: Gustong Tubo (Markup) with Quick-Add Buttons */}
             <View style={styles.tuboSectionCard}>
@@ -1875,17 +1932,21 @@ export default function InventoryManagementScreen() {
               />
             </View>
 
-            {/* Multi-unit Pricing & Barcodes (Pack / Box) */}
+            {/* Multi-unit Pricing & Barcodes (Buong Pack Only — Box Removed) */}
             {newUnitOfMeasure !== 'kg' ? (
               <View style={styles.tierSection}>
                 <Pressable
                   style={styles.tierToggleHeader}
-                  onPress={() => setHasPackBoxTier(!hasPackBoxTier)}
+                  onPress={() => {
+                    const next = !hasPackBoxTier;
+                    setHasPackBoxTier(next);
+                    if (next) setPackEnabled(true);
+                  }}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
-                    <Ionicons name="cube-outline" size={18} color="#0D7A52" />
+                    <Ionicons name="layers-outline" size={18} color="#0D7A52" />
                     <Text style={styles.tierToggleTitle}>
-                      Ibenta rin bilang Pack / Box (Multi-unit)
+                      📦 Ibenta rin bilang Buong Pack (Whole Pack)
                     </Text>
                   </View>
                   <Ionicons
@@ -1898,7 +1959,7 @@ export default function InventoryManagementScreen() {
                 {hasPackBoxTier ? (
                   <View style={styles.tierContainer}>
                     <Text style={styles.tierSubtext}>
-                      Itakda ang presyo at opsyonal na sariling barcode para sa buong Pack o Box. Kapag na-scan ang barcode ng kahon/pack sa POS, direktang mababawas ang tamang bilang ng piraso sa imbentaryo.
+                      Puwede itong bilhin ng buo ng suki. Kapag pinili sa New Sale, direktang mababawas ang tamang bilang ng piraso sa stock.
                     </Text>
 
                     {/* Pack Tier */}
@@ -1912,7 +1973,7 @@ export default function InventoryManagementScreen() {
                         color={packEnabled ? '#0D7A52' : '#64748B'}
                       />
                       <Text style={[styles.tierCheckboxLabel, packEnabled ? styles.tierCheckboxLabelActive : null]}>
-                        Ibenta bilang Pack (Hal. 6 pcs o 12 pcs)
+                        Paganahin ang Pagbenta ng Buong Pack
                       </Text>
                     </Pressable>
 
@@ -1925,7 +1986,7 @@ export default function InventoryManagementScreen() {
                               style={styles.textInput}
                               value={packMultiplier}
                               onChangeText={setPackMultiplier}
-                              placeholder="6"
+                              placeholder="10"
                               keyboardType="number-pad"
                             />
                           </View>
@@ -1935,70 +1996,69 @@ export default function InventoryManagementScreen() {
                               style={styles.textInput}
                               value={packPricePhp}
                               onChangeText={setPackPricePhp}
-                              placeholder="Hal. 55.00"
+                              placeholder={
+                                currentEnteredPrice > 0
+                                  ? (currentEnteredPrice * (parseInt(packMultiplier, 10) || 10)).toFixed(2)
+                                  : 'Hal. 125.00'
+                              }
                               keyboardType="decimal-pad"
                             />
                           </View>
                         </View>
-                        <View style={{ marginTop: 6 }}>
+
+                        {/* Suki Discount Quick Suggestion Chips */}
+                        {currentEnteredPrice > 0 ? (
+                          <View style={{ marginTop: 8 }}>
+                            <Text style={{ fontSize: 11, color: '#4B5563', marginBottom: 4, fontWeight: '600' }}>
+                              💡 Mungkahing Presyo ng Pack (Tingi: ₱{currentEnteredPrice.toFixed(2)} × {packMultiplier || '10'} pcs = ₱{(currentEnteredPrice * (parseInt(packMultiplier, 10) || 10)).toFixed(2)}):
+                            </Text>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                              {[
+                                {
+                                  label: `₱${(currentEnteredPrice * (parseInt(packMultiplier, 10) || 10)).toFixed(2)} (Walang Bawas)`,
+                                  val: (currentEnteredPrice * (parseInt(packMultiplier, 10) || 10)).toFixed(2),
+                                },
+                                {
+                                  label: `₱${Math.max(1, currentEnteredPrice * (parseInt(packMultiplier, 10) || 10) - 5).toFixed(2)} (-₱5 Suki Bawas)`,
+                                  val: Math.max(1, currentEnteredPrice * (parseInt(packMultiplier, 10) || 10) - 5).toFixed(2),
+                                },
+                                {
+                                  label: `₱${Math.max(1, currentEnteredPrice * (parseInt(packMultiplier, 10) || 10) - 10).toFixed(2)} (-₱10 Suki Bawas)`,
+                                  val: Math.max(1, currentEnteredPrice * (parseInt(packMultiplier, 10) || 10) - 10).toFixed(2),
+                                },
+                              ].map((chip) => (
+                                <Pressable
+                                  key={chip.label}
+                                  style={[
+                                    styles.quickTuboChip,
+                                    packPricePhp === chip.val ? styles.quickTuboChipActive : null,
+                                  ]}
+                                  onPress={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                                    setPackPricePhp(chip.val);
+                                  }}
+                                >
+                                  <Text
+                                    style={[
+                                      styles.quickTuboChipText,
+                                      packPricePhp === chip.val ? styles.quickTuboChipTextActive : null,
+                                    ]}
+                                  >
+                                    {chip.label}
+                                  </Text>
+                                </Pressable>
+                              ))}
+                            </View>
+                          </View>
+                        ) : null}
+
+                        <View style={{ marginTop: 8 }}>
                           <Text style={styles.fieldLabel}>Pack Barcode (Opsyonal):</Text>
                           <TextInput
                             style={styles.textInput}
                             value={packBarcode}
                             onChangeText={setPackBarcode}
-                            placeholder="I-type o i-scan ang barcode ng pack"
-                            placeholderTextColor="#9CA3AF"
-                          />
-                        </View>
-                      </View>
-                    ) : null}
-
-                    {/* Box Tier */}
-                    <Pressable
-                      style={[styles.tierCheckboxRow, boxEnabled ? styles.tierCheckboxRowActive : null, { marginTop: 10 }]}
-                      onPress={() => setBoxEnabled(!boxEnabled)}
-                    >
-                      <Ionicons
-                        name={boxEnabled ? 'checkbox' : 'square-outline'}
-                        size={20}
-                        color={boxEnabled ? '#0D7A52' : '#64748B'}
-                      />
-                      <Text style={[styles.tierCheckboxLabel, boxEnabled ? styles.tierCheckboxLabelActive : null]}>
-                        Ibenta bilang Box / Kahon (Hal. 24 pcs)
-                      </Text>
-                    </Pressable>
-
-                    {boxEnabled ? (
-                      <View style={{ marginTop: 8, paddingLeft: 4 }}>
-                        <View style={styles.modalTwoColGrid}>
-                          <View style={styles.modalCol}>
-                            <Text style={styles.fieldLabel}>Piraso bawat Box:</Text>
-                            <TextInput
-                              style={styles.textInput}
-                              value={boxMultiplier}
-                              onChangeText={setBoxMultiplier}
-                              placeholder="24"
-                              keyboardType="number-pad"
-                            />
-                          </View>
-                          <View style={styles.modalCol}>
-                            <Text style={styles.fieldLabel}>Presyo ng Box (₱):</Text>
-                            <TextInput
-                              style={styles.textInput}
-                              value={boxPricePhp}
-                              onChangeText={setBoxPricePhp}
-                              placeholder="Hal. 200.00"
-                              keyboardType="decimal-pad"
-                            />
-                          </View>
-                        </View>
-                        <View style={{ marginTop: 6 }}>
-                          <Text style={styles.fieldLabel}>Box Barcode (Opsyonal):</Text>
-                          <TextInput
-                            style={styles.textInput}
-                            value={boxBarcode}
-                            onChangeText={setBoxBarcode}
-                            placeholder="I-type o i-scan ang barcode sa labas ng kahon"
+                            placeholder="I-type o i-scan ang barcode sa labas ng pack"
                             placeholderTextColor="#9CA3AF"
                           />
                         </View>
@@ -2903,17 +2963,21 @@ export default function InventoryManagementScreen() {
                 />
               </View>
 
-              {/* Multi-unit Pricing & Barcodes (Pack / Box) */}
+              {/* Multi-unit Pricing & Barcodes (Buong Pack Only — Box Removed) */}
               {editUnitOfMeasure !== 'kg' ? (
                 <View style={[styles.tierSection, { marginTop: 12 }]}>
                   <Pressable
                     style={styles.tierToggleHeader}
-                    onPress={() => setEditHasPackBoxTier(!editHasPackBoxTier)}
+                    onPress={() => {
+                      const next = !editHasPackBoxTier;
+                      setEditHasPackBoxTier(next);
+                      if (next) setEditPackEnabled(true);
+                    }}
                   >
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
-                      <Ionicons name="cube-outline" size={18} color="#0D7A52" />
+                      <Ionicons name="layers-outline" size={18} color="#0D7A52" />
                       <Text style={styles.tierToggleTitle}>
-                        Ibenta rin bilang Pack / Box (Multi-unit)
+                        📦 Ibenta rin bilang Buong Pack (Whole Pack)
                       </Text>
                     </View>
                     <Ionicons
@@ -2926,7 +2990,7 @@ export default function InventoryManagementScreen() {
                   {editHasPackBoxTier ? (
                     <View style={styles.tierContainer}>
                       <Text style={styles.tierSubtext}>
-                        Itakda ang presyo at sariling barcode para sa buong Pack o Box. Kapag na-scan ang barcode ng box/pack sa POS, mababawas pa rin ang tamang bilang ng piraso sa stock.
+                        Puwede itong bilhin ng buo ng suki. Kapag pinili sa New Sale, mababawas ang tamang bilang ng piraso sa stock.
                       </Text>
 
                       {/* Pack Tier */}
@@ -2940,7 +3004,7 @@ export default function InventoryManagementScreen() {
                           color={editPackEnabled ? '#0D7A52' : '#64748B'}
                         />
                         <Text style={[styles.tierCheckboxLabel, editPackEnabled ? styles.tierCheckboxLabelActive : null]}>
-                          Ibenta bilang Pack (Hal. 6 pcs o 12 pcs)
+                          Paganahin ang Pagbenta ng Buong Pack
                         </Text>
                       </Pressable>
 
@@ -2953,7 +3017,7 @@ export default function InventoryManagementScreen() {
                                 style={styles.textInput}
                                 value={editPackMultiplier}
                                 onChangeText={setEditPackMultiplier}
-                                placeholder="6"
+                                placeholder="10"
                                 keyboardType="number-pad"
                               />
                             </View>
@@ -2963,70 +3027,69 @@ export default function InventoryManagementScreen() {
                                 style={styles.textInput}
                                 value={editPackPricePhp}
                                 onChangeText={setEditPackPricePhp}
-                                placeholder="Hal. 55.00"
+                                placeholder={
+                                  editCurrentEnteredPrice > 0
+                                    ? (editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2)
+                                    : 'Hal. 125.00'
+                                }
                                 keyboardType="decimal-pad"
                               />
                             </View>
                           </View>
-                          <View style={{ marginTop: 6 }}>
+
+                          {/* Suki Discount Quick Suggestion Chips */}
+                          {editCurrentEnteredPrice > 0 ? (
+                            <View style={{ marginTop: 8 }}>
+                              <Text style={{ fontSize: 11, color: '#4B5563', marginBottom: 4, fontWeight: '600' }}>
+                                💡 Mungkahing Presyo ng Pack (Tingi: ₱{editCurrentEnteredPrice.toFixed(2)} × {editPackMultiplier || '10'} pcs = ₱{(editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2)}):
+                              </Text>
+                              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                                {[
+                                  {
+                                    label: `₱${(editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2)} (Walang Bawas)`,
+                                    val: (editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10)).toFixed(2),
+                                  },
+                                  {
+                                    label: `₱${Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 5).toFixed(2)} (-₱5 Suki Bawas)`,
+                                    val: Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 5).toFixed(2),
+                                  },
+                                  {
+                                    label: `₱${Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 10).toFixed(2)} (-₱10 Suki Bawas)`,
+                                    val: Math.max(1, editCurrentEnteredPrice * (parseInt(editPackMultiplier, 10) || 10) - 10).toFixed(2),
+                                  },
+                                ].map((chip) => (
+                                  <Pressable
+                                    key={chip.label}
+                                    style={[
+                                      styles.quickTuboChip,
+                                      editPackPricePhp === chip.val ? styles.quickTuboChipActive : null,
+                                    ]}
+                                    onPress={() => {
+                                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                                      setEditPackPricePhp(chip.val);
+                                    }}
+                                  >
+                                    <Text
+                                      style={[
+                                        styles.quickTuboChipText,
+                                        editPackPricePhp === chip.val ? styles.quickTuboChipTextActive : null,
+                                      ]}
+                                    >
+                                      {chip.label}
+                                    </Text>
+                                  </Pressable>
+                                ))}
+                              </View>
+                            </View>
+                          ) : null}
+
+                          <View style={{ marginTop: 8 }}>
                             <Text style={styles.fieldLabel}>Pack Barcode (Opsyonal):</Text>
                             <TextInput
                               style={styles.textInput}
                               value={editPackBarcode}
                               onChangeText={setEditPackBarcode}
                               placeholder="I-type o i-scan ang barcode sa pack"
-                              placeholderTextColor="#9CA3AF"
-                            />
-                          </View>
-                        </View>
-                      ) : null}
-
-                      {/* Box Tier */}
-                      <Pressable
-                        style={[styles.tierCheckboxRow, editBoxEnabled ? styles.tierCheckboxRowActive : null, { marginTop: 10 }]}
-                        onPress={() => setEditBoxEnabled(!editBoxEnabled)}
-                      >
-                        <Ionicons
-                          name={editBoxEnabled ? 'checkbox' : 'square-outline'}
-                          size={20}
-                          color={editBoxEnabled ? '#0D7A52' : '#64748B'}
-                        />
-                        <Text style={[styles.tierCheckboxLabel, editBoxEnabled ? styles.tierCheckboxLabelActive : null]}>
-                          Ibenta bilang Box / Kahon (Hal. 24 pcs)
-                        </Text>
-                      </Pressable>
-
-                      {editBoxEnabled ? (
-                        <View style={{ marginTop: 8, paddingLeft: 4 }}>
-                          <View style={styles.modalTwoColGrid}>
-                            <View style={styles.modalCol}>
-                              <Text style={styles.fieldLabel}>Piraso bawat Box:</Text>
-                              <TextInput
-                                style={styles.textInput}
-                                value={editBoxMultiplier}
-                                onChangeText={setEditBoxMultiplier}
-                                placeholder="24"
-                                keyboardType="number-pad"
-                              />
-                            </View>
-                            <View style={styles.modalCol}>
-                              <Text style={styles.fieldLabel}>Presyo ng Box (₱):</Text>
-                              <TextInput
-                                style={styles.textInput}
-                                value={editBoxPricePhp}
-                                onChangeText={setEditBoxPricePhp}
-                                placeholder="Hal. 200.00"
-                                keyboardType="decimal-pad"
-                              />
-                            </View>
-                          </View>
-                          <View style={{ marginTop: 6 }}>
-                            <Text style={styles.fieldLabel}>Box Barcode (Opsyonal):</Text>
-                            <TextInput
-                              style={styles.textInput}
-                              value={editBoxBarcode}
-                              onChangeText={setEditBoxBarcode}
-                              placeholder="I-type o i-scan ang barcode sa kahon"
                               placeholderTextColor="#9CA3AF"
                             />
                           </View>
