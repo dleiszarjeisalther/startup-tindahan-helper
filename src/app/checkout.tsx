@@ -197,7 +197,6 @@ export default function CheckoutNewSaleScreen() {
   // Utang customer selection or custom input
   const [selectedCustomer, setSelectedCustomer] = useState<string>('');
   const [chargeShortfallToUtang, setChargeShortfallToUtang] = useState(false);
-  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [holdModalVisible, setHoldModalVisible] = useState(false);
   const [holdCustomerName, setHoldCustomerName] = useState('');
   const [heldCartsModalVisible, setHeldCartsModalVisible] = useState(false);
@@ -206,7 +205,6 @@ export default function CheckoutNewSaleScreen() {
   const [showPrinterModal, setShowPrinterModal] = useState<boolean>(false);
   const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
   const [unitModalSelection, setUnitModalSelection] = useState<{ product: ProductDTO; item: CartItemDTO } | null>(null);
-  const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
@@ -227,7 +225,6 @@ export default function CheckoutNewSaleScreen() {
     setSelectedCustomer('');
     setGcashRefInput('');
     setChargeShortfallToUtang(false);
-    setPaymentErrorMsg(null);
   }, []);
 
 
@@ -237,39 +234,56 @@ export default function CheckoutNewSaleScreen() {
   const runCartAction = useCallback((action: () => void, afterCommit?: () => void) => {
     try {
       action();
-      setPaymentErrorMsg(null);
       afterCommit?.();
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-      setPaymentErrorMsg(
-        error instanceof Error ? error.message : 'Could not save the cart. Please try again.'
-      );
+      const errorMsg =
+        error instanceof Error ? error.message : 'Could not save the cart. Please try again.';
+      const isInsufficient =
+        errorMsg.toLowerCase().includes('insufficient') ||
+        errorMsg.toLowerCase().includes('kulang') ||
+        errorMsg.toLowerCase().includes('stock');
+      setConfirmDialog({
+        type: isInsufficient ? 'warning' : 'danger',
+        title: isInsufficient ? 'Kulang ang Stock' : 'May Error sa Cart',
+        message: errorMsg,
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
     }
-  }, []);
+  }, [setConfirmDialog]);
 
   const handleUnitSwitch = (
     newUnit: 'piece' | 'pack' | 'box',
     _multiplier: number,
-    _price: number
+    _price: number,
+    fellBackToPiece?: boolean
   ) => {
     if (!unitModalSelection) return;
     const { product, item } = unitModalSelection;
-    if (item.unit !== newUnit) {
+    if (item.unit !== newUnit || fellBackToPiece) {
       runCartAction(() => {
         // Reset the old unit cart entry to 0
         setCartItemQuantity(item.cartKey ?? item.productId, 0);
         // Add the new unit cart entry with the desired quantity
-        addToCart(product.id, item.quantity, newUnit);
+        const result = addToCart(product.id, item.quantity, newUnit);
+        if (result?.fellBackToPiece || fellBackToPiece) {
+          showToast(
+            `⚠️ Kulang ang stock para sa buong ${newUnit}. Pinalitan sa Per Piece (${product.name}).`
+          );
+        } else {
+          showToast(
+            `✓ Pinalitan sa ${
+              newUnit === 'pack'
+                ? 'Whole Pack'
+                : newUnit === 'box'
+                ? 'Whole Box'
+                : 'Per Piece'
+            } (${product.name})`
+          );
+        }
       });
-      showToast(
-        `✓ Pinalitan sa ${
-          newUnit === 'pack'
-            ? 'Whole Pack'
-            : newUnit === 'box'
-            ? 'Whole Box'
-            : 'Per Piece'
-        } (${product.name})`
-      );
     }
     setUnitModalSelection(null);
   };
@@ -327,28 +341,7 @@ export default function CheckoutNewSaleScreen() {
     setDiscountPhp(Number.isFinite(val) ? val : 0);
   };
 
-  const { trigger: handleCompleteSale, isSubmitting } = useIdempotentSubmit(async () => {
-    setPaymentErrorMsg(null);
-    if (cartSummary.items.length === 0) return;
-
-    if (isUnderpaid) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-      setPaymentErrorMsg(
-        `⚠️ Payment entered (₱${parsedPaymentPhp.toFixed(
-          2
-        )}) is short by ₱${shortfallPhp.toFixed(
-          2
-        )}. Please input at least ${cartSummary.formattedTotal} or enable "Charge Deficit to Utang".`
-      );
-      return;
-    }
-
-    if ((tenderType === 'UTANG' || chargeShortfallToUtang) && !selectedCustomer.trim()) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-      setPaymentErrorMsg('⚠️ Please enter a Customer Name for Utang credit.');
-      return;
-    }
-
+  const { trigger: executeCompleteSale, isSubmitting } = useIdempotentSubmit(async () => {
     try {
       const tx = await completeSale({
         tenderType,
@@ -372,12 +365,111 @@ export default function CheckoutNewSaleScreen() {
       setGcashRefInput('');
       setConvenienceFeePhp(0);
       setChargeShortfallToUtang(false);
-      setPaymentErrorMsg(null);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-      setPaymentErrorMsg(err instanceof Error ? err.message : 'Payment error');
+      const msg = err instanceof Error ? err.message : 'May naganap na error sa pagproseso ng bayad.';
+      setConfirmDialog({
+        type: 'danger',
+        title: 'Error sa Pagbenta',
+        message: msg,
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
     }
   });
+
+  const handleCompleteSale = () => {
+    if (cartSummary.items.length === 0) return;
+
+    if (isUnderpaid) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      const msg = `Kulang ang bayad ng ₱${shortfallPhp.toFixed(2)}. Magbayad ng hindi bababa sa ${cartSummary.formattedTotal} o i-on ang "I-charge sa Utang ang Kulang".`;
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Kulang ang Bayad',
+        message: msg,
+        details: [
+          { label: 'Halaga ng Bibilhin', value: cartSummary.formattedTotal },
+          { label: 'Naibigay na Pera', value: `₱${parsedPaymentPhp.toFixed(2)}` },
+          { label: 'Kulang na Bayad', value: `₱${shortfallPhp.toFixed(2)}`, highlight: true },
+        ],
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
+      return;
+    }
+
+    if ((tenderType === 'UTANG' || chargeShortfallToUtang) && !selectedCustomer.trim()) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      const msg = 'Kailangan ilagay o piliin ang Pangalan ng Customer para sa Utang credit.';
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Kailangan ang Pangalan',
+        message: msg,
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
+      return;
+    }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    setConfirmDialog({
+      type: 'success',
+      title: 'Kumpirmahin ang Pagbenta',
+      message: `Nais mo bang kumpletuhin ang transaksyon para sa ${cartSummary.totalCount} na paninda?`,
+      details: [
+        { label: 'Kabuuang Halaga', value: cartSummary.formattedTotal, highlight: true },
+        {
+          label: 'Dami ng Paninda',
+          value: `${cartSummary.totalCount} ${cartSummary.totalCount === 1 ? 'item' : 'items'}`,
+        },
+        {
+          label: 'Paraan ng Bayad',
+          value:
+            tenderType === 'CASH'
+              ? 'Cash'
+              : tenderType === 'GCASH'
+              ? 'GCash'
+              : 'Suki Utang',
+        },
+        ...(tenderType === 'CASH'
+          ? [
+              { label: 'Halagang Iniabot', value: `₱${effectivePaymentPhp.toFixed(2)}` },
+              ...(changeDuePhp > 0
+                ? [{ label: 'Sukli sa Suki', value: `₱${changeDuePhp.toFixed(2)}`, highlight: true }]
+                : []),
+            ]
+          : []),
+        ...(tenderType === 'GCASH'
+          ? [
+              ...(gcashRefInput.trim()
+                ? [{ label: 'GCash Ref #', value: gcashRefInput.trim() }]
+                : []),
+              ...(convenienceFeePhp > 0
+                ? [{ label: 'Convenience Fee', value: `₱${convenienceFeePhp.toFixed(2)}` }]
+                : []),
+            ]
+          : []),
+        ...(tenderType === 'UTANG' || chargeShortfallToUtang
+          ? [
+              { label: 'Pangalan ng Suki', value: selectedCustomer.trim() },
+              ...(chargeShortfallToUtang
+                ? [{ label: 'I-uutang na Kulang', value: `₱${shortfallPhp.toFixed(2)}`, highlight: true }]
+                : []),
+            ]
+          : []),
+      ],
+      confirmText: 'Oo, Tapusin ang Benta',
+      cancelText: 'Bumalik',
+      onConfirm: async () => {
+        setConfirmDialog(null);
+        await executeCompleteSale();
+      },
+    });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -402,6 +494,21 @@ export default function CheckoutNewSaleScreen() {
         </View>
 
         <View style={styles.headerRight}>
+          {cartSummary.totalCount > 0 ? (
+            <Pressable
+              style={styles.parkBtnHeader}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                setHoldCustomerName('');
+                setHoldModalVisible(true);
+              }}
+              hitSlop={6}
+            >
+              <Ionicons name="pause-circle-outline" size={13} color="#0D7A52" style={{ marginRight: 3 }} />
+              <Text style={styles.parkBtnHeaderText}>{t.holdCartBtn}</Text>
+            </Pressable>
+          ) : null}
+
           {heldCarts && heldCarts.length > 0 ? (
             <Pressable
               style={styles.restoreParkedBtn}
@@ -420,7 +527,25 @@ export default function CheckoutNewSaleScreen() {
             style={styles.trashBtn}
             onPress={() => {
               if (cartSummary.totalCount > 0 || cartSummary.items.length > 0) {
-                setShowClearConfirm((prev) => !prev);
+                setConfirmDialog({
+                  type: 'delete',
+                  title: 'I-clear ang Buong Cart?',
+                  message: `Sigurado ka bang nais mong alisin ang lahat ng ${cartSummary.totalCount} paninda (${cartSummary.formattedTotal}) sa New Sale?`,
+                  details: [
+                    { label: 'Bilang ng Paninda', value: `${cartSummary.totalCount} items` },
+                    { label: 'Kabuuang Halaga', value: cartSummary.formattedTotal, highlight: true },
+                  ],
+                  confirmText: 'Oo, I-clear ang Cart',
+                  cancelText: 'Kanselahin',
+                  onConfirm: () => {
+                    setConfirmDialog(null);
+                    runCartAction(clearCart, () => {
+                      resetSaleForm();
+                      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                      showToast('✓ Na-clear ang mga paninda sa checkout.', 'warning');
+                    });
+                  },
+                });
               }
             }}
             hitSlop={10}
@@ -429,48 +554,6 @@ export default function CheckoutNewSaleScreen() {
           </Pressable>
         </View>
       </View>
-
-      {/* Owner Guard on Trash / Clear Cart */}
-      {showClearConfirm ? (
-        <View style={styles.confirmBanner}>
-          <Text style={styles.confirmBannerTitle}>
-            Owner Action: Clear or Hold {cartSummary.totalCount} items ({cartSummary.formattedTotal})?
-          </Text>
-          <View style={styles.confirmActions}>
-            <Pressable
-              style={styles.parkBtn}
-              onPress={() => {
-                setShowClearConfirm(false);
-                setHoldCustomerName('');
-                setHoldModalVisible(true);
-              }}
-            >
-              <Ionicons name="pause-circle-outline" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
-              <Text style={styles.parkBtnText}>{t.holdCartBtn}</Text>
-            </Pressable>
-            <Pressable
-              style={styles.clearConfirmBtn}
-              onPress={() => {
-                runCartAction(clearCart, () => {
-                  resetSaleForm();
-                  setShowClearConfirm(false);
-                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-                  showToast('✓ Na-clear ang mga paninda sa checkout.', 'warning');
-                });
-              }}
-            >
-              <Ionicons name="trash-outline" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
-              <Text style={styles.clearConfirmText}>{t.clearCart}</Text>
-            </Pressable>
-            <Pressable
-              style={styles.cancelConfirmBtn}
-              onPress={() => setShowClearConfirm(false)}
-            >
-              <Text style={styles.cancelConfirmText}>{t.cancel}</Text>
-            </Pressable>
-          </View>
-        </View>
-      ) : null}
 
       {/* Forgiving UX: Undo Toast when an item is decremented to 0 */}
       {cartSummary.lastRemovedItem ? (
@@ -610,7 +693,14 @@ export default function CheckoutNewSaleScreen() {
                         )
                       }
                       onDelta={(delta) =>
-                        runCartAction(() => addToCart(item.productId, delta, item.unit))
+                        runCartAction(() => {
+                          const result = addToCart(item.productId, delta, item.unit);
+                          if (result?.fellBackToPiece) {
+                            showToast(
+                              `⚠️ Kulang ang stock para sa dagdag na ${item.unit}. Inilagay bilang piraso (${item.name}).`
+                            );
+                          }
+                        })
                       }
                     />
                   </View>
@@ -677,7 +767,6 @@ export default function CheckoutNewSaleScreen() {
                   style={[styles.tenderTab, active ? styles.tenderTabActive : null]}
                   onPress={() => {
                     setTenderType(mode);
-                    setPaymentErrorMsg(null);
                     if (mode === 'GCASH' && cartSummary.totalPhp > 0) {
                       setPaymentInputText(cartSummary.totalPhp.toFixed(2));
                     }
@@ -719,7 +808,6 @@ export default function CheckoutNewSaleScreen() {
                   style={styles.paymentTextInput}
                   value={paymentInputText}
                   onChangeText={(txt) => {
-                    setPaymentErrorMsg(null);
                     setPaymentInputText(txt);
                   }}
                   placeholder={cartSummary.totalPhp.toFixed(2)}
@@ -754,7 +842,6 @@ export default function CheckoutNewSaleScreen() {
                       key={`${bill}_${idx}`}
                       style={[styles.billPill, selected ? styles.billPillActive : null]}
                       onPress={() => {
-                        setPaymentErrorMsg(null);
                         if (isExact) {
                           setPaymentInputText('');
                         } else {
@@ -901,11 +988,6 @@ export default function CheckoutNewSaleScreen() {
 
         </View>
 
-        {paymentErrorMsg ? (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorBoxText}>{paymentErrorMsg}</Text>
-          </View>
-        ) : null}
 
         {/* Primary Action CTAs (Matches Screen 3 Prototype: Solid Green "Complete Sale" + Outlined "+ Add More Items") */}
         <View style={styles.ctaContainer}>
@@ -1325,6 +1407,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  parkBtnHeader: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  parkBtnHeaderText: {
+    color: '#0D7A52',
+    fontSize: 11,
+    fontWeight: '700',
   },
   restoreParkedBtn: {
     backgroundColor: '#FEF3C7',

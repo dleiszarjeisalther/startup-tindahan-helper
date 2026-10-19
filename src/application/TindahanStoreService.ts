@@ -53,6 +53,15 @@ export type ReturnDisposition = 'SELLABLE' | 'DAMAGED_QUARANTINE';
 export type ReturnResolution = 'CASH_REFUND' | 'EXCHANGE_CREDIT' | 'UTANG_DEDUCTION';
 export type PaymentTenderType = 'CASH' | 'GCASH' | 'UTANG' | 'SPLIT';
 
+export interface AddToCartResult {
+  success: boolean;
+  fellBackToPiece?: boolean;
+  originalUnit?: string;
+  unitAdded: 'piece' | 'bundle' | 'pack' | 'box' | 'case';
+  remainingStock: number;
+  addedQty: number;
+}
+
 export interface SaleLineItemRecord {
   productId: string;
   name: string;
@@ -1172,7 +1181,7 @@ export class TindahanStoreService {
     productIdOrKey: string,
     deltaQty = 1,
     unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
-  ): void {
+  ): AddToCartResult {
     if (this.isCompletingSale) {
       throw new Error('Sale is currently being completed. Please wait.');
     }
@@ -1190,18 +1199,22 @@ export class TindahanStoreService {
       throw new Error('Product not found in catalog.');
     }
 
-    const tier = prod.sellingTiers?.find((t) => t.unitName === selectedUnit);
-    const unitMultiplier =
+    let tier = prod.sellingTiers?.find((t) => t.unitName === selectedUnit);
+    let unitMultiplier =
       tier?.baseUnitMultiplier && tier.baseUnitMultiplier > 0 ? tier.baseUnitMultiplier : 1;
 
     const isKg = prod.unitOfMeasure === 'kg';
-    const cartKey = selectedUnit === 'piece' ? productId : `${productId}__${selectedUnit}`;
+    let cartKey = selectedUnit === 'piece' ? productId : `${productId}__${selectedUnit}`;
     const nextCart = new Map(this.cartMap);
-    const current = this.cartMap.get(cartKey) ?? 0;
-    const rawNext = current + deltaQty;
-    const next = isKg
+    let current = this.cartMap.get(cartKey) ?? 0;
+    let rawNext = current + deltaQty;
+    let next = isKg
       ? Math.max(0, Math.round(rawNext * 1000) / 1000)
       : Math.max(0, Math.floor(rawNext));
+
+    let fellBackToPiece = false;
+    const originalUnit = selectedUnit;
+    let finalAddedQty = deltaQty;
 
     // Calculate total base units that would be occupied by this product in the cart
     if (deltaQty > 0) {
@@ -1209,7 +1222,8 @@ export class TindahanStoreService {
         throw new Error(`Out of Stock — ${prod.name} is currently unavailable.`);
       }
 
-      let totalBaseUnits = 0;
+      // Calculate how many base units other cart items of this product occupy
+      let otherBaseUnits = 0;
       for (const [k, q] of this.cartMap.entries()) {
         let kProdId = k;
         let kUnit = 'piece';
@@ -1218,25 +1232,48 @@ export class TindahanStoreService {
           kProdId = parts[0];
           kUnit = parts[1];
         }
-        if (kProdId === productId) {
-          if (k === cartKey) {
-            totalBaseUnits += next * unitMultiplier;
-          } else {
-            const kTier = prod.sellingTiers?.find((t) => t.unitName === kUnit);
-            const kMultiplier =
-              kTier?.baseUnitMultiplier && kTier.baseUnitMultiplier > 0
-                ? kTier.baseUnitMultiplier
-                : 1;
-            totalBaseUnits += q * kMultiplier;
-          }
+        if (kProdId === productId && k !== cartKey) {
+          const kTier = prod.sellingTiers?.find((t) => t.unitName === kUnit);
+          const kMultiplier =
+            kTier?.baseUnitMultiplier && kTier.baseUnitMultiplier > 0
+              ? kTier.baseUnitMultiplier
+              : 1;
+          otherBaseUnits += q * kMultiplier;
         }
       }
-      if (!this.cartMap.has(cartKey)) {
-        totalBaseUnits += next * unitMultiplier;
-      }
 
-      if (totalBaseUnits > prod.stockCount) {
-        throw new Error(`Insufficient Stock — Only ${prod.formattedStock} available.`);
+      const availableForThisKey = Math.max(0, prod.stockCount - otherBaseUnits);
+      const neededBaseUnits = next * unitMultiplier;
+
+      if (neededBaseUnits > availableForThisKey) {
+        // Insufficient stock for the requested unit tier
+        if (selectedUnit !== 'piece') {
+          // AUTO-FALLBACK: If pack/box/bundle cannot be fulfilled, check if we can add as 'piece'
+          const currentTotalUsed = otherBaseUnits + current * unitMultiplier;
+          const remainingBaseUnits = Math.max(0, prod.stockCount - currentTotalUsed);
+
+          if (remainingBaseUnits >= 1) {
+            // Auto fallback to piece
+            fellBackToPiece = true;
+            selectedUnit = 'piece';
+            tier = prod.sellingTiers?.find((t) => t.unitName === 'piece');
+            unitMultiplier = 1;
+            cartKey = productId;
+
+            const currentPiece = this.cartMap.get(cartKey) ?? 0;
+            const pieceAddQty = Math.min(Math.max(1, deltaQty), remainingBaseUnits);
+            finalAddedQty = pieceAddQty;
+            current = currentPiece;
+            rawNext = currentPiece + pieceAddQty;
+            next = isKg
+              ? Math.max(0, Math.round(rawNext * 1000) / 1000)
+              : Math.max(0, Math.floor(rawNext));
+          } else {
+            throw new Error(`Insufficient Stock — Only ${prod.formattedStock} available.`);
+          }
+        } else {
+          throw new Error(`Insufficient Stock — Only ${prod.formattedStock} available.`);
+        }
       }
     }
 
@@ -1255,6 +1292,15 @@ export class TindahanStoreService {
     this.lastRemovedItem = nextLastRemoved;
     this.cartRevision++;
     this.notify();
+
+    return {
+      success: true,
+      fellBackToPiece,
+      originalUnit,
+      unitAdded: selectedUnit,
+      remainingStock: prod.stockCount,
+      addedQty: finalAddedQty,
+    };
   }
 
   /**

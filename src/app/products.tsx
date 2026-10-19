@@ -21,6 +21,10 @@ import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { FloatingToast } from '@/presentation/components/FloatingToast';
 import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/components/WeightQuantityModal';
+import {
+  ConfirmationModal,
+  ConfirmationType,
+} from '@/presentation/components/ConfirmationModal';
 
 export default function ProductListScreen() {
   const router = useRouter();
@@ -34,6 +38,12 @@ export default function ProductListScreen() {
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
   const [addedBanner, setAddedBanner] = useState<string | null>(null);
   const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
+  const [alertModal, setAlertModal] = useState<{
+    type?: ConfirmationType;
+    title: string;
+    message: string;
+    itemName?: string;
+  } | null>(null);
 
   // Pagination state (12 items per page)
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,11 +60,9 @@ export default function ProductListScreen() {
   const [newPricePhp, setNewPricePhp] = useState('');
   const [newStock, setNewStock] = useState('');
   const [newUnitOfMeasure, setNewUnitOfMeasure] = useState<'pc' | 'kg'>('pc');
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleBarcodeChange = useCallback(
     (code: string, mode: 'SCAN' | 'MANUAL' | 'GENERATE_TINGI') => {
-      setErrorMsg(null);
       setBarcodeMode(mode);
       if (mode === 'GENERATE_TINGI') {
         setNewBarcode('AUTO-TINGI-CODE');
@@ -69,7 +77,11 @@ export default function ProductListScreen() {
     try {
       const perm = await ImagePicker.requestCameraPermissionsAsync();
       if (!perm.granted) {
-        setErrorMsg('Camera permission needed to take product photos.');
+        setAlertModal({
+          type: 'warning',
+          title: 'Pahintulot sa Camera',
+          message: 'Kailangan ng camera permission para kumuha ng litrato ng paninda.',
+        });
         return;
       }
       const result = await ImagePicker.launchCameraAsync({
@@ -79,10 +91,13 @@ export default function ProductListScreen() {
       });
       if (!result.canceled && result.assets[0]?.uri) {
         setNewImageUri(result.assets[0].uri);
-        setErrorMsg(null);
       }
     } catch {
-      setErrorMsg('Could not open camera.');
+      setAlertModal({
+        type: 'danger',
+        title: 'Hindi Mabuksan ang Camera',
+        message: 'May naganap na problema sa pagbukas ng camera ng telepono.',
+      });
     }
   };
 
@@ -90,7 +105,11 @@ export default function ProductListScreen() {
     try {
       const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!perm.granted) {
-        setErrorMsg('Gallery permission needed to choose product photos.');
+        setAlertModal({
+          type: 'warning',
+          title: 'Pahintulot sa Gallery',
+          message: 'Kailangan ng gallery permission para pumili ng litrato ng paninda.',
+        });
         return;
       }
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -100,16 +119,28 @@ export default function ProductListScreen() {
       });
       if (!result.canceled && result.assets[0]?.uri) {
         setNewImageUri(result.assets[0].uri);
-        setErrorMsg(null);
       }
     } catch {
-      setErrorMsg('Could not open gallery.');
+      setAlertModal({
+        type: 'danger',
+        title: 'Hindi Mabuksan ang Gallery',
+        message: 'May naganap na problema sa pagbukas ng photo gallery.',
+      });
     }
   };
 
   const { trigger: handleSaveProduct, isSubmitting } = useIdempotentSubmit(async () => {
-    setErrorMsg(null);
     try {
+      if (!newName.trim()) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setAlertModal({
+          type: 'warning',
+          title: 'Kulang ang Pangalan',
+          message: 'Mangyaring maglagay ng pangalan ng paninda bago mag-save.',
+        });
+        return;
+      }
+
       const parsedPrice = parseFloat(newPricePhp.replace(/[^0-9.]/g, ''));
       const parsedStock = newUnitOfMeasure === 'kg'
         ? parseFloat(newStock.replace(/[^0-9.]/g, '') || '0')
@@ -129,7 +160,13 @@ export default function ProductListScreen() {
       });
 
       if (res.status === 'DUPLICATE_BARCODE_FOUND') {
-        setErrorMsg(res.message);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setAlertModal({
+          type: 'warning',
+          title: 'May Parehong Barcode',
+          message: res.message,
+          itemName: newName,
+        });
         return;
       }
 
@@ -144,7 +181,14 @@ export default function ProductListScreen() {
       setNewImageUri(null);
       setShowAddForm(false);
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Unable to save product.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      const msg = err instanceof Error ? err.message : 'Hindi mai-save ang paninda.';
+      setAlertModal({
+        type: 'danger',
+        title: 'Error sa Pag-save',
+        message: msg,
+        itemName: newName,
+      });
     }
   });
 
@@ -191,7 +235,6 @@ export default function ProductListScreen() {
         <Pressable
           style={styles.addBtn}
           onPress={() => {
-            setErrorMsg(null);
             setShowAddForm((prev) => !prev);
           }}
         >
@@ -303,7 +346,6 @@ export default function ProductListScreen() {
               style={styles.textInput}
               value={newName}
               onChangeText={(t) => {
-                setErrorMsg(null);
                 setNewName(t);
               }}
               placeholder="Enter product name"
@@ -386,7 +428,6 @@ export default function ProductListScreen() {
                   style={styles.textInput}
                   value={newPricePhp}
                   onChangeText={(t) => {
-                    setErrorMsg(null);
                     setNewPricePhp(t);
                   }}
                   placeholder="0.00"
@@ -409,11 +450,6 @@ export default function ProductListScreen() {
               </View>
             </View>
 
-            {errorMsg ? (
-              <View style={styles.errorBox}>
-                <Text style={styles.errorBoxText}>⚠️ {errorMsg}</Text>
-              </View>
-            ) : null}
 
             <Pressable
               style={[styles.saveBtn, isSubmitting ? styles.btnDisabled : null]}
@@ -459,7 +495,12 @@ export default function ProductListScreen() {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(
                   () => {}
                 );
-                setAddedBanner(`⚠️ ${item.name} is Out of Stock — restock in Inventory`);
+                setAlertModal({
+                  type: 'warning',
+                  title: 'Out of Stock!',
+                  message: 'Wala nang natitirang stock ang produktong ito sa imbentaryo.',
+                  itemName: item.name,
+                });
                 return;
               }
               if (item.unitOfMeasure === 'kg') {
@@ -478,13 +519,22 @@ export default function ProductListScreen() {
                 addToCart(item.id, 1);
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                 setAddedBanner(`✓ Added 1× ${item.name} to New Sale`);
+                setTimeout(() => setAddedBanner(null), 2000);
               } catch (error) {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-                setAddedBanner(
-                  error instanceof Error ? error.message : 'Could not update the cart. Try again.'
-                );
+                const errorMsg =
+                  error instanceof Error ? error.message : 'Could not update the cart. Try again.';
+                const isInsufficient =
+                  errorMsg.toLowerCase().includes('insufficient') ||
+                  errorMsg.toLowerCase().includes('kulang') ||
+                  errorMsg.toLowerCase().includes('stock');
+                setAlertModal({
+                  type: isInsufficient ? 'warning' : 'danger',
+                  title: isInsufficient ? 'Kulang ang Stock' : 'May Error sa Cart',
+                  message: errorMsg,
+                  itemName: item.name,
+                });
               }
-              setTimeout(() => setAddedBanner(null), 2000);
             }}
           >
             <View style={styles.thumbWrapper}>
@@ -603,13 +653,38 @@ export default function ProductListScreen() {
             setCartItemQuantity(productId, qty);
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
             setAddedBanner(`✓ Added ${qty} kg ${weightModalProduct?.name} to New Sale`);
+            setTimeout(() => setAddedBanner(null), 2000);
           } catch (error) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-            setAddedBanner(error instanceof Error ? error.message : 'Could not update cart.');
+            const errorMsg = error instanceof Error ? error.message : 'Could not update cart.';
+            const isInsufficient =
+              errorMsg.toLowerCase().includes('insufficient') ||
+              errorMsg.toLowerCase().includes('kulang') ||
+              errorMsg.toLowerCase().includes('stock');
+            setAlertModal({
+              type: isInsufficient ? 'warning' : 'danger',
+              title: isInsufficient ? 'Kulang ang Stock' : 'May Error sa Cart',
+              message: errorMsg,
+              itemName: weightModalProduct?.name,
+            });
           }
-          setTimeout(() => setAddedBanner(null), 2000);
         }}
       />
+
+      {/* Styled Pop-up Modal for Alerts / Errors */}
+      {alertModal ? (
+        <ConfirmationModal
+          visible={true}
+          type={alertModal.type ?? 'warning'}
+          title={alertModal.title}
+          message={alertModal.message}
+          itemName={alertModal.itemName}
+          confirmText="Naintindihan"
+          cancelText={null}
+          onConfirm={() => setAlertModal(null)}
+          onCancel={() => setAlertModal(null)}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }

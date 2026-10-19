@@ -14,7 +14,72 @@
       "file_type": "code",
       "norm_label": "product",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L56"
+      "source_location": "L57"
+    },
+    {
+      "id": "src_infrastructure_services_databasebackupservice_backupdatapayload",
+      "label": "BackupDataPayload",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "code",
+      "norm_label": "backupdatapayload",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_infrastructure_services_databasebackupservice_backupexportresult",
+      "label": "BackupExportResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "code",
+      "norm_label": "backupexportresult",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "src_infrastructure_services_databasebackupservice_backuprestoreresult",
+      "label": "BackupRestoreResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "code",
+      "norm_label": "backuprestoreresult",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L45"
+    },
+    {
+      "id": "src_domain_services_pinsecurityengine_pinsecurityengine",
+      "label": "PinSecurityEngine",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": "pinsecurityengine",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
+      "label": "SqliteDatabase",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "SqliteDatabase",
+      "file_type": "code",
+      "norm_label": "sqlitedatabase",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L5"
     },
     {
       "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage",
@@ -80,6 +145,19 @@
       "norm_label": "monthlysalesrecord",
       "source_file": "src/domain/strategies/SeasonalForecastEngine.ts",
       "source_location": "L3"
+    },
+    {
+      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice",
+      "label": "DatabaseBackupService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": "databasebackupservice",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L51"
     },
     {
       "id": "src_components_external_link_props",
@@ -316,6 +394,32 @@
       "source_location": "L5"
     },
     {
+      "id": "src_application_productonboardingservice_addproductcommand",
+      "label": "AddProductCommand",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "addproductcommand",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_application_productonboardingservice_addproductresult",
+      "label": "AddProductResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "addproductresult",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L25"
+    },
+    {
       "id": "src_application_productonboardingservice_productonboardingservice",
       "label": "ProductOnboardingService",
       "_callable": true,
@@ -327,6 +431,19 @@
       "norm_label": "productonboardingservice",
       "source_file": "src/application/ProductOnboardingService.ts",
       "source_location": "L36"
+    },
+    {
+      "id": "src_domain_entities_product_sellingunittier",
+      "label": "SellingUnitTier",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "sellingunittier",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L5"
     },
     {
       "id": "src_infrastructure_services_openfoodfactsapiclient_externalproductcatalogresult",
@@ -524,32 +641,6 @@
       "source_location": "L24"
     },
     {
-      "id": "src_application_productonboardingservice_addproductcommand",
-      "label": "AddProductCommand",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "addproductcommand",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_storesnapshot",
-      "label": "StoreSnapshot",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "storesnapshot",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L175"
-    },
-    {
       "id": "src_domain_entities_product_productdto",
       "label": "ProductDTO",
       "_callable": true,
@@ -560,7 +651,7 @@
       "file_type": "code",
       "norm_label": "productdto",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L26"
+      "source_location": "L27"
     },
     {
       "id": "src_domain_entities_product_productvisual",
@@ -573,20 +664,7 @@
       "file_type": "code",
       "norm_label": "productvisual",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_domain_entities_product_sellingunittier",
-      "label": "SellingUnitTier",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "sellingunittier",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L5"
+      "source_location": "L17"
     },
     {
       "id": "src_domain_entities_product_stockstatus",
@@ -599,7 +677,7 @@
       "file_type": "code",
       "norm_label": "stockstatus",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L14"
+      "source_location": "L15"
     },
     {
       "id": "src_domain_entities_product_unitofmeasure",
@@ -612,7 +690,7 @@
       "file_type": "code",
       "norm_label": "unitofmeasure",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L12"
+      "source_location": "L13"
     },
     {
       "id": "src_domain_value_objects_barcode_barcodesource",
@@ -667,13 +745,26 @@
       "source_location": "L14"
     },
     {
+      "id": "src_app_checkout_cartitemstepperprops",
+      "label": "CartItemStepperProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cartitemstepperprops",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L43"
+    },
+    {
       "id": "src_presentation_components_barcodeinputfield_barcodeinputfieldprops",
       "label": "BarcodeInputFieldProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "barcodeinputfieldprops",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
@@ -686,7 +777,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "barcodescannerviewfinderprops",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
@@ -699,7 +790,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodalprops",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -712,7 +803,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "weightquantityproduct",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -725,24 +816,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "weightquantitysheetprops",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
       "source_location": "L50"
-    },
-    {
-      "id": "src_app_checkout_cartitemstepperprops",
-      "label": "CartItemStepperProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "cartitemstepperprops",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L43"
     },
     {
       "id": "src_app_checkout_confirmationstate",
@@ -751,7 +829,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/checkout.tsx",
@@ -764,7 +842,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/inventory.tsx",
@@ -777,7 +855,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/sales.tsx",
@@ -790,7 +868,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/settings.tsx",
@@ -803,7 +881,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/utang.tsx",
@@ -816,37 +894,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "filtertype",
       "source_file": "src/app/utang.tsx",
       "source_location": "L42"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_daterangefilter",
-      "label": "DateRangeFilter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "daterangefilter",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L70"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_paymenttendertype",
-      "label": "PaymentTenderType",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "paymenttendertype",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L54"
     },
     {
       "id": "src_presentation_components_confirmationmodal_confirmationmodaldetail",
@@ -855,7 +907,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodaldetail",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -868,7 +920,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodalprops",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -881,7 +933,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationtype",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -894,7 +946,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "typetheme",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -907,7 +959,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "floatingtoastprops",
       "source_file": "src/presentation/components/FloatingToast.tsx",
@@ -920,24 +972,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "toasttype",
       "source_file": "src/presentation/components/FloatingToast.tsx",
       "source_location": "L11"
-    },
-    {
-      "id": "src_application_productonboardingservice_addproductresult",
-      "label": "AddProductResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "addproductresult",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L25"
     },
     {
       "id": "src_application_tindahanstoreservice_cartitemdto",
@@ -992,6 +1031,19 @@
       "source_location": "L76"
     },
     {
+      "id": "src_application_tindahanstoreservice_daterangefilter",
+      "label": "DateRangeFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "daterangefilter",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L70"
+    },
+    {
       "id": "src_application_tindahanstoreservice_daysalesbucket",
       "label": "DaySalesBucket",
       "_callable": true,
@@ -1029,6 +1081,19 @@
       "norm_label": "listener",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L197"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_paymenttendertype",
+      "label": "PaymentTenderType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "paymenttendertype",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L54"
     },
     {
       "id": "src_application_tindahanstoreservice_returndisposition",
@@ -1083,17 +1148,17 @@
       "source_location": "L114"
     },
     {
-      "id": "src_application_tindahanstoreservice_stockmovementrecord",
-      "label": "StockMovementRecord",
+      "id": "src_application_tindahanstoreservice_storesnapshot",
+      "label": "StoreSnapshot",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 8,
       "community_name": "TindahanStoreService.ts",
       "file_type": "code",
-      "norm_label": "stockmovementrecord",
+      "norm_label": "storesnapshot",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L161"
+      "source_location": "L175"
     },
     {
       "id": "src_application_tindahanstoreservice_topsellingitemrecord",
@@ -1135,19 +1200,6 @@
       "source_location": "L11"
     },
     {
-      "id": "src_domain_services_pinsecurityengine_pinsecurityengine",
-      "label": "PinSecurityEngine",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "pinsecurityengine",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L24"
-    },
-    {
       "id": "src_domain_services_pinsecurityengine_pinverificationoutcome",
       "label": "PinVerificationOutcome",
       "_callable": true,
@@ -1159,71 +1211,6 @@
       "norm_label": "pinverificationoutcome",
       "source_file": "src/domain/services/PinSecurityEngine.ts",
       "source_location": "L17"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
-      "label": "SqliteDatabase",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "sqlitedatabase",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_backupdatapayload",
-      "label": "BackupDataPayload",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "backupdatapayload",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_backupexportresult",
-      "label": "BackupExportResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "backupexportresult",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L37"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_backuprestoreresult",
-      "label": "BackupRestoreResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "backuprestoreresult",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L45"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice",
-      "label": "DatabaseBackupService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "databasebackupservice",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L51"
     },
     {
       "id": "src_app_history_datefilter",
@@ -1250,6 +1237,19 @@
       "norm_label": "movementfilter",
       "source_file": "src/app/history.tsx",
       "source_location": "L24"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_stockmovementrecord",
+      "label": "StockMovementRecord",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "stockmovementrecord",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L161"
     },
     {
       "id": "src_presentation_localization_i18n_supportedlanguage",
@@ -1339,7 +1339,7 @@
       "file_type": "code",
       "norm_label": ".addquarantinestock()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L268"
+      "source_location": "L269"
     },
     {
       "id": "src_domain_entities_product_product_adjuststock",
@@ -1351,7 +1351,7 @@
       "file_type": "code",
       "norm_label": ".adjuststock()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L180"
+      "source_location": "L181"
     },
     {
       "id": "src_domain_entities_product_product_basestockcount",
@@ -1363,7 +1363,7 @@
       "file_type": "code",
       "norm_label": ".basestockcount()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L120"
+      "source_location": "L121"
     },
     {
       "id": "src_domain_entities_product_product_category",
@@ -1375,7 +1375,7 @@
       "file_type": "code",
       "norm_label": ".category()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L116"
+      "source_location": "L117"
     },
     {
       "id": "src_domain_entities_product_product_daysuntilexpiry",
@@ -1387,7 +1387,7 @@
       "file_type": "code",
       "norm_label": ".daysuntilexpiry()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L85"
+      "source_location": "L86"
     },
     {
       "id": "src_domain_entities_product_product_defaultpricephp",
@@ -1399,7 +1399,7 @@
       "file_type": "code",
       "norm_label": ".defaultpricephp()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L378"
+      "source_location": "L393"
     },
     {
       "id": "src_domain_entities_product_product_expirydate",
@@ -1411,7 +1411,7 @@
       "file_type": "code",
       "norm_label": ".expirydate()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L81"
+      "source_location": "L82"
     },
     {
       "id": "src_domain_entities_product_product_getdefaultvisual",
@@ -1423,7 +1423,7 @@
       "file_type": "code",
       "norm_label": ".getdefaultvisual()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L290"
+      "source_location": "L291"
     },
     {
       "id": "src_domain_entities_product_product_geteffectivelowstockthreshold",
@@ -1435,7 +1435,7 @@
       "file_type": "code",
       "norm_label": ".geteffectivelowstockthreshold()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L169"
+      "source_location": "L170"
     },
     {
       "id": "src_domain_entities_product_product_getexpirystatus",
@@ -1447,7 +1447,7 @@
       "file_type": "code",
       "norm_label": ".getexpirystatus()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L96"
+      "source_location": "L97"
     },
     {
       "id": "src_domain_entities_product_product_getstockstatus",
@@ -1459,7 +1459,7 @@
       "file_type": "code",
       "norm_label": ".getstockstatus()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L173"
+      "source_location": "L174"
     },
     {
       "id": "src_domain_entities_product_product_gettier",
@@ -1471,7 +1471,7 @@
       "file_type": "code",
       "norm_label": ".gettier()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L384"
+      "source_location": "L399"
     },
     {
       "id": "src_domain_entities_product_product_getunitmultiplier",
@@ -1483,7 +1483,7 @@
       "file_type": "code",
       "norm_label": ".getunitmultiplier()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L388"
+      "source_location": "L403"
     },
     {
       "id": "src_domain_entities_product_product_getunitprice",
@@ -1495,7 +1495,7 @@
       "file_type": "code",
       "norm_label": ".getunitprice()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L392"
+      "source_location": "L407"
     },
     {
       "id": "src_domain_entities_product_product_imageuri",
@@ -1507,7 +1507,7 @@
       "file_type": "code",
       "norm_label": ".imageuri()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L132"
+      "source_location": "L133"
     },
     {
       "id": "src_domain_entities_product_product_name",
@@ -1519,7 +1519,7 @@
       "file_type": "code",
       "norm_label": ".name()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L112"
+      "source_location": "L113"
     },
     {
       "id": "src_domain_entities_product_product_outofstockdays",
@@ -1531,7 +1531,7 @@
       "file_type": "code",
       "norm_label": ".outofstockdays()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L128"
+      "source_location": "L129"
     },
     {
       "id": "src_domain_entities_product_product_quarantinestockcount",
@@ -1543,7 +1543,7 @@
       "file_type": "code",
       "norm_label": ".quarantinestockcount()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L124"
+      "source_location": "L125"
     },
     {
       "id": "src_domain_entities_product_product_sellingtiers",
@@ -1555,7 +1555,7 @@
       "file_type": "code",
       "norm_label": ".sellingtiers()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L374"
+      "source_location": "L389"
     },
     {
       "id": "src_domain_entities_product_product_todto",
@@ -1567,7 +1567,7 @@
       "file_type": "code",
       "norm_label": ".todto()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L328"
+      "source_location": "L329"
     },
     {
       "id": "src_domain_entities_product_product_unitcostphp",
@@ -1579,7 +1579,7 @@
       "file_type": "code",
       "norm_label": ".unitcostphp()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L140"
+      "source_location": "L141"
     },
     {
       "id": "src_domain_entities_product_product_unitofmeasure",
@@ -1591,7 +1591,7 @@
       "file_type": "code",
       "norm_label": ".unitofmeasure()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L136"
+      "source_location": "L137"
     },
     {
       "id": "src_domain_entities_product_product_updatedetails",
@@ -1603,7 +1603,7 @@
       "file_type": "code",
       "norm_label": ".updatedetails()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L201"
+      "source_location": "L202"
     },
     {
       "id": "src_domain_entities_product_product_withimage",
@@ -1615,7 +1615,7 @@
       "file_type": "code",
       "norm_label": ".withimage()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L249"
+      "source_location": "L250"
     },
     {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_persistproducttosqlite",
@@ -1627,7 +1627,7 @@
       "file_type": "code",
       "norm_label": ".persistproducttosqlite()",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L103"
+      "source_location": "L104"
     },
     {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_save",
@@ -1639,7 +1639,7 @@
       "file_type": "code",
       "norm_label": ".save()",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L151"
+      "source_location": "L152"
     },
     {
       "id": "src_app_index_posscanproductscreen",
@@ -1772,6 +1772,18 @@
       "norm_label": "addutangcustomer()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L60"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_adjustinventorystock",
+      "label": "adjustInventoryStock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "adjustinventorystock()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L57"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_clearalldatabasedata",
@@ -2230,6 +2242,18 @@
       "source_location": "L19"
     },
     {
+      "id": "src_presentation_hooks_usetindahanstore_updatesettings",
+      "label": "updateSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "updatesettings()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L85"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore_updateutangcustomer",
       "label": "updateUtangCustomer()",
       "_callable": true,
@@ -2288,6 +2312,162 @@
       "norm_label": "render_from_storyboard()",
       "source_file": "scripts/render_shotstack_ad.py",
       "source_location": "L15"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_tindahanstoreservice_setownermasterpin",
+      "label": ".setOwnerMasterPin()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": ".setownermasterpin()",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L2973"
+    },
+    {
+      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_checklockout",
+      "label": ".checkLockout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": ".checklockout()",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L148"
+    },
+    {
+      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_generatesalt",
+      "label": ".generateSalt()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": ".generatesalt()",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_hashpin",
+      "label": ".hashPin()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": ".hashpin()",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L141"
+    },
+    {
+      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_isvalidpinformat",
+      "label": ".isValidPinFormat()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": ".isvalidpinformat()",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_sha256",
+      "label": ".sha256()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": ".sha256()",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_sha256_rightrotate",
+      "label": "rightRotate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": "rightrotate()",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L54"
+    },
+    {
+      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_verifypin",
+      "label": ".verifyPin()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "PinSecurityEngine",
+      "file_type": "code",
+      "norm_label": ".verifypin()",
+      "source_file": "src/domain/services/PinSecurityEngine.ts",
+      "source_location": "L171"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_clearalltablesforreset",
+      "label": ".clearAllTablesForReset()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "SqliteDatabase",
+      "file_type": "code",
+      "norm_label": ".clearalltablesforreset()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L215"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "SqliteDatabase",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_initializetables",
+      "label": ".initializeTables()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "SqliteDatabase",
+      "file_type": "code",
+      "norm_label": ".initializetables()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L36"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_ispersistentsqliteactive",
+      "label": ".isPersistentSqliteActive()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "SqliteDatabase",
+      "file_type": "code",
+      "norm_label": ".ispersistentsqliteactive()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_rawdb",
+      "label": ".rawDb()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "SqliteDatabase",
+      "file_type": "code",
+      "norm_label": ".rawdb()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L28"
     },
     {
       "id": "src_components_animated_icon_animatedicon",
@@ -4174,6 +4354,42 @@
       "source_location": "L21"
     },
     {
+      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_exportbackup",
+      "label": ".exportBackup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".exportbackup()",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L65"
+    },
+    {
+      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_getinstance",
+      "label": ".getInstance()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".getinstance()",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L54"
+    },
+    {
+      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_pickandrestorebackup",
+      "label": ".pickAndRestoreBackup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".pickandrestorebackup()",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L167"
+    },
+    {
       "id": "marketing_website_assets_js_main_checkdownloadstatus",
       "label": "checkDownloadStatus()",
       "_callable": true,
@@ -4747,7 +4963,7 @@
       "file_type": "code",
       "norm_label": ".barcode()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L108"
+      "source_location": "L109"
     },
     {
       "id": "src_domain_entities_product_product_constructor",
@@ -4759,7 +4975,7 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L57"
+      "source_location": "L58"
     },
     {
       "id": "src_domain_repositories_iproductrepository_iproductrepository_deletebyid",
@@ -5263,7 +5479,7 @@
       "file_type": "code",
       "norm_label": ".calculatelinetotal()",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L144"
+      "source_location": "L145"
     },
     {
       "id": "src_domain_value_objects_money_money_add",
@@ -5398,12 +5614,24 @@
       "source_location": "L57"
     },
     {
+      "id": "src_app_checkout_cartitemstepper",
+      "label": "CartItemStepper()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cartitemstepper()",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L53"
+    },
+    {
       "id": "src_app_checkout_checkoutnewsalescreen",
       "label": "CheckoutNewSaleScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "checkoutnewsalescreen()",
       "source_file": "src/app/checkout.tsx",
@@ -5415,7 +5643,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "barcodeinputfield()",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
@@ -5427,7 +5655,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "barcodescannerviewfinder()",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
@@ -5439,11 +5667,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "productthumbnail()",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
       "source_location": "L13"
+    },
+    {
+      "id": "src_presentation_components_receiptprintermodal_receiptprintermodal",
+      "label": "ReceiptPrinterModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "receiptprintermodal()",
+      "source_file": "src/presentation/components/ReceiptPrinterModal.tsx",
+      "source_location": "L30"
     },
     {
       "id": "src_presentation_components_weightquantitymodal_weightquantitymodal",
@@ -5451,7 +5691,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodal()",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -5463,7 +5703,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "useidempotentsubmit()",
       "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
@@ -5482,24 +5722,12 @@
       "source_location": "L7"
     },
     {
-      "id": "src_app_checkout_cartitemstepper",
-      "label": "CartItemStepper()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "cartitemstepper()",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L53"
-    },
-    {
       "id": "src_app_sales_saleshistoryscreen",
       "label": "SalesHistoryScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "saleshistoryscreen()",
       "source_file": "src/app/sales.tsx",
@@ -5511,7 +5739,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "sukiutangledgerscreen()",
       "source_file": "src/app/utang.tsx",
@@ -5523,7 +5751,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodal()",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -5535,215 +5763,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "floatingtoast()",
       "source_file": "src/presentation/components/FloatingToast.tsx",
       "source_location": "L21"
-    },
-    {
-      "id": "src_presentation_components_receiptprintermodal_receiptprintermodal",
-      "label": "ReceiptPrinterModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "receiptprintermodal()",
-      "source_file": "src/presentation/components/ReceiptPrinterModal.tsx",
-      "source_location": "L30"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_tindahanstoreservice_setownermasterpin",
-      "label": ".setOwnerMasterPin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".setownermasterpin()",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2973"
-    },
-    {
-      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_checklockout",
-      "label": ".checkLockout()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".checklockout()",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L148"
-    },
-    {
-      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_generatesalt",
-      "label": ".generateSalt()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".generatesalt()",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L39"
-    },
-    {
-      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_hashpin",
-      "label": ".hashPin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".hashpin()",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L141"
-    },
-    {
-      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_isvalidpinformat",
-      "label": ".isValidPinFormat()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".isvalidpinformat()",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L32"
-    },
-    {
-      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_sha256",
-      "label": ".sha256()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".sha256()",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L53"
-    },
-    {
-      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_sha256_rightrotate",
-      "label": "rightRotate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "rightrotate()",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L54"
-    },
-    {
-      "id": "src_domain_services_pinsecurityengine_pinsecurityengine_verifypin",
-      "label": ".verifyPin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".verifypin()",
-      "source_file": "src/domain/services/PinSecurityEngine.ts",
-      "source_location": "L171"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_clearalltablesforreset",
-      "label": ".clearAllTablesForReset()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".clearalltablesforreset()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L215"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_initializetables",
-      "label": ".initializeTables()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".initializetables()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L36"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_ispersistentsqliteactive",
-      "label": ".isPersistentSqliteActive()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".ispersistentsqliteactive()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L32"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_rawdb",
-      "label": ".rawDb()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".rawdb()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L28"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_exportbackup",
-      "label": ".exportBackup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".exportbackup()",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L65"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_getinstance",
-      "label": ".getInstance()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".getinstance()",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L54"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_pickandrestorebackup",
-      "label": ".pickAndRestoreBackup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": ".pickandrestorebackup()",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L167"
     },
     {
       "id": "src_app_explore_getlocalizedmonths",
@@ -5818,18 +5842,6 @@
       "source_location": "L10"
     },
     {
-      "id": "src_presentation_hooks_usetindahanstore_adjustinventorystock",
-      "label": "adjustInventoryStock()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "getTranslations",
-      "file_type": "code",
-      "norm_label": "adjustinventorystock()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L57"
-    },
-    {
       "id": "src_presentation_hooks_usetindahanstore_getmonthlysaleshistory",
       "label": "getMonthlySalesHistory()",
       "_callable": true,
@@ -5840,18 +5852,6 @@
       "norm_label": "getmonthlysaleshistory()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L81"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_updatesettings",
-      "label": "updateSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "getTranslations",
-      "file_type": "code",
-      "norm_label": "updatesettings()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L85"
     },
     {
       "id": "src_presentation_localization_i18n_gettranslations",
@@ -5947,7 +5947,7 @@
       "file_type": "code",
       "norm_label": ".deletebyid()",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L161"
+      "source_location": "L162"
     },
     {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_findbybarcode",
@@ -5959,7 +5959,7 @@
       "file_type": "code",
       "norm_label": ".findbybarcode()",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L147"
+      "source_location": "L148"
     },
     {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getall",
@@ -5971,7 +5971,7 @@
       "file_type": "code",
       "norm_label": ".getall()",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L143"
+      "source_location": "L144"
     },
     {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getinitialdtos",
@@ -5983,7 +5983,7 @@
       "file_type": "code",
       "norm_label": ".getinitialdtos()",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L139"
+      "source_location": "L140"
     },
     {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getnexttingisequence",
@@ -5995,7 +5995,7 @@
       "file_type": "code",
       "norm_label": ".getnexttingisequence()",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L175"
+      "source_location": "L176"
     },
     {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_hydratefromsqlite",
@@ -6118,6 +6118,18 @@
       "source_location": "L33"
     },
     {
+      "id": "scripts_test_multi_unit_inventory_runmultiunittests_formatstock",
+      "label": "formatStock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 91,
+      "community_name": "runMultiUnitTests",
+      "file_type": "code",
+      "norm_label": "formatstock()",
+      "source_file": "scripts/test-multi-unit-inventory.cjs",
+      "source_location": "L151"
+    },
+    {
       "id": "scripts_test_multi_unit_inventory_runmultiunittests_gettier",
       "label": "getTier()",
       "_callable": true,
@@ -6128,6 +6140,18 @@
       "norm_label": "gettier()",
       "source_file": "scripts/test-multi-unit-inventory.cjs",
       "source_location": "L29"
+    },
+    {
+      "id": "scripts_test_multi_unit_inventory_runmultiunittests_matchbarcode",
+      "label": "matchBarcode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 91,
+      "community_name": "runMultiUnitTests",
+      "file_type": "code",
+      "norm_label": "matchbarcode()",
+      "source_file": "scripts/test-multi-unit-inventory.cjs",
+      "source_location": "L117"
     },
     {
       "id": "scripts_test_multi_unit_inventory_runmultiunittests_validatestock",
@@ -6299,6 +6323,94 @@
       "norm_label": "test-website-feedback.php",
       "source_file": "scripts/test-website-feedback.php",
       "source_location": "L1"
+    },
+    {
+      "id": "app_expo_plugins",
+      "label": "plugins",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "code",
+      "norm_label": "plugins",
+      "source_file": "app.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase",
+      "label": "SqliteDatabase.ts",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "code",
+      "norm_label": "sqlitedatabase.ts",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_services_databasebackupservice",
+      "label": "DatabaseBackupService.ts",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "code",
+      "norm_label": "databasebackupservice.ts",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "ref_expo_asset",
+      "label": "expo-asset",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "concept",
+      "norm_label": "expo-asset",
+      "source_file": "app.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "ref_expo_sharing",
+      "label": "expo-sharing",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "concept",
+      "norm_label": "expo-sharing",
+      "source_file": "app.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "ref_expo_sqlite",
+      "label": "expo-sqlite",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "concept",
+      "norm_label": "expo-sqlite",
+      "source_file": "app.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage",
+      "label": "KeyValueStorage.ts",
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "SqliteDatabase",
+      "file_type": "code",
+      "norm_label": "keyvaluestorage.ts",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_storage_keyvaluestorage_appkeyvaluestorage",
+      "label": "appKeyValueStorage",
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "SqliteDatabase",
+      "file_type": "code",
+      "norm_label": "appkeyvaluestorage",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L352"
     },
     {
       "id": "src_components_animated_icon",
@@ -10030,6 +10142,17 @@
       "source_location": "L7"
     },
     {
+      "id": "src_application_productonboardingservice",
+      "label": "ProductOnboardingService.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "productonboardingservice.ts",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_infrastructure_container",
       "label": "container.ts",
       "_origin": "ast",
@@ -13102,17 +13225,6 @@
       "source_location": "L14"
     },
     {
-      "id": "src_application_productonboardingservice",
-      "label": "ProductOnboardingService.ts",
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "productonboardingservice.ts",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_domain_entities_product",
       "label": "Product.ts",
       "_origin": "ast",
@@ -13587,11 +13699,33 @@
       "source_location": "L19"
     },
     {
+      "id": "src_app_checkout",
+      "label": "checkout.tsx",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "checkout.tsx",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_checkout_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L1200"
+    },
+    {
       "id": "src_app_index",
       "label": "index.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "index.tsx",
       "source_file": "src/app/index.tsx",
@@ -13602,18 +13736,18 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/index.tsx",
-      "source_location": "L611"
+      "source_location": "L645"
     },
     {
       "id": "src_app_inventory",
       "label": "inventory.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "inventory.tsx",
       "source_file": "src/app/inventory.tsx",
@@ -13624,7 +13758,7 @@
       "label": "STOCK_FILTERS",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "stock_filters",
       "source_file": "src/app/inventory.tsx",
@@ -13635,18 +13769,18 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2838"
+      "source_location": "L3275"
     },
     {
       "id": "src_app_products",
       "label": "products.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "products.tsx",
       "source_file": "src/app/products.tsx",
@@ -13657,18 +13791,40 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/products.tsx",
       "source_location": "L617"
     },
     {
+      "id": "src_domain_value_objects_money",
+      "label": "Money.ts",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "money.ts",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_domain_value_objects_money_phpcurrencyformatter",
+      "label": "phpCurrencyFormatter",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "phpcurrencyformatter",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L3"
+    },
+    {
       "id": "src_presentation_components_barcodeinputfield",
       "label": "BarcodeInputField.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "barcodeinputfield.tsx",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
@@ -13679,7 +13835,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
@@ -13690,7 +13846,7 @@
       "label": "BarcodeScannerViewfinder.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "barcodescannerviewfinder.tsx",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
@@ -13701,7 +13857,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
@@ -13712,7 +13868,7 @@
       "label": "ProductThumbnail.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "productthumbnail.tsx",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
@@ -13723,7 +13879,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
@@ -13734,7 +13890,7 @@
       "label": "WeightQuantityModal.tsx",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodal.tsx",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -13745,7 +13901,7 @@
       "label": "PRESET_PESO_AMOUNTS",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "preset_peso_amounts",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -13756,7 +13912,7 @@
       "label": "PRESET_WEIGHTS",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "preset_weights",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -13767,7 +13923,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -13778,7 +13934,7 @@
       "label": "useIdempotentSubmit.ts",
       "_origin": "ast",
       "community": 75,
-      "community_name": "inventory.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "useidempotentsubmit.ts",
       "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
@@ -13856,33 +14012,11 @@
       "source_location": "L1"
     },
     {
-      "id": "src_app_checkout",
-      "label": "checkout.tsx",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "checkout.tsx",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_checkout_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L1200"
-    },
-    {
       "id": "src_app_sales",
       "label": "sales.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "sales.tsx",
       "source_file": "src/app/sales.tsx",
@@ -13893,7 +14027,7 @@
       "label": "GASTOS_CATEGORIES",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "gastos_categories",
       "source_file": "src/app/sales.tsx",
@@ -13904,7 +14038,7 @@
       "label": "PANUKLI_CATEGORIES",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "panukli_categories",
       "source_file": "src/app/sales.tsx",
@@ -13915,7 +14049,7 @@
       "label": "PERIODS",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "periods",
       "source_file": "src/app/sales.tsx",
@@ -13926,7 +14060,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/sales.tsx",
@@ -13937,7 +14071,7 @@
       "label": "settings.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "settings.tsx",
       "source_file": "src/app/settings.tsx",
@@ -13948,7 +14082,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/settings.tsx",
@@ -13959,7 +14093,7 @@
       "label": "utang.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "utang.tsx",
       "source_file": "src/app/utang.tsx",
@@ -13970,40 +14104,18 @@
       "label": "styles",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/utang.tsx",
       "source_location": "L1231"
     },
     {
-      "id": "src_domain_value_objects_money",
-      "label": "Money.ts",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "money.ts",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_domain_value_objects_money_phpcurrencyformatter",
-      "label": "phpCurrencyFormatter",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "phpcurrencyformatter",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L3"
-    },
-    {
       "id": "src_presentation_components_confirmationmodal",
       "label": "ConfirmationModal.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodal.tsx",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -14014,7 +14126,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -14025,7 +14137,7 @@
       "label": "THEMES",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "themes",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -14036,7 +14148,7 @@
       "label": "FloatingToast.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "floatingtoast.tsx",
       "source_file": "src/presentation/components/FloatingToast.tsx",
@@ -14047,7 +14159,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 78,
-      "community_name": "checkout.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/FloatingToast.tsx",
@@ -14074,17 +14186,6 @@
       "norm_label": "expo-local-authentication",
       "source_file": "package.json",
       "source_location": "L23"
-    },
-    {
-      "id": "app_expo_plugins",
-      "label": "plugins",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "plugins",
-      "source_file": "app.json",
-      "source_location": "L34"
     },
     {
       "id": "src_application_tindahanstoreservice",
@@ -14118,83 +14219,6 @@
       "norm_label": "pinsecurityengine.ts",
       "source_file": "src/domain/services/PinSecurityEngine.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase",
-      "label": "SqliteDatabase.ts",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "sqlitedatabase.ts",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice",
-      "label": "DatabaseBackupService.ts",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "databasebackupservice.ts",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage",
-      "label": "KeyValueStorage.ts",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "keyvaluestorage.ts",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_appkeyvaluestorage",
-      "label": "appKeyValueStorage",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "appkeyvaluestorage",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L352"
-    },
-    {
-      "id": "ref_expo_asset",
-      "label": "expo-asset",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "concept",
-      "norm_label": "expo-asset",
-      "source_file": "app.json",
-      "source_location": "L34"
-    },
-    {
-      "id": "ref_expo_sharing",
-      "label": "expo-sharing",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "concept",
-      "norm_label": "expo-sharing",
-      "source_file": "app.json",
-      "source_location": "L34"
-    },
-    {
-      "id": "ref_expo_sqlite",
-      "label": "expo-sqlite",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "concept",
-      "norm_label": "expo-sqlite",
-      "source_file": "app.json",
-      "source_location": "L34"
     },
     {
       "id": "src_app_explore",
@@ -15724,7 +15748,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L202",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -15736,7 +15760,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L218",
+      "source_location": "L252",
       "weight": 1.0
     },
     {
@@ -15772,7 +15796,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L455",
+      "source_location": "L489",
       "weight": 1.0
     },
     {
@@ -15784,7 +15808,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L471",
+      "source_location": "L505",
       "weight": 1.0
     },
     {
@@ -15797,6 +15821,18 @@
       "context": "call",
       "source_file": "src/app/index.tsx",
       "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory_inventorymanagementscreen",
+      "target": "src_presentation_hooks_usetindahanstore_lockstore",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L1098",
       "weight": 1.0
     },
     {
@@ -15844,7 +15880,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L1915",
+      "source_location": "L2218",
       "weight": 1.0
     },
     {
@@ -15856,7 +15892,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2054",
+      "source_location": "L2357",
       "weight": 1.0
     },
     {
@@ -15868,7 +15904,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2829",
+      "source_location": "L3266",
       "weight": 1.0
     },
     {
@@ -15880,7 +15916,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L395",
+      "source_location": "L491",
       "weight": 1.0
     },
     {
@@ -15892,7 +15928,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L555",
+      "source_location": "L664",
       "weight": 1.0
     },
     {
@@ -15928,7 +15964,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L758",
+      "source_location": "L867",
       "weight": 1.0
     },
     {
@@ -15940,7 +15976,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L767",
+      "source_location": "L876",
       "weight": 1.0
     },
     {
@@ -15952,19 +15988,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L833",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_inventory_inventorymanagementscreen",
-      "target": "src_presentation_hooks_usetindahanstore_lockstore",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/app/inventory.tsx",
-      "source_location": "L942",
+      "source_location": "L979",
       "weight": 1.0
     },
     {
@@ -18016,7 +18040,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L272",
+      "source_location": "L273",
       "weight": 1.0
     },
     {
@@ -18028,7 +18052,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L183",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -18040,7 +18064,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L150",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -18052,7 +18076,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L162",
+      "source_location": "L163",
       "weight": 1.0
     },
     {
@@ -18064,7 +18088,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L175",
+      "source_location": "L176",
       "weight": 1.0
     },
     {
@@ -18076,7 +18100,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L389",
+      "source_location": "L404",
       "weight": 1.0
     },
     {
@@ -18088,7 +18112,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L393",
+      "source_location": "L408",
       "weight": 1.0
     },
     {
@@ -18100,7 +18124,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L347",
+      "source_location": "L348",
       "weight": 1.0
     },
     {
@@ -18112,7 +18136,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L351",
+      "source_location": "L352",
       "weight": 1.0
     },
     {
@@ -18124,7 +18148,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L357",
+      "source_location": "L358",
       "weight": 1.0
     },
     {
@@ -18136,7 +18160,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L360",
+      "source_location": "L361",
       "weight": 1.0
     },
     {
@@ -18148,7 +18172,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L368",
+      "source_location": "L383",
       "weight": 1.0
     },
     {
@@ -18160,7 +18184,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L231",
+      "source_location": "L232",
       "weight": 1.0
     },
     {
@@ -18172,7 +18196,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L250",
+      "source_location": "L251",
       "weight": 1.0
     },
     {
@@ -18520,7 +18544,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L163",
+      "source_location": "L164",
       "weight": 1.0
     },
     {
@@ -18556,7 +18580,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L82",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -18568,7 +18592,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L104",
+      "source_location": "L105",
       "weight": 1.0
     },
     {
@@ -18580,7 +18604,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L152",
+      "source_location": "L153",
       "weight": 1.0
     },
     {
@@ -19617,6 +19641,30 @@
     },
     {
       "source": "scripts_test_multi_unit_inventory_runmultiunittests",
+      "target": "scripts_test_multi_unit_inventory_runmultiunittests_matchbarcode",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "scripts/test-multi-unit-inventory.cjs",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_test_multi_unit_inventory_runmultiunittests",
+      "target": "scripts_test_multi_unit_inventory_runmultiunittests_formatstock",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "scripts/test-multi-unit-inventory.cjs",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_test_multi_unit_inventory_runmultiunittests",
       "target": "scripts_test_multi_unit_inventory_runmultiunittests_gettier",
       "relation": "contains",
       "_origin": "ast",
@@ -19828,7 +19876,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -19840,7 +19888,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -19948,7 +19996,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L147",
+      "source_location": "L148",
       "weight": 1.0
     },
     {
@@ -19960,7 +20008,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L143",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -21142,6 +21190,18 @@
     {
       "source": "src_app_inventory",
       "target": "src_domain_entities_product_productdto",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_inventory",
+      "target": "src_domain_entities_product_sellingunittier",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -24820,7 +24880,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -24856,7 +24916,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L147",
+      "source_location": "L148",
       "weight": 1.0
     },
     {
@@ -24868,7 +24928,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L103",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -24880,7 +24940,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L151",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -25036,7 +25096,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L108",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -25048,7 +25108,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L144",
+      "source_location": "L145",
       "weight": 1.0
     },
     {
@@ -25060,7 +25120,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L139",
+      "source_location": "L140",
       "weight": 1.0
     },
     {
@@ -31869,7 +31929,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/index.tsx",
-      "source_location": "L611",
+      "source_location": "L645",
       "weight": 1.0
     },
     {
@@ -31880,7 +31940,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2838",
+      "source_location": "L3275",
       "weight": 1.0
     },
     {
@@ -32804,7 +32864,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -32815,7 +32875,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -32826,7 +32886,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -32837,7 +32897,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -32859,7 +32919,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L56",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
@@ -35598,7 +35658,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L108",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -35609,7 +35669,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L112",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -35620,7 +35680,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L116",
+      "source_location": "L117",
       "weight": 1.0
     },
     {
@@ -35631,7 +35691,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L120",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -35642,7 +35702,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L124",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -35653,7 +35713,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L128",
+      "source_location": "L129",
       "weight": 1.0
     },
     {
@@ -35664,7 +35724,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L132",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -35675,7 +35735,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L136",
+      "source_location": "L137",
       "weight": 1.0
     },
     {
@@ -35686,7 +35746,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L140",
+      "source_location": "L141",
       "weight": 1.0
     },
     {
@@ -35697,7 +35757,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L144",
+      "source_location": "L145",
       "weight": 1.0
     },
     {
@@ -35708,7 +35768,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L169",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -35719,7 +35779,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L173",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -35730,7 +35790,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L290",
+      "source_location": "L291",
       "weight": 1.0
     },
     {
@@ -35741,7 +35801,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L328",
+      "source_location": "L329",
       "weight": 1.0
     },
     {
@@ -35752,7 +35812,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L374",
+      "source_location": "L389",
       "weight": 1.0
     },
     {
@@ -35763,7 +35823,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L378",
+      "source_location": "L393",
       "weight": 1.0
     },
     {
@@ -35774,7 +35834,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L384",
+      "source_location": "L399",
       "weight": 1.0
     },
     {
@@ -35785,7 +35845,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L388",
+      "source_location": "L403",
       "weight": 1.0
     },
     {
@@ -35796,7 +35856,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L392",
+      "source_location": "L407",
       "weight": 1.0
     },
     {
@@ -35807,7 +35867,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -35818,7 +35878,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L81",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -35829,7 +35889,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L85",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -35840,7 +35900,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L96",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -36280,7 +36340,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L103",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -36291,7 +36351,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L139",
+      "source_location": "L140",
       "weight": 1.0
     },
     {
@@ -36302,7 +36362,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L143",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -36313,7 +36373,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L147",
+      "source_location": "L148",
       "weight": 1.0
     },
     {
@@ -36324,7 +36384,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L151",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -36335,7 +36395,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L161",
+      "source_location": "L162",
       "weight": 1.0
     },
     {
@@ -36346,7 +36406,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L175",
+      "source_location": "L176",
       "weight": 1.0
     },
     {
@@ -37734,7 +37794,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L106",
+      "source_location": "L107",
       "weight": 1.0
     },
     {
@@ -38387,5 +38447,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c880a12af202b28cdc7409138f3227776ee8248f"
+  "built_at_commit": "37a7a3d08f9cb510dda3df00311ba45f10277e60"
 }

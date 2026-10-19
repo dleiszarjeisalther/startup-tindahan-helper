@@ -19,6 +19,7 @@ import { getTranslations } from '@/presentation/localization/i18n';
 import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/components/WeightQuantityModal';
 import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 import { UnitSelectionModal } from '@/presentation/components/UnitSelectionModal';
+import { ConfirmationModal } from '@/presentation/components/ConfirmationModal';
 import { ProductDTO } from '@/domain/entities/Product';
 
 export default function PosScanProductScreen() {
@@ -44,6 +45,12 @@ export default function PosScanProductScreen() {
   const [onlyTingi, setOnlyTingi] = useState(false);
   const [liveCameraActive, setLiveCameraActive] = useState(true);
   const [scanToast, setScanToast] = useState<string | null>(null);
+  const [alertModal, setAlertModal] = useState<{
+    type?: 'warning' | 'danger' | 'info' | 'success';
+    title: string;
+    message: string;
+    itemName?: string;
+  } | null>(null);
   const [unknownBarcode, setUnknownBarcode] = useState<string | null>(null);
   const [lastScannedProductId, setLastScannedProductId] = useState<string | null>(null);
   const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
@@ -72,30 +79,60 @@ export default function PosScanProductScreen() {
     successMessage: string,
     unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
   ) => {
+    const prod = products.find((p) => p.id === productId);
     try {
-      const prod = products.find((p) => p.id === productId);
       if (prod && prod.expiryDate) {
         const expDate = new Date(prod.expiryDate);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const diffDays = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
         if (diffDays < 0) {
-          triggerScanToast(`⚠️ HALA! EXPIRED NA (${prod.expiryDate})! Huwag ibenta sa suki.`);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+          setAlertModal({
+            type: 'danger',
+            title: 'Hala! Expired Na!',
+            message: `Ang produktong ito ay expired na noong ${prod.expiryDate}. Mahigpit na ipinagbabawal ang pagbenta nito sa suki.`,
+            itemName: prod.name,
+          });
           return false;
         } else if (diffDays <= 7) {
           triggerScanToast(`⏳ FEFO: Malapit nang mag-expire (${diffDays} araw)!`);
         }
       }
 
-      addToCart(productId, 1, unit);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      triggerScanToast(successMessage);
-      console.log(`[POS Screen] ✓ Added to cart: productId=${productId}, unit=${unit}`);
+      const result = addToCart(productId, 1, unit);
+      if (result?.fellBackToPiece) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        const unitName =
+          result.originalUnit === 'pack'
+            ? 'buong pack'
+            : result.originalUnit === 'box'
+            ? 'buong box'
+            : result.originalUnit === 'bundle'
+            ? 'bundle'
+            : (result.originalUnit ?? 'pack');
+        triggerScanToast(
+          `⚠️ Kulang na ang stock sa ${unitName} (${result.remainingStock} pcs na lang). Inilagay bilang piraso.`
+        );
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        triggerScanToast(successMessage);
+      }
+      console.log(`[POS Screen] ✓ Added to cart: productId=${productId}, unit=${result?.unitAdded ?? unit}`);
       return true;
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-      triggerScanToast(error instanceof Error ? error.message : 'Could not update the cart. Try again.');
+      const errorMsg = error instanceof Error ? error.message : 'Could not update the cart. Try again.';
+      const isInsufficient =
+        errorMsg.toLowerCase().includes('insufficient') ||
+        errorMsg.toLowerCase().includes('kulang') ||
+        errorMsg.toLowerCase().includes('stock');
+      setAlertModal({
+        type: isInsufficient ? 'warning' : 'danger',
+        title: isInsufficient ? 'Kulang ang Stock' : 'May Error sa Cart',
+        message: errorMsg,
+        itemName: prod?.name,
+      });
       console.log('[POS Screen] Failed to add to cart:', error);
       return false;
     }
@@ -127,7 +164,12 @@ export default function PosScanProductScreen() {
       if (matched.stockCount <= 0) {
         console.log(`[POS Screen] ⚠️ Product "${matched.name}" is OUT OF STOCK.`);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-        triggerScanToast(`⚠️ Out of Stock — This product is currently unavailable.`);
+        setAlertModal({
+          type: 'warning',
+          title: 'Out of Stock!',
+          message: 'Wala nang natitirang stock ang produktong ito sa imbentaryo.',
+          itemName: matched.name,
+        });
         return;
       }
       if (matched.unitOfMeasure === 'kg') {
@@ -395,7 +437,12 @@ export default function PosScanProductScreen() {
                         Haptics.notificationAsync(
                           Haptics.NotificationFeedbackType.Warning
                         ).catch(() => {});
-                        triggerScanToast('⚠️ Out of Stock — This product is currently unavailable.');
+                        setAlertModal({
+                          type: 'warning',
+                          title: 'Out of Stock!',
+                          message: 'Wala nang natitirang stock ang produktong ito sa imbentaryo.',
+                          itemName: item.name,
+                        });
                         return;
                       }
                       if (item.unitOfMeasure === 'kg') {
@@ -497,7 +544,17 @@ export default function PosScanProductScreen() {
             triggerScanToast(`✓ ${qty} kg ${weightModalProduct?.name} added to New Sale`);
           } catch (error) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-            triggerScanToast(error instanceof Error ? error.message : 'Could not update cart.');
+            const errorMsg = error instanceof Error ? error.message : 'Could not update cart.';
+            const isInsufficient =
+              errorMsg.toLowerCase().includes('insufficient') ||
+              errorMsg.toLowerCase().includes('kulang') ||
+              errorMsg.toLowerCase().includes('stock');
+            setAlertModal({
+              type: isInsufficient ? 'warning' : 'danger',
+              title: isInsufficient ? 'Kulang ang Stock' : 'May Error sa Cart',
+              message: errorMsg,
+              itemName: weightModalProduct?.name,
+            });
           }
         }}
       />
@@ -546,6 +603,21 @@ export default function PosScanProductScreen() {
           }
         }}
       />
+
+      {/* Styled Alert / Confirmation Pop-up Modal */}
+      {alertModal ? (
+        <ConfirmationModal
+          visible={true}
+          type={alertModal.type ?? 'warning'}
+          title={alertModal.title}
+          message={alertModal.message}
+          itemName={alertModal.itemName}
+          confirmText="Naintindihan"
+          cancelText={null}
+          onConfirm={() => setAlertModal(null)}
+          onCancel={() => setAlertModal(null)}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }

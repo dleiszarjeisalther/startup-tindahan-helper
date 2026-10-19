@@ -1,4 +1,7 @@
-# Ignore local generated folders and heavy docs for EAS upload
+# Ignore local generated folders, dependencies, and build outputs for EAS upload
+node_modules/
+*.apk
+tindahan-helper.apk
 android/
 ios/
 marketing/

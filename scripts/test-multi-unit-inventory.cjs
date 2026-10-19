@@ -167,6 +167,92 @@ function runMultiUnitTests() {
   assert.strictEqual(formatted, '60 pcs • 2 boxes • 10 packs');
   console.log(`✓ Test 11: formattedStock calculation verified: "${formatted}"`);
 
+  // Test 12: Auto-fallback from pack/box to piece when remaining stock is insufficient for a whole unit
+  function simulateAddToCart(stockCount, cartItems, requestedUnit, requestedQty = 1) {
+    if (stockCount <= 0) {
+      throw new Error('Out of Stock — Product is unavailable.');
+    }
+    const packTier = { baseUnitMultiplier: 10, unitPricePhp: 140 };
+    const mult = requestedUnit === 'pack' ? packTier.baseUnitMultiplier : 1;
+    let otherBaseUnits = 0;
+    for (const item of cartItems) {
+      if (item.unit !== requestedUnit) {
+        otherBaseUnits += item.quantity * (item.unit === 'pack' ? 10 : 1);
+      }
+    }
+    const currentRequestedQty = (cartItems.find((i) => i.unit === requestedUnit) || {}).quantity || 0;
+    const nextTotalBaseUnits = otherBaseUnits + (currentRequestedQty + requestedQty) * mult;
+
+    if (nextTotalBaseUnits > stockCount) {
+      if (requestedUnit !== 'piece') {
+        const currentTotalUsed = otherBaseUnits + currentRequestedQty * mult;
+        const remaining = Math.max(0, stockCount - currentTotalUsed);
+        if (remaining >= 1) {
+          return {
+            fellBackToPiece: true,
+            unitAdded: 'piece',
+            addedQty: Math.min(requestedQty, remaining),
+            remainingStock: stockCount,
+          };
+        }
+      }
+      throw new Error(`Insufficient Stock — Only ${stockCount} available.`);
+    }
+
+    return {
+      fellBackToPiece: false,
+      unitAdded: requestedUnit,
+      addedQty: requestedQty,
+      remainingStock: stockCount,
+    };
+  }
+
+  // 7 pcs in stock, adding 1 pack (10 pcs) should auto fallback to piece
+  const fallbackResult = simulateAddToCart(7, [], 'pack', 1);
+  assert.strictEqual(fallbackResult.fellBackToPiece, true, 'Expected auto fallback to piece');
+  assert.strictEqual(fallbackResult.unitAdded, 'piece', 'Expected piece unit added');
+  assert.strictEqual(fallbackResult.addedQty, 1, 'Expected 1 piece added');
+  console.log('✓ Test 12: Auto-fallback from pack to piece when 7 pcs < 10 pcs pack verified');
+
+  // Test 13: When 0 pcs available, Insufficient Stock is thrown
+  assert.throws(
+    () => simulateAddToCart(7, [{ unit: 'piece', quantity: 7 }], 'pack', 1),
+    /Insufficient Stock/,
+    'Expected Insufficient Stock when 0 remaining pcs'
+  );
+  console.log('✓ Test 13: Insufficient stock correctly thrown when remaining pieces is 0');
+
+  // Test 14: Sale confirmation modal payload verification
+  function buildSaleConfirmation(totalPhp, count, tenderType, tenderedPhp, changeDuePhp, sukiName) {
+    return {
+      type: 'success',
+      title: 'Kumpirmahin ang Pagbenta',
+      message: `Nais mo bang kumpletuhin ang transaksyon para sa ${count} na paninda?`,
+      details: [
+        { label: 'Kabuuang Halaga', value: `₱${totalPhp.toFixed(2)}`, highlight: true },
+        { label: 'Dami ng Paninda', value: `${count} items` },
+        { label: 'Paraan ng Bayad', value: tenderType },
+        ...(tenderType === 'CASH'
+          ? [
+              { label: 'Halagang Iniabot', value: `₱${tenderedPhp.toFixed(2)}` },
+              ...(changeDuePhp > 0 ? [{ label: 'Sukli sa Suki', value: `₱${changeDuePhp.toFixed(2)}`, highlight: true }] : []),
+            ]
+          : []),
+        ...(sukiName ? [{ label: 'Pangalan ng Suki', value: sukiName }] : []),
+      ],
+      confirmText: 'Oo, Tapusin ang Benta',
+      cancelText: 'Bumalik',
+    };
+  }
+
+  const modalPayload = buildSaleConfirmation(250.00, 3, 'CASH', 500.00, 250.00, null);
+  assert.strictEqual(modalPayload.details.length, 5);
+  assert.strictEqual(modalPayload.details[0].label, 'Kabuuang Halaga');
+  assert.strictEqual(modalPayload.details[0].value, '₱250.00');
+  assert.strictEqual(modalPayload.details[4].label, 'Sukli sa Suki');
+  assert.strictEqual(modalPayload.details[4].value, '₱250.00');
+  console.log('✓ Test 14: Sale confirmation modal breakdown and change due payload verified');
+
   console.log('--- ALL MULTI-UNIT SELLING TESTS PASSED ---');
 }
 

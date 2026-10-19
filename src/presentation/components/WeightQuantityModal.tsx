@@ -14,6 +14,10 @@ import {
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Money } from '@/domain/value-objects/Money';
+import {
+  ConfirmationModal,
+  ConfirmationType,
+} from '@/presentation/components/ConfirmationModal';
 
 export interface WeightQuantityProduct {
   id: string;
@@ -116,9 +120,29 @@ function WeightQuantitySheet({
     setWeightInput(Number(next.toFixed(3)).toString());
   };
 
+  const [alertModal, setAlertModal] = useState<{
+    type?: ConfirmationType;
+    title: string;
+    message: string;
+  } | null>(null);
+
   const handleConfirm = () => {
-    if (resolvedWeight <= 0 || isStockInsufficient) {
+    if (resolvedWeight <= 0) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      setAlertModal({
+        type: 'warning',
+        title: 'Walang Halaga o Timbang',
+        message: 'Mangyaring maglagay ng timbang o halaga ng bibilhin bago ilagay sa cart.',
+      });
+      return;
+    }
+    if (isStockInsufficient) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      setAlertModal({
+        type: 'warning',
+        title: 'Kulang ang Stock',
+        message: `Mayroon na lamang ${Number(stockCount.toFixed(3))} kg na stock sa imbentaryo para sa ${product.name}. Hindi maaaring magbenta ng higit sa kasalukuyang stock (${resolvedWeight} kg).`,
+      });
       return;
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
@@ -364,7 +388,6 @@ function WeightQuantitySheet({
               (resolvedWeight <= 0 || isStockInsufficient) && styles.confirmBtnDisabled,
             ]}
             onPress={handleConfirm}
-            disabled={resolvedWeight <= 0 || isStockInsufficient}
           >
             <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
             <Text style={styles.confirmBtnText}>
@@ -372,6 +395,20 @@ function WeightQuantitySheet({
             </Text>
           </Pressable>
         </View>
+
+        {alertModal ? (
+          <ConfirmationModal
+            visible={true}
+            type={alertModal.type ?? 'warning'}
+            title={alertModal.title}
+            message={alertModal.message}
+            itemName={product.name}
+            confirmText="Naintindihan"
+            cancelText={null}
+            onConfirm={() => setAlertModal(null)}
+            onCancel={() => setAlertModal(null)}
+          />
+        ) : null}
       </View>
     </KeyboardAvoidingView>
   );

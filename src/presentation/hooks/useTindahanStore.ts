@@ -3,7 +3,7 @@ import { tindahanStoreService } from '../../infrastructure/container';
 import { useTindahanStoreService } from '../providers/TindahanStoreProvider';
 import { AddProductCommand } from '../../application/ProductOnboardingService';
 import { MonthlySalesRecord } from '../../domain/strategies/SeasonalForecastEngine';
-import { DateRangeFilter, PaymentTenderType } from '../../application/TindahanStoreService';
+import { AddToCartResult, DateRangeFilter, PaymentTenderType } from '../../application/TindahanStoreService';
 
 // Stable dispatchers with fixed function identities across renders
 const refreshFromSqlite = () => tindahanStoreService.refreshFromSqlite();
@@ -26,7 +26,7 @@ const addToCart = (
   productId: string,
   deltaQty = 1,
   unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
-) => tindahanStoreService.addToCart(productId, deltaQty, unit);
+): AddToCartResult => tindahanStoreService.addToCart(productId, deltaQty, unit);
 const setCartItemQuantity = (
   productId: string,
   quantity: number,

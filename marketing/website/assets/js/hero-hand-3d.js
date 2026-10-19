@@ -72,11 +72,14 @@
     });
 
     // Also stop if user scrolls manually past top
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 25 && !autoScrollInterval) {
+    function handleUserScrollStop() {
+      const st = window.pageYOffset || window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      if (st > 15 && !autoScrollInterval) {
         stopHandAnimation();
       }
-    }, { passive: true });
+    }
+    window.addEventListener('scroll', handleUserScrollStop, { passive: true });
+    document.addEventListener('scroll', handleUserScrollStop, { passive: true });
 
     // Handle viewport resize / screen orientation changes
     window.addEventListener('resize', () => {
@@ -383,7 +386,8 @@
     // --- 3-Second Idle Delay before appearing ---
     setTimeout(() => {
       // Only start if user hasn't scrolled or interacted
-      if (isUserInteracting || isTerminated || window.scrollY > 20) {
+      const st = window.pageYOffset || window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      if (isUserInteracting || isTerminated || st > 15) {
         return;
       }
 

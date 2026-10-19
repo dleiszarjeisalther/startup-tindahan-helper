@@ -6,7 +6,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Alert,
   Linking,
   Share,
 } from 'react-native';
@@ -17,6 +16,22 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Haptics from 'expo-haptics';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { getTranslations } from '@/presentation/localization/i18n';
+import {
+  ConfirmationModal,
+  ConfirmationType,
+  ConfirmationModalDetail,
+} from '@/presentation/components/ConfirmationModal';
+
+interface ConfirmationState {
+  type?: ConfirmationType;
+  title: string;
+  message: string;
+  itemName?: string;
+  details?: ConfirmationModalDetail[];
+  confirmText?: string;
+  cancelText?: string | null;
+  onConfirm: () => void | Promise<void>;
+}
 
 export default function MenuProfileScreen() {
   const router = useRouter();
@@ -31,36 +46,41 @@ export default function MenuProfileScreen() {
     'NONE' | 'SUBSCRIPTION' | 'HELP'
   >('NONE');
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
 
   const handleOpenFeedback = async () => {
     const feedbackUrl = 'https://tindahanhelper.wuaze.com/feedback.php';
-    Alert.alert(
-      '💬 Mag-iwan ng Feedback & Mungkahi',
-      'Kailangan ng aktibong internet connection (Wi-Fi o Mobile Data) para ma-access ang online feedback page ng Startup Tindahan Helper.\n\nNais mo bang buksan ang browser?',
-      [
-        { text: 'Kanselahin', style: 'cancel' },
-        {
-          text: 'Magpatuloy',
-          onPress: async () => {
-            try {
-              await WebBrowser.openBrowserAsync(feedbackUrl, {
-                presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
-                toolbarColor: '#0F172A',
-              });
-            } catch {
-              try {
-                await Linking.openURL(feedbackUrl);
-              } catch {
-                Alert.alert(
-                  'Hindi Mabuksan ang Browser',
-                  'Pakibisita ang https://tindahanhelper.wuaze.com/feedback.php sa iyong phone browser.'
-                );
-              }
-            }
-          },
-        },
-      ]
-    );
+    setConfirmDialog({
+      type: 'info',
+      title: '💬 Mag-iwan ng Feedback & Mungkahi',
+      message:
+        'Kailangan ng aktibong internet connection (Wi-Fi o Mobile Data) para ma-access ang online feedback page ng Startup Tindahan Helper.\n\nNais mo bang buksan ang browser?',
+      confirmText: 'Magpatuloy',
+      cancelText: 'Kanselahin',
+      onConfirm: async () => {
+        setConfirmDialog(null);
+        try {
+          await WebBrowser.openBrowserAsync(feedbackUrl, {
+            presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
+            toolbarColor: '#0F172A',
+          });
+        } catch {
+          try {
+            await Linking.openURL(feedbackUrl);
+          } catch {
+            setConfirmDialog({
+              type: 'warning',
+              title: 'Hindi Mabuksan ang Browser',
+              message:
+                'Pakibisita ang https://tindahanhelper.wuaze.com/feedback.php sa iyong phone browser.',
+              confirmText: 'Naintindihan',
+              cancelText: null,
+              onConfirm: () => setConfirmDialog(null),
+            });
+          }
+        }
+      },
+    });
   };
 
   return (
@@ -306,10 +326,15 @@ export default function MenuProfileScreen() {
                     try {
                       await Linking.openURL('tel:09916589854');
                     } catch {
-                      Alert.alert(
-                        'Hindi Mabuksan ang Dialer',
-                        'Maaaring i-dial nang mano-mano ang 09916589854 sa iyong telepono.'
-                      );
+                      setConfirmDialog({
+                        type: 'warning',
+                        title: 'Hindi Mabuksan ang Dialer',
+                        message:
+                          'Maaaring i-dial nang mano-mano ang 09916589854 sa iyong telepono.',
+                        confirmText: 'Naintindihan',
+                        cancelText: null,
+                        onConfirm: () => setConfirmDialog(null),
+                      });
                     }
                   }}
                 >
@@ -323,7 +348,19 @@ export default function MenuProfileScreen() {
           {/* 10. Log Out */}
           <Pressable
             style={[styles.menuRow, styles.menuRowNoBorder]}
-            onPress={() => router.push('/')}
+            onPress={() => {
+              setConfirmDialog({
+                type: 'warning',
+                title: 'Mag-Log Out?',
+                message: 'Nais mo bang bumalik sa POS Scan cashier screen?',
+                confirmText: 'Oo, Mag-Log Out',
+                cancelText: 'Kanselahin',
+                onConfirm: () => {
+                  setConfirmDialog(null);
+                  router.push('/');
+                },
+              });
+            }}
           >
             <View style={styles.menuLeft}>
               <Text style={styles.menuIcon}>↪️</Text>
@@ -338,6 +375,22 @@ export default function MenuProfileScreen() {
         <View style={styles.toastContainer}>
           <Text style={styles.toastText}>{toastMsg}</Text>
         </View>
+      ) : null}
+
+      {/* Styled Confirmation / Alert Modal */}
+      {confirmDialog ? (
+        <ConfirmationModal
+          visible={true}
+          type={confirmDialog.type ?? 'info'}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          itemName={confirmDialog.itemName}
+          details={confirmDialog.details}
+          confirmText={confirmDialog.confirmText}
+          cancelText={confirmDialog.cancelText}
+          onConfirm={confirmDialog.onConfirm}
+          onCancel={() => setConfirmDialog(null)}
+        />
       ) : null}
     </SafeAreaView>
   );

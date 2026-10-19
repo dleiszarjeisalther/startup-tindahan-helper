@@ -90,15 +90,15 @@
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1792373536.6102934,
-    "seen": 1792374322.9726613,
-    "ast_hash": "209d5b81085a83096496e4f4166faedb",
+    "mtime": 1792374996.4046247,
+    "seen": 1792375847.8982263,
+    "ast_hash": "b3aebef859084623cfa5a09df995e0c0",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1792285055.4056082,
-    "seen": 1792285176.6038496,
-    "ast_hash": "36257ea5f978f4f1784b8b448c984b57",
+    "mtime": 1792375588.2941253,
+    "seen": 1792375847.8982337,
+    "ast_hash": "482d688121fd96052861f83155d29df9",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
@@ -204,9 +204,9 @@
     "semantic_hash": ""
   },
   "src/domain/entities/Product.ts": {
-    "mtime": 1792373610.7587502,
-    "seen": 1792374322.972733,
-    "ast_hash": "6791df3c26f87c99905cf1a6498c99e2",
+    "mtime": 1792374964.6076899,
+    "seen": 1792375847.8983917,
+    "ast_hash": "6d7521a4f767b81d3e0c8914c02045dc",
     "semantic_hash": ""
   },
   "src/domain/repositories/IProductRepository.ts": {
@@ -264,9 +264,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/repositories/InMemoryProductRepository.ts": {
-    "mtime": 1792373251.1869495,
-    "seen": 1792374322.9727993,
-    "ast_hash": "b719f99d305f60912f101aca12d648cb",
+    "mtime": 1792374944.5894237,
+    "seen": 1792375847.8984923,
+    "ast_hash": "7cb2176aec0b4c384d340e74664a4e8f",
     "semantic_hash": ""
   },
   "src/presentation/components/BarcodeInputField.tsx": {
@@ -785,12 +785,6 @@
     "ast_hash": "48bac12c61675c5d03021c9c67bc2268",
     "semantic_hash": ""
   },
-  "marketing/website/api/mediafire_cache.json": {
-    "mtime": 1792364644.6502702,
-    "seen": 1792374322.97259,
-    "ast_hash": "9a362c025ae805fa4cc2ad9c547a5e61",
-    "semantic_hash": ""
-  },
   "marketing/website/api/signup.php": {
     "mtime": 1792364532.7867453,
     "seen": 1792374322.9725928,
@@ -858,9 +852,9 @@
     "semantic_hash": ""
   },
   "scripts/test-multi-unit-inventory.cjs": {
-    "mtime": 1792374237.29516,
-    "seen": 1792374322.97264,
-    "ast_hash": "3fe731e1a36638f636235c97b07435a1",
+    "mtime": 1792375747.1337101,
+    "seen": 1792375847.8981752,
+    "ast_hash": "5e81b4637367b7184db198b93b1854af",
     "semantic_hash": ""
   },
   "scripts/test-website-feedback.php": {

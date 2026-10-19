@@ -105,7 +105,7 @@ export default function InventoryManagementScreen() {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategoryOldName, setEditingCategoryOldName] = useState<string | null>(null);
   const [editingCategoryNewName, setEditingCategoryNewName] = useState('');
-  const [categoryModalError, setCategoryModalError] = useState<string | null>(null);
+  const [, setCategoryModalError] = useState<string | null>(null);
   const [categoryModalSuccess, setCategoryModalSuccess] = useState<string | null>(null);
 
   // Styled Confirmation Dialog State
@@ -114,44 +114,66 @@ export default function InventoryManagementScreen() {
   const handleAddNewCategory = () => {
     const trimmed = newCategoryName.trim();
     if (!trimmed) {
-      setCategoryModalError(t.categoryRequired);
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Kulang ang Pangalan',
+        message: t.categoryRequired,
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
       return;
     }
     if (categories.some((c) => c.toLowerCase() === trimmed.toLowerCase())) {
-      setCategoryModalError('Mayroon nang ganitong kategorya.');
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Mayroon Nang Kategorya',
+        message: 'Mayroon nang ganitong kategorya sa iyong tindahan.',
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
       return;
     }
     addCategory(trimmed);
     setNewCategoryName('');
     setCategoryModalError(null);
-    setCategoryModalSuccess(`✓ Naidagdag ang kategoryang "${trimmed}"`);
-    setTimeout(() => {
-      setCategoryModalSuccess((prev) => (prev?.includes(trimmed) ? null : prev));
-    }, 2800);
+    showToast(`✓ Naidagdag ang kategoryang "${trimmed}"`, 'success');
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
   };
 
   const handleSaveCategoryEdit = async (oldName: string) => {
     const trimmed = editingCategoryNewName.trim();
     if (!trimmed) {
-      setCategoryModalError(t.categoryRequired);
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Kulang ang Pangalan',
+        message: t.categoryRequired,
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
       return;
     }
     if (
       oldName.toLowerCase() !== trimmed.toLowerCase() &&
       categories.some((c) => c.toLowerCase() === trimmed.toLowerCase())
     ) {
-      setCategoryModalError('Mayroon nang ganitong kategorya.');
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Mayroon Nang Kategorya',
+        message: 'Mayroon nang ganitong kategorya sa iyong tindahan.',
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
       return;
     }
     await updateCategory(oldName, trimmed);
     setEditingCategoryOldName(null);
     setEditingCategoryNewName('');
     setCategoryModalError(null);
-    setCategoryModalSuccess(`✓ Na-update ang kategoryang "${trimmed}"`);
-    setTimeout(() => {
-      setCategoryModalSuccess((prev) => (prev?.includes(trimmed) ? null : prev));
-    }, 2800);
+    showToast(`✓ Na-update ang kategoryang "${trimmed}"`, 'success');
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
   };
 
@@ -204,7 +226,7 @@ export default function InventoryManagementScreen() {
   const [editUnitOfMeasure, setEditUnitOfMeasure] = useState<'pc' | 'kg'>('pc');
   const [editPackagingType, setEditPackagingType] = useState<'PACK' | 'PIECE' | 'KG'>('PACK');
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
-  const [editError, setEditError] = useState<string | null>(null);
+  const [, setEditError] = useState<string | null>(null);
 
   // Edit Receipt-First Workflow States & Math
   const [editCostPhp, setEditCostPhp] = useState('');
@@ -359,32 +381,65 @@ export default function InventoryManagementScreen() {
   const handleSaveEditProduct = async () => {
     if (!editingProduct) return;
     if (!editName.trim()) {
-      setEditError('Pangalan ng paninda ay kailangan.');
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Kulang ang Pangalan',
+        message: 'Pangalan ng paninda ay kailangan bago i-save.',
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
       return;
     }
     const price = parseFloat(editPricePhp);
     if (isNaN(price) || price < 0) {
-      setEditError('Maglagay ng wastong presyo.');
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Maling Presyo',
+        message: 'Maglagay ng wastong presyo ng benta.',
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
       return;
     }
     const stock = editUnitOfMeasure === 'kg'
       ? parseFloat(editStock.replace(/[^0-9.]/g, '') || '0')
       : parseInt(editStock.replace(/[^0-9]/g, '') || '0', 10);
     if (isNaN(stock) || stock < 0) {
-      setEditError('Maglagay ng wastong bilang ng stock.');
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Maling Bilang ng Stock',
+        message: 'Maglagay ng wastong bilang ng stock sa imbentaryo.',
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
       return;
     }
     const threshold = parseInt(editLowThreshold, 10);
     if (isNaN(threshold) || threshold < 1) {
-      setEditError('Ang paalala sa mababang stock ay dapat hindi bababa sa 1.');
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Mababang Stock Alert',
+        message: 'Ang paalala sa mababang stock ay dapat hindi bababa sa 1.',
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
       return;
     }
 
     if (editEffectiveUnitCost > 0 && price > 0 && editEffectiveUnitCost >= price) {
-      setEditError(
-        `Ang puhunan (₱${editEffectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo (₱${price.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.`
-      );
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      setConfirmDialog({
+        type: 'warning',
+        title: 'Suriin ang Puhunan at Presyo',
+        message: `Ang puhunan (₱${editEffectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo (₱${price.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.`,
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
       return;
     }
 
@@ -462,7 +517,16 @@ export default function InventoryManagementScreen() {
           showToast(`✓ Na-save ang pagbabago sa "${editName.trim()}"`, 'success');
           setEditingProduct(null);
         } catch (err) {
-          setEditError(err instanceof Error ? err.message : 'Hindi ma-update ang paninda.');
+          const msg = err instanceof Error ? err.message : 'Hindi ma-update ang paninda.';
+          setEditError(msg);
+          setConfirmDialog({
+            type: 'danger',
+            title: 'Error sa Pag-update',
+            message: msg,
+            confirmText: 'Naintindihan',
+            cancelText: null,
+            onConfirm: () => setConfirmDialog(null),
+          });
         } finally {
           setIsSubmittingEdit(false);
         }
@@ -492,7 +556,7 @@ export default function InventoryManagementScreen() {
     setToastMsg(msg);
     setToastType(type);
   };
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [, setErrorMsg] = useState<string | null>(null);
   const [isLookingUpOnline, setIsLookingUpOnline] = useState(false);
   const [onlineNotice, setOnlineNotice] = useState<string | null>(null);
 
@@ -840,14 +904,28 @@ export default function InventoryManagementScreen() {
     setFeedbackMsg(null);
     try {
       if (!newName.trim()) {
-        setErrorMsg('Please enter a product name.');
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setConfirmDialog({
+          type: 'warning',
+          title: 'Kulang ang Pangalan',
+          message: 'Mangyaring maglagay ng pangalan ng paninda bago mag-save.',
+          confirmText: 'Naintindihan',
+          cancelText: null,
+          onConfirm: () => setConfirmDialog(null),
+        });
         return;
       }
 
       if (barcodeMode !== 'GENERATE_TINGI' && !newBarcode.trim()) {
-        setErrorMsg('Please scan, type, or generate a barcode.');
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setConfirmDialog({
+          type: 'warning',
+          title: 'Kulang ang Barcode',
+          message: 'Mangyaring mag-scan, mag-type, o mag-generate ng barcode para sa paninda.',
+          confirmText: 'Naintindihan',
+          cancelText: null,
+          onConfirm: () => setConfirmDialog(null),
+        });
         return;
       }
 
@@ -859,12 +937,20 @@ export default function InventoryManagementScreen() {
 
       if (existingByBarcode) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-        setSearchQuery(cleanBarcode);
-        setExpandedProductId(existingByBarcode.id);
-        setShowAddForm(false);
-        setFeedbackMsg(
-          `⚠️ Product "${existingByBarcode.name}" (${existingByBarcode.barcode}) already exists in inventory! Switched to restock & details.`
-        );
+        setConfirmDialog({
+          type: 'info',
+          title: 'Nasa Imbentaryo Na!',
+          itemName: existingByBarcode.name,
+          message: `Ang panindang "${existingByBarcode.name}" (${existingByBarcode.barcode}) ay nakalista na sa imbentaryo. Lilipat sa detalye at restock ng panindang ito.`,
+          confirmText: 'Tingnan ang Paninda',
+          cancelText: null,
+          onConfirm: () => {
+            setConfirmDialog(null);
+            setSearchQuery(cleanBarcode);
+            setExpandedProductId(existingByBarcode.id);
+            setShowAddForm(false);
+          },
+        });
         return;
       }
 
@@ -872,27 +958,47 @@ export default function InventoryManagementScreen() {
       const existingByName = products.find((p) => p.name.trim().toLowerCase() === cleanName);
       if (existingByName) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-        setSearchQuery(existingByName.name);
-        setExpandedProductId(existingByName.id);
-        setShowAddForm(false);
-        setFeedbackMsg(
-          `⚠️ Product "${existingByName.name}" is already in inventory (Barcode: ${existingByName.barcode})! Switched to product view.`
-        );
+        setConfirmDialog({
+          type: 'info',
+          title: 'Nasa Imbentaryo Na!',
+          itemName: existingByName.name,
+          message: `Ang panindang "${existingByName.name}" ay nakalista na sa imbentaryo (Barcode: ${existingByName.barcode}). Lilipat sa detalye ng panindang ito.`,
+          confirmText: 'Tingnan ang Paninda',
+          cancelText: null,
+          onConfirm: () => {
+            setConfirmDialog(null);
+            setSearchQuery(existingByName.name);
+            setExpandedProductId(existingByName.id);
+            setShowAddForm(false);
+          },
+        });
         return;
       }
 
       const parsedPrice = parseFloat(newPricePhp.replace(/[^0-9.]/g, '') || '0');
       if (isNaN(parsedPrice) || parsedPrice <= 0) {
-        setErrorMsg('Please enter a valid selling price greater than ₱0.');
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setConfirmDialog({
+          type: 'warning',
+          title: 'Maling Presyo',
+          message: 'Mangyaring maglagay ng wastong presyo ng benta na mas mataas sa ₱0.',
+          confirmText: 'Naintindihan',
+          cancelText: null,
+          onConfirm: () => setConfirmDialog(null),
+        });
         return;
       }
 
       if (effectiveUnitCost > 0 && parsedPrice > 0 && effectiveUnitCost >= parsedPrice) {
-        setErrorMsg(
-          `Ang puhunan (₱${effectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo ng benta (₱${parsedPrice.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.`
-        );
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setConfirmDialog({
+          type: 'warning',
+          title: 'Suriin ang Puhunan at Presyo',
+          message: `Ang puhunan (₱${effectiveUnitCost.toFixed(2)}) ay mas mataas o kapantay ng presyo ng benta (₱${parsedPrice.toFixed(2)}). Pakisuri kung Buong Balot ang nailagay.`,
+          confirmText: 'Naintindihan',
+          cancelText: null,
+          onConfirm: () => setConfirmDialog(null),
+        });
         return;
       }
 
@@ -944,13 +1050,20 @@ export default function InventoryManagementScreen() {
 
       if (result.status === 'DUPLICATE_BARCODE_FOUND') {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-        setSearchQuery(result.existingProduct.barcode);
-        setExpandedProductId(result.existingProduct.id);
-        setShowAddForm(false);
-        showToast(
-          `⚠️ Mayroon nang paninda na "${result.existingProduct.name}" (${result.existingProduct.barcode}) sa tindahan!`,
-          'warning'
-        );
+        setConfirmDialog({
+          type: 'warning',
+          title: 'May Parehong Barcode',
+          itemName: result.existingProduct.name,
+          message: `Mayroon nang paninda na "${result.existingProduct.name}" (${result.existingProduct.barcode}) sa imbentaryo!`,
+          confirmText: 'Tingnan ang Paninda',
+          cancelText: null,
+          onConfirm: () => {
+            setConfirmDialog(null);
+            setSearchQuery(result.existingProduct.barcode);
+            setExpandedProductId(result.existingProduct.id);
+            setShowAddForm(false);
+          },
+        });
         return;
       }
 
@@ -982,7 +1095,16 @@ export default function InventoryManagementScreen() {
       setShowAddForm(false);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-      setErrorMsg(err instanceof Error ? err.message : 'Unable to save product.');
+      const msg = err instanceof Error ? err.message : 'Hindi mai-save ang paninda.';
+      setErrorMsg(msg);
+      setConfirmDialog({
+        type: 'danger',
+        title: 'Error sa Pag-save',
+        message: msg,
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => setConfirmDialog(null),
+      });
     }
   });
 
@@ -2278,11 +2400,6 @@ export default function InventoryManagementScreen() {
               </View>
             )}
 
-            {errorMsg ? (
-              <View style={styles.formErrorBox}>
-                <Text style={styles.formErrorText}>⚠️ {errorMsg}</Text>
-              </View>
-            ) : null}
 
             <Pressable
               style={[styles.saveProductBtn, isSubmitting ? styles.btnDisabled : null]}
@@ -3608,12 +3725,6 @@ export default function InventoryManagementScreen() {
                 />
               </View>
 
-              {editError ? (
-                <View style={styles.modalErrorContainer}>
-                  <Ionicons name="alert-circle" size={16} color="#DC2626" />
-                  <Text style={styles.modalErrorLabel}>{editError}</Text>
-                </View>
-              ) : null}
 
               <View style={styles.modalActionsRow}>
                 <Pressable
@@ -3721,12 +3832,6 @@ export default function InventoryManagementScreen() {
                 </Pressable>
               </View>
 
-              {categoryModalError ? (
-                <View style={styles.modalErrorContainer}>
-                  <Ionicons name="alert-circle" size={16} color="#DC2626" />
-                  <Text style={styles.modalErrorLabel}>{categoryModalError}</Text>
-                </View>
-              ) : null}
 
               {/* Category List */}
               <View style={styles.categoryListContainer}>

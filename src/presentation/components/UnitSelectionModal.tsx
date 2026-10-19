@@ -21,7 +21,8 @@ export interface UnitSelectionModalProps {
   onSelectUnit: (
     unit: 'piece' | 'pack' | 'box',
     multiplier: number,
-    price: number
+    price: number,
+    fellBackToPiece?: boolean
   ) => void;
   onSaveTierConfig?: (tiers: SellingUnitTier[]) => void | Promise<void>;
 }
@@ -62,7 +63,8 @@ interface UnitSelectionDialogContentProps {
   onSelectUnit: (
     unit: 'piece' | 'pack' | 'box',
     multiplier: number,
-    price: number
+    price: number,
+    fellBackToPiece?: boolean
   ) => void;
   onSaveTierConfig?: (tiers: SellingUnitTier[]) => void | Promise<void>;
 }
@@ -98,10 +100,11 @@ function UnitSelectionDialogContent({
   const handleSelect = (
     unit: 'piece' | 'pack' | 'box',
     mult: number,
-    pr: number
+    pr: number,
+    fellBackToPiece?: boolean
   ) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    onSelectUnit(unit, mult, pr);
+    onSelectUnit(unit, mult, pr, fellBackToPiece);
     onClose();
   };
 
@@ -175,26 +178,50 @@ function UnitSelectionDialogContent({
 
           {/* OPTION 2: WHOLE PACK (BUONG PACK) */}
           <Pressable
-            disabled={isPackOutOfStock}
+            disabled={isPieceOutOfStock}
             style={[
               styles.optionCard,
               currentUnit === 'pack' ? styles.optionCardActive : null,
-              isPackOutOfStock ? styles.optionCardDisabled : null,
+              isPieceOutOfStock ? styles.optionCardDisabled : null,
+              isPackOutOfStock && !isPieceOutOfStock ? styles.optionCardWarning : null,
             ]}
-            onPress={() => handleSelect('pack', packMultiplier, packPrice)}
+            onPress={() => {
+              if (isPackOutOfStock) {
+                // Auto-fallback to piece if insufficient for whole pack
+                handleSelect('piece', 1, pieceTier.unitPricePhp, true);
+              } else {
+                handleSelect('pack', packMultiplier, packPrice, false);
+              }
+            }}
           >
             <View style={styles.optionLeft}>
-              <View style={[styles.iconWrap, currentUnit === 'pack' ? styles.iconWrapActive : null]}>
+              <View
+                style={[
+                  styles.iconWrap,
+                  currentUnit === 'pack' ? styles.iconWrapActive : null,
+                  isPackOutOfStock && !isPieceOutOfStock ? styles.iconWrapWarning : null,
+                ]}
+              >
                 <Ionicons
                   name="layers-outline"
                   size={20}
-                  color={currentUnit === 'pack' ? '#0D7A52' : '#4B5563'}
+                  color={
+                    currentUnit === 'pack'
+                      ? '#0D7A52'
+                      : isPackOutOfStock && !isPieceOutOfStock
+                      ? '#D97706'
+                      : '#4B5563'
+                  }
                 />
               </View>
               <View>
                 <View style={styles.titleBadgeRow}>
                   <Text style={styles.optionTitle}>Whole Pack (Buong Pack)</Text>
-                  {currentUnit === 'pack' ? (
+                  {isPackOutOfStock && !isPieceOutOfStock ? (
+                    <View style={styles.warningPill}>
+                      <Text style={styles.warningPillText}>Auto Per Piece</Text>
+                    </View>
+                  ) : currentUnit === 'pack' ? (
                     <View style={styles.activePill}>
                       <Text style={styles.activePillText}>✓ Kasalukuyan</Text>
                     </View>
@@ -203,9 +230,16 @@ function UnitSelectionDialogContent({
                 <Text style={styles.optionDetail}>
                   {packMultiplier} piraso bawat pack (₱{(packPrice / packMultiplier).toFixed(2)}/pc)
                 </Text>
-                <Text style={styles.optionStock}>
-                  {isPackOutOfStock
-                    ? `⚠️ Kulang ang stock para sa 1 pack (${packMultiplier} pcs kailangan)`
+                <Text
+                  style={[
+                    styles.optionStock,
+                    isPackOutOfStock && !isPieceOutOfStock ? styles.optionStockWarning : null,
+                  ]}
+                >
+                  {isPieceOutOfStock
+                    ? '⚠️ Walang stock'
+                    : isPackOutOfStock
+                    ? `⚠️ Kulang para sa 1 pack (${totalStock} pcs na lang) — auto per piece`
                     : `May ${availablePacks} pack magagamit`}
                 </Text>
               </View>
@@ -213,8 +247,23 @@ function UnitSelectionDialogContent({
 
             <View style={styles.optionRight}>
               <Text style={styles.optionPrice}>₱{packPrice.toFixed(2)}</Text>
-              <View style={[styles.selectBtn, isPackOutOfStock ? styles.selectBtnDisabled : null]}>
-                <Text style={styles.selectBtnText}>{isPackOutOfStock ? 'Kulang' : '+ Piliin'}</Text>
+              <View
+                style={[
+                  styles.selectBtn,
+                  isPieceOutOfStock
+                    ? styles.selectBtnDisabled
+                    : isPackOutOfStock
+                    ? styles.selectBtnWarning
+                    : null,
+                ]}
+              >
+                <Text style={styles.selectBtnText}>
+                  {isPieceOutOfStock
+                    ? 'Ubos'
+                    : isPackOutOfStock
+                    ? 'Per Piece na lang'
+                    : '+ Piliin'}
+                </Text>
               </View>
             </View>
           </Pressable>
@@ -385,6 +434,31 @@ const styles = StyleSheet.create({
   },
   selectBtnDisabled: {
     backgroundColor: '#9CA3AF',
+  },
+  optionCardWarning: {
+    backgroundColor: '#FFFBEB',
+    borderColor: '#F59E0B',
+  },
+  iconWrapWarning: {
+    backgroundColor: '#FEF3C7',
+  },
+  warningPill: {
+    backgroundColor: '#F59E0B',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 6,
+  },
+  warningPillText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  optionStockWarning: {
+    color: '#D97706',
+    fontWeight: '700',
+  },
+  selectBtnWarning: {
+    backgroundColor: '#D97706',
   },
   selectBtnText: {
     color: '#FFFFFF',

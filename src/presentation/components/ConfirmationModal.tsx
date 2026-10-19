@@ -19,7 +19,8 @@ export type ConfirmationType =
   | 'delete'
   | 'danger'
   | 'warning'
-  | 'info';
+  | 'info'
+  | 'success';
 
 export interface ConfirmationModalDetail {
   label: string;
@@ -96,6 +97,12 @@ const THEMES: Record<ConfirmationType, TypeTheme> = {
     primaryLight: '#F0F9FF',
     icon: 'information-circle-outline',
     badgeLabel: 'IMPORMASYON',
+  },
+  success: {
+    primary: '#0D7A52',
+    primaryLight: '#ECFDF5',
+    icon: 'checkmark-circle-outline',
+    badgeLabel: 'TAGUMPAY',
   },
 };
 

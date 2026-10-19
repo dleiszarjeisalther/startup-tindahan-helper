@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroScrollCue = document.getElementById('hero-scroll-cue');
 
   function updateScrollState() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollTop = window.pageYOffset || window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     
     // 1. Goal-Gradient Progress Bar
@@ -39,21 +39,24 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollProgressBar.style.width = scrollPercent + '%';
     }
 
-    // 2. Micro-Affordance Fade-out (disappears as soon as user starts scrolling)
+    // 2. Micro-Affordance Fade-out (disappears immediately as soon as user starts scrolling)
     if (heroScrollCue) {
-      if (scrollTop > 20) {
+      if (scrollTop > 15) {
         heroScrollCue.style.opacity = '0';
         heroScrollCue.style.pointerEvents = 'none';
-        heroScrollCue.style.transform = 'translate(-50%, 14px)';
+        heroScrollCue.style.transform = 'translateY(12px) scale(0.96)';
+        heroScrollCue.style.visibility = 'hidden';
       } else {
+        heroScrollCue.style.visibility = 'visible';
         heroScrollCue.style.opacity = '1';
         heroScrollCue.style.pointerEvents = 'auto';
-        heroScrollCue.style.transform = 'translate(-50%, 0)';
+        heroScrollCue.style.transform = 'translateY(0) scale(1)';
       }
     }
   }
 
   window.addEventListener('scroll', updateScrollState, { passive: true });
+  document.addEventListener('scroll', updateScrollState, { passive: true });
   updateScrollState();
 
   // --- Check Download Status (Controlled by gg.php) ---
