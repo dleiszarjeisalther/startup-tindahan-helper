@@ -1,0 +1,5 @@
+# ======================================================================
+# STARTUP TINDAHAN HELPER - SYSTEM & ACTION DIAGNOSTIC LOGS
+# Dito nakalista ang lahat ng actions, API requests, at download resolver logs.
+# ======================================================================
+

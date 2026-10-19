@@ -1,5 +1,5 @@
 // src/application/TindahanStoreService.ts
-import { ProductDTO } from '../domain/entities/Product';
+import { ProductDTO, SellingUnitTier } from '../domain/entities/Product';
 import { Money } from '../domain/value-objects/Money';
 import { IProductRepository } from '../domain/repositories/IProductRepository';
 import {
@@ -14,10 +14,15 @@ import {
   PinSecurityEngine,
   PinVerificationOutcome,
 } from '../domain/services/PinSecurityEngine';
+import { databaseBackupService } from '../infrastructure/services/DatabaseBackupService';
 
 export interface CartItemDTO {
+  cartKey?: string;
   productId: string;
   name: string;
+  unit?: 'piece' | 'bundle' | 'pack' | 'box' | 'case';
+  unitMultiplier?: number;
+  baseUnitsDeducted?: number;
   unitPricePhp: number;
   formattedUnitPrice: string;
   quantity: number;
@@ -862,6 +867,29 @@ export class TindahanStoreService {
     this.notify();
   }
 
+  /**
+   * Safely exports all database records to a structured JSON file and triggers sharing.
+   */
+  public async exportDatabaseBackup() {
+    return databaseBackupService.exportBackup();
+  }
+
+  /**
+   * Prompts user to pick a valid backup and atomically restores it.
+   */
+  public async restoreDatabaseBackup() {
+    const res = await databaseBackupService.pickAndRestoreBackup(() => {
+      const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
+      if (repo.hydrateFromSqlite) {
+        repo.hydrateFromSqlite();
+      }
+      this.hydrateAllFromSqlite(true);
+      this.version++;
+      this.notify();
+    });
+    return res;
+  }
+
   public subscribe(listener: Listener): () => void {
     this.listeners.add(listener);
     return () => {
@@ -966,6 +994,7 @@ export class TindahanStoreService {
       lowStockThreshold?: number;
       unitOfMeasure?: 'pc' | 'kg';
       expiryDate?: string | null;
+      sellingTiers?: SellingUnitTier[];
     }
   ): Promise<void> {
     const all = await this.productRepo.getAll();
@@ -1059,26 +1088,44 @@ export class TindahanStoreService {
 
   private calculateCartItems(products: ProductDTO[] = this.readProducts()): CartItemDTO[] {
     const items: CartItemDTO[] = [];
-    for (const [productId, qty] of this.cartMap.entries()) {
+    for (const [cartKey, qty] of this.cartMap.entries()) {
       if (qty <= 0) {
         continue;
+      }
+      let productId = cartKey;
+      let unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece';
+      if (cartKey.includes('__')) {
+        const parts = cartKey.split('__');
+        productId = parts[0];
+        unit = (parts[1] as 'piece' | 'bundle' | 'pack' | 'box' | 'case') || 'piece';
       }
       const p = products.find((prod) => prod.id === productId);
       if (!p) {
         continue;
       }
+      const tier = p.sellingTiers?.find((t) => t.unitName === unit);
+      const unitMultiplier =
+        tier?.baseUnitMultiplier && tier.baseUnitMultiplier > 0 ? tier.baseUnitMultiplier : 1;
+      const unitPricePhp =
+        tier && Number(tier.unitPricePhp) > 0 ? Number(tier.unitPricePhp) : p.defaultPricePhp;
+
       const isKg = p.unitOfMeasure === 'kg';
-      const totalCentavos = Math.round(p.defaultPricePhp * 100 * qty);
+      const totalCentavos = Math.round(unitPricePhp * 100 * qty);
       const lineTotalPhp = totalCentavos / 100;
+      const baseUnitsDeducted = Number((qty * unitMultiplier).toFixed(3));
       const formattedQuantity = isKg
         ? `${Number(qty.toFixed(3))} kg`
-        : `${Math.floor(qty)}`;
+        : `${Math.floor(qty)} ${unit !== 'piece' ? unit : qty > 1 ? 'pcs' : 'pc'}`;
 
       items.push({
+        cartKey,
         productId: p.id,
         name: p.name,
-        unitPricePhp: p.defaultPricePhp,
-        formattedUnitPrice: Money.fromPhp(p.defaultPricePhp).format(),
+        unit,
+        unitMultiplier,
+        baseUnitsDeducted,
+        unitPricePhp,
+        formattedUnitPrice: Money.fromPhp(unitPricePhp).format(),
         quantity: qty,
         lineTotalPhp,
         formattedLineTotal: Money.fromCentavos(totalCentavos).format(),
@@ -1121,26 +1168,86 @@ export class TindahanStoreService {
     };
   }
 
-  public addToCart(productId: string, deltaQty = 1): void {
+  public addToCart(
+    productIdOrKey: string,
+    deltaQty = 1,
+    unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
+  ): void {
     if (this.isCompletingSale) {
       throw new Error('Sale is currently being completed. Please wait.');
     }
+
+    let productId = productIdOrKey;
+    let selectedUnit = unit;
+    if (productIdOrKey.includes('__')) {
+      const parts = productIdOrKey.split('__');
+      productId = parts[0];
+      selectedUnit = (parts[1] as 'piece' | 'bundle' | 'pack' | 'box' | 'case') || unit;
+    }
+
     const prod = this.snapshot?.products?.find((p) => p.id === productId);
-    const isKg = prod?.unitOfMeasure === 'kg';
+    if (!prod) {
+      throw new Error('Product not found in catalog.');
+    }
+
+    const tier = prod.sellingTiers?.find((t) => t.unitName === selectedUnit);
+    const unitMultiplier =
+      tier?.baseUnitMultiplier && tier.baseUnitMultiplier > 0 ? tier.baseUnitMultiplier : 1;
+
+    const isKg = prod.unitOfMeasure === 'kg';
+    const cartKey = selectedUnit === 'piece' ? productId : `${productId}__${selectedUnit}`;
     const nextCart = new Map(this.cartMap);
-    const current = this.cartMap.get(productId) ?? 0;
+    const current = this.cartMap.get(cartKey) ?? 0;
     const rawNext = current + deltaQty;
     const next = isKg
       ? Math.max(0, Math.round(rawNext * 1000) / 1000)
       : Math.max(0, Math.floor(rawNext));
+
+    // Calculate total base units that would be occupied by this product in the cart
+    if (deltaQty > 0) {
+      if (prod.stockCount <= 0) {
+        throw new Error(`Out of Stock — ${prod.name} is currently unavailable.`);
+      }
+
+      let totalBaseUnits = 0;
+      for (const [k, q] of this.cartMap.entries()) {
+        let kProdId = k;
+        let kUnit = 'piece';
+        if (k.includes('__')) {
+          const parts = k.split('__');
+          kProdId = parts[0];
+          kUnit = parts[1];
+        }
+        if (kProdId === productId) {
+          if (k === cartKey) {
+            totalBaseUnits += next * unitMultiplier;
+          } else {
+            const kTier = prod.sellingTiers?.find((t) => t.unitName === kUnit);
+            const kMultiplier =
+              kTier?.baseUnitMultiplier && kTier.baseUnitMultiplier > 0
+                ? kTier.baseUnitMultiplier
+                : 1;
+            totalBaseUnits += q * kMultiplier;
+          }
+        }
+      }
+      if (!this.cartMap.has(cartKey)) {
+        totalBaseUnits += next * unitMultiplier;
+      }
+
+      if (totalBaseUnits > prod.stockCount) {
+        throw new Error(`Insufficient Stock — Only ${prod.formattedStock} available.`);
+      }
+    }
+
     let nextLastRemoved = this.lastRemovedItem;
     if (next === 0) {
       if (prod && current > 0) {
         nextLastRemoved = { productId, name: prod.name, qty: current };
       }
-      nextCart.delete(productId);
+      nextCart.delete(cartKey);
     } else {
-      nextCart.set(productId, next);
+      nextCart.set(cartKey, next);
       nextLastRemoved = null;
     }
     this.persistCartToSqlite(nextCart);
@@ -1153,26 +1260,82 @@ export class TindahanStoreService {
   /**
    * Sets the explicit quantity for an item in the cart.
    */
-  public setCartItemQuantity(productId: string, quantity: number): void {
+  public setCartItemQuantity(
+    productIdOrKey: string,
+    quantity: number,
+    unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
+  ): void {
     if (this.isCompletingSale) {
       throw new Error('Sale is currently being completed. Please wait.');
     }
+
+    let productId = productIdOrKey;
+    let selectedUnit = unit;
+    if (productIdOrKey.includes('__')) {
+      const parts = productIdOrKey.split('__');
+      productId = parts[0];
+      selectedUnit = (parts[1] as 'piece' | 'bundle' | 'pack' | 'box' | 'case') || unit;
+    }
+
     const prod = this.snapshot?.products?.find((p) => p.id === productId);
-    const isKg = prod?.unitOfMeasure === 'kg';
+    if (!prod) {
+      throw new Error('Product not found in catalog.');
+    }
+
+    const tier = prod.sellingTiers?.find((t) => t.unitName === selectedUnit);
+    const unitMultiplier =
+      tier?.baseUnitMultiplier && tier.baseUnitMultiplier > 0 ? tier.baseUnitMultiplier : 1;
+
+    const isKg = prod.unitOfMeasure === 'kg';
     const targetQty = isKg
       ? Math.max(0, Math.round((Number.isFinite(quantity) ? quantity : 0) * 1000) / 1000)
       : Math.max(0, Math.floor(Number.isFinite(quantity) ? quantity : 0));
+
+    const cartKey = selectedUnit === 'piece' ? productId : `${productId}__${selectedUnit}`;
+
+    if (targetQty > 0) {
+      let totalBaseUnits = 0;
+      for (const [k, q] of this.cartMap.entries()) {
+        let kProdId = k;
+        let kUnit = 'piece';
+        if (k.includes('__')) {
+          const parts = k.split('__');
+          kProdId = parts[0];
+          kUnit = parts[1];
+        }
+        if (kProdId === productId) {
+          if (k === cartKey) {
+            totalBaseUnits += targetQty * unitMultiplier;
+          } else {
+            const kTier = prod.sellingTiers?.find((t) => t.unitName === kUnit);
+            const kMultiplier =
+              kTier?.baseUnitMultiplier && kTier.baseUnitMultiplier > 0
+                ? kTier.baseUnitMultiplier
+                : 1;
+            totalBaseUnits += q * kMultiplier;
+          }
+        }
+      }
+      if (!this.cartMap.has(cartKey)) {
+        totalBaseUnits += targetQty * unitMultiplier;
+      }
+
+      if (totalBaseUnits > prod.stockCount) {
+        throw new Error(`Insufficient Stock — Only ${prod.formattedStock} available.`);
+      }
+    }
+
     const nextCart = new Map(this.cartMap);
-    const current = this.cartMap.get(productId) ?? 0;
+    const current = this.cartMap.get(cartKey) ?? 0;
     let nextLastRemoved = this.lastRemovedItem;
 
     if (targetQty === 0) {
       if (prod && current > 0) {
         nextLastRemoved = { productId, name: prod.name, qty: current };
       }
-      nextCart.delete(productId);
+      nextCart.delete(cartKey);
     } else {
-      nextCart.set(productId, targetQty);
+      nextCart.set(cartKey, targetQty);
       nextLastRemoved = null;
     }
 
@@ -1459,24 +1622,48 @@ export class TindahanStoreService {
     try {
       if (db) {
         db.withTransactionSync(() => {
+          // Group required base units by productId across all cart lines
+          const requiredBaseMap = new Map<
+            string,
+            { name: string; totalBaseUnits: number; unitCostPhp: number }
+          >();
           for (const item of summary.items) {
+            const mult = item.unitMultiplier && item.unitMultiplier > 0 ? item.unitMultiplier : 1;
+            const itemBaseUnits = item.baseUnitsDeducted ?? Number((item.quantity * mult).toFixed(3));
+            const existing = requiredBaseMap.get(item.productId);
+            if (existing) {
+              existing.totalBaseUnits = Number(
+                (existing.totalBaseUnits + itemBaseUnits).toFixed(3)
+              );
+            } else {
+              const lineRecord = saleItems.find((s) => s.productId === item.productId);
+              requiredBaseMap.set(item.productId, {
+                name: item.name,
+                totalBaseUnits: itemBaseUnits,
+                unitCostPhp: lineRecord?.unitCostPhp ?? 0,
+              });
+            }
+          }
+
+          // Validate and deduct atomic base units per product
+          for (const [prodId, req] of requiredBaseMap.entries()) {
             const row = db.getFirstSync<{ base_stock_count: number }>(
               'SELECT base_stock_count FROM products WHERE id = ?',
-              [item.productId]
+              [prodId]
             );
-            if (!row) throw new Error(`${item.name} is no longer in inventory.`);
-            if (row.base_stock_count < item.quantity) {
-              throw new Error(`Not enough stock for ${item.name}.`);
+            if (!row) throw new Error(`${req.name} is no longer in inventory.`);
+            if (row.base_stock_count < req.totalBaseUnits) {
+              throw new Error(
+                `Insufficient Stock — Only ${row.base_stock_count} available for ${req.name}.`
+              );
             }
             db.runSync(
               'UPDATE products SET base_stock_count = ROUND(base_stock_count - ?, 3) WHERE id = ?',
-              [item.quantity, item.productId]
+              [req.totalBaseUnits, prodId]
             );
             const prevStock = row.base_stock_count;
-            const resStock = Number((prevStock - item.quantity).toFixed(3));
-            const movementId = `mov_${txTime}_${item.productId}`;
-            const lineRecord = saleItems.find((s) => s.productId === item.productId);
-            const lineCost = lineRecord?.unitCostPhp ?? 0;
+            const resStock = Number((prevStock - req.totalBaseUnits).toFixed(3));
+            const movementId = `mov_${txTime}_${prodId}`;
             db.runSync(
               `INSERT INTO stock_movement_logs (
                 id, product_id, product_name, movement_type, quantity_delta,
@@ -1484,18 +1671,18 @@ export class TindahanStoreService {
               ) VALUES (?, ?, ?, 'SALE', ?, ?, ?, ?, ?, ?, datetime('now', 'localtime'))`,
               [
                 movementId,
-                item.productId,
-                item.name,
-                -item.quantity,
+                prodId,
+                req.name,
+                -req.totalBaseUnits,
                 prevStock,
                 resStock,
-                lineCost,
+                req.unitCostPhp,
                 `POS Sale (${newTx.id})`,
                 newTx.id,
               ]
             );
             if (!options.isOneTimeBulkOrder) {
-              const historyId = `msh_${item.productId}_${curYear}_${curMonth}`;
+              const historyId = `msh_${prodId}_${curYear}_${curMonth}`;
               db.runSync(
                 `INSERT INTO monthly_sales_history (
                   id, product_id, year, month, gross_units_sold,
@@ -1503,7 +1690,7 @@ export class TindahanStoreService {
                 ) VALUES (?, ?, ?, ?, ?, 0, 0, 0, 30)
                 ON CONFLICT(id) DO UPDATE SET
                   gross_units_sold = gross_units_sold + excluded.gross_units_sold`,
-                [historyId, item.productId, curYear, curMonth, item.quantity]
+                [historyId, prodId, curYear, curMonth, req.totalBaseUnits]
               );
             }
           }
@@ -2532,6 +2719,30 @@ export class TindahanStoreService {
 
   public getCashAdjustments(): CashDrawerAdjustmentRecord[] {
     return [...this.snapshot.cashDrawerAdjustments];
+  }
+
+  /**
+   * Manually updates the cash-in-drawer balance by recording a separate
+   * audited adjustment without modifying historical sales or inventory.
+   */
+  public setCashInDrawer(newAmountPhp: number, note?: string): CashDrawerAdjustmentRecord | null {
+    const target = Number(newAmountPhp);
+    if (!Number.isFinite(target) || target < 0) {
+      throw new Error('Invalid cash amount. Balance cannot be negative.');
+    }
+    const currentDrawer = this.getSalesSummary('Daily').cashInDrawerPhp;
+    const delta = Number((target - currentDrawer).toFixed(2));
+    if (Math.abs(delta) < 0.01) {
+      return null;
+    }
+    const type: CashAdjustmentType = delta > 0 ? 'PANUKLI' : 'GASTOS';
+    const absAmount = Math.abs(delta);
+    const category = 'Bilang sa Kaha';
+    const auditNote =
+      note?.trim() ||
+      `Manual drawer balance update from ₱${currentDrawer.toFixed(2)} to ₱${target.toFixed(2)}`;
+    this.addCashAdjustment(type, absAmount, category, auditNote);
+    return this.cashDrawerAdjustments[0] ?? null;
   }
 
   public addCashAdjustment(

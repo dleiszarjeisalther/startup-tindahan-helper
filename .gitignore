@@ -41,3 +41,10 @@ example
 # generated native folders
 /ios
 /android
+
+# local SQLite databases & caches
+*.sqlite*
+*.db
+marketing/website/data/*.sqlite*
+marketing/website/api/mediafire_cache.json
+tindahan-helper.apk

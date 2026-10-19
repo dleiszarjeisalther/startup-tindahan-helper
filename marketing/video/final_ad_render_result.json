@@ -1,0 +1,430 @@
+{
+  "id": "6e575a32-1856-4d87-aa5f-1fdb483d8dfe",
+  "owner": "4iy1b8sc1f",
+  "plan": "freeTrial",
+  "status": "done",
+  "error": "",
+  "duration": 30.55,
+  "billable": 30.55,
+  "renderTime": 10604,
+  "totalRenderTime": 28771,
+  "url": "https://shotstack-api-v1-output.s3-ap-southeast-2.amazonaws.com/4iy1b8sc1f/6e575a32-1856-4d87-aa5f-1fdb483d8dfe.mp4",
+  "poster": null,
+  "thumbnail": null,
+  "data": {
+    "output": {
+      "aspectRatio": "9:16",
+      "fps": 30,
+      "format": "mp4",
+      "resolution": "sd"
+    },
+    "timeline": {
+      "fonts": [
+        {
+          "src": "https://fonts.gstatic.com/s/opensans/v44/mem8YaGs126MiZpBA-U1UpcaXcl0Aw.ttf"
+        }
+      ],
+      "tracks": [
+        {
+          "clips": [
+            {
+              "asset": {
+                "metadata": {
+                  "customFonts": [
+                    {
+                      "style": "normal",
+                      "family": "mem8YaGs126MiZpBA-U1UpcaXcl0Aw",
+                      "weight": "400",
+                      "src": "https://fonts.gstatic.com/s/opensans/v44/mem8YaGs126MiZpBA-U1UpcaXcl0Aw.ttf"
+                    }
+                  ],
+                  "style": {
+                    "letterSpacing": 0,
+                    "lineHeight": 1.25,
+                    "textTransform": "none",
+                    "wordSpacing": 0,
+                    "textDecoration": "none"
+                  },
+                  "height": 95,
+                  "background": {
+                    "wrap": false,
+                    "borderRadius": 12,
+                    "opacity": 0.95,
+                    "color": "#0d6efd"
+                  },
+                  "width": 640,
+                  "align": {
+                    "vertical": "middle",
+                    "horizontal": "center"
+                  },
+                  "text": "SUB-SECOND CAMERA SCANNER \ud83d\udcf8\nPasok agad ang barcode at presyo!",
+                  "type": "rich-text",
+                  "font": {
+                    "weight": "700",
+                    "family": "mem8YaGs126MiZpBA-U1UpcaXcl0Aw",
+                    "color": "#ffffff",
+                    "size": 24,
+                    "opacity": 1,
+                    "style": "normal"
+                  }
+                },
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/d0b4a1e12b978271ce4bd654.canvas-1792309061979-5798750c.png",
+                "type": "image"
+              },
+              "fit": "cover",
+              "offset": {
+                "y": 0.05,
+                "x": 0
+              },
+              "height": 95,
+              "width": 640,
+              "length": 5,
+              "transition": {
+                "in": "fade",
+                "out": "fade"
+              },
+              "position": "bottom",
+              "start": 7.55
+            },
+            {
+              "start": 12.55,
+              "position": "bottom",
+              "transition": {
+                "out": "fade",
+                "in": "fade"
+              },
+              "width": 640,
+              "asset": {
+                "metadata": {
+                  "text": "AUTO SUKLI CALCULATOR \ud83e\ude99\nKalkulado ang sukli, ligtas ang barya!",
+                  "customFonts": [
+                    {
+                      "style": "normal",
+                      "src": "https://fonts.gstatic.com/s/opensans/v44/mem8YaGs126MiZpBA-U1UpcaXcl0Aw.ttf",
+                      "weight": "400",
+                      "family": "mem8YaGs126MiZpBA-U1UpcaXcl0Aw"
+                    }
+                  ],
+                  "style": {
+                    "textDecoration": "none",
+                    "lineHeight": 1.25,
+                    "textTransform": "none",
+                    "letterSpacing": 0,
+                    "wordSpacing": 0
+                  },
+                  "background": {
+                    "borderRadius": 12,
+                    "wrap": false,
+                    "color": "#0d6efd",
+                    "opacity": 0.95
+                  },
+                  "align": {
+                    "vertical": "middle",
+                    "horizontal": "center"
+                  },
+                  "height": 95,
+                  "width": 640,
+                  "type": "rich-text",
+                  "font": {
+                    "opacity": 1,
+                    "style": "normal",
+                    "color": "#ffffff",
+                    "family": "mem8YaGs126MiZpBA-U1UpcaXcl0Aw",
+                    "size": 24,
+                    "weight": "700"
+                  }
+                },
+                "type": "image",
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/cb9b2e27d04132a066309347.canvas-1792309063207-8a57f0ea.png"
+              },
+              "fit": "cover",
+              "offset": {
+                "x": 0,
+                "y": 0.05
+              },
+              "length": 4.5,
+              "height": 95
+            },
+            {
+              "asset": {
+                "type": "image",
+                "metadata": {
+                  "customFonts": [
+                    {
+                      "style": "normal",
+                      "family": "mem8YaGs126MiZpBA-U1UpcaXcl0Aw",
+                      "weight": "400",
+                      "src": "https://fonts.gstatic.com/s/opensans/v44/mem8YaGs126MiZpBA-U1UpcaXcl0Aw.ttf"
+                    }
+                  ],
+                  "text": "SALES HISTORY & MALINIS NA TUBO \ud83d\udcb0\nKita ang benta, may Privacy Shield!",
+                  "type": "rich-text",
+                  "font": {
+                    "weight": "700",
+                    "family": "mem8YaGs126MiZpBA-U1UpcaXcl0Aw",
+                    "size": 24,
+                    "color": "#ffffff",
+                    "opacity": 1,
+                    "style": "normal"
+                  },
+                  "height": 95,
+                  "align": {
+                    "horizontal": "center",
+                    "vertical": "middle"
+                  },
+                  "width": 640,
+                  "background": {
+                    "opacity": 0.95,
+                    "wrap": false,
+                    "color": "#0d6efd",
+                    "borderRadius": 12
+                  },
+                  "style": {
+                    "letterSpacing": 0,
+                    "lineHeight": 1.25,
+                    "textDecoration": "none",
+                    "wordSpacing": 0,
+                    "textTransform": "none"
+                  }
+                },
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/22bd9fe74a683b9b2d2774c9.canvas-1792309065392-43955542.png"
+              },
+              "length": 4.5,
+              "width": 640,
+              "height": 95,
+              "position": "bottom",
+              "offset": {
+                "y": 0.05,
+                "x": 0
+              },
+              "fit": "cover",
+              "start": 17.05,
+              "transition": {
+                "in": "fade",
+                "out": "fade"
+              }
+            },
+            {
+              "width": 640,
+              "transition": {
+                "out": "fade",
+                "in": "fade"
+              },
+              "length": 4.5,
+              "height": 95,
+              "position": "bottom",
+              "asset": {
+                "type": "image",
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/a53d342da8283e683d579882.canvas-1792309066508-5cedc447.png",
+                "metadata": {
+                  "font": {
+                    "style": "normal",
+                    "color": "#ffffff",
+                    "size": 24,
+                    "family": "mem8YaGs126MiZpBA-U1UpcaXcl0Aw",
+                    "opacity": 1,
+                    "weight": "700"
+                  },
+                  "style": {
+                    "lineHeight": 1.25,
+                    "wordSpacing": 0,
+                    "textTransform": "none",
+                    "letterSpacing": 0,
+                    "textDecoration": "none"
+                  },
+                  "align": {
+                    "horizontal": "center",
+                    "vertical": "middle"
+                  },
+                  "background": {
+                    "opacity": 0.95,
+                    "wrap": false,
+                    "borderRadius": 12,
+                    "color": "#0d6efd"
+                  },
+                  "width": 640,
+                  "customFonts": [
+                    {
+                      "src": "https://fonts.gstatic.com/s/opensans/v44/mem8YaGs126MiZpBA-U1UpcaXcl0Aw.ttf",
+                      "style": "normal",
+                      "family": "mem8YaGs126MiZpBA-U1UpcaXcl0Aw",
+                      "weight": "400"
+                    }
+                  ],
+                  "height": 95,
+                  "text": "REAL-TIME INVENTORY & FEFO \ud83d\udce6\nMay alert sa pa-expire na paninda!",
+                  "type": "rich-text"
+                }
+              },
+              "fit": "cover",
+              "offset": {
+                "y": 0.05,
+                "x": 0
+              },
+              "start": 21.55
+            }
+          ]
+        },
+        {
+          "clips": [
+            {
+              "scale": 1,
+              "fit": "cover",
+              "start": 0,
+              "length": 7.55,
+              "offset": {
+                "y": 0,
+                "x": 0
+              },
+              "asset": {
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/7e21dde67a927e699cfd1060.282554546f0216740c8f9b86.source_processed.mp4",
+                "speed": 1,
+                "volume": 1,
+                "type": "video"
+              },
+              "transition": {
+                "out": "fade",
+                "in": "fade"
+              }
+            },
+            {
+              "start": 7.55,
+              "scale": 0.88,
+              "fit": "contain",
+              "length": 5,
+              "offset": {
+                "x": 0,
+                "y": 0.04
+              },
+              "transition": {
+                "in": "fade",
+                "out": "fade"
+              },
+              "asset": {
+                "speed": 1,
+                "type": "video",
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/005a1b01b4c6dc87477bb071.1668729e7b4c2cf19181dfeb.source_processed.mp4",
+                "volume": 0
+              }
+            },
+            {
+              "fit": "contain",
+              "length": 4.5,
+              "transition": {
+                "out": "fade",
+                "in": "fade"
+              },
+              "scale": 0.85,
+              "asset": {
+                "type": "image",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p5sze-kad6q-fqm1j-cd6j1p/source.jpg"
+              },
+              "effect": "zoomIn",
+              "start": 12.55,
+              "offset": {
+                "x": 0,
+                "y": 0.04
+              }
+            },
+            {
+              "asset": {
+                "type": "image",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rm88t-antws-cezh9-95pfkj/source.jpg"
+              },
+              "effect": "zoomIn",
+              "fit": "contain",
+              "start": 17.05,
+              "length": 4.5,
+              "transition": {
+                "in": "fade",
+                "out": "fade"
+              },
+              "scale": 0.85,
+              "offset": {
+                "x": 0,
+                "y": 0.04
+              }
+            },
+            {
+              "fit": "contain",
+              "asset": {
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rneaz-6xs50-znsm2-r2vyab/source.jpg",
+                "type": "image"
+              },
+              "start": 21.55,
+              "scale": 0.85,
+              "effect": "zoomIn",
+              "transition": {
+                "in": "fade",
+                "out": "fade"
+              },
+              "length": 4.5,
+              "offset": {
+                "y": 0.04,
+                "x": 0
+              }
+            },
+            {
+              "asset": {
+                "type": "html",
+                "width": 720,
+                "height": 1280,
+                "html": "<div style='width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;background:radial-gradient(circle at center, #1e3a8a 0%, #0a1128 100%);color:#ffffff;font-family:sans-serif;text-align:center;padding:40px;box-sizing:border-box;'><div style='font-size:68px;margin-bottom:20px;'>\ud83c\udfea\u2728</div><div style='font-size:38px;font-weight:900;letter-spacing:1px;color:#38bdf8;text-shadow:0 4px 14px rgba(0,0,0,0.6);line-height:1.2;'>STARTUP TINDAHAN<br>HELPER</div><div style='margin-top:28px;font-size:24px;font-weight:800;color:#facc15;background:rgba(250,204,21,0.18);padding:10px 26px;border-radius:999px;border:2px solid #facc15;'>100% OFFLINE POS</div><div style='margin-top:24px;font-size:20px;color:#e2e8f0;font-weight:600;'>Libreng Gamitin \u2022 Walang Monthly Fee</div><div style='margin-top:32px;font-size:26px;font-weight:800;color:#4ade80;'>\u2705 Negosyong Sigurado!</div></div>"
+              },
+              "fit": "crop",
+              "length": 4.5,
+              "transition": {
+                "out": "fade",
+                "in": "fade"
+              },
+              "start": 26.05
+            }
+          ]
+        },
+        {
+          "clips": [
+            {
+              "asset": {
+                "type": "html",
+                "height": 1280,
+                "width": 720,
+                "html": "<div style='width:100%;height:100%;background:linear-gradient(180deg,#0a1128 0%,#1e293b 100%);'></div>"
+              },
+              "start": 0,
+              "length": 30.55
+            }
+          ]
+        },
+        {
+          "clips": [
+            {
+              "length": 22.5,
+              "start": 7.55,
+              "asset": {
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/4a11654b-9c43-5501-b2b6-19d8462b6f18.mp3",
+                "type": "audio",
+                "volume": 1
+              }
+            }
+          ]
+        },
+        {
+          "clips": [
+            {
+              "start": 0,
+              "asset": {
+                "volume": 0.18,
+                "type": "audio",
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/32372ff4-99d2-5e05-85ef-2e43315c25ed.mp3"
+              },
+              "length": 30.55
+            }
+          ]
+        }
+      ],
+      "background": "#0a1128"
+    }
+  },
+  "created": "2026-10-18T07:37:37.315Z",
+  "updated": "2026-10-18T07:38:06.086Z"
+}

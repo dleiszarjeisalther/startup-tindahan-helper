@@ -44,6 +44,8 @@ export default function StoreSettingsScreen() {
     settings,
     updateSettings,
     clearAllDatabaseData,
+    exportDatabaseBackup,
+    restoreDatabaseBackup,
     hasOwnerPinSet,
     isStoreSecurityEnabled,
     isStoreLocked,
@@ -57,6 +59,8 @@ export default function StoreSettingsScreen() {
   const [editingField, setEditingField] = useState<'NONE' | 'NAME' | 'ADDRESS'>('NONE');
   const [draftName, setDraftName] = useState(settings.storeName);
   const [draftAddress, setDraftAddress] = useState(settings.address);
+  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
@@ -93,6 +97,71 @@ export default function StoreSettingsScreen() {
   const showToast = (msg: string, type: ToastType = 'success') => {
     setToastMsg(msg);
     setToastType(type);
+  };
+
+  const handleExportBackup = async () => {
+    if (isBackingUp) return;
+    try {
+      setIsBackingUp(true);
+      const res = await exportDatabaseBackup();
+      if (res.success) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        showToast(
+          `✓ Na-export ang backup! (${res.recordCounts?.products ?? 0} paninda, ${res.recordCounts?.sales_transactions ?? 0} benta)`,
+          'success'
+        );
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+        showToast(res.error || 'Hindi natuloy ang export.', 'warning');
+      }
+    } catch (err) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      showToast(err instanceof Error ? err.message : 'Nabigong mag-export', 'error');
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
+  const handleRestoreBackup = () => {
+    if (isRestoring) return;
+    setConfirmDialog({
+      type: 'danger',
+      title: 'I-restore ang Database Backup?',
+      itemName: 'Kasalukuyang Datos ng Tindahan',
+      message:
+        'Babala: Papalitan nito ang lahat ng kasalukuyang paninda, benta, at suki ng datos mula sa backup file. Hindi ito mababawi.',
+      details: [
+        {
+          label: 'Paalala',
+          value: 'Siguraduhing valid at pinakabagong backup file ang pipiliin.',
+          highlight: true,
+        },
+      ],
+      confirmText: 'Piliin ang Backup File',
+      cancelText: t.cancelBtn,
+      onConfirm: async () => {
+        setConfirmDialog(null);
+        try {
+          setIsRestoring(true);
+          const res = await restoreDatabaseBackup();
+          if (res.success) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+            showToast(
+              `✓ Naibalik ang datos! (${res.recordCounts?.products ?? 0} paninda, ${res.recordCounts?.sales_transactions ?? 0} benta)`,
+              'success'
+            );
+          } else {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+            showToast(res.error || 'Hindi natuloy ang pag-restore.', 'warning');
+          }
+        } catch (err) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+          showToast(err instanceof Error ? err.message : 'Nabigong mag-restore', 'error');
+        } finally {
+          setIsRestoring(false);
+        }
+      },
+    });
   };
 
   const monthNames: Record<number, string> = {
@@ -551,6 +620,40 @@ export default function StoreSettingsScreen() {
               <Text style={styles.rowValue}>{t.offlineStorageSub}</Text>
             </View>
           </View>
+
+          {/* Backup Database Row */}
+          <Pressable
+            style={[styles.settingRow, styles.rowBorder]}
+            disabled={isBackingUp}
+            onPress={handleExportBackup}
+          >
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>Backup / I-export ang Database</Text>
+              <Text style={styles.rowValue}>
+                {isBackingUp
+                  ? 'Kasalukuyang nag-eexport ng backup...'
+                  : 'I-save ang mga paninda, benta, at suki sa Google Drive o storage'}
+              </Text>
+            </View>
+            <Text style={styles.chevron}>{isBackingUp ? '⏳' : '📤'}</Text>
+          </Pressable>
+
+          {/* Restore Database Row */}
+          <Pressable
+            style={[styles.settingRow, styles.rowBorder]}
+            disabled={isRestoring}
+            onPress={handleRestoreBackup}
+          >
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>Restore / Ibalik ang Database</Text>
+              <Text style={styles.rowValue}>
+                {isRestoring
+                  ? 'Kasalukuyang nag-rerestore...'
+                  : 'Ibalik ang mga talaan mula sa na-export na backup file'}
+              </Text>
+            </View>
+            <Text style={styles.chevron}>{isRestoring ? '⏳' : '📥'}</Text>
+          </Pressable>
 
           <Pressable
             style={styles.settingRow}

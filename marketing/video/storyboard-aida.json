@@ -1,0 +1,96 @@
+{
+  "project": "Startup Tindahan Helper - AIDA Video Ad",
+  "framework": "AIDA",
+  "aspectRatio": "9:16",
+  "output": {
+    "format": "mp4",
+    "resolution": "sd",
+    "fps": 30
+  },
+  "scenes": [
+    {
+      "id": "scene_01_hook",
+      "type": "video",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-qjcdk-t7pqh-heezt-b1g97n/source.mp4",
+      "start": 0.0,
+      "length": 4.0,
+      "speed": 1.0,
+      "scale": 0.85,
+      "headline": "DIGITAL NA ANG TINDAHAN!",
+      "subheadline": "Itapon na ang lumang notebook!",
+      "voiceover": "Mga Ka-Tindahan! Itapon na ang punit-punit na notebook sa utang at benta!"
+    },
+    {
+      "id": "scene_02_scanner_slowed",
+      "type": "video",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-qrax1-a613h-10s0d-6yrkb8/source.mp4",
+      "start": 4.0,
+      "length": 6.0,
+      "speed": 0.65,
+      "scale": 0.82,
+      "headline": "SUB-SECOND CAMERA SCANNER",
+      "subheadline": "Pasok agad ang paninda at presyo!",
+      "voiceover": "Isang tutok lang ng camera—pasok agad ang paninda, presyo, at litrato!"
+    },
+    {
+      "id": "scene_03_sukli_calc",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p5sze-kad6q-fqm1j-cd6j1p/source.jpg",
+      "start": 10.0,
+      "length": 4.0,
+      "motion": "zoomIn",
+      "scale": 0.82,
+      "headline": "AUTO SUKLI CALCULATOR",
+      "subheadline": "Iwas-mali sa sukli, ligtas ang barya!",
+      "voiceover": "Wala nang maling sukli kahit kakaiba ang barya ni suki!"
+    },
+    {
+      "id": "scene_04_hold_cart",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p6t56-5t9zx-jqy58-dbbzxj/source.jpg",
+      "start": 14.0,
+      "length": 4.0,
+      "motion": "zoomOut",
+      "scale": 0.82,
+      "headline": "HOLD / PARK CART QUEUE",
+      "subheadline": "I-park ang basket, tuloy ang pila!",
+      "voiceover": "May nakalimutan si suki? I-park ang basket nang hindi naaantala ang iba!"
+    },
+    {
+      "id": "scene_05_malinis_na_tubo",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rm88t-antws-cezh9-95pfkj/source.jpg",
+      "start": 18.0,
+      "length": 4.0,
+      "motion": "zoomIn",
+      "scale": 0.82,
+      "headline": "MALINIS NA TUBO (33.3%)",
+      "subheadline": "Bantay kita with Privacy Shield!",
+      "voiceover": "Kalkulado agad ang malinis na tubo at kita sa bawat benta!"
+    },
+    {
+      "id": "scene_06_fefo_expiry",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rneaz-6xs50-znsm2-r2vyab/source.jpg",
+      "start": 22.0,
+      "length": 4.0,
+      "motion": "zoomOut",
+      "scale": 0.82,
+      "headline": "FEFO EXPIRY WARNING",
+      "subheadline": "Iwas-panis at sira sa paninda!",
+      "voiceover": "May paalala sa mga malapit nang ma-expire para walang tapon na paninda!"
+    },
+    {
+      "id": "scene_07_cta_offline",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p7n3j-2d1d5-z26ne-qx3y7j/source.jpg",
+      "start": 26.0,
+      "length": 4.0,
+      "motion": "zoomIn",
+      "scale": 0.82,
+      "headline": "100% OFFLINE SA CELLPHONE MO!",
+      "subheadline": "Libreng Gamitin • Walang Monthly Fee",
+      "voiceover": "Kahit brownout o walang internet, tuloy ang negosyo! Subukan nang libre ngayon!"
+    }
+  ]
+}

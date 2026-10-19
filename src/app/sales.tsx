@@ -69,6 +69,7 @@ export default function SalesHistoryScreen() {
     voidEntireTransaction,
     processReturnOrExchange,
     addCashAdjustment,
+    setCashInDrawer,
     deleteCashAdjustment,
     transactions,
     settings,
@@ -146,10 +147,14 @@ export default function SalesHistoryScreen() {
 
   // Cash Drawer Modal state
   const [cashDrawerModalVisible, setCashDrawerModalVisible] = useState(false);
+  const [drawerMode, setDrawerMode] = useState<'PANUKLI' | 'GASTOS' | 'EDIT_DRAWER'>('PANUKLI');
   const [adjType, setAdjType] = useState<CashAdjustmentType>('PANUKLI');
   const [adjAmount, setAdjAmount] = useState('');
   const [adjCategory, setAdjCategory] = useState(PANUKLI_CATEGORIES[0]);
   const [adjNote, setAdjNote] = useState('');
+  const [targetDrawerAmount, setTargetDrawerAmount] = useState('');
+  const [drawerEditNote, setDrawerEditNote] = useState('');
+  const [isSavingDrawer, setIsSavingDrawer] = useState(false);
   const [drawerSavedMsg, setDrawerSavedMsg] = useState<string | null>(null);
   const [isJustSavedDrawer, setIsJustSavedDrawer] = useState(false);
 
@@ -484,6 +489,52 @@ export default function SalesHistoryScreen() {
     showActionToast(`✓ Naitala ang ${isPanukli ? '+ Panukli' : '- Gastos'} na ${formatted}`, 'success');
   };
 
+  const handleSaveDirectDrawer = () => {
+    if (isSavingDrawer) return;
+    const cleanStr = targetDrawerAmount.trim().replace(/,/g, '');
+    const val = parseFloat(cleanStr);
+    if (!cleanStr || isNaN(val) || val < 0) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      setConfirmDialog({
+        type: 'danger',
+        title: 'Maling Halaga',
+        message: 'Mangyaring maglagay ng wastong numero para sa cash balance. Hindi maaaring negative ang halaga.',
+        confirmText: 'Naintindihan',
+        cancelText: null,
+        onConfirm: () => {
+          setConfirmDialog(null);
+        },
+      });
+      return;
+    }
+
+    try {
+      setIsSavingDrawer(true);
+      const res = setCashInDrawer(val, drawerEditNote.trim() || undefined);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      const formatted = Money.fromPhp(val).format();
+      const msg = res
+        ? `✓ Na-update ang Cash sa Kaha sa ${formatted}!`
+        : `Walang pagbabago: ${formatted} na ang kasalukuyang balance.`;
+      setDrawerSavedMsg(msg);
+      setIsJustSavedDrawer(true);
+      setTargetDrawerAmount('');
+      setDrawerEditNote('');
+      showActionToast(msg, 'success');
+      setTimeout(() => {
+        setIsJustSavedDrawer(false);
+      }, 1400);
+      setTimeout(() => {
+        setDrawerSavedMsg((prev) => (prev === msg ? null : prev));
+      }, 3500);
+    } catch (err) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      showActionToast(err instanceof Error ? err.message : 'Nabigong i-update ang kaha', 'error');
+    } finally {
+      setIsSavingDrawer(false);
+    }
+  };
+
   const handleShareZReading = async () => {
     try {
       const nowStr = new Date().toLocaleString('en-US', {
@@ -516,7 +567,7 @@ export default function SalesHistoryScreen() {
           ? `🚫 Na-Void: ${summary.formattedTotalVoided} (${summary.totalVoidedTransactions} resibo)`
           : '',
         `==================================`,
-        `Startup Tindahan Helper POS`,
+        `Tindahan Helper POS`,
       ].filter(Boolean);
 
       await Share.share({
@@ -1555,14 +1606,15 @@ export default function SalesHistoryScreen() {
                   </View>
                 ) : null}
 
-                {/* Segmented Picker: Panukli vs Gastos */}
+                {/* Segmented Picker: Panukli vs Gastos vs Edit Kaha */}
                 <View style={styles.adjSegmentRow}>
                   <Pressable
                     style={[
                       styles.adjSegmentBtn,
-                      adjType === 'PANUKLI' ? styles.adjSegmentBtnPanukli : null,
+                      drawerMode === 'PANUKLI' ? styles.adjSegmentBtnPanukli : null,
                     ]}
                     onPress={() => {
+                      setDrawerMode('PANUKLI');
                       setAdjType('PANUKLI');
                       setAdjCategory(PANUKLI_CATEGORIES[0]);
                     }}
@@ -1570,19 +1622,20 @@ export default function SalesHistoryScreen() {
                     <Text
                       style={[
                         styles.adjSegmentText,
-                        adjType === 'PANUKLI' ? styles.adjSegmentTextActive : null,
+                        drawerMode === 'PANUKLI' ? styles.adjSegmentTextActive : null,
                       ]}
                     >
-                      + Panukli (Cash In)
+                      + Panukli
                     </Text>
                   </Pressable>
 
                   <Pressable
                     style={[
                       styles.adjSegmentBtn,
-                      adjType === 'GASTOS' ? styles.adjSegmentBtnGastos : null,
+                      drawerMode === 'GASTOS' ? styles.adjSegmentBtnGastos : null,
                     ]}
                     onPress={() => {
+                      setDrawerMode('GASTOS');
                       setAdjType('GASTOS');
                       setAdjCategory(GASTOS_CATEGORIES[0]);
                     }}
@@ -1590,84 +1643,189 @@ export default function SalesHistoryScreen() {
                     <Text
                       style={[
                         styles.adjSegmentText,
-                        adjType === 'GASTOS' ? styles.adjSegmentTextActive : null,
+                        drawerMode === 'GASTOS' ? styles.adjSegmentTextActive : null,
                       ]}
                     >
-                      - Gastos (Cash Out)
+                      - Gastos
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={[
+                      styles.adjSegmentBtn,
+                      drawerMode === 'EDIT_DRAWER' ? styles.adjSegmentBtnEdit : null,
+                    ]}
+                    onPress={() => {
+                      setDrawerMode('EDIT_DRAWER');
+                      setTargetDrawerAmount(summary.cashInDrawerPhp > 0 ? summary.cashInDrawerPhp.toFixed(2) : '');
+                      setDrawerEditNote('');
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.adjSegmentText,
+                        drawerMode === 'EDIT_DRAWER' ? styles.adjSegmentTextActive : null,
+                      ]}
+                    >
+                      ✏️ Edit Kaha
                     </Text>
                   </Pressable>
                 </View>
 
-                {/* Amount Input */}
-                <Text style={styles.inputFieldLabel}>{t.amountPhpLabel}</Text>
-                <View style={styles.amountInputRow}>
-                  <Text style={styles.pesoPrefix}>₱</Text>
-                  <TextInput
-                    style={styles.amountInput}
-                    keyboardType="numeric"
-                    placeholder="0.00"
-                    placeholderTextColor="#9CA3AF"
-                    value={adjAmount}
-                    onChangeText={setAdjAmount}
-                  />
-                </View>
+                {drawerMode === 'EDIT_DRAWER' ? (
+                  /* Form: Direct Edit Cash in Drawer */
+                  <View style={{ marginTop: 8 }}>
+                    <View style={styles.editDrawerCurrentBox}>
+                      <Text style={styles.editDrawerCurrentLabel}>Kasalukuyang Cash sa Kaha:</Text>
+                      <Text style={styles.editDrawerCurrentVal}>{summary.formattedCashInDrawer}</Text>
+                    </View>
 
-                {/* Category Chips */}
-                <Text style={styles.inputFieldLabel}>{t.categoryLabel}</Text>
-                <View style={styles.catChipsRow}>
-                  {(adjType === 'PANUKLI' ? PANUKLI_CATEGORIES : GASTOS_CATEGORIES).map(
-                    (cat) => {
-                      const active = adjCategory === cat;
+                    <Text style={styles.inputFieldLabel}>Bagong Balance sa Kaha (₱)</Text>
+                    <View style={styles.amountInputRow}>
+                      <Text style={styles.pesoPrefix}>₱</Text>
+                      <TextInput
+                        style={styles.amountInput}
+                        keyboardType="decimal-pad"
+                        placeholder="0.00"
+                        placeholderTextColor="#9CA3AF"
+                        value={targetDrawerAmount}
+                        onChangeText={setTargetDrawerAmount}
+                      />
+                    </View>
+
+                    {(() => {
+                      const clean = targetDrawerAmount.trim().replace(/,/g, '');
+                      const parsed = parseFloat(clean);
+                      if (!clean || isNaN(parsed)) return null;
+                      const diff = Number((parsed - summary.cashInDrawerPhp).toFixed(2));
+                      if (diff > 0) {
+                        return (
+                          <View style={styles.diffPreviewBoxSuccess}>
+                            <Text style={styles.diffPreviewTextSuccess}>
+                              📈 Dagdag sa kaha: +{Money.fromPhp(diff).format()} (Panukli / Float)
+                            </Text>
+                          </View>
+                        );
+                      } else if (diff < 0) {
+                        return (
+                          <View style={styles.diffPreviewBoxDanger}>
+                            <Text style={styles.diffPreviewTextDanger}>
+                              📉 Bawas sa kaha: -{Money.fromPhp(Math.abs(diff)).format()} (Gastos / Withdrawal)
+                            </Text>
+                          </View>
+                        );
+                      }
                       return (
-                        <Pressable
-                          key={cat}
-                          style={[
-                            styles.catChip,
-                            active ? styles.catChipActive : null,
-                          ]}
-                          onPress={() => setAdjCategory(cat)}
-                        >
-                          <Text
-                            style={[
-                              styles.catChipText,
-                              active ? styles.catChipTextActive : null,
-                            ]}
-                          >
-                            {cat}
-                          </Text>
-                        </Pressable>
+                        <View style={styles.diffPreviewBoxNeutral}>
+                          <Text style={styles.diffPreviewTextNeutral}>Walang pagbabago sa balance</Text>
+                        </View>
                       );
-                    }
-                  )}
-                </View>
+                    })()}
 
-                {/* Note Input */}
-                <Text style={styles.inputFieldLabel}>{t.noteLabel}</Text>
-                <TextInput
-                  style={styles.noteInput}
-                  placeholder="hal. Para sa 3 sako ng yelo"
-                  placeholderTextColor="#9CA3AF"
-                  value={adjNote}
-                  onChangeText={setAdjNote}
-                />
+                    <Text style={styles.inputFieldLabel}>Dahilan / Note (Opsyonal)</Text>
+                    <TextInput
+                      style={styles.noteInput}
+                      placeholder="hal. Bilang sa Kaha pagkasara"
+                      placeholderTextColor="#9CA3AF"
+                      value={drawerEditNote}
+                      onChangeText={setDrawerEditNote}
+                    />
 
-                <Pressable
-                  style={[
-                    styles.saveAdjBtn,
-                    isJustSavedDrawer ? styles.saveAdjBtnSuccess : null,
-                  ]}
-                  onPress={handleSaveDrawerAdjustment}
-                >
-                  <Ionicons
-                    name={isJustSavedDrawer ? 'checkmark' : 'save-outline'}
-                    size={16}
-                    color="#FFFFFF"
-                    style={{ marginRight: 6 }}
-                  />
-                  <Text style={styles.saveAdjBtnText}>
-                    {isJustSavedDrawer ? '✓ Naitala Na!' : t.saveAdjustmentBtn}
-                  </Text>
-                </Pressable>
+                    <Pressable
+                      style={[
+                        styles.saveAdjBtn,
+                        styles.saveDirectDrawerBtn,
+                        isSavingDrawer ? styles.saveAdjBtnDisabled : null,
+                        isJustSavedDrawer ? styles.saveAdjBtnSuccess : null,
+                      ]}
+                      disabled={isSavingDrawer}
+                      onPress={handleSaveDirectDrawer}
+                    >
+                      <Ionicons
+                        name={isJustSavedDrawer ? 'checkmark' : 'checkmark-done-circle-outline'}
+                        size={16}
+                        color="#FFFFFF"
+                        style={{ marginRight: 6 }}
+                      />
+                      <Text style={styles.saveAdjBtnText}>
+                        {isJustSavedDrawer ? '✓ Na-save ang Bagong Balance!' : 'I-save ang Bagong Balance sa Kaha'}
+                      </Text>
+                    </Pressable>
+                  </View>
+                ) : (
+                  /* Form: Panukli / Gastos Entry */
+                  <View style={{ marginTop: 8 }}>
+                    <Text style={styles.inputFieldLabel}>{t.amountPhpLabel}</Text>
+                    <View style={styles.amountInputRow}>
+                      <Text style={styles.pesoPrefix}>₱</Text>
+                      <TextInput
+                        style={styles.amountInput}
+                        keyboardType="numeric"
+                        placeholder="0.00"
+                        placeholderTextColor="#9CA3AF"
+                        value={adjAmount}
+                        onChangeText={setAdjAmount}
+                      />
+                    </View>
+
+                    {/* Category Chips */}
+                    <Text style={styles.inputFieldLabel}>{t.categoryLabel}</Text>
+                    <View style={styles.catChipsRow}>
+                      {(adjType === 'PANUKLI' ? PANUKLI_CATEGORIES : GASTOS_CATEGORIES).map(
+                        (cat) => {
+                          const active = adjCategory === cat;
+                          return (
+                            <Pressable
+                              key={cat}
+                              style={[
+                                styles.catChip,
+                                active ? styles.catChipActive : null,
+                              ]}
+                              onPress={() => setAdjCategory(cat)}
+                            >
+                              <Text
+                                style={[
+                                  styles.catChipText,
+                                  active ? styles.catChipTextActive : null,
+                                ]}
+                              >
+                                {cat}
+                              </Text>
+                            </Pressable>
+                          );
+                        }
+                      )}
+                    </View>
+
+                    {/* Note Input */}
+                    <Text style={styles.inputFieldLabel}>{t.noteLabel}</Text>
+                    <TextInput
+                      style={styles.noteInput}
+                      placeholder="hal. Para sa 3 sako ng yelo"
+                      placeholderTextColor="#9CA3AF"
+                      value={adjNote}
+                      onChangeText={setAdjNote}
+                    />
+
+                    <Pressable
+                      style={[
+                        styles.saveAdjBtn,
+                        isJustSavedDrawer ? styles.saveAdjBtnSuccess : null,
+                      ]}
+                      onPress={handleSaveDrawerAdjustment}
+                    >
+                      <Ionicons
+                        name={isJustSavedDrawer ? 'checkmark' : 'save-outline'}
+                        size={16}
+                        color="#FFFFFF"
+                        style={{ marginRight: 6 }}
+                      />
+                      <Text style={styles.saveAdjBtnText}>
+                        {isJustSavedDrawer ? '✓ Naitala Na!' : t.saveAdjustmentBtn}
+                      </Text>
+                    </Pressable>
+                  </View>
+                )}
               </View>
 
               {/* Today's Adjustments History */}
@@ -1956,7 +2114,7 @@ export default function SalesHistoryScreen() {
 
                 <View style={styles.receiptDashedLine} />
                 <Text style={styles.receiptFooter}>
-                  Generated with Startup Tindahan Helper POS
+                  Generated with Tindahan Helper POS
                 </Text>
               </View>
 
@@ -3665,6 +3823,74 @@ const styles = StyleSheet.create({
   },
   adjSegmentBtnGastos: {
     backgroundColor: '#DC2626',
+  },
+  adjSegmentBtnEdit: {
+    backgroundColor: '#059669',
+  },
+  editDrawerCurrentBox: {
+    backgroundColor: '#F0FDF4',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    marginVertical: 4,
+  },
+  editDrawerCurrentLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#166534',
+  },
+  editDrawerCurrentVal: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#15803D',
+    marginTop: 2,
+    fontVariant: ['tabular-nums'],
+  },
+  diffPreviewBoxSuccess: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
+    borderWidth: 1,
+    padding: 8,
+    borderRadius: 6,
+    marginVertical: 4,
+  },
+  diffPreviewTextSuccess: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#047857',
+  },
+  diffPreviewBoxDanger: {
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FECACA',
+    borderWidth: 1,
+    padding: 8,
+    borderRadius: 6,
+    marginVertical: 4,
+  },
+  diffPreviewTextDanger: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#B91C1C',
+  },
+  diffPreviewBoxNeutral: {
+    backgroundColor: '#F3F4F6',
+    borderColor: '#E5E7EB',
+    borderWidth: 1,
+    padding: 8,
+    borderRadius: 6,
+    marginVertical: 4,
+  },
+  diffPreviewTextNeutral: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#4B5563',
+  },
+  saveDirectDrawerBtn: {
+    backgroundColor: '#059669',
+  },
+  saveAdjBtnDisabled: {
+    opacity: 0.6,
   },
   adjSegmentText: {
     fontSize: 12,

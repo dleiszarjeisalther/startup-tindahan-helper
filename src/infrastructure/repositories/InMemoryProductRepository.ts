@@ -104,9 +104,10 @@ export class InMemoryProductRepository implements IProductRepository {
     const db = SqliteDatabase.getInstance().rawDb;
     if (!db) return;
     const dto = product.toDTO();
-    const tiers: SellingUnitTier[] = [
-      { unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: dto.defaultPricePhp },
-    ];
+    const tiers: SellingUnitTier[] =
+      dto.sellingTiers && dto.sellingTiers.length > 0
+        ? dto.sellingTiers
+        : [{ unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: dto.defaultPricePhp }];
 
     db.runSync(
       `INSERT OR REPLACE INTO products (

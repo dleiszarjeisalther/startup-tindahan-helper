@@ -46,7 +46,7 @@ def build_rtm_excel(output_path: str):
     ws_summary = wb.create_sheet(title="Executive Summary")
     ws_summary.views.sheetView[0].showGridLines = True
 
-    ws_summary["B2"] = "Startup Tindahan Helper (Juan's Store POS)"
+    ws_summary["B2"] = "Tindahan Helper (Juan's Store POS)"
     ws_summary["B2"].font = title_font
     ws_summary["B3"] = "Requirements Traceability Matrix (RTM) Dashboard — ISO/IEC/IEEE 29148 Standard"
     ws_summary["B3"].font = subtitle_font

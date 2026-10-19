@@ -6,10 +6,15 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Alert,
+  Linking,
+  Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as WebBrowser from 'expo-web-browser';
+import * as Haptics from 'expo-haptics';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { getTranslations } from '@/presentation/localization/i18n';
 
@@ -25,6 +30,38 @@ export default function MenuProfileScreen() {
   const [activeSection, setActiveSection] = useState<
     'NONE' | 'SUBSCRIPTION' | 'HELP'
   >('NONE');
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  const handleOpenFeedback = async () => {
+    const feedbackUrl = 'https://tindahanhelper.wuaze.com/feedback.php';
+    Alert.alert(
+      '💬 Mag-iwan ng Feedback & Mungkahi',
+      'Kailangan ng aktibong internet connection (Wi-Fi o Mobile Data) para ma-access ang online feedback page ng Startup Tindahan Helper.\n\nNais mo bang buksan ang browser?',
+      [
+        { text: 'Kanselahin', style: 'cancel' },
+        {
+          text: 'Magpatuloy',
+          onPress: async () => {
+            try {
+              await WebBrowser.openBrowserAsync(feedbackUrl, {
+                presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
+                toolbarColor: '#0F172A',
+              });
+            } catch {
+              try {
+                await Linking.openURL(feedbackUrl);
+              } catch {
+                Alert.alert(
+                  'Hindi Mabuksan ang Browser',
+                  'Pakibisita ang https://tindahanhelper.wuaze.com/feedback.php sa iyong phone browser.'
+                );
+              }
+            }
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -202,7 +239,88 @@ export default function MenuProfileScreen() {
             </View>
           ) : null}
 
-          {/* 8. Log Out */}
+          {/* 8. Feedback & Suggestions (Task 10) */}
+          <Pressable
+            style={styles.menuRow}
+            onPress={handleOpenFeedback}
+          >
+            <View style={styles.menuLeft}>
+              <Ionicons name="chatbubbles-outline" size={22} color="#0D7A52" />
+              <View>
+                <Text style={styles.menuLabel}>Feedback &amp; Mga Mungkahi</Text>
+                <Text style={styles.menuSubLabel}>Ibahagi ang iyong mga kahilingan online</Text>
+              </View>
+            </View>
+            <View style={styles.menuRightGroup}>
+              <View style={styles.onlineBadge}>
+                <Text style={styles.onlineBadgeText}>Online</Text>
+              </View>
+              <Text style={styles.menuChevron}>›</Text>
+            </View>
+          </Pressable>
+
+          {/* 9. Developer / Creator Contact Section (Task 11) */}
+          <View style={styles.creatorCard}>
+            <View style={styles.creatorTopRow}>
+              <View style={styles.creatorIconWrap}>
+                <Ionicons name="call-outline" size={18} color="#0D7A52" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.creatorTitle}>Developer / Creator Contact</Text>
+                <Text style={styles.creatorSubtitle}>
+                  May tanong, feedback, o kailangan ng tulong?
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.creatorBodyRow}>
+              <View>
+                <Text style={styles.creatorPhoneLabel}>Official Helpline:</Text>
+                <Text style={styles.creatorPhoneNumber}>0991 658 9854</Text>
+              </View>
+
+              <View style={styles.creatorButtonsRow}>
+                <Pressable
+                  style={styles.creatorBtnCopy}
+                  onPress={() => {
+                    try {
+                      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText('09916589854').catch(() => {});
+                      }
+                      Share.share({ message: '09916589854' }).catch(() => {});
+                      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                      setToastMsg('✓ Na-kopyang numero: 0991 658 9854');
+                      setTimeout(() => setToastMsg(null), 2500);
+                    } catch {
+                      // ignore
+                    }
+                  }}
+                >
+                  <Ionicons name="copy-outline" size={14} color="#0D7A52" />
+                  <Text style={styles.creatorBtnCopyText}>Kopyahin</Text>
+                </Pressable>
+
+                <Pressable
+                  style={styles.creatorBtnDial}
+                  onPress={async () => {
+                    try {
+                      await Linking.openURL('tel:09916589854');
+                    } catch {
+                      Alert.alert(
+                        'Hindi Mabuksan ang Dialer',
+                        'Maaaring i-dial nang mano-mano ang 09916589854 sa iyong telepono.'
+                      );
+                    }
+                  }}
+                >
+                  <Ionicons name="call" size={14} color="#FFFFFF" />
+                  <Text style={styles.creatorBtnDialText}>Tawagan</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+
+          {/* 10. Log Out */}
           <Pressable
             style={[styles.menuRow, styles.menuRowNoBorder]}
             onPress={() => router.push('/')}
@@ -215,6 +333,12 @@ export default function MenuProfileScreen() {
           </Pressable>
         </ScrollView>
       </View>
+
+      {toastMsg ? (
+        <View style={styles.toastContainer}>
+          <Text style={styles.toastText}>{toastMsg}</Text>
+        </View>
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -371,5 +495,136 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#475569',
     lineHeight: 18,
+  },
+  menuSubLabel: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  onlineBadge: {
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  onlineBadgeText: {
+    color: '#059669',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  creatorCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    padding: 16,
+    marginVertical: 10,
+    gap: 12,
+  },
+  creatorTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  creatorIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#ECFDF5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#D1FAE5',
+  },
+  creatorTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  creatorSubtitle: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 1,
+  },
+  creatorBodyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  creatorPhoneLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    color: '#64748B',
+  },
+  creatorPhoneNumber: {
+    fontSize: 17,
+    fontWeight: '900',
+    color: '#0D7A52',
+    letterSpacing: 0.5,
+  },
+  creatorButtonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  creatorBtnCopy: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+  },
+  creatorBtnCopyText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  creatorBtnDial: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    backgroundColor: '#0D7A52',
+  },
+  creatorBtnDialText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  toastContainer: {
+    position: 'absolute',
+    bottom: 24,
+    left: 20,
+    right: 20,
+    backgroundColor: '#111827',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  toastText: {
+    color: '#34D399',
+    fontSize: 13,
+    fontWeight: '700',
+    textAlign: 'center',
   },
 });

@@ -1,0 +1,10 @@
+# Ignore local generated folders and heavy docs for EAS upload
+android/
+ios/
+marketing/
+graphify-out/
+dist/
+.expo/
+.vscode/
+.claude/
+*.xlsx

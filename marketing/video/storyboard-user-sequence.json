@@ -1,0 +1,97 @@
+{
+  "title": "Startup Tindahan Helper - Final 30s Ad (Fixed)",
+  "aspectRatio": "9:16",
+  "resolution": "sd",
+  "fps": 30,
+  "audio": {
+    "voiceover": {
+      "src": "https://cdn.shotstack.io/au/v1/generations/4iy1b8sc1f/4a11654b-9c43-5501-b2b6-19d8462b6f18.mp3",
+      "start": 7.55,
+      "length": 22.5,
+      "volume": 1.0
+    },
+    "music": {
+      "src": "https://cdn.shotstack.io/au/v1/generations/4iy1b8sc1f/32372ff4-99d2-5e05-85ef-2e43315c25ed.mp3",
+      "start": 0.0,
+      "length": 30.55,
+      "volume": 0.18
+    }
+  },
+  "scenes": [
+    {
+      "name": "Scene 1 - Hook & Notebook",
+      "type": "video",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-qjcdk-t7pqh-heezt-b1g97n/source.mp4",
+      "start": 0.0,
+      "length": 7.55,
+      "speed": 1.0,
+      "scale": 1.0,
+      "fit": "cover",
+      "volume": 1.0
+    },
+    {
+      "name": "Scene 2 - Scanner in Action",
+      "type": "video",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-xd46c-2gqhv-hgk3p-c5efxb/source.mp4",
+      "start": 7.55,
+      "length": 5.0,
+      "speed": 1.0,
+      "scale": 0.88,
+      "fit": "contain",
+      "volume": 0.0,
+      "badge": {
+        "title": "SUB-SECOND CAMERA SCANNER 📸",
+        "subtitle": "Pasok agad ang barcode at presyo!"
+      }
+    },
+    {
+      "name": "Scene 3 - Sale Checkout & Sukli",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p5sze-kad6q-fqm1j-cd6j1p/source.jpg",
+      "start": 12.55,
+      "length": 4.5,
+      "scale": 0.85,
+      "fit": "contain",
+      "motion": "zoomIn",
+      "badge": {
+        "title": "AUTO SUKLI CALCULATOR 🪙",
+        "subtitle": "Kalkulado ang sukli, ligtas ang barya!"
+      }
+    },
+    {
+      "name": "Scene 4 - Sales History & Tubo",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rm88t-antws-cezh9-95pfkj/source.jpg",
+      "start": 17.05,
+      "length": 4.5,
+      "scale": 0.85,
+      "fit": "contain",
+      "motion": "zoomIn",
+      "badge": {
+        "title": "SALES HISTORY & MALINIS NA TUBO 💰",
+        "subtitle": "Kita ang benta, may Privacy Shield!"
+      }
+    },
+    {
+      "name": "Scene 5 - Real-time Inventory & Expiry",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rneaz-6xs50-znsm2-r2vyab/source.jpg",
+      "start": 21.55,
+      "length": 4.5,
+      "scale": 0.85,
+      "fit": "contain",
+      "motion": "zoomIn",
+      "badge": {
+        "title": "REAL-TIME INVENTORY & FEFO 📦",
+        "subtitle": "May alert sa pa-expire na paninda!"
+      }
+    },
+    {
+      "name": "Scene 6 - Outro CTA Card",
+      "type": "html",
+      "html": "<div style='width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;background:radial-gradient(circle at center, #1e3a8a 0%, #0a1128 100%);color:#ffffff;font-family:sans-serif;text-align:center;padding:40px;box-sizing:border-box;'><div style='font-size:68px;margin-bottom:20px;'>🏪✨</div><div style='font-size:38px;font-weight:900;letter-spacing:1px;color:#38bdf8;text-shadow:0 4px 14px rgba(0,0,0,0.6);line-height:1.2;'>STARTUP TINDAHAN<br>HELPER</div><div style='margin-top:28px;font-size:24px;font-weight:800;color:#facc15;background:rgba(250,204,21,0.18);padding:10px 26px;border-radius:999px;border:2px solid #facc15;'>100% OFFLINE POS</div><div style='margin-top:24px;font-size:20px;color:#e2e8f0;font-weight:600;'>Libreng Gamitin • Walang Monthly Fee</div><div style='margin-top:32px;font-size:26px;font-weight:800;color:#4ade80;'>✅ Negosyong Sigurado!</div></div>",
+      "start": 26.05,
+      "length": 4.5
+    }
+  ]
+}

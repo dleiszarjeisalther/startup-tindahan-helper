@@ -471,7 +471,7 @@ export default function CheckoutNewSaleScreen() {
               const prod = products.find((p) => p.id === item.productId);
               return (
                 <View
-                  key={item.productId}
+                  key={item.cartKey ?? item.productId}
                   style={[
                     styles.cartItemRow,
                     idx < cartSummary.items.length - 1 ? styles.cartItemBorder : null,
@@ -488,9 +488,17 @@ export default function CheckoutNewSaleScreen() {
                   </View>
 
                   <View style={styles.itemCenterCol}>
-                    <Text style={styles.itemName}>{item.name}</Text>
+                    <Text style={styles.itemName}>
+                      {item.name}
+                      {item.unit && item.unit !== 'piece'
+                        ? ` [${item.unit.toUpperCase()} of ${item.unitMultiplier ?? 1}]`
+                        : ''}
+                    </Text>
                     <View style={styles.unitPriceRow}>
-                      <Text style={styles.itemUnitPrice}>{item.formattedUnitPrice}</Text>
+                      <Text style={styles.itemUnitPrice}>
+                        {item.formattedUnitPrice}
+                        {item.unit && item.unit !== 'piece' ? ` / ${item.unit}` : ''}
+                      </Text>
                       {item.bundleApplied ? (
                         <Text style={styles.bundleTag}> (2 for ₱24 promo)</Text>
                       ) : null}
@@ -515,10 +523,12 @@ export default function CheckoutNewSaleScreen() {
                         }
                       }}
                       onUpdateQty={(qty) =>
-                        runCartAction(() => setCartItemQuantity(item.productId, qty))
+                        runCartAction(() =>
+                          setCartItemQuantity(item.cartKey ?? item.productId, qty, item.unit)
+                        )
                       }
                       onDelta={(delta) =>
-                        runCartAction(() => addToCart(item.productId, delta))
+                        runCartAction(() => addToCart(item.productId, delta, item.unit))
                       }
                     />
                   </View>

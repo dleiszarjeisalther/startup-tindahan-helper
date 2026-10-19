@@ -1,0 +1,325 @@
+{
+  "id": "49cd48bc-e780-4965-b8d2-b244ac21f7da",
+  "owner": "4iy1b8sc1f",
+  "plan": "freeTrial",
+  "status": "done",
+  "error": "",
+  "duration": 30,
+  "billable": 30,
+  "renderTime": 7895,
+  "totalRenderTime": 24264,
+  "credits": 0.5,
+  "url": "https://shotstack-api-v1-output.s3-ap-southeast-2.amazonaws.com/4iy1b8sc1f/49cd48bc-e780-4965-b8d2-b244ac21f7da.mp4",
+  "poster": null,
+  "thumbnail": null,
+  "data": {
+    "timeline": {
+      "background": "#0a1128",
+      "tracks": [
+        {
+          "clips": [
+            {
+              "start": 0,
+              "length": 4,
+              "asset": {
+                "style": "minimal",
+                "background": "#0d6efd",
+                "text": "DIGITAL NA ANG TINDAHAN!\nItapon na ang lumang notebook!",
+                "size": "small",
+                "offset": {
+                  "y": 0.08
+                },
+                "type": "title",
+                "position": "bottom",
+                "color": "#ffffff"
+              },
+              "transition": {
+                "out": "fade",
+                "in": "slideUp"
+              }
+            },
+            {
+              "transition": {
+                "out": "fade",
+                "in": "slideUp"
+              },
+              "start": 4,
+              "length": 6,
+              "asset": {
+                "position": "bottom",
+                "type": "title",
+                "offset": {
+                  "y": 0.08
+                },
+                "text": "SUB-SECOND CAMERA SCANNER\nPasok agad ang paninda at presyo!",
+                "style": "minimal",
+                "background": "#0d6efd",
+                "size": "small",
+                "color": "#ffffff"
+              }
+            },
+            {
+              "transition": {
+                "out": "fade",
+                "in": "slideUp"
+              },
+              "asset": {
+                "offset": {
+                  "y": 0.08
+                },
+                "background": "#0d6efd",
+                "size": "small",
+                "color": "#ffffff",
+                "text": "AUTO SUKLI CALCULATOR\nIwas-mali sa sukli, ligtas ang barya!",
+                "style": "minimal",
+                "position": "bottom",
+                "type": "title"
+              },
+              "start": 10,
+              "length": 4
+            },
+            {
+              "length": 4,
+              "start": 14,
+              "transition": {
+                "in": "slideUp",
+                "out": "fade"
+              },
+              "asset": {
+                "offset": {
+                  "y": 0.08
+                },
+                "type": "title",
+                "position": "bottom",
+                "color": "#ffffff",
+                "size": "small",
+                "text": "HOLD / PARK CART QUEUE\nI-park ang basket, tuloy ang pila!",
+                "background": "#0d6efd",
+                "style": "minimal"
+              }
+            },
+            {
+              "length": 4,
+              "transition": {
+                "out": "fade",
+                "in": "slideUp"
+              },
+              "asset": {
+                "text": "MALINIS NA TUBO (33.3%)\nBantay kita with Privacy Shield!",
+                "offset": {
+                  "y": 0.08
+                },
+                "style": "minimal",
+                "type": "title",
+                "position": "bottom",
+                "color": "#ffffff",
+                "background": "#0d6efd",
+                "size": "small"
+              },
+              "start": 18
+            },
+            {
+              "length": 4,
+              "start": 22,
+              "asset": {
+                "offset": {
+                  "y": 0.08
+                },
+                "color": "#ffffff",
+                "style": "minimal",
+                "background": "#0d6efd",
+                "position": "bottom",
+                "text": "FEFO EXPIRY WARNING\nIwas-panis at sira sa paninda!",
+                "type": "title",
+                "size": "small"
+              },
+              "transition": {
+                "out": "fade",
+                "in": "slideUp"
+              }
+            },
+            {
+              "transition": {
+                "out": "fade",
+                "in": "slideUp"
+              },
+              "length": 4,
+              "asset": {
+                "color": "#ffffff",
+                "type": "title",
+                "text": "100% OFFLINE SA CELLPHONE MO!\nLibreng Gamitin \u2022 Walang Monthly Fee",
+                "style": "minimal",
+                "position": "bottom",
+                "size": "small",
+                "offset": {
+                  "y": 0.08
+                },
+                "background": "#0d6efd"
+              },
+              "start": 26
+            }
+          ]
+        },
+        {
+          "clips": [
+            {
+              "start": 0,
+              "scale": 0.85,
+              "asset": {
+                "type": "video",
+                "speed": 1,
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/7e21dde67a927e699cfd1060.282554546f0216740c8f9b86.source_processed.mp4"
+              },
+              "fit": "contain",
+              "length": 4,
+              "offset": {
+                "x": 0,
+                "y": 0.04
+              },
+              "transition": {
+                "in": "fade",
+                "out": "fade"
+              }
+            },
+            {
+              "length": 6,
+              "scale": 0.82,
+              "offset": {
+                "y": 0.04,
+                "x": 0
+              },
+              "start": 4,
+              "fit": "contain",
+              "transition": {
+                "out": "fade",
+                "in": "fade"
+              },
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-api-v1-cache.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/16eb703b3de1ff9e6125d371.e772250962486bcb5a762efb.source_processed.mp4",
+                "speed": 0.65
+              }
+            },
+            {
+              "asset": {
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p5sze-kad6q-fqm1j-cd6j1p/source.jpg",
+                "type": "image"
+              },
+              "transition": {
+                "out": "fade",
+                "in": "fade"
+              },
+              "length": 4,
+              "scale": 0.82,
+              "fit": "contain",
+              "effect": "zoomIn",
+              "offset": {
+                "x": 0,
+                "y": 0.04
+              },
+              "start": 10
+            },
+            {
+              "scale": 0.82,
+              "asset": {
+                "type": "image",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p6t56-5t9zx-jqy58-dbbzxj/source.jpg"
+              },
+              "start": 14,
+              "effect": "zoomOut",
+              "offset": {
+                "y": 0.04,
+                "x": 0
+              },
+              "transition": {
+                "in": "fade",
+                "out": "fade"
+              },
+              "length": 4,
+              "fit": "contain"
+            },
+            {
+              "offset": {
+                "y": 0.04,
+                "x": 0
+              },
+              "fit": "contain",
+              "effect": "zoomIn",
+              "scale": 0.82,
+              "start": 18,
+              "asset": {
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rm88t-antws-cezh9-95pfkj/source.jpg",
+                "type": "image"
+              },
+              "length": 4,
+              "transition": {
+                "in": "fade",
+                "out": "fade"
+              }
+            },
+            {
+              "start": 22,
+              "asset": {
+                "type": "image",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rneaz-6xs50-znsm2-r2vyab/source.jpg"
+              },
+              "offset": {
+                "y": 0.04,
+                "x": 0
+              },
+              "fit": "contain",
+              "length": 4,
+              "transition": {
+                "in": "fade",
+                "out": "fade"
+              },
+              "effect": "zoomOut",
+              "scale": 0.82
+            },
+            {
+              "asset": {
+                "type": "image",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p7n3j-2d1d5-z26ne-qx3y7j/source.jpg"
+              },
+              "length": 4,
+              "offset": {
+                "y": 0.04,
+                "x": 0
+              },
+              "fit": "contain",
+              "start": 26,
+              "effect": "zoomIn",
+              "transition": {
+                "out": "fade",
+                "in": "fade"
+              },
+              "scale": 0.82
+            }
+          ]
+        },
+        {
+          "clips": [
+            {
+              "asset": {
+                "type": "html",
+                "width": 720,
+                "height": 1280,
+                "html": "<div style='width:100%;height:100%;background:linear-gradient(180deg,#0a1128 0%,#1e293b 100%);'></div>"
+              },
+              "start": 0,
+              "length": 30
+            }
+          ]
+        }
+      ]
+    },
+    "output": {
+      "aspectRatio": "9:16",
+      "fps": 30,
+      "resolution": "sd",
+      "format": "mp4"
+    }
+  },
+  "created": "2026-10-18T05:50:28.341Z",
+  "updated": "2026-10-18T05:50:52.605Z"
+}

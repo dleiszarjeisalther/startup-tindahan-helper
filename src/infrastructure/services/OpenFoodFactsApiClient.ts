@@ -66,7 +66,7 @@ interface UpcItemDbPayload {
  */
 export class OpenFoodFactsApiClient implements IExternalCatalogLookupService {
   private readonly userAgent =
-    'StartupTindahanHelper/1.0 (contact@tindahanpos.ph - React Native Expo Mobile App)';
+    'TindahanHelper/1.0 (contact@tindahanpos.ph - React Native Expo Mobile App)';
 
   private async fetchJsonWithTimeout<T>(url: string, timeoutMs = 6000): Promise<T | null> {
     const controller = new AbortController();

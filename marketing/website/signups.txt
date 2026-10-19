@@ -1,0 +1,23 @@
+# STARTUP TINDAHAN HELPER - MGA NAG-SIGN UP AT STATUS NG DOWNLOAD (LEADS)
+# Talaan ng lahat ng nag-sign up mula sa website:
+# Kasama kung SUCCESS o UNSUCCESSFUL ang naging pag-download ng APK.
+
+====================================================
+Date/Time : 2026-10-18 21:33:03
+Pangalan  : Nanay Linda Reyes
+Cellphone : 09171234567
+Tindahan  : Linda Tindahan
+Barangay  : Brgy Commonwealth
+Download  : SUCCESS (APK Downloaded)
+IP        : 127.0.0.1
+====================================================
+
+====================================================
+Date/Time : 2026-10-18 22:07:02
+Pangalan  : Aling Marites
+Cellphone : 09933334444
+Tindahan  : Marites Tindahan
+Barangay  : Brgy Gulod
+Download  : UNSUCCESSFUL (Download Disabled / Priority Waitlist)
+IP        : 127.0.0.1
+====================================================

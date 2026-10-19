@@ -22,10 +22,16 @@ const updateProductDetails = (
   productId: string,
   updates: Parameters<typeof tindahanStoreService.updateProductDetails>[1]
 ) => tindahanStoreService.updateProductDetails(productId, updates);
-const addToCart = (productId: string, deltaQty = 1) =>
-  tindahanStoreService.addToCart(productId, deltaQty);
-const setCartItemQuantity = (productId: string, quantity: number) =>
-  tindahanStoreService.setCartItemQuantity(productId, quantity);
+const addToCart = (
+  productId: string,
+  deltaQty = 1,
+  unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
+) => tindahanStoreService.addToCart(productId, deltaQty, unit);
+const setCartItemQuantity = (
+  productId: string,
+  quantity: number,
+  unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
+) => tindahanStoreService.setCartItemQuantity(productId, quantity, unit);
 const addCategory = (name: string) => tindahanStoreService.addCategory(name);
 const updateCategory = (oldName: string, newName: string) =>
   tindahanStoreService.updateCategory(oldName, newName);
@@ -84,11 +90,15 @@ const addCashAdjustment = (
   category: string,
   note?: string
 ) => tindahanStoreService.addCashAdjustment(type, amountPhp, category, note);
+const setCashInDrawer = (newAmountPhp: number, note?: string) =>
+  tindahanStoreService.setCashInDrawer(newAmountPhp, note);
 const deleteCashAdjustment = (adjustmentId: string) =>
   tindahanStoreService.deleteCashAdjustment(adjustmentId);
 const recordStockMovement = (params: Parameters<typeof tindahanStoreService.recordStockMovement>[0]) =>
   tindahanStoreService.recordStockMovement(params);
 const clearAllDatabaseData = () => tindahanStoreService.clearAllDatabaseData();
+const exportDatabaseBackup = () => tindahanStoreService.exportDatabaseBackup();
+const restoreDatabaseBackup = () => tindahanStoreService.restoreDatabaseBackup();
 const notifyCatalogChanged = () => tindahanStoreService.notifyCatalogChanged();
 const setOwnerMasterPin = (pin: string) => tindahanStoreService.setOwnerMasterPin(pin);
 const verifyOwnerMasterPin = (pin: string) => tindahanStoreService.verifyOwnerMasterPin(pin);
@@ -167,11 +177,14 @@ export function useTindahanStore() {
     deleteUtangCustomer,
     recordUtangPayment,
     addCashAdjustment,
+    setCashInDrawer,
     deleteCashAdjustment,
     getMonthlySalesHistory,
     addOrUpdateMonthlySalesRecord,
     updateSettings,
     clearAllDatabaseData,
+    exportDatabaseBackup,
+    restoreDatabaseBackup,
     notifyCatalogChanged,
     setOwnerMasterPin,
     verifyOwnerMasterPin,

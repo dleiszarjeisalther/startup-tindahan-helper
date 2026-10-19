@@ -3,7 +3,7 @@ import { Barcode, BarcodeSource } from '../value-objects/Barcode';
 import { Money } from '../value-objects/Money';
 
 export interface SellingUnitTier {
-  unitName: 'piece' | 'bundle' | 'pack' | 'case';
+  unitName: 'piece' | 'bundle' | 'pack' | 'box' | 'case';
   baseUnitMultiplier: number;
   unitPricePhp: number;
   unitBarcode?: Barcode;
@@ -50,6 +50,7 @@ export interface ProductDTO {
   expiryDate?: string | null;
   expiryStatus?: 'SAFE' | 'NEAR_EXPIRY' | 'EXPIRED' | 'NONE';
   daysUntilExpiry?: number | null;
+  sellingTiers: SellingUnitTier[];
 }
 
 export class Product {
@@ -206,6 +207,7 @@ export class Product {
     lowStockThreshold?: number;
     unitOfMeasure?: UnitOfMeasure;
     expiryDate?: string | null;
+    sellingTiers?: SellingUnitTier[];
   }): Product {
     const nextName = updates.name !== undefined && updates.name.trim() ? updates.name.trim() : this._name;
     const nextCategory = updates.category !== undefined && updates.category.trim() ? updates.category.trim() : this._category;
@@ -215,8 +217,8 @@ export class Product {
     const nextOosDays = nextStock === 0 ? Math.max(1, this._outOfStockDays) : (this._baseStockCount === 0 && nextStock > 0 ? 0 : this._outOfStockDays);
     const nextUnitOfMeasure = updates.unitOfMeasure ?? this._unitOfMeasure;
     const nextExpiry = updates.expiryDate !== undefined ? updates.expiryDate : this._expiryDate;
-    let nextTiers = this._sellingTiers;
-    if (updates.pricePhp !== undefined && updates.pricePhp >= 0) {
+    let nextTiers = updates.sellingTiers ? [...updates.sellingTiers] : this._sellingTiers;
+    if (updates.pricePhp !== undefined && updates.pricePhp >= 0 && !updates.sellingTiers) {
       const pieceIdx = this._sellingTiers.findIndex((t) => t.unitName === 'piece');
       if (pieceIdx >= 0) {
         nextTiers = this._sellingTiers.map((t, idx) =>
@@ -365,6 +367,29 @@ export class Product {
       expiryDate: this._expiryDate,
       expiryStatus: this.getExpiryStatus(),
       daysUntilExpiry: this.daysUntilExpiry,
+      sellingTiers: this._sellingTiers.map((t) => ({ ...t })),
     };
+  }
+
+  public get sellingTiers(): SellingUnitTier[] {
+    return this._sellingTiers.map((t) => ({ ...t }));
+  }
+
+  public get defaultPricePhp(): number {
+    const pieceTier =
+      this._sellingTiers.find((t) => t.unitName === 'piece') ?? this._sellingTiers[0];
+    return Number(pieceTier?.unitPricePhp) || 0;
+  }
+
+  public getTier(unitName: string): SellingUnitTier | undefined {
+    return this._sellingTiers.find((t) => t.unitName === unitName);
+  }
+
+  public getUnitMultiplier(unitName: string): number {
+    return this.getTier(unitName)?.baseUnitMultiplier ?? 1;
+  }
+
+  public getUnitPrice(unitName: string): number {
+    return this.getTier(unitName)?.unitPricePhp ?? this.defaultPricePhp;
   }
 }

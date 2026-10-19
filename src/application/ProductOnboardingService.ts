@@ -1,7 +1,7 @@
 // src/application/ProductOnboardingService.ts
 import { IProductRepository } from '../domain/repositories/IProductRepository';
 import { Barcode } from '../domain/value-objects/Barcode';
-import { Product, ProductDTO } from '../domain/entities/Product';
+import { Product, ProductDTO, SellingUnitTier } from '../domain/entities/Product';
 import {
   IExternalCatalogLookupService,
   ExternalProductCatalogResult,
@@ -19,6 +19,7 @@ export interface AddProductCommand {
   imageUri?: string;
   unitOfMeasure?: 'pc' | 'kg';
   expiryDate?: string | null;
+  sellingTiers?: SellingUnitTier[];
 }
 
 export type AddProductResult =
@@ -114,7 +115,9 @@ export class ProductOnboardingService {
       safeStock,
       safeLowThreshold,
       safeCost,
-      [{ unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: safePrice }],
+      cmd.sellingTiers && cmd.sellingTiers.length > 0
+        ? cmd.sellingTiers
+        : [{ unitName: 'piece', baseUnitMultiplier: 1, unitPricePhp: safePrice }],
       0,
       0,
       undefined,

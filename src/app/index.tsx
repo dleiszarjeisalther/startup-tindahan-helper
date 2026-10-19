@@ -1,5 +1,5 @@
 // src/app/index.tsx — Screen 1: POS / Scan Product (OOP Barcode Scanner Viewfinder + SQLite Backed)
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -18,6 +19,7 @@ import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScann
 import { getTranslations } from '@/presentation/localization/i18n';
 import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/components/WeightQuantityModal';
 import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
+import { ProductDTO } from '@/domain/entities/Product';
 
 export default function PosScanProductScreen() {
   const router = useRouter();
@@ -44,7 +46,10 @@ export default function PosScanProductScreen() {
   const [unknownBarcode, setUnknownBarcode] = useState<string | null>(null);
   const [lastScannedProductId, setLastScannedProductId] = useState<string | null>(null);
   const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
+  const [unitModalProduct, setUnitModalProduct] = useState<ProductDTO | null>(null);
   const [showPinModal, setShowPinModal] = useState(false);
+  const lastScanTimestampRef = useRef<number>(0);
+  const lastScannedBarcodeRef = useRef<string>('');
 
   useEffect(() => {
     if (__DEV__) console.debug('[StoreRender]', { surface: 'Scan', version, cartCount: cartSummary.totalCount });
@@ -61,7 +66,11 @@ export default function PosScanProductScreen() {
     }, 2400);
   };
 
-  const tryAddToCart = (productId: string, successMessage: string) => {
+  const tryAddToCart = (
+    productId: string,
+    successMessage: string,
+    unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
+  ) => {
     try {
       const prod = products.find((p) => p.id === productId);
       if (prod && prod.expiryDate) {
@@ -78,10 +87,10 @@ export default function PosScanProductScreen() {
         }
       }
 
-      addToCart(productId, 1);
+      addToCart(productId, 1, unit);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       triggerScanToast(successMessage);
-      console.log(`[POS Screen] ✓ Added to cart: productId=${productId}`);
+      console.log(`[POS Screen] ✓ Added to cart: productId=${productId}, unit=${unit}`);
       return true;
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
@@ -92,9 +101,18 @@ export default function PosScanProductScreen() {
   };
 
   const handleBarcodeDetected = (rawCode: string) => {
+    if (!rawCode || typeof rawCode !== 'string') return;
     const clean = rawCode.replace(/\s+/g, '').trim().toUpperCase();
     console.log(`[POS Screen] handleBarcodeDetected received rawCode="${rawCode}", normalized="${clean}"`);
-    if (!clean) return;
+    if (!clean || clean.length < 2) return;
+
+    // Cooldown debounce: prevent duplicate scan events within 1200ms
+    const now = Date.now();
+    if (lastScannedBarcodeRef.current === clean && now - lastScanTimestampRef.current < 1200) {
+      return;
+    }
+    lastScanTimestampRef.current = now;
+    lastScannedBarcodeRef.current = clean;
 
     const matched = products.find(
       (p) =>
@@ -108,7 +126,7 @@ export default function PosScanProductScreen() {
       if (matched.stockCount <= 0) {
         console.log(`[POS Screen] ⚠️ Product "${matched.name}" is OUT OF STOCK.`);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-        triggerScanToast(`⚠️ ${matched.name} is Out of Stock!`);
+        triggerScanToast(`⚠️ Out of Stock — This product is currently unavailable.`);
         return;
       }
       if (matched.unitOfMeasure === 'kg') {
@@ -121,6 +139,12 @@ export default function PosScanProductScreen() {
           formattedPrice: matched.formattedPrice,
           unitOfMeasure: matched.unitOfMeasure,
         });
+        setUnknownBarcode(null);
+        return;
+      }
+      if (matched.sellingTiers && matched.sellingTiers.length > 1) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+        setUnitModalProduct(matched);
         setUnknownBarcode(null);
         return;
       }
@@ -321,8 +345,9 @@ export default function PosScanProductScreen() {
           ) : (
             <View style={styles.gridContainer}>
               {filteredProducts.map((item) => {
-                const inCartQty =
-                  cartSummary.items.find((c) => c.productId === item.id)?.quantity ?? 0;
+                const inCartQty = cartSummary.items
+                  .filter((c) => c.productId === item.id)
+                  .reduce((sum, c) => sum + c.quantity, 0);
 
                 return (
                   <Pressable
@@ -337,7 +362,7 @@ export default function PosScanProductScreen() {
                         Haptics.notificationAsync(
                           Haptics.NotificationFeedbackType.Warning
                         ).catch(() => {});
-                        triggerScanToast(`⚠️ ${item.name} ${t.outOfStockAlert}`);
+                        triggerScanToast('⚠️ Out of Stock — This product is currently unavailable.');
                         return;
                       }
                       if (item.unitOfMeasure === 'kg') {
@@ -350,6 +375,11 @@ export default function PosScanProductScreen() {
                           formattedPrice: item.formattedPrice,
                           unitOfMeasure: item.unitOfMeasure,
                         });
+                        return;
+                      }
+                      if (item.sellingTiers && item.sellingTiers.length > 1) {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        setUnitModalProduct(item);
                         return;
                       }
                       tryAddToCart(item.id, `+1 ${item.name} added to New Sale`);
@@ -443,6 +473,137 @@ export default function PosScanProductScreen() {
         }}
         onCancel={() => setShowPinModal(false)}
       />
+
+      {/* Unit Selection Modal for Multi-Unit Selling (Piece, Pack, Box) */}
+      <Modal
+        visible={unitModalProduct !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setUnitModalProduct(null)}
+      >
+        <View style={styles.unitModalBackdrop}>
+          <View style={styles.unitModalBox}>
+            <View style={styles.unitModalHeader}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.unitModalProductTitle} numberOfLines={1}>
+                  {unitModalProduct?.name}
+                </Text>
+                <Text style={styles.unitModalSubtitle}>
+                  Kabuuang Stock: {unitModalProduct?.formattedStock}
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => setUnitModalProduct(null)}
+                hitSlop={8}
+                style={styles.unitModalCloseBtn}
+              >
+                <Ionicons name="close" size={20} color="#6B7280" />
+              </Pressable>
+            </View>
+
+            <Text style={styles.unitModalPrompt}>
+              Pumili ng unit o sukat na ibebenta:
+            </Text>
+
+            <View style={styles.unitTiersList}>
+              {unitModalProduct?.sellingTiers.map((tier) => {
+                const multiplier = tier.baseUnitMultiplier || 1;
+                const availableUnits = Math.floor(
+                  (unitModalProduct.stockCount || 0) / multiplier
+                );
+                const isOutOfStock = availableUnits <= 0;
+
+                return (
+                  <Pressable
+                    key={tier.unitName}
+                    disabled={isOutOfStock}
+                    style={[
+                      styles.unitTierCard,
+                      isOutOfStock ? styles.unitTierCardDisabled : null,
+                    ]}
+                    onPress={() => {
+                      if (!unitModalProduct) return;
+                      const success = tryAddToCart(
+                        unitModalProduct.id,
+                        `✓ +1 ${tier.unitName.toUpperCase()} ${unitModalProduct.name} idinagdag`,
+                        tier.unitName
+                      );
+                      if (success) {
+                        setUnitModalProduct(null);
+                      }
+                    }}
+                  >
+                    <View style={styles.unitTierLeft}>
+                      <View style={styles.unitTierIconWrap}>
+                        <Ionicons
+                          name={
+                            tier.unitName === 'box'
+                              ? 'cube-outline'
+                              : tier.unitName === 'pack'
+                              ? 'layers-outline'
+                              : 'pricetag-outline'
+                          }
+                          size={18}
+                          color={isOutOfStock ? '#9CA3AF' : '#0D7A52'}
+                        />
+                      </View>
+                      <View>
+                        <Text
+                          style={[
+                            styles.unitTierName,
+                            isOutOfStock ? styles.unitTierNameDisabled : null,
+                          ]}
+                        >
+                          {tier.unitName === 'piece'
+                            ? 'Piraso (Piece)'
+                            : tier.unitName === 'pack'
+                            ? `Pack (${multiplier} pcs)`
+                            : tier.unitName === 'box'
+                            ? `Box (${multiplier} pcs)`
+                            : `${tier.unitName} (${multiplier} pcs)`}
+                        </Text>
+                        <Text style={styles.unitTierStock}>
+                          {isOutOfStock
+                            ? 'Kulang ang stock'
+                            : `May ${availableUnits} ${tier.unitName} magagamit`}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.unitTierRight}>
+                      <Text
+                        style={[
+                          styles.unitTierPrice,
+                          isOutOfStock ? styles.unitTierPriceDisabled : null,
+                        ]}
+                      >
+                        ₱{tier.unitPricePhp.toFixed(2)}
+                      </Text>
+                      <View
+                        style={[
+                          styles.unitTierBtn,
+                          isOutOfStock ? styles.unitTierBtnDisabled : null,
+                        ]}
+                      >
+                        <Text style={styles.unitTierBtnText}>
+                          {isOutOfStock ? 'Ubos' : '+ Piliin'}
+                        </Text>
+                      </View>
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+
+            <Pressable
+              style={styles.unitModalDismissBtn}
+              onPress={() => setUnitModalProduct(null)}
+            >
+              <Text style={styles.unitModalDismissText}>Kanselahin</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -924,5 +1085,136 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 11,
     fontWeight: '700',
+  },
+  unitModalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  unitModalBox: {
+    width: '100%',
+    maxWidth: 420,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  unitModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  unitModalProductTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#111827',
+  },
+  unitModalSubtitle: {
+    fontSize: 12,
+    color: '#0D7A52',
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  unitModalCloseBtn: {
+    padding: 4,
+  },
+  unitModalPrompt: {
+    fontSize: 13,
+    color: '#4B5563',
+    marginTop: 12,
+    marginBottom: 10,
+    fontWeight: '500',
+  },
+  unitTiersList: {
+    gap: 8,
+  },
+  unitTierCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    padding: 12,
+  },
+  unitTierCardDisabled: {
+    backgroundColor: '#F3F4F6',
+    borderColor: '#E5E7EB',
+    opacity: 0.6,
+  },
+  unitTierLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1,
+  },
+  unitTierIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#ECFDF5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  unitTierName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  unitTierNameDisabled: {
+    color: '#9CA3AF',
+  },
+  unitTierStock: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 1,
+  },
+  unitTierRight: {
+    alignItems: 'flex-end',
+    gap: 4,
+  },
+  unitTierPrice: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#0D7A52',
+  },
+  unitTierPriceDisabled: {
+    color: '#9CA3AF',
+  },
+  unitTierBtn: {
+    backgroundColor: '#0D7A52',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  unitTierBtnDisabled: {
+    backgroundColor: '#9CA3AF',
+  },
+  unitTierBtnText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  unitModalDismissBtn: {
+    marginTop: 16,
+    paddingVertical: 11,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  unitModalDismissText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#4B5563',
   },
 });

@@ -1,0 +1,90 @@
+{
+  "project": "Startup Tindahan Helper - Before After Bridge Video Ad",
+  "framework": "BAB",
+  "aspectRatio": "9:16",
+  "output": {
+    "format": "mp4",
+    "resolution": "sd",
+    "fps": 30
+  },
+  "scenes": [
+    {
+      "id": "scene_01_before",
+      "stage": "BEFORE",
+      "type": "video",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-qjcdk-t7pqh-heezt-b1g97n/source.mp4",
+      "start": 0.0,
+      "length": 6.0,
+      "speed": 1.0,
+      "scale": 0.85,
+      "headline": "NAWAWALANG UTANG SA NOTEBOOK?",
+      "subheadline": "Iwas-lugi sa punit at basang cuaderno!",
+      "voiceover": "Naranasan mo na bang malugi sa nawawalang listahan ng utang sa lumang notebook?"
+    },
+    {
+      "id": "scene_02_after_scanner",
+      "stage": "AFTER",
+      "type": "video",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-qrax1-a613h-10s0d-6yrkb8/source.mp4",
+      "start": 6.0,
+      "length": 6.0,
+      "speed": 0.65,
+      "scale": 0.82,
+      "headline": "DIGITAL CHECKOUT & SCANNER",
+      "subheadline": "Sub-second camera scan sa paninda!",
+      "voiceover": "Ganito kaginhawa kapag digital ang tindahan: Isang tutok lang ng camera, pasok ang presyo!"
+    },
+    {
+      "id": "scene_03_after_sukli",
+      "stage": "AFTER",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p5sze-kad6q-fqm1j-cd6j1p/source.jpg",
+      "start": 12.0,
+      "length": 6.0,
+      "motion": "zoomIn",
+      "scale": 0.82,
+      "headline": "AUTO SUKLI & EXACT CHANGE",
+      "subheadline": "Kalkulado ang sukli, ligtas ang barya!",
+      "voiceover": "Kalkulado agad ang sukli kahit kakaiba ang baryang inabot ni suki!"
+    },
+    {
+      "id": "scene_04_bridge_tubo",
+      "stage": "BRIDGE",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rm88t-antws-cezh9-95pfkj/source.jpg",
+      "start": 18.0,
+      "length": 4.0,
+      "motion": "zoomIn",
+      "scale": 0.82,
+      "headline": "MALINIS NA TUBO (33.3%)",
+      "subheadline": "Bantay kita with Privacy Shield!",
+      "voiceover": "Bantay ang totoong tubo at kita nang hindi nasisilip ng mga nakatayo sa bintana!"
+    },
+    {
+      "id": "scene_05_bridge_expiry",
+      "stage": "BRIDGE",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-rneaz-6xs50-znsm2-r2vyab/source.jpg",
+      "start": 22.0,
+      "length": 4.0,
+      "motion": "zoomOut",
+      "scale": 0.82,
+      "headline": "FEFO EXPIRY ALERTS",
+      "subheadline": "Iwas-panis at sira sa paninda!",
+      "voiceover": "May alert sa pa-expire na paninda para protektado ang puhunan mo!"
+    },
+    {
+      "id": "scene_06_bridge_cta",
+      "stage": "BRIDGE",
+      "type": "image",
+      "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/4iy1b8sc1f/zzz01m56-p7n3j-2d1d5-z26ne-qx3y7j/source.jpg",
+      "start": 26.0,
+      "length": 4.0,
+      "motion": "zoomIn",
+      "scale": 0.82,
+      "headline": "100% OFFLINE SA CELLPHONE MO!",
+      "subheadline": "Libreng Gamitin • Walang Monthly Fee",
+      "voiceover": "Startup Tindahan Helper: 100% Offline! Walang internet, walang monthly bayarin. Subukan na ngayon!"
+    }
+  ]
+}
