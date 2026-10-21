@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useLicensing } from '../hooks/useLicensing';
 import { useTindahanStore } from '../hooks/useTindahanStore';
+import { isValidPhilippinePhoneNumber } from '../../infrastructure/services/LicensingService';
 
 interface OnboardingModalProps {
   visible: boolean;
@@ -41,8 +42,8 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
       setErrorMessage('Pakilagay ang pangalan ng iyong tindahan.');
       return;
     }
-    if (!phoneNumber.trim() || phoneNumber.trim().length < 10) {
-      setErrorMessage('Pakilagay ang wastong cellphone o GCash number (11 digits).');
+    if (!isValidPhilippinePhoneNumber(phoneNumber)) {
+      setErrorMessage('Pakilagay ang wastong 11-digit mobile number na nagsisimula sa 09 (hal. 09171234567).');
       return;
     }
 

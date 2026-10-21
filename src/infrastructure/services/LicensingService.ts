@@ -1,4 +1,5 @@
 // src/infrastructure/services/LicensingService.ts
+import * as Device from 'expo-device';
 import { SqliteDatabase } from '../database/SqliteDatabase';
 import { appKeyValueStorage } from '../storage/KeyValueStorage';
 
@@ -17,6 +18,9 @@ export interface LicensingState {
   lastObservedTimeMs: number;
   isTrialExpired: boolean;
   isClockTampered: boolean;
+  isQuotaExceeded: boolean;
+  completedSalesCount: number;
+  maxTrialSales: number;
   daysRemaining: number;
   hoursRemaining: number;
   gcashNumber: string;
@@ -44,8 +48,74 @@ export interface VerificationResult {
 
 const SUPABASE_URL = 'https://eitqtggytkosvdgfeqap.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_71hwmfru1nxpm2OMNU3W_w_EPV2HhOz';
-const SECRET_SALT = 'TindahanHelperSecretKey2026!';
 const MASTER_PIN = '985421';
+export const MAX_TRIAL_SALES = 200;
+
+/**
+ * Obfuscated salt bytes unscrambled at runtime to prevent plaintext string extraction from APK bytecode
+ */
+function getSecretSalt(): string {
+  const bytes = [84, 105, 110, 100, 97, 104, 97, 110, 72, 101, 108, 112, 101, 114, 83, 101, 99, 114, 101, 116, 75, 101, 121, 50, 48, 50, 54, 33];
+  return bytes.map((c) => String.fromCharCode(c)).join('');
+}
+
+/**
+ * Normalizes any Philippine phone number variation to standard 11 digits (e.g. 09171234567)
+ */
+export function normalizePhoneNumber(raw: string): string {
+  let digits = raw.replace(/\D/g, '');
+  if (digits.startsWith('63') && digits.length === 12) {
+    digits = '0' + digits.substring(2);
+  } else if (digits.length === 10 && digits.startsWith('9')) {
+    digits = '0' + digits;
+  }
+  return digits;
+}
+
+/**
+ * Validates whether string is a valid Philippine mobile number (11 digits starting with 09)
+ */
+export function isValidPhilippinePhoneNumber(raw: string): boolean {
+  const norm = normalizePhoneNumber(raw);
+  return norm.length === 11 && norm.startsWith('09');
+}
+
+/**
+ * Generates deterministic hardware fingerprint based on physical device characteristics
+ */
+export function getDeviceHardwareFingerprint(): string {
+  const parts = [
+    Device.brand || '',
+    Device.manufacturer || '',
+    Device.modelName || '',
+    Device.designName || '',
+    Device.productName || '',
+    Device.osBuildId || '',
+    String(Device.deviceYearClass || ''),
+    String(Device.totalMemory || ''),
+  ];
+  const raw = parts.join('|').toLowerCase().trim();
+  if (!raw.replace(/\|/g, '')) {
+    return 'generic_fingerprint';
+  }
+  return sha256Hex(raw);
+}
+
+/**
+ * Counts total completed sales in local SQLite database
+ */
+function getCompletedSalesCount(): number {
+  const db = SqliteDatabase.getInstance().rawDb;
+  if (!db) return 0;
+  try {
+    const row = db.getFirstSync<{ count: number }>(
+      "SELECT COUNT(*) as count FROM sales_transactions WHERE status = 'COMPLETED'"
+    );
+    return row ? Number(row.count || 0) : 0;
+  } catch {
+    return 0;
+  }
+}
 
 async function supabaseFetch(path: string, options: RequestInit = {}): Promise<Response> {
   const headers = {
@@ -63,7 +133,7 @@ async function supabaseFetch(path: string, options: RequestInit = {}): Promise<R
 /**
  * Pure JavaScript SHA-256 Implementation (Zero-dependency, synchronous, cross-platform)
  */
-function sha256Hex(ascii: string): string {
+export function sha256Hex(ascii: string): string {
   function rightRotate(value: number, amount: number): number {
     return (value >>> amount) | (value << (32 - amount));
   }
@@ -201,7 +271,7 @@ export class LicensingService {
    */
   public computeExpectedPin(deviceId: string): string {
     const cleanId = deviceId.trim().toUpperCase();
-    const hash = sha256Hex(`${cleanId}:${SECRET_SALT}`);
+    const hash = sha256Hex(`${cleanId}:${getSecretSalt()}`);
     const num = parseInt(hash.substring(0, 8), 16);
     return (num % 1000000).toString().padStart(6, '0');
   }
@@ -273,8 +343,12 @@ export class LicensingService {
       }
     }
 
+    // Transaction ceiling check: Max 200 sales in trial mode
+    const completedSalesCount = getCompletedSalesCount();
+    const isQuotaExceeded = isRegistered && !isLicensed && completedSalesCount >= MAX_TRIAL_SALES;
+
     const isTrialExpired =
-      isRegistered && !isLicensed && (now >= trialExpiresAtMs || isClockTampered);
+      isRegistered && !isLicensed && (now >= trialExpiresAtMs || isClockTampered || isQuotaExceeded);
 
     const msRemaining = Math.max(0, trialExpiresAtMs - now);
     const daysRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60 * 24)));
@@ -299,6 +373,9 @@ export class LicensingService {
       lastObservedTimeMs: updatedLastObserved,
       isTrialExpired,
       isClockTampered,
+      isQuotaExceeded,
+      completedSalesCount,
+      maxTrialSales: MAX_TRIAL_SALES,
       daysRemaining,
       hoursRemaining,
       gcashNumber,
@@ -316,7 +393,9 @@ export class LicensingService {
     const now = Date.now();
     const isClockTampered = now < this.state.lastObservedTimeMs - 600000;
     const updatedLastObserved = Math.max(this.state.lastObservedTimeMs, now);
-    const isTrialExpired = now >= this.state.trialExpiresAtMs || isClockTampered;
+    const completedSalesCount = getCompletedSalesCount();
+    const isQuotaExceeded = !this.state.isLicensed && completedSalesCount >= MAX_TRIAL_SALES;
+    const isTrialExpired = now >= this.state.trialExpiresAtMs || isClockTampered || isQuotaExceeded;
 
     const msRemaining = Math.max(0, this.state.trialExpiresAtMs - now);
     const daysRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60 * 24)));
@@ -339,6 +418,8 @@ export class LicensingService {
       lastObservedTimeMs: updatedLastObserved,
       isTrialExpired,
       isClockTampered,
+      isQuotaExceeded,
+      completedSalesCount,
       daysRemaining,
       hoursRemaining,
     });
@@ -348,10 +429,22 @@ export class LicensingService {
 
   /**
    * First-launch online onboarding: sends store info directly to Supabase and registers trial duration.
+   * Performs deduplication across device ID, normalized phone number, and hardware fingerprint.
    */
   public async registerTrial(params: RegisterTrialParams): Promise<VerificationResult> {
-    const deviceId = this.getOrCreateDeviceId();
-    const cleanDevId = deviceId.trim().toUpperCase();
+    const rawDevId = this.getOrCreateDeviceId();
+    const cleanDevId = rawDevId.trim().toUpperCase();
+
+    // Strict Philippine Phone Validation
+    const normalizedPhone = normalizePhoneNumber(params.phoneNumber);
+    if (!isValidPhilippinePhoneNumber(params.phoneNumber)) {
+      return {
+        success: false,
+        message: 'Pakisuyong maglagay ng wastong 11-digit mobile number na nagsisimula sa 09 (hal. 09171234567).',
+      };
+    }
+
+    const deviceFingerprint = getDeviceHardwareFingerprint();
 
     try {
       const controller = new AbortController();
@@ -384,23 +477,50 @@ export class LicensingService {
       appKeyValueStorage.setString('cfg_gcash_name', gcashNm);
       appKeyValueStorage.setNumber('cfg_pro_price', proPrc);
 
-      // 2. Check if device already registered in Supabase
+      // 2. Check if device, normalized phone, or hardware fingerprint already registered in Supabase
+      const orFilter = `or=(device_id.eq.${encodeURIComponent(cleanDevId)},phone_number_normalized.eq.${encodeURIComponent(normalizedPhone)},device_fingerprint.eq.${encodeURIComponent(deviceFingerprint)})`;
       const checkRes = await supabaseFetch(
-        `device_trials?device_id=eq.${encodeURIComponent(cleanDevId)}&select=*`,
+        `device_trials?${orFilter}&select=*&order=created_at.asc&limit=1`,
         { signal: controller.signal }
       );
 
       const serverTimeMs = Date.now();
       let expiresAtMs = serverTimeMs + freeDays * 24 * 60 * 60 * 1000;
       let trialDays = freeDays;
+      let effectiveDeviceId = cleanDevId;
+      let isExistingReinstall = false;
+      let isAlreadyLicensed = false;
+      let restoredPin: string | null = null;
 
       if (checkRes.ok) {
         const rows = await checkRes.json();
         if (Array.isArray(rows) && rows.length > 0) {
-          // Reinstalling: preserve existing trial
           const existing = rows[0];
+          isExistingReinstall = true;
+          effectiveDeviceId = existing.device_id || cleanDevId;
+          appKeyValueStorage.setString('app_device_id', effectiveDeviceId);
+
           trialDays = Number(existing.trial_days || freeDays);
           expiresAtMs = existing.expires_at ? new Date(existing.expires_at).getTime() : expiresAtMs;
+          const currentInstallCount = Number(existing.install_count || 1);
+
+          if (existing.status === 'licensed') {
+            isAlreadyLicensed = true;
+            restoredPin = this.computeExpectedPin(effectiveDeviceId);
+          }
+
+          // Increment install_count in Supabase and record latest hardware fingerprint
+          await supabaseFetch(`device_trials?device_id=eq.${encodeURIComponent(effectiveDeviceId)}`, {
+            method: 'PATCH',
+            signal: controller.signal,
+            body: JSON.stringify({
+              install_count: currentInstallCount + 1,
+              device_fingerprint: deviceFingerprint,
+              phone_number_normalized: normalizedPhone,
+              owner_name: params.ownerName.trim(),
+              store_name: params.storeName.trim() || existing.store_name,
+            }),
+          });
         } else {
           // New registration: insert into Supabase
           const nowIso = new Date(serverTimeMs).toISOString();
@@ -414,6 +534,9 @@ export class LicensingService {
               owner_name: params.ownerName.trim(),
               store_name: params.storeName.trim() || 'Aking Tindahan',
               phone_number: params.phoneNumber.trim(),
+              phone_number_normalized: normalizedPhone,
+              device_fingerprint: deviceFingerprint,
+              install_count: 1,
               location: (params.location || 'Pilipinas').trim(),
               trial_days: trialDays,
               first_opened_at: nowIso,
@@ -436,7 +559,7 @@ export class LicensingService {
             license_pin, last_observed_time_ms
           ) VALUES (
             1,
-            '${cleanDevId.replace(/'/g, "''")}',
+            '${effectiveDeviceId.replace(/'/g, "''")}',
             '${params.storeName.replace(/'/g, "''")}',
             '${params.ownerName.replace(/'/g, "''")}',
             '${params.phoneNumber.replace(/'/g, "''")}',
@@ -444,8 +567,8 @@ export class LicensingService {
             ${serverTimeMs},
             ${trialDays},
             ${expiresAtMs},
-            0,
-            NULL,
+            ${isAlreadyLicensed ? 1 : 0},
+            ${isAlreadyLicensed && restoredPin ? `'${restoredPin}'` : 'NULL'},
             ${serverTimeMs}
           );
         `);
@@ -454,6 +577,28 @@ export class LicensingService {
       // Re-hydrate state
       this.hydrateInitialState();
       this.notify();
+
+      if (isAlreadyLicensed) {
+        return {
+          success: true,
+          message: 'Binabati kita! Naibalik ang iyong Pro Lifetime License para sa tindahang ito.',
+        };
+      }
+
+      if (isExistingReinstall) {
+        if (expiresAtMs <= serverTimeMs) {
+          return {
+            success: true,
+            message: 'Natapos na ang libreng trial para sa device o numerong ito. Mag-upgrade sa Pro Lifetime Access upang ma-unlock ang tindahan.',
+          };
+        } else {
+          const daysLeft = Math.max(1, Math.ceil((expiresAtMs - serverTimeMs) / (1000 * 60 * 60 * 24)));
+          return {
+            success: true,
+            message: `Naibalik ang iyong umiiral na trial! Mayroon ka pang natitirang ${daysLeft} araw.`,
+          };
+        }
+      }
 
       return {
         success: true,
@@ -679,7 +824,7 @@ export class LicensingService {
   public isFeatureLocked(): boolean {
     if (!this.state.isRegistered) return true;
     if (this.state.isLicensed) return false;
-    return this.state.isTrialExpired || this.state.isClockTampered;
+    return this.state.isTrialExpired || this.state.isClockTampered || this.state.isQuotaExceeded;
   }
 }
 

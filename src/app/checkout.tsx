@@ -186,7 +186,7 @@ export default function CheckoutNewSaleScreen() {
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
-  const { isFeatureLocked } = useLicensing();
+  const { isFeatureLocked, updateClockCheck } = useLicensing();
   const { openUpgradeModal } = useLicensingGate();
 
   const [tenderType, setTenderType] = useState<PaymentTenderType>('CASH');
@@ -363,6 +363,7 @@ export default function CheckoutNewSaleScreen() {
       });
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      updateClockCheck();
       setCompletedTx(tx);
       setPaymentInputText('');
       setDiscountInputText('0.00');

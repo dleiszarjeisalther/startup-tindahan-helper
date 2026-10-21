@@ -33,6 +33,9 @@ export function TrialExpiredModal({
     isLicensed,
     isTrialExpired,
     isClockTampered,
+    isQuotaExceeded,
+    completedSalesCount,
+    maxTrialSales,
     gcashNumber,
     gcashName,
     proPrice,
@@ -173,15 +176,29 @@ export function TrialExpiredModal({
           {/* Header Icon */}
           <View style={styles.lockBadge}>
             <Ionicons
-              name={isClockTampered ? 'warning' : 'lock-closed'}
+              name={
+                isClockTampered
+                  ? 'warning'
+                  : isQuotaExceeded
+                  ? 'trending-up'
+                  : 'lock-closed'
+              }
               size={44}
-              color={isClockTampered ? '#D97706' : '#DC2626'}
+              color={
+                isClockTampered
+                  ? '#D97706'
+                  : isQuotaExceeded
+                  ? '#2563EB'
+                  : '#DC2626'
+              }
             />
           </View>
 
           <Text style={styles.title}>
             {isClockTampered
               ? 'Naantala ang Oras ng Device'
+              : isQuotaExceeded
+              ? `Naabot ang Limit (${completedSalesCount}/${maxTrialSales} Benta)`
               : isTrialExpired
               ? 'Tapos Na ang Libreng Trial'
               : 'I-upgrade sa Pro Lifetime Access'}
@@ -190,6 +207,8 @@ export function TrialExpiredModal({
           <Text style={styles.subtitle}>
             {isClockTampered
               ? 'Napansin na nabago ang orasan ng device. Pakitama ang system date at oras upang magpatuloy, o i-enter ang Pro PIN.'
+              : isQuotaExceeded
+              ? `Lumalago ang iyong tindahan! Naka-${completedSalesCount} benta ka na habang nasa Libreng Trial (limit: ${maxTrialSales}). I-upgrade sa Pro Lifetime Access para sa walang limitasyong benta!`
               : isTrialExpired
               ? 'Upang patuloy na magamit ang POS Checkout, Imbentaryo, at Listahan ng Utang nang walang limitasyon, magbayad sa GCash upang makuha ang iyong PIN.'
               : 'Magkaroon ng permanenteng access sa lahat ng features nang walang anumang buwanang bayarin!'}

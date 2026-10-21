@@ -45,6 +45,5 @@ example
 # local SQLite databases & caches
 *.sqlite*
 *.db
-marketing/
-supabase/.temp/
-*.apk
+marketing/website/
+tindahan-helper.apk
