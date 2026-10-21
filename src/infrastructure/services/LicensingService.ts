@@ -868,6 +868,7 @@ export class LicensingService {
 
   /**
    * Checks if admin has approved payment directly in Supabase.
+   * Automatically activates Pro Lifetime access without requiring user to type a 6-digit PIN!
    */
   public async checkOnlineApproval(): Promise<VerificationResult> {
     try {
@@ -875,6 +876,26 @@ export class LicensingService {
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
       const cleanDevId = this.state.deviceId.trim().toUpperCase();
+
+      // 1. Check direct device status in device_trials table (Instant Direct Approval)
+      try {
+        const trialRes = await supabaseFetch(
+          `device_trials?device_id=eq.${encodeURIComponent(cleanDevId)}&select=*`,
+          { signal: controller.signal }
+        );
+        if (trialRes.ok) {
+          const trialRows = await trialRes.json();
+          if (Array.isArray(trialRows) && trialRows.length > 0 && trialRows[0].status === 'licensed') {
+            clearTimeout(timeoutId);
+            const expectedPin = this.computeExpectedPin(cleanDevId);
+            return this.verifyPin(expectedPin);
+          }
+        }
+      } catch {
+        // Fallback to checking payment_requests
+      }
+
+      // 2. Check payment_requests for APPROVED status
       const res = await supabaseFetch(
         `payment_requests?device_id=eq.${encodeURIComponent(cleanDevId)}&status=eq.APPROVED&select=*&order=created_at.desc&limit=1`,
         { signal: controller.signal }
@@ -886,8 +907,9 @@ export class LicensingService {
         const rows = await res.json();
         if (Array.isArray(rows) && rows.length > 0) {
           const match = rows[0];
-          if (match.status === 'APPROVED' && match.generated_pin) {
-            return this.verifyPin(match.generated_pin);
+          if (match.status === 'APPROVED') {
+            const pinToUse = match.generated_pin || this.computeExpectedPin(cleanDevId);
+            return this.verifyPin(pinToUse);
           }
         }
       }

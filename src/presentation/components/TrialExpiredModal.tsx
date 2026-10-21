@@ -368,16 +368,16 @@ export function TrialExpiredModal({
             </TouchableOpacity>
           </View>
 
-          {/* Step 2: Enter PIN */}
+          {/* Step 2: Enter PIN (Offline backup) */}
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <View style={styles.stepCircle}>
                 <Text style={styles.stepNum}>2</Text>
               </View>
-              <Text style={styles.cardTitle}>I-enter ang 6-Digit PIN (Offline)</Text>
+              <Text style={styles.cardTitle}>Opsyonal: 6-Digit PIN (Offline Backup)</Text>
             </View>
             <Text style={styles.pinInstructions}>
-              Kung may natanggap kang PIN sa SMS o chat mula kay Admin, i-type ito rito upang ma-activate kahit walang internet:
+              Kapag may internet ka, <Text style={{ fontWeight: '700', color: '#059669' }}>awtomatiko nang magiging Pro ang app kapag na-approve ni Admin</Text> nang hindi na kailangang mag-type ng PIN. Gamitin lamang ang kahon sa ibaba kung walang internet at may natanggap kang PIN sa SMS:
             </Text>
 
             <View style={styles.pinInputWrapper}>
