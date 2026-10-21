@@ -9,15 +9,20 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import * as Clipboard from 'expo-clipboard';
+import * as Sharing from 'expo-sharing';
+import { File, Paths } from 'expo-file-system';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { useIdempotentSubmit } from '@/presentation/hooks/useIdempotentSubmit';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { UnitSelectionModal } from '@/presentation/components/UnitSelectionModal';
+import { GcashQrModal } from '@/presentation/components/GcashQrModal';
 import { ProductDTO, SellingUnitTier } from '@/domain/entities/Product';
 import { PaymentTenderType, SaleTransactionRecord, CartItemDTO } from '@/application/TindahanStoreService';
 import { Money } from '@/domain/value-objects/Money';
@@ -183,6 +188,7 @@ export default function CheckoutNewSaleScreen() {
     cartRevision,
     version,
     updateProductDetails,
+    updateSettings,
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
@@ -198,6 +204,8 @@ export default function CheckoutNewSaleScreen() {
   );
   // User-input GCash Reference #
   const [gcashRefInput, setGcashRefInput] = useState<string>('');
+  const [showGcashQrModal, setShowGcashQrModal] = useState<boolean>(false);
+  const [copiedGcashInfo, setCopiedGcashInfo] = useState<boolean>(false);
   // Utang customer selection or custom input
   const [selectedCustomer, setSelectedCustomer] = useState<string>('');
   const [chargeShortfallToUtang, setChargeShortfallToUtang] = useState(false);
@@ -872,50 +880,187 @@ export default function CheckoutNewSaleScreen() {
                 })}
               </ScrollView>
 
-              {/* GCash Reference & Surcharge Selector */}
+              {/* GCash QR Standee, Reference & Surcharge Selector */}
               {tenderType === 'GCASH' ? (
-                <View style={styles.gcashRefBox}>
-                  <Text style={styles.paymentFieldLabel}>
-                    Convenience Surcharge (GCash Cash-In / Surcharge):
-                  </Text>
-                  <View style={{ flexDirection: 'row', gap: 8, marginVertical: 6 }}>
-                    {[0, 2, 5].map((fee) => (
+                <View style={{ marginBottom: 10 }}>
+                  {/* Digital QR Standee Card */}
+                  <View style={styles.gcashStandeeCard}>
+                    <View style={styles.gcashStandeeLeft}>
                       <Pressable
-                        key={fee}
-                        style={[
-                          styles.billPill,
-                          convenienceFeePhp === fee ? styles.billPillActive : null,
-                        ]}
-                        onPress={() => setConvenienceFeePhp(fee)}
+                        style={styles.qrThumbWrap}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          setShowGcashQrModal(true);
+                        }}
                       >
+                        <Image
+                          source={{
+                            uri:
+                              settings.gcashQrImageUri && settings.gcashQrImageUri.trim().length > 0
+                                ? settings.gcashQrImageUri
+                                : 'https://tindahanhelper.wuaze.com/assets/images/gcash_qr.png',
+                          }}
+                          style={styles.qrThumbImage}
+                          resizeMode="contain"
+                        />
+                        <View style={styles.qrExpandBadge}>
+                          <Ionicons name="expand" size={10} color="#FFFFFF" />
+                        </View>
+                      </Pressable>
+
+                      <View style={{ flex: 1 }}>
+                        <View style={styles.qrPhTagRow}>
+                          <View style={styles.qrPhSmallPill}>
+                            <Text style={styles.qrPhSmallPillText}>QR Ph Interoperable</Text>
+                          </View>
+                        </View>
+                        <Text style={styles.gcashCardOwner} numberOfLines={1}>
+                          {settings.gcashAccountName || settings.storeName || 'Tindahan'}
+                        </Text>
+                        <Text style={styles.gcashCardNum}>
+                          {settings.gcashNumber || '0917 123 4567'}
+                        </Text>
+                      </View>
+                    </View>
+
+                    {/* Quick Buttons: Fullscreen, Download, Copy */}
+                    <View style={styles.gcashCardActionRow}>
+                      <Pressable
+                        style={styles.gcashCardViewBtn}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          setShowGcashQrModal(true);
+                        }}
+                      >
+                        <Ionicons name="scan" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
+                        <Text style={styles.gcashCardViewBtnText}>Ipakita ang QR</Text>
+                      </Pressable>
+
+                      <Pressable
+                        style={styles.gcashCardDownloadBtn}
+                        onPress={async () => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+                          try {
+                            const uri =
+                              settings.gcashQrImageUri && settings.gcashQrImageUri.trim().length > 0
+                                ? settings.gcashQrImageUri
+                                : 'https://tindahanhelper.wuaze.com/assets/images/gcash_qr.png';
+                            if (Platform.OS === 'web') {
+                              const a = document.createElement('a');
+                              a.href = uri;
+                              a.download = `gcash-qr-${Date.now()}.png`;
+                              document.body.appendChild(a);
+                              a.click();
+                              document.body.removeChild(a);
+                              showToast('✓ Na-download ang QR Code!');
+                              return;
+                            }
+                            let shareUri = uri;
+                            if (uri.startsWith('http')) {
+                              const file = await File.downloadFileAsync(uri, Paths.cache);
+                              shareUri = file.uri;
+                            }
+                            await Sharing.shareAsync(shareUri, {
+                              mimeType: 'image/png',
+                              dialogTitle: 'I-save o Ibahagi ang GCash QR Code',
+                            });
+                            showToast('✓ Na-save o naibahagi ang QR Code!');
+                          } catch (err) {
+                            console.warn('[Checkout] Share error:', err);
+                            showToast('⚠️ Hindi ma-download ang QR Code.');
+                          }
+                        }}
+                      >
+                        <Ionicons name="download-outline" size={14} color="#005CE6" style={{ marginRight: 4 }} />
+                        <Text style={styles.gcashCardDownloadBtnText}>I-download</Text>
+                      </Pressable>
+
+                      <Pressable
+                        style={[styles.gcashCardCopyBtn, copiedGcashInfo && styles.gcashCardCopyBtnActive]}
+                        onPress={async () => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          const num = settings.gcashNumber || '09171234567';
+                          await Clipboard.setStringAsync(num.replace(/[^0-9]/g, ''));
+                          setCopiedGcashInfo(true);
+                          showToast(`✓ Nakopya ang numero: ${num}`);
+                          setTimeout(() => setCopiedGcashInfo(false), 2000);
+                        }}
+                      >
+                        <Ionicons
+                          name={copiedGcashInfo ? 'checkmark' : 'copy-outline'}
+                          size={14}
+                          color={copiedGcashInfo ? '#059669' : '#334155'}
+                          style={{ marginRight: 4 }}
+                        />
                         <Text
                           style={[
-                            styles.billPillText,
-                            convenienceFeePhp === fee ? styles.billPillTextActive : null,
+                            styles.gcashCardCopyBtnText,
+                            copiedGcashInfo && { color: '#059669' },
                           ]}
                         >
-                          {fee === 0 ? 'Walang Dagdag (+₱0)' : `+₱${fee}`}
+                          {copiedGcashInfo ? 'Kopya na' : 'Kopyahin'}
                         </Text>
                       </Pressable>
-                    ))}
+                    </View>
+
+                    {/* Maya & Bank Transfer Guide Banner */}
+                    <Pressable
+                      style={styles.mayaHintRow}
+                      onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        setShowGcashQrModal(true);
+                      }}
+                    >
+                      <Ionicons name="help-circle-outline" size={15} color="#0284C7" />
+                      <Text style={styles.mayaHintText}>
+                        Puwede ring bayaran gamit ang <Text style={{ fontWeight: '800' }}>Maya</Text> o <Text style={{ fontWeight: '800' }}>Bank Transfer (InstaPay)</Text>. Pindutin para sa gabay ›
+                      </Text>
+                    </Pressable>
                   </View>
-                  {convenienceFeePhp > 0 && (
-                    <Text style={{ fontSize: 12, color: '#0D7A52', fontWeight: '700', marginBottom: 6 }}>
-                      Total na sisingilin sa GCash: ₱{(cartSummary.totalPhp + convenienceFeePhp).toFixed(2)}
+
+                  <View style={styles.gcashRefBox}>
+                    <Text style={styles.paymentFieldLabel}>
+                      Convenience Surcharge (GCash Cash-In / Surcharge):
                     </Text>
-                  )}
-                  <Text style={styles.paymentFieldLabel}>
-                    GCash Ref # (Last 4 to 13 digits):
-                  </Text>
-                  <TextInput
-                    style={styles.gcashRefInput}
-                    value={gcashRefInput}
-                    onChangeText={setGcashRefInput}
-                    placeholder="e.g. 4829 or 100234829"
-                    placeholderTextColor="#9CA3AF"
-                    keyboardType="number-pad"
-                    maxLength={13}
-                  />
+                    <View style={{ flexDirection: 'row', gap: 8, marginVertical: 6 }}>
+                      {[0, 2, 5].map((fee) => (
+                        <Pressable
+                          key={fee}
+                          style={[
+                            styles.billPill,
+                            convenienceFeePhp === fee ? styles.billPillActive : null,
+                          ]}
+                          onPress={() => setConvenienceFeePhp(fee)}
+                        >
+                          <Text
+                            style={[
+                              styles.billPillText,
+                              convenienceFeePhp === fee ? styles.billPillTextActive : null,
+                            ]}
+                          >
+                            {fee === 0 ? 'Walang Dagdag (+₱0)' : `+₱${fee}`}
+                          </Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                    {convenienceFeePhp > 0 && (
+                      <Text style={{ fontSize: 12, color: '#0D7A52', fontWeight: '700', marginBottom: 6 }}>
+                        Total na sisingilin sa GCash: ₱{(cartSummary.totalPhp + convenienceFeePhp).toFixed(2)}
+                      </Text>
+                    )}
+                    <Text style={styles.paymentFieldLabel}>
+                      GCash Ref # (Last 4 to 13 digits):
+                    </Text>
+                    <TextInput
+                      style={styles.gcashRefInput}
+                      value={gcashRefInput}
+                      onChangeText={setGcashRefInput}
+                      placeholder="e.g. 4829 or 100234829"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="number-pad"
+                      maxLength={13}
+                    />
+                  </View>
                 </View>
               ) : null}
 
@@ -1344,6 +1489,7 @@ export default function CheckoutNewSaleScreen() {
             ? {
                 storeName: settings.storeName || 'Tindahan Helper',
                 storeAddress: settings.address,
+                tinNumber: settings.tinNumber,
                 receiptNumber: completedTx.id,
                 timestamp: `${completedTx.dateLabel} ${completedTx.timeLabel}`,
                 customerName: completedTx.customerName,
@@ -1375,6 +1521,18 @@ export default function CheckoutNewSaleScreen() {
         onClose={() => setUnitModalSelection(null)}
         onSelectUnit={handleUnitSwitch}
         onSaveTierConfig={handleSaveUnitConfig}
+      />
+
+      <GcashQrModal
+        visible={showGcashQrModal}
+        onClose={() => setShowGcashQrModal(false)}
+        qrImageUri={settings.gcashQrImageUri}
+        gcashNumber={settings.gcashNumber || '0917 123 4567'}
+        gcashAccountName={settings.gcashAccountName || settings.storeName || 'Tindahan'}
+        onUpdateQrImage={async (uri) => {
+          updateSettings({ gcashQrImageUri: uri });
+          showToast('✓ Na-update ang QR code ng tindahan!');
+        }}
       />
     </SafeAreaView>
   );
@@ -1957,6 +2115,146 @@ const styles = StyleSheet.create({
   billPillTextActive: {
     color: '#0D7A52',
     fontWeight: '800',
+  },
+  gcashStandeeCard: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1.5,
+    borderColor: '#BFDBFE',
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 10,
+  },
+  gcashStandeeLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  qrThumbWrap: {
+    width: 60,
+    height: 60,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#005CE6',
+    padding: 3,
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  qrThumbImage: {
+    width: '100%',
+    height: '100%',
+  },
+  qrExpandBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    backgroundColor: '#005CE6',
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  qrPhTagRow: {
+    flexDirection: 'row',
+    marginBottom: 2,
+  },
+  qrPhSmallPill: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+  },
+  qrPhSmallPillText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#1D4ED8',
+    textTransform: 'uppercase',
+  },
+  gcashCardOwner: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  gcashCardNum: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#005CE6',
+    marginTop: 1,
+  },
+  gcashCardActionRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 10,
+  },
+  gcashCardViewBtn: {
+    flex: 1.2,
+    backgroundColor: '#005CE6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  gcashCardViewBtnText: {
+    color: '#FFFFFF',
+    fontSize: 11.5,
+    fontWeight: '800',
+  },
+  gcashCardDownloadBtn: {
+    flex: 1,
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  gcashCardDownloadBtnText: {
+    color: '#005CE6',
+    fontSize: 11.5,
+    fontWeight: '800',
+  },
+  gcashCardCopyBtn: {
+    flex: 1,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  gcashCardCopyBtnActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
+  },
+  gcashCardCopyBtnText: {
+    color: '#334155',
+    fontSize: 11.5,
+    fontWeight: '700',
+  },
+  mayaHintRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#E0F2FE',
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  mayaHintText: {
+    fontSize: 10.5,
+    color: '#0369A1',
+    flex: 1,
+    lineHeight: 14,
   },
   gcashRefBox: {
     flexDirection: 'row',

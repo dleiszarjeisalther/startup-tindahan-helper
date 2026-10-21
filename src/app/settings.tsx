@@ -9,10 +9,12 @@ import {
   ScrollView,
   StyleSheet,
   Modal,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { getTranslations } from '@/presentation/localization/i18n';
@@ -23,6 +25,8 @@ import {
   ConfirmationModalDetail,
 } from '@/presentation/components/ConfirmationModal';
 import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
+import { GcashQrModal } from '@/presentation/components/GcashQrModal';
+import { PrivacyPolicyModal } from '@/presentation/components/PrivacyPolicyModal';
 import { appKeyValueStorage } from '@/infrastructure/storage/KeyValueStorage';
 import { PinSecurityEngine } from '@/domain/services/PinSecurityEngine';
 import { BiometricAuthService } from '@/infrastructure/services/BiometricAuthService';
@@ -62,9 +66,16 @@ export default function StoreSettingsScreen() {
   const licensing = useLicensing();
   const { openUpgradeModal } = useLicensingGate();
   const [copiedId, setCopiedId] = useState(false);
-  const [editingField, setEditingField] = useState<'NONE' | 'NAME' | 'ADDRESS'>('NONE');
+  const [editingField, setEditingField] = useState<
+    'NONE' | 'NAME' | 'ADDRESS' | 'TIN' | 'GCASH_NUM' | 'GCASH_NAME'
+  >('NONE');
   const [draftName, setDraftName] = useState(settings.storeName);
   const [draftAddress, setDraftAddress] = useState(settings.address);
+  const [draftTin, setDraftTin] = useState(settings.tinNumber ?? '');
+  const [draftGcashNum, setDraftGcashNum] = useState(settings.gcashNumber ?? '');
+  const [draftGcashName, setDraftGcashName] = useState(settings.gcashAccountName ?? '');
+  const [showGcashQrModal, setShowGcashQrModal] = useState(false);
+  const [showPrivacyPolicyModal, setShowPrivacyPolicyModal] = useState(false);
   const [isBackingUp, setIsBackingUp] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -318,9 +329,10 @@ export default function StoreSettingsScreen() {
           {/* Store Name */}
           <Pressable
             style={[styles.settingRow, styles.rowBorder]}
-            onPress={() =>
-              setEditingField((prev) => (prev === 'NAME' ? 'NONE' : 'NAME'))
-            }
+            onPress={() => {
+              setDraftName(settings.storeName);
+              setEditingField((prev) => (prev === 'NAME' ? 'NONE' : 'NAME'));
+            }}
           >
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>{t.storeName}</Text>
@@ -369,10 +381,11 @@ export default function StoreSettingsScreen() {
 
           {/* Address */}
           <Pressable
-            style={styles.settingRow}
-            onPress={() =>
-              setEditingField((prev) => (prev === 'ADDRESS' ? 'NONE' : 'ADDRESS'))
-            }
+            style={[styles.settingRow, styles.rowBorder]}
+            onPress={() => {
+              setDraftAddress(settings.address);
+              setEditingField((prev) => (prev === 'ADDRESS' ? 'NONE' : 'ADDRESS'));
+            }}
           >
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>{t.storeAddress}</Text>
@@ -397,6 +410,48 @@ export default function StoreSettingsScreen() {
                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
                     showToast(t.storeAddressSaved, 'success');
                   }
+                  setEditingField('NONE');
+                }}
+              >
+                <Text style={styles.saveMiniText}>{t.save}</Text>
+              </Pressable>
+            </View>
+          ) : null}
+
+          {/* TIN Number (Tax Identification Number) for BIR Compliance */}
+          <Pressable
+            style={styles.settingRow}
+            onPress={() => {
+              setDraftTin(settings.tinNumber ?? '');
+              setEditingField((prev) => (prev === 'TIN' ? 'NONE' : 'TIN'));
+            }}
+          >
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>TIN Number (BIR Customer Sales Slip)</Text>
+              <Text style={styles.rowValue}>
+                {settings.tinNumber && settings.tinNumber.trim().length > 0
+                  ? settings.tinNumber
+                  : 'Walang TIN (Opsyonal — i-click upang maglagay)'}
+              </Text>
+            </View>
+            <Text style={styles.chevron}>›</Text>
+          </Pressable>
+
+          {editingField === 'TIN' ? (
+            <View style={styles.editBox}>
+              <TextInput
+                style={styles.editInput}
+                value={draftTin}
+                onChangeText={setDraftTin}
+                placeholder="Hal. 123-456-789-000"
+                keyboardType="numbers-and-punctuation"
+              />
+              <Pressable
+                style={styles.saveMiniBtn}
+                onPress={() => {
+                  updateSettings({ tinNumber: draftTin.trim() });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  showToast('✓ Naitakda ang TIN number para sa resibo', 'success');
                   setEditingField('NONE');
                 }}
               >
@@ -690,15 +745,150 @@ export default function StoreSettingsScreen() {
             ))}
           </View>
 
-          <View style={styles.settingRow}>
+          {/* QR Standee Card with Preview and Action Buttons */}
+          <View style={[styles.settingRow, styles.rowBorder]}>
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>Static QR Ph Standee Support</Text>
+              <Text style={styles.rowTitle}>Counter GCash / QR Ph Standee</Text>
               <Text style={styles.rowValue}>
-                Tumatanggap ng GCash at Maya via counter QR standee na may Reference Number audit
+                I-display sa customer counter o i-download para i-print
               </Text>
             </View>
-            <Ionicons name="qr-code-outline" size={20} color="#6B7280" />
+            {settings.gcashQrImageUri ? (
+              <Image
+                source={{ uri: settings.gcashQrImageUri }}
+                style={styles.settingsQrThumb}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={styles.settingsQrPlaceholder}>
+                <Ionicons name="qr-code" size={22} color="#0D7A52" />
+              </View>
+            )}
           </View>
+
+          {/* QR Actions: View Fullscreen & Upload / Change */}
+          <View style={[styles.qrActionRow, styles.rowBorder]}>
+            <Pressable
+              style={styles.qrActionBtnSecondary}
+              onPress={() => setShowGcashQrModal(true)}
+            >
+              <Ionicons name="expand-outline" size={16} color="#0D7A52" />
+              <Text style={styles.qrActionBtnTextSecondary}>I-view / I-download</Text>
+            </Pressable>
+
+            <Pressable
+              style={styles.qrActionBtnPrimary}
+              onPress={async () => {
+                try {
+                  const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                  if (!perm.granted) {
+                    showToast('Kailangan ng pahintulot sa gallery.', 'warning');
+                    return;
+                  }
+                  const res = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    aspect: [1, 1],
+                    quality: 0.9,
+                  });
+                  if (!res.canceled && res.assets && res.assets.length > 0) {
+                    const newUri = res.assets[0].uri;
+                    updateSettings({ gcashQrImageUri: newUri });
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                    showToast('✓ Na-update ang QR Standee image!', 'success');
+                  }
+                } catch {
+                  showToast('Hindi napili ang larawan.', 'error');
+                }
+              }}
+            >
+              <Ionicons name="image-outline" size={16} color="#FFFFFF" />
+              <Text style={styles.qrActionBtnTextPrimary}>Palitan ang QR</Text>
+            </Pressable>
+          </View>
+
+          {/* GCash Registered Mobile Number */}
+          <Pressable
+            style={[styles.settingRow, styles.rowBorder]}
+            onPress={() => {
+              setDraftGcashNum(settings.gcashNumber ?? '');
+              setEditingField((prev) => (prev === 'GCASH_NUM' ? 'NONE' : 'GCASH_NUM'));
+            }}
+          >
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>GCash Registered Mobile Number</Text>
+              <Text style={styles.rowValue}>
+                {settings.gcashNumber && settings.gcashNumber.trim().length > 0
+                  ? settings.gcashNumber
+                  : 'Walang nakatakdang numero (Hal. 0917 123 4567)'}
+              </Text>
+            </View>
+            <Text style={styles.chevron}>›</Text>
+          </Pressable>
+
+          {editingField === 'GCASH_NUM' ? (
+            <View style={styles.editBox}>
+              <TextInput
+                style={styles.editInput}
+                value={draftGcashNum}
+                onChangeText={setDraftGcashNum}
+                placeholder="Hal. 0917 123 4567"
+                keyboardType="phone-pad"
+              />
+              <Pressable
+                style={styles.saveMiniBtn}
+                onPress={() => {
+                  updateSettings({ gcashNumber: draftGcashNum.trim() });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  showToast('✓ Na-save ang GCash mobile number', 'success');
+                  setEditingField('NONE');
+                }}
+              >
+                <Text style={styles.saveMiniText}>{t.save}</Text>
+              </Pressable>
+            </View>
+          ) : null}
+
+          {/* GCash Registered Account Name */}
+          <Pressable
+            style={styles.settingRow}
+            onPress={() => {
+              setDraftGcashName(settings.gcashAccountName ?? '');
+              setEditingField((prev) => (prev === 'GCASH_NAME' ? 'NONE' : 'GCASH_NAME'));
+            }}
+          >
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>GCash Registered Account Name</Text>
+              <Text style={styles.rowValue}>
+                {settings.gcashAccountName && settings.gcashAccountName.trim().length > 0
+                  ? settings.gcashAccountName
+                  : 'Walang nakatakdang pangalan (Hal. Juan Dela Cruz)'}
+              </Text>
+            </View>
+            <Text style={styles.chevron}>›</Text>
+          </Pressable>
+
+          {editingField === 'GCASH_NAME' ? (
+            <View style={styles.editBox}>
+              <TextInput
+                style={styles.editInput}
+                value={draftGcashName}
+                onChangeText={setDraftGcashName}
+                placeholder="Hal. Juan Dela Cruz"
+              />
+              <Pressable
+                style={styles.saveMiniBtn}
+                onPress={() => {
+                  updateSettings({ gcashAccountName: draftGcashName.trim() });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  showToast('✓ Na-save ang GCash account name', 'success');
+                  setEditingField('NONE');
+                }}
+              >
+                <Text style={styles.saveMiniText}>{t.save}</Text>
+              </Pressable>
+            </View>
+          ) : null}
         </View>
 
         {/* Section 3: Owner Controls & Seasonal Calendar */}
@@ -733,6 +923,20 @@ export default function StoreSettingsScreen() {
               <Text style={styles.rowValue}>{t.offlineStorageSub}</Text>
             </View>
           </View>
+
+          {/* Privacy Policy / Data Privacy Act Compliance */}
+          <Pressable
+            style={[styles.settingRow, styles.rowBorder]}
+            onPress={() => setShowPrivacyPolicyModal(true)}
+          >
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>Patakaran sa Privacy (Data Privacy Act RA 10173)</Text>
+              <Text style={styles.rowValue}>
+                100% offline-first SQLite, proteksyon sa suki utang at datos
+              </Text>
+            </View>
+            <Ionicons name="shield-checkmark-outline" size={20} color="#0D7A52" />
+          </Pressable>
 
           {/* Backup Database Row */}
           <Pressable
@@ -937,6 +1141,23 @@ export default function StoreSettingsScreen() {
           action?.();
         }}
         onCancel={() => setPinChallengeAction(null)}
+      />
+
+      <GcashQrModal
+        visible={showGcashQrModal}
+        onClose={() => setShowGcashQrModal(false)}
+        qrImageUri={settings.gcashQrImageUri}
+        gcashNumber={settings.gcashNumber || '0917 123 4567'}
+        gcashAccountName={settings.gcashAccountName || settings.storeName}
+        onUpdateQrImage={(newUri) => {
+          updateSettings({ gcashQrImageUri: newUri });
+          showToast('✓ Na-update ang GCash QR image!', 'success');
+        }}
+      />
+
+      <PrivacyPolicyModal
+        visible={showPrivacyPolicyModal}
+        onClose={() => setShowPrivacyPolicyModal(false)}
       />
     </SafeAreaView>
   );
@@ -1149,6 +1370,60 @@ const styles = StyleSheet.create({
   feeChipTextActive: {
     color: '#0D7A52',
     fontWeight: '800',
+  },
+  settingsQrThumb: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  settingsQrPlaceholder: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    backgroundColor: '#ECFDF5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  qrActionRow: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingVertical: 10,
+  },
+  qrActionBtnSecondary: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    paddingVertical: 9,
+    borderRadius: 10,
+  },
+  qrActionBtnTextSecondary: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  qrActionBtnPrimary: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: '#0D7A52',
+    paddingVertical: 9,
+    borderRadius: 10,
+  },
+  qrActionBtnTextPrimary: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   modalOverlay: {
     flex: 1,

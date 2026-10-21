@@ -21,6 +21,8 @@ import {
   ConfirmationType,
   ConfirmationModalDetail,
 } from '@/presentation/components/ConfirmationModal';
+import { GcashQrModal } from '@/presentation/components/GcashQrModal';
+import { PrivacyPolicyModal } from '@/presentation/components/PrivacyPolicyModal';
 
 interface ConfirmationState {
   type?: ConfirmationType;
@@ -37,6 +39,7 @@ export default function MenuProfileScreen() {
   const router = useRouter();
   const {
     settings,
+    updateSettings,
     utangCustomers,
   } = useTindahanStore();
 
@@ -45,6 +48,8 @@ export default function MenuProfileScreen() {
   const [activeSection, setActiveSection] = useState<
     'NONE' | 'SUBSCRIPTION' | 'HELP'
   >('NONE');
+  const [showGcashQrModal, setShowGcashQrModal] = useState(false);
+  const [showPrivacyPolicyModal, setShowPrivacyPolicyModal] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
 
@@ -199,7 +204,27 @@ export default function MenuProfileScreen() {
             </View>
           </Pressable>
 
-          {/* 6. Subscription [Free] */}
+          {/* 7. GCash & QR Ph Standee */}
+          <Pressable
+            style={styles.menuRow}
+            onPress={() => setShowGcashQrModal(true)}
+          >
+            <View style={styles.menuLeft}>
+              <Ionicons name="qr-code-outline" size={22} color="#0D7A52" />
+              <View>
+                <Text style={styles.menuLabel}>GCash &amp; QR Ph Standee</Text>
+                <Text style={styles.menuSubLabel}>I-view o i-download ang counter QR code</Text>
+              </View>
+            </View>
+            <View style={styles.menuRightGroup}>
+              <View style={styles.forecastTag}>
+                <Text style={styles.forecastTagText}>Counter QR</Text>
+              </View>
+              <Text style={styles.menuChevron}>›</Text>
+            </View>
+          </Pressable>
+
+          {/* 8. Subscription [Free] */}
           <Pressable
             style={styles.menuRow}
             onPress={() =>
@@ -231,7 +256,7 @@ export default function MenuProfileScreen() {
             </View>
           ) : null}
 
-          {/* 7. Help & Support */}
+          {/* 9. Help & Support */}
           <Pressable
             style={styles.menuRow}
             onPress={() =>
@@ -258,6 +283,21 @@ export default function MenuProfileScreen() {
               </Text>
             </View>
           ) : null}
+
+          {/* 10. Patakaran sa Privacy (Data Privacy Act RA 10173) */}
+          <Pressable
+            style={styles.menuRow}
+            onPress={() => setShowPrivacyPolicyModal(true)}
+          >
+            <View style={styles.menuLeft}>
+              <Ionicons name="shield-checkmark-outline" size={22} color="#0D7A52" />
+              <View>
+                <Text style={styles.menuLabel}>Patakaran sa Privacy (DPA RA 10173)</Text>
+                <Text style={styles.menuSubLabel}>100% offline-first SQLite, proteksyon ng datos</Text>
+              </View>
+            </View>
+            <Text style={styles.menuChevron}>›</Text>
+          </Pressable>
 
           {/* 8. Feedback & Suggestions (Task 10) */}
           <Pressable
@@ -392,6 +432,24 @@ export default function MenuProfileScreen() {
           onCancel={() => setConfirmDialog(null)}
         />
       ) : null}
+
+      <GcashQrModal
+        visible={showGcashQrModal}
+        onClose={() => setShowGcashQrModal(false)}
+        qrImageUri={settings.gcashQrImageUri}
+        gcashNumber={settings.gcashNumber || '0917 123 4567'}
+        gcashAccountName={settings.gcashAccountName || settings.storeName}
+        onUpdateQrImage={(newUri) => {
+          updateSettings({ gcashQrImageUri: newUri });
+          setToastMsg('✓ Na-update ang GCash QR image!');
+          setTimeout(() => setToastMsg(null), 2500);
+        }}
+      />
+
+      <PrivacyPolicyModal
+        visible={showPrivacyPolicyModal}
+        onClose={() => setShowPrivacyPolicyModal(false)}
+      />
     </SafeAreaView>
   );
 }

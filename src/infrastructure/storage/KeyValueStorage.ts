@@ -212,6 +212,10 @@ class SynchronousKeyValueStorage implements IKeyValueStorage {
       notifications: this.getBoolean('setting_notifications', defaultSettings.notifications) ?? defaultSettings.notifications,
       schoolOpeningMonth: this.getNumber('setting_school_month', defaultSettings.schoolOpeningMonth) ?? defaultSettings.schoolOpeningMonth,
       wholesaleBudgetPhp: this.getNumber('setting_wholesale_budget', defaultSettings.wholesaleBudgetPhp) ?? defaultSettings.wholesaleBudgetPhp,
+      gcashNumber: this.getString('setting_gcash_number', defaultSettings.gcashNumber) || defaultSettings.gcashNumber,
+      gcashAccountName: this.getString('setting_gcash_account_name', defaultSettings.gcashAccountName) || defaultSettings.gcashAccountName,
+      gcashQrImageUri: this.getString('setting_gcash_qr_image_uri', defaultSettings.gcashQrImageUri) || defaultSettings.gcashQrImageUri,
+      tinNumber: this.getString('setting_tin_number', defaultSettings.tinNumber) || defaultSettings.tinNumber,
     };
   }
 
@@ -222,6 +226,10 @@ class SynchronousKeyValueStorage implements IKeyValueStorage {
     this.setBoolean('setting_notifications', settings.notifications);
     this.setNumber('setting_school_month', settings.schoolOpeningMonth);
     this.setNumber('setting_wholesale_budget', settings.wholesaleBudgetPhp);
+    if (settings.gcashNumber !== undefined) this.setString('setting_gcash_number', settings.gcashNumber);
+    if (settings.gcashAccountName !== undefined) this.setString('setting_gcash_account_name', settings.gcashAccountName);
+    if (settings.gcashQrImageUri !== undefined) this.setString('setting_gcash_qr_image_uri', settings.gcashQrImageUri);
+    if (settings.tinNumber !== undefined) this.setString('setting_tin_number', settings.tinNumber);
   }
 
   public loadCategories(defaultCategories: string[]): string[] {

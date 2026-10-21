@@ -21,6 +21,7 @@ export interface ReceiptData {
   storeName: string;
   storeOwner?: string;
   storeAddress?: string;
+  tinNumber?: string;
   receiptNumber?: string;
   receiptId?: string;
   timestamp?: string; // ISO or formatted
@@ -112,6 +113,9 @@ export class EscPosReceiptFormatter {
     if (data.storeAddress) {
       lines.push(this.centerText(data.storeAddress, width));
     }
+    if (data.tinNumber) {
+      lines.push(this.centerText(`TIN: ${data.tinNumber}`, width));
+    }
     lines.push(doubleDivider);
 
     // Metadata
@@ -166,6 +170,10 @@ export class EscPosReceiptFormatter {
 
     // Footer
     lines.push(doubleDivider);
+    lines.push(this.centerText('THIS DOCUMENT IS NOT VALID FOR', width));
+    lines.push(this.centerText('CLAIM OF INPUT TAX', width));
+    lines.push(this.centerText('[ CUSTOMER SALES SLIP ]', width));
+    lines.push(divider);
     lines.push(this.centerText('Maraming Salamat sa Pagtangkilik!', width));
     lines.push(this.centerText('Ibalik ang resibo kung may depekto.', width));
 

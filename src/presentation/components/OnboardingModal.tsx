@@ -17,6 +17,7 @@ import * as Haptics from 'expo-haptics';
 import { useLicensing } from '../hooks/useLicensing';
 import { useTindahanStore } from '../hooks/useTindahanStore';
 import { isValidPhilippinePhoneNumber } from '../../infrastructure/services/LicensingService';
+import { PrivacyPolicyModal } from './PrivacyPolicyModal';
 
 interface OnboardingModalProps {
   visible: boolean;
@@ -32,6 +33,8 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
   const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [privacyModalVisible, setPrivacyModalVisible] = useState(false);
+  const [agreedToPrivacy, setAgreedToPrivacy] = useState(true);
 
   const handleSubmit = async () => {
     if (!ownerName.trim()) {
@@ -44,6 +47,10 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
     }
     if (!isValidPhilippinePhoneNumber(phoneNumber)) {
       setErrorMessage('Pakilagay ang wastong 11-digit mobile number na nagsisimula sa 09 (hal. 09171234567).');
+      return;
+    }
+    if (!agreedToPrivacy) {
+      setErrorMessage('Paki-tsek ang kahon upang sumang-ayon sa Patakaran sa Privacy bago magpatuloy.');
       return;
     }
 
@@ -70,6 +77,8 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
         notifications: settings?.notifications ?? true,
         schoolOpeningMonth: settings?.schoolOpeningMonth ?? 7,
         wholesaleBudgetPhp: settings?.wholesaleBudgetPhp ?? 3000,
+        gcashNumber: phoneNumber.trim(),
+        gcashAccountName: ownerName.trim(),
       });
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
@@ -180,6 +189,36 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
               </Text>
             </View>
 
+            {/* Privacy Policy Consent Box */}
+            <View style={styles.privacyConsentContainer}>
+              <TouchableOpacity
+                style={styles.checkboxTouch}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setAgreedToPrivacy(!agreedToPrivacy);
+                }}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.checkbox, agreedToPrivacy && styles.checkboxActive]}>
+                  {agreedToPrivacy ? (
+                    <Ionicons name="checkmark" size={14} color="#FFFFFF" />
+                  ) : null}
+                </View>
+              </TouchableOpacity>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.privacyConsentText}>
+                  Sumasang-ayon ako sa{' '}
+                  <Text
+                    style={styles.privacyLink}
+                    onPress={() => setPrivacyModalVisible(true)}
+                  >
+                    Patakaran sa Privacy (DPA RA 10173)
+                  </Text>
+                  . Naiintindihan ko na 100% offline-first ang benta at utang ng aking tindahan.
+                </Text>
+              </View>
+            </View>
+
             <TouchableOpacity
               style={[styles.submitButton, loading && styles.submitButtonDisabled]}
               onPress={handleSubmit}
@@ -201,6 +240,11 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <PrivacyPolicyModal
+        visible={privacyModalVisible}
+        onClose={() => setPrivacyModalVisible(false)}
+      />
     </Modal>
   );
 }
@@ -336,6 +380,40 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#0369A1',
     lineHeight: 18,
+  },
+  privacyConsentContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  checkboxTouch: {
+    paddingTop: 2,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: '#9CA3AF',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxActive: {
+    backgroundColor: '#059669',
+    borderColor: '#059669',
+  },
+  privacyConsentText: {
+    fontSize: 12,
+    color: '#4B5563',
+    lineHeight: 18,
+  },
+  privacyLink: {
+    color: '#059669',
+    fontWeight: '800',
+    textDecorationLine: 'underline',
   },
   submitButton: {
     backgroundColor: '#059669',

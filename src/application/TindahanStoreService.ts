@@ -163,6 +163,10 @@ export interface StoreSettingsState {
   notifications: boolean;
   schoolOpeningMonth: number;
   wholesaleBudgetPhp: number;
+  gcashNumber?: string;
+  gcashAccountName?: string;
+  gcashQrImageUri?: string;
+  tinNumber?: string;
 }
 
 export const DEFAULT_CATEGORIES: string[] = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
@@ -419,6 +423,10 @@ export class TindahanStoreService {
           notifications: mmkvSettings.notifications,
           schoolOpeningMonth: mmkvSettings.schoolOpeningMonth,
           wholesaleBudgetPhp: mmkvSettings.wholesaleBudgetPhp,
+          gcashNumber: mmkvSettings.gcashNumber,
+          gcashAccountName: mmkvSettings.gcashAccountName,
+          gcashQrImageUri: mmkvSettings.gcashQrImageUri,
+          tinNumber: mmkvSettings.tinNumber,
         };
         appKeyValueStorage.saveSettings(this.settings);
       } else {
