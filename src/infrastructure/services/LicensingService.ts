@@ -12,6 +12,8 @@ export interface LicensingState {
   location: string;
   registeredAtMs: number;
   trialDays: number;
+  trialDurationValue: number;
+  trialDurationUnit: string;
   trialExpiresAtMs: number;
   isLicensed: boolean;
   licensePin: string | null;
@@ -23,6 +25,9 @@ export interface LicensingState {
   maxTrialSales: number;
   daysRemaining: number;
   hoursRemaining: number;
+  minutesRemaining: number;
+  secondsRemaining: number;
+  timeRemainingLabel: string;
   gcashNumber: string;
   gcashName: string;
   proPrice: number;
@@ -50,6 +55,61 @@ const SUPABASE_URL = 'https://eitqtggytkosvdgfeqap.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_71hwmfru1nxpm2OMNU3W_w_EPV2HhOz';
 const MASTER_PIN = '985421';
 export const MAX_TRIAL_SALES = 200;
+
+/**
+ * Converts a flexible duration value and unit into milliseconds
+ */
+export function parseDurationToMs(value: number, unit: string): number {
+  const v = Math.max(1, value);
+  switch ((unit || 'days').toLowerCase().trim()) {
+    case 'seconds':
+    case 'second':
+    case 'segundo':
+      return v * 1000;
+    case 'minutes':
+    case 'minute':
+    case 'minuto':
+      return v * 60 * 1000;
+    case 'hours':
+    case 'hour':
+    case 'oras':
+      return v * 60 * 60 * 1000;
+    case 'days':
+    case 'day':
+    case 'araw':
+      return v * 24 * 60 * 60 * 1000;
+    case 'weeks':
+    case 'week':
+    case 'linggo':
+      return v * 7 * 24 * 60 * 60 * 1000;
+    case 'months':
+    case 'month':
+    case 'buwan':
+      return v * 30 * 24 * 60 * 60 * 1000;
+    case 'years':
+    case 'year':
+    case 'taon':
+      return v * 365 * 24 * 60 * 60 * 1000;
+    default:
+      return v * 24 * 60 * 60 * 1000;
+  }
+}
+
+/**
+ * Human-readable Tagalog string for remaining trial time across all units
+ */
+export function formatTimeRemaining(msRemaining: number): string {
+  if (msRemaining <= 0) return '0 segundo';
+  const sec = Math.ceil(msRemaining / 1000);
+  const min = Math.ceil(msRemaining / (1000 * 60));
+  const hr = Math.ceil(msRemaining / (1000 * 60 * 60));
+  const days = Math.ceil(msRemaining / (1000 * 60 * 60 * 24));
+
+  if (days > 1) return `${days} araw`;
+  if (hr > 1) return `${hr} oras`;
+  if (min > 1) return `${min} minuto`;
+  return `${sec} segundo`;
+}
 
 /**
  * Obfuscated salt bytes unscrambled at runtime to prevent plaintext string extraction from APK bytecode
@@ -353,6 +413,12 @@ export class LicensingService {
     const msRemaining = Math.max(0, trialExpiresAtMs - now);
     const daysRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60 * 24)));
     const hoursRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60)));
+    const minutesRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60)));
+    const secondsRemaining = Math.max(0, Math.ceil(msRemaining / 1000));
+    const timeRemainingLabel = formatTimeRemaining(msRemaining);
+
+    const trialDurationValue = appKeyValueStorage.getNumber('cfg_trial_duration_value', 7) || 7;
+    const trialDurationUnit = appKeyValueStorage.getString('cfg_trial_duration_unit', 'days') || 'days';
 
     const gcashNumber = appKeyValueStorage.getString('cfg_gcash_number', '0991 658 9854') || '0991 658 9854';
     const gcashName = appKeyValueStorage.getString('cfg_gcash_name', 'Tindahan Helper Support') || 'Tindahan Helper Support';
@@ -367,6 +433,8 @@ export class LicensingService {
       location,
       registeredAtMs,
       trialDays,
+      trialDurationValue,
+      trialDurationUnit,
       trialExpiresAtMs,
       isLicensed,
       licensePin,
@@ -378,6 +446,9 @@ export class LicensingService {
       maxTrialSales: MAX_TRIAL_SALES,
       daysRemaining,
       hoursRemaining,
+      minutesRemaining,
+      secondsRemaining,
+      timeRemainingLabel,
       gcashNumber,
       gcashName,
       proPrice,
@@ -400,6 +471,9 @@ export class LicensingService {
     const msRemaining = Math.max(0, this.state.trialExpiresAtMs - now);
     const daysRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60 * 24)));
     const hoursRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60)));
+    const minutesRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60)));
+    const secondsRemaining = Math.max(0, Math.ceil(msRemaining / 1000));
+    const timeRemainingLabel = formatTimeRemaining(msRemaining);
 
     const db = SqliteDatabase.getInstance().rawDb;
     if (db) {
@@ -422,6 +496,9 @@ export class LicensingService {
       completedSalesCount,
       daysRemaining,
       hoursRemaining,
+      minutesRemaining,
+      secondsRemaining,
+      timeRemainingLabel,
     });
 
     this.notify();
@@ -451,6 +528,8 @@ export class LicensingService {
       const timeoutId = setTimeout(() => controller.abort(), 12000);
 
       // 1. Fetch live app config from Supabase
+      let durationValue = 7;
+      let durationUnit = 'days';
       let freeDays = 7;
       let gcashNum = '0991 658 9854';
       let gcashNm = 'Tindahan Helper Support';
@@ -463,10 +542,13 @@ export class LicensingService {
         if (cfgRes.ok) {
           const cfgData = await cfgRes.json();
           if (Array.isArray(cfgData) && cfgData.length > 0) {
-            freeDays = Math.max(1, Number(cfgData[0].free_trial_days || 7));
-            gcashNum = cfgData[0].gcash_number || gcashNum;
-            gcashNm = cfgData[0].gcash_name || gcashNm;
-            proPrc = Number(cfgData[0].pro_price || proPrc);
+            const row = cfgData[0];
+            durationValue = Math.max(1, Number(row.trial_duration_value || row.free_trial_days || 7));
+            durationUnit = row.trial_duration_unit || 'days';
+            freeDays = Math.max(1, Number(row.free_trial_days || 7));
+            gcashNum = row.gcash_number || gcashNum;
+            gcashNm = row.gcash_name || gcashNm;
+            proPrc = Number(row.pro_price || proPrc);
           }
         }
       } catch {
@@ -476,6 +558,8 @@ export class LicensingService {
       appKeyValueStorage.setString('cfg_gcash_number', gcashNum);
       appKeyValueStorage.setString('cfg_gcash_name', gcashNm);
       appKeyValueStorage.setNumber('cfg_pro_price', proPrc);
+      appKeyValueStorage.setNumber('cfg_trial_duration_value', durationValue);
+      appKeyValueStorage.setString('cfg_trial_duration_unit', durationUnit);
 
       // 2. Check if device, normalized phone, or hardware fingerprint already registered in Supabase
       const orFilter = `or=(device_id.eq.${encodeURIComponent(cleanDevId)},phone_number_normalized.eq.${encodeURIComponent(normalizedPhone)},device_fingerprint.eq.${encodeURIComponent(deviceFingerprint)})`;
@@ -485,7 +569,8 @@ export class LicensingService {
       );
 
       const serverTimeMs = Date.now();
-      let expiresAtMs = serverTimeMs + freeDays * 24 * 60 * 60 * 1000;
+      const durationMs = parseDurationToMs(durationValue, durationUnit);
+      let expiresAtMs = serverTimeMs + durationMs;
       let trialDays = freeDays;
       let effectiveDeviceId = cleanDevId;
       let isExistingReinstall = false;
@@ -592,17 +677,29 @@ export class LicensingService {
             message: 'Natapos na ang libreng trial para sa device o numerong ito. Mag-upgrade sa Pro Lifetime Access upang ma-unlock ang tindahan.',
           };
         } else {
-          const daysLeft = Math.max(1, Math.ceil((expiresAtMs - serverTimeMs) / (1000 * 60 * 60 * 24)));
+          const remainingMs = Math.max(0, expiresAtMs - serverTimeMs);
+          const remainingLabel = formatTimeRemaining(remainingMs);
           return {
             success: true,
-            message: `Naibalik ang iyong umiiral na trial! Mayroon ka pang natitirang ${daysLeft} araw.`,
+            message: `Naibalik ang iyong umiiral na trial! Mayroon ka pang natitirang ${remainingLabel}.`,
           };
         }
       }
 
+      const unitMap: Record<string, string> = {
+        seconds: 'segundo',
+        minutes: 'minuto',
+        hours: 'oras',
+        days: 'araw',
+        weeks: 'linggo',
+        months: 'buwan',
+        years: 'taon',
+      };
+      const unitText = unitMap[durationUnit.toLowerCase()] || 'araw';
+
       return {
         success: true,
-        message: `Mabuhay! Nagsimula na ang iyong ${trialDays}-araw na Libreng Trial.`,
+        message: `Mabuhay! Nagsimula na ang iyong ${durationValue} ${unitText} na Libreng Trial.`,
       };
     } catch {
       return {

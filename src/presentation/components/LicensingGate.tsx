@@ -30,10 +30,18 @@ export function LicensingGate({ children }: LicensingGateProps) {
       }
     });
 
+    // Real-time ticking interval for live second/minute countdown and instant expiry lock
+    const interval = setInterval(() => {
+      if (isRegistered && !isLicensed && !isTrialExpired) {
+        updateClockCheck();
+      }
+    }, 1000);
+
     return () => {
       subscription.remove();
+      clearInterval(interval);
     };
-  }, [updateClockCheck]);
+  }, [updateClockCheck, isRegistered, isLicensed, isTrialExpired]);
 
   const openUpgradeModal = () => {
     setManualUpgradeVisible(true);

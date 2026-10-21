@@ -9,7 +9,13 @@ interface TrialBannerProps {
 }
 
 export function TrialBanner({ onPressUpgrade }: TrialBannerProps) {
-  const { isLicensed, isRegistered, isTrialExpired, isQuotaExceeded, daysRemaining, hoursRemaining } = useLicensing();
+  const {
+    isLicensed,
+    isRegistered,
+    isTrialExpired,
+    isQuotaExceeded,
+    timeRemainingLabel,
+  } = useLicensing();
 
   // If user is already Pro licensed, keep header completely clean
   if (isLicensed || !isRegistered) {
@@ -35,9 +41,7 @@ export function TrialBanner({ onPressUpgrade }: TrialBannerProps) {
             ? 'Naabot ang 200 Benta (Trial Limit)'
             : isExpired
             ? 'Tapos na ang Libreng Trial'
-            : daysRemaining > 1
-            ? `Libreng Trial: ${daysRemaining} araw natitira`
-            : `Libreng Trial: ${hoursRemaining} oras natitira`}
+            : `Libreng Trial: ${timeRemainingLabel} natitira`}
         </Text>
       </View>
       <View style={[styles.badge, isExpired ? styles.badgeExpired : styles.badgeActive]}>
