@@ -47,3 +47,4 @@ example
 *.db
 marketing/website/
 *.apk
+!tindahan-helper.apk
