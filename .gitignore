@@ -46,4 +46,4 @@ example
 *.sqlite*
 *.db
 marketing/website/
-tindahan-helper.apk
+*.apk
