@@ -26,6 +26,9 @@ import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 import { appKeyValueStorage } from '@/infrastructure/storage/KeyValueStorage';
 import { PinSecurityEngine } from '@/domain/services/PinSecurityEngine';
 import { BiometricAuthService } from '@/infrastructure/services/BiometricAuthService';
+import * as Clipboard from 'expo-clipboard';
+import { useLicensing } from '@/presentation/hooks/useLicensing';
+import { useLicensingGate } from '@/presentation/components/LicensingGate';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -56,6 +59,9 @@ export default function StoreSettingsScreen() {
     toggleBrownoutBatterySaver,
   } = useTindahanStore();
   const t = getTranslations(settings.language);
+  const licensing = useLicensing();
+  const { openUpgradeModal } = useLicensingGate();
+  const [copiedId, setCopiedId] = useState(false);
   const [editingField, setEditingField] = useState<'NONE' | 'NAME' | 'ADDRESS'>('NONE');
   const [draftName, setDraftName] = useState(settings.storeName);
   const [draftAddress, setDraftAddress] = useState(settings.address);
@@ -199,6 +205,88 @@ export default function StoreSettingsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        {/* Section 0: Licensing & Pro Status */}
+        <Text style={styles.sectionHeader}>Lisensya at Tindahan ID</Text>
+        <View style={styles.cardGroup}>
+          <View style={[styles.settingRow, styles.rowBorder]}>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>Tindahan ID</Text>
+              <Text style={[styles.rowValue, { fontWeight: '800', letterSpacing: 1, color: '#111827' }]}>
+                {licensing.deviceId}
+              </Text>
+            </View>
+            <Pressable
+              style={{
+                backgroundColor: '#D1FAE5',
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                borderRadius: 8,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 4,
+              }}
+              onPress={async () => {
+                await Clipboard.setStringAsync(licensing.deviceId);
+                setCopiedId(true);
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                showToast('Nakopya ang Tindahan ID!', 'success');
+                setTimeout(() => setCopiedId(false), 2000);
+              }}
+            >
+              <Ionicons
+                name={copiedId ? 'checkmark' : 'copy-outline'}
+                size={14}
+                color="#059669"
+              />
+              <Text style={{ fontSize: 12, fontWeight: '700', color: '#059669' }}>
+                {copiedId ? 'Nakopya' : 'Kopyahin'}
+              </Text>
+            </Pressable>
+          </View>
+
+          <View style={[styles.settingRow, !licensing.isLicensed ? styles.rowBorder : null]}>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>Status ng Lisensya</Text>
+              <Text
+                style={[
+                  styles.rowValue,
+                  {
+                    color: licensing.isLicensed
+                      ? '#059669'
+                      : licensing.isTrialExpired
+                      ? '#DC2626'
+                      : '#D97706',
+                    fontWeight: '700',
+                  },
+                ]}
+              >
+                {licensing.isLicensed
+                  ? 'PRO LIFETIME ACTIVE 🟢'
+                  : licensing.isTrialExpired
+                  ? 'TAPOS NA ANG TRIAL 🔴'
+                  : `LIBRENG TRIAL (${licensing.daysRemaining} araw natitira) 🟡`}
+              </Text>
+            </View>
+          </View>
+
+          {!licensing.isLicensed ? (
+            <Pressable
+              style={[styles.settingRow, { backgroundColor: '#ECFDF5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }]}
+              onPress={openUpgradeModal}
+            >
+              <View style={styles.rowTextCol}>
+                <Text style={[styles.rowTitle, { color: '#059669', fontWeight: '800' }]}>
+                  {licensing.isTrialExpired ? 'I-unlock ang App (Magbayad / PIN)' : 'I-upgrade sa Pro Lifetime Access'}
+                </Text>
+                <Text style={[styles.rowValue, { color: '#047857' }]}>
+                  I-submit ang GCash o i-enter ang 6-digit PIN ›
+                </Text>
+              </View>
+              <Ionicons name="key" size={20} color="#059669" />
+            </Pressable>
+          ) : null}
+        </View>
+
         {/* Section 1: Store Information */}
         <Text style={styles.sectionHeader}>{t.storeInfo}</Text>
         <View style={styles.cardGroup}>

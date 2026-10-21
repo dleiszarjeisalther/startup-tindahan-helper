@@ -30,6 +30,8 @@ import {
   ConfirmationModalDetail,
 } from '@/presentation/components/ConfirmationModal';
 import { ReceiptPrinterModal } from '@/presentation/components/ReceiptPrinterModal';
+import { useLicensing } from '@/presentation/hooks/useLicensing';
+import { useLicensingGate } from '@/presentation/components/LicensingGate';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -184,6 +186,8 @@ export default function CheckoutNewSaleScreen() {
   } = useTindahanStore();
 
   const t = getTranslations(settings?.language);
+  const { isFeatureLocked } = useLicensing();
+  const { openUpgradeModal } = useLicensingGate();
 
   const [tenderType, setTenderType] = useState<PaymentTenderType>('CASH');
   // User-input Payment Amount Received (TextInput) — starts empty so user can optionally type cash bill handed
@@ -381,6 +385,11 @@ export default function CheckoutNewSaleScreen() {
 
   const handleCompleteSale = () => {
     if (cartSummary.items.length === 0) return;
+
+    if (isFeatureLocked()) {
+      openUpgradeModal();
+      return;
+    }
 
     if (isUnderpaid) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});

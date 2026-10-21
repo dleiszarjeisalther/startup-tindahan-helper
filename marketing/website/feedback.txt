@@ -1,8 +1,0 @@
-======================================================================
-STARTUP TINDAHAN HELPER — USER FEEDBACK & SUGGESTIONS EXPORT
-Authoritative Source: feedback.sqlite (Auto-Generated)
-Export Date: 2026-10-19 02:44:53
-Total Submissions: 0
-======================================================================
-
-Wala pang naisusumiteng feedback o mungkahi sa kasalukuyan.

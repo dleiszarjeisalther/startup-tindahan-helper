@@ -54,7 +54,7 @@ export default function MenuProfileScreen() {
       type: 'info',
       title: '💬 Mag-iwan ng Feedback & Mungkahi',
       message:
-        'Kailangan ng aktibong internet connection (Wi-Fi o Mobile Data) para ma-access ang online feedback page ng Startup Tindahan Helper.\n\nNais mo bang buksan ang browser?',
+        'Kailangan ng aktibong internet connection (Wi-Fi o Mobile Data) para ma-access ang online feedback page ng Tindahan Helper.\n\nNais mo bang buksan ang browser?',
       confirmText: 'Magpatuloy',
       cancelText: 'Kanselahin',
       onConfirm: async () => {

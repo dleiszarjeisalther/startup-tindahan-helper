@@ -21,6 +21,9 @@ import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 import { UnitSelectionModal } from '@/presentation/components/UnitSelectionModal';
 import { ConfirmationModal } from '@/presentation/components/ConfirmationModal';
 import { ProductDTO } from '@/domain/entities/Product';
+import { TrialBanner } from '@/presentation/components/TrialBanner';
+import { useLicensing } from '@/presentation/hooks/useLicensing';
+import { useLicensingGate } from '@/presentation/components/LicensingGate';
 
 export default function PosScanProductScreen() {
   const router = useRouter();
@@ -41,6 +44,8 @@ export default function PosScanProductScreen() {
     updateProductDetails,
   } = useTindahanStore();
   const t = getTranslations(settings?.language);
+  const { isFeatureLocked } = useLicensing();
+  const { openUpgradeModal } = useLicensingGate();
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyTingi, setOnlyTingi] = useState(false);
   const [liveCameraActive, setLiveCameraActive] = useState(true);
@@ -79,6 +84,10 @@ export default function PosScanProductScreen() {
     successMessage: string,
     unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
   ) => {
+    if (isFeatureLocked()) {
+      openUpgradeModal();
+      return false;
+    }
     const prod = products.find((p) => p.id === productId);
     try {
       if (prod && prod.expiryDate) {
@@ -224,6 +233,9 @@ export default function PosScanProductScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      {/* Trial Status Header Pill */}
+      <TrialBanner onPressUpgrade={openUpgradeModal} />
+
       {/* TOP HALF: Camera Barcode Viewfinder with Animated Sweeping Laser (OOP Shared Component) */}
       <BarcodeScannerViewfinder
         isActive={liveCameraActive && isFocused}

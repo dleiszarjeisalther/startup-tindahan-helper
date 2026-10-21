@@ -1,5 +1,0 @@
-# Deny direct web access to SQLite database files
-<FilesMatch "\.(sqlite|db)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>

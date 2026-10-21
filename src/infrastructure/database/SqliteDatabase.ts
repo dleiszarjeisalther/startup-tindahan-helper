@@ -164,6 +164,21 @@ export class SqliteDatabase {
         created_at_ms INTEGER NOT NULL,
         time_label TEXT NOT NULL
       );
+
+      CREATE TABLE IF NOT EXISTS app_licensing (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        device_id TEXT NOT NULL,
+        store_name TEXT NOT NULL,
+        owner_name TEXT NOT NULL,
+        phone_number TEXT NOT NULL,
+        location TEXT,
+        registered_at_ms INTEGER NOT NULL,
+        trial_days INTEGER NOT NULL DEFAULT 7,
+        trial_expires_at_ms INTEGER NOT NULL,
+        is_licensed INTEGER NOT NULL DEFAULT 0,
+        license_pin TEXT,
+        last_observed_time_ms INTEGER NOT NULL
+      );
     `);
     } catch (err) {
       console.warn('SQLite table initialization warning:', err);
