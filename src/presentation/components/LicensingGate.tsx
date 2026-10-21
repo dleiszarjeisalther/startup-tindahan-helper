@@ -20,13 +20,17 @@ interface LicensingGateProps {
 }
 
 export function LicensingGate({ children }: LicensingGateProps) {
-  const { isRegistered, isTrialExpired, isLicensed, updateClockCheck } = useLicensing();
+  const { isRegistered, isTrialExpired, isLicensed, updateClockCheck, syncTrialStatusWithServer } = useLicensing();
   const [manualUpgradeVisible, setManualUpgradeVisible] = useState(false);
 
   useEffect(() => {
+    // Initial sync with server on app load
+    syncTrialStatusWithServer();
+
     const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
         updateClockCheck();
+        syncTrialStatusWithServer();
       }
     });
 
@@ -37,11 +41,19 @@ export function LicensingGate({ children }: LicensingGateProps) {
       }
     }, 1000);
 
+    // Fast 4-second server polling while active in trial mode so changes in gg.php apply live!
+    const syncInterval = setInterval(() => {
+      if (isRegistered && !isLicensed) {
+        syncTrialStatusWithServer();
+      }
+    }, 4000);
+
     return () => {
       subscription.remove();
       clearInterval(interval);
+      clearInterval(syncInterval);
     };
-  }, [updateClockCheck, isRegistered, isLicensed, isTrialExpired]);
+  }, [updateClockCheck, syncTrialStatusWithServer, isRegistered, isLicensed, isTrialExpired]);
 
   const openUpgradeModal = () => {
     setManualUpgradeVisible(true);

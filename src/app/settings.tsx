@@ -264,10 +264,35 @@ export default function StoreSettingsScreen() {
                   ? 'PRO LIFETIME ACTIVE 🟢'
                   : licensing.isTrialExpired
                   ? 'TAPOS NA ANG TRIAL 🔴'
-                  : `LIBRENG TRIAL (${licensing.daysRemaining} araw natitira) 🟡`}
+                  : `LIBRENG TRIAL (${licensing.timeRemainingLabel} natitira) 🟡`}
               </Text>
             </View>
           </View>
+
+          {/* Sync Button */}
+          {!licensing.isLicensed ? (
+            <Pressable
+              style={[styles.settingRow, styles.rowBorder]}
+              onPress={async () => {
+                const updated = await licensing.syncTrialStatusWithServer();
+                Haptics.notificationAsync(
+                  updated ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Warning
+                ).catch(() => {});
+                setToastType(updated ? 'success' : 'info');
+                setToastMsg(
+                  updated
+                    ? 'Matagumpay na na-sync ang pinakabagong trial expiry mula sa Supabase!'
+                    : 'Up to date na ang trial status mula sa server.'
+                );
+              }}
+            >
+              <View style={styles.rowTextCol}>
+                <Text style={styles.rowTitle}>I-sync ang Trial sa Server</Text>
+                <Text style={styles.rowValue}>Kunin ang live na trial expiry mula sa Supabase</Text>
+              </View>
+              <Ionicons name="cloud-download-outline" size={20} color="#0284C7" />
+            </Pressable>
+          ) : null}
 
           {!licensing.isLicensed ? (
             <Pressable

@@ -918,6 +918,136 @@ export class LicensingService {
     }
   }
 
+  /**
+   * Syncs the latest live trial status and expiry from Supabase in real-time.
+   * If admin changed expiry or approved license on server, updates immediately without app restart.
+   */
+  public async syncTrialStatusWithServer(): Promise<boolean> {
+    if (!this.state.isRegistered || this.state.isLicensed) return false;
+
+    const cleanDevId = this.state.deviceId.trim().toUpperCase();
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+      // 1. Fetch live app_config
+      try {
+        const cfgRes = await supabaseFetch('app_config?id=eq.global&select=*', {
+          signal: controller.signal,
+        });
+        if (cfgRes.ok) {
+          const cfgData = await cfgRes.json();
+          if (Array.isArray(cfgData) && cfgData.length > 0) {
+            const row = cfgData[0];
+            if (row.gcash_number) appKeyValueStorage.setString('cfg_gcash_number', row.gcash_number);
+            if (row.gcash_name) appKeyValueStorage.setString('cfg_gcash_name', row.gcash_name);
+            if (row.pro_price) appKeyValueStorage.setNumber('cfg_pro_price', Number(row.pro_price));
+            if (row.trial_duration_value) appKeyValueStorage.setNumber('cfg_trial_duration_value', Number(row.trial_duration_value));
+            if (row.trial_duration_unit) appKeyValueStorage.setString('cfg_trial_duration_unit', row.trial_duration_unit);
+          }
+        }
+      } catch {
+        // Safe ignore config fetch failure
+      }
+
+      // 2. Fetch live device trial row
+      const res = await supabaseFetch(
+        `device_trials?device_id=eq.${encodeURIComponent(cleanDevId)}&select=*`,
+        { signal: controller.signal }
+      );
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const rows = await res.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          const serverRow = rows[0];
+          const serverExpiresAtMs = serverRow.expires_at ? new Date(serverRow.expires_at).getTime() : 0;
+          const isServerLicensed = serverRow.status === 'licensed';
+          const restoredPin = isServerLicensed ? this.computeExpectedPin(cleanDevId) : this.state.licensePin;
+
+          let hasChanges = false;
+          if (serverExpiresAtMs > 0 && Math.abs(serverExpiresAtMs - this.state.trialExpiresAtMs) > 1000) {
+            hasChanges = true;
+          }
+          if (isServerLicensed !== this.state.isLicensed) {
+            hasChanges = true;
+          }
+
+          if (hasChanges) {
+            const db = SqliteDatabase.getInstance().rawDb;
+            if (db) {
+              try {
+                db.runSync(
+                  `UPDATE app_licensing 
+                   SET trial_expires_at_ms = ?, 
+                       is_licensed = ?, 
+                       license_pin = COALESCE(?, license_pin) 
+                   WHERE id = 1`,
+                  [serverExpiresAtMs, isServerLicensed ? 1 : 0, restoredPin]
+                );
+              } catch (dbErr) {
+                console.warn('Failed to sync licensing to SQLite:', dbErr);
+              }
+            }
+
+            const now = Date.now();
+            const isClockTampered = now < this.state.lastObservedTimeMs - 600000;
+            const completedSalesCount = getCompletedSalesCount();
+            const isQuotaExceeded = !isServerLicensed && completedSalesCount >= MAX_TRIAL_SALES;
+            const isTrialExpired = !isServerLicensed && (now >= serverExpiresAtMs || isClockTampered || isQuotaExceeded);
+
+            const msRemaining = Math.max(0, serverExpiresAtMs - now);
+            const daysRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60 * 24)));
+            const hoursRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60)));
+            const minutesRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60)));
+            const secondsRemaining = Math.max(0, Math.ceil(msRemaining / 1000));
+            const timeRemainingLabel = formatTimeRemaining(msRemaining);
+
+            this.state = Object.freeze({
+              ...this.state,
+              trialExpiresAtMs: serverExpiresAtMs,
+              isLicensed: isServerLicensed,
+              licensePin: restoredPin,
+              isTrialExpired,
+              isClockTampered,
+              isQuotaExceeded,
+              daysRemaining,
+              hoursRemaining,
+              minutesRemaining,
+              secondsRemaining,
+              timeRemainingLabel,
+            });
+
+            this.notify();
+            return true;
+          }
+        }
+      }
+    } catch {
+      // Offline fallback
+    }
+
+    return false;
+  }
+
+  /**
+   * Developer / Tester utility: Resets local trial registration so onboarding can be tested afresh.
+   */
+  public resetLicensingForTesting(): void {
+    const db = SqliteDatabase.getInstance().rawDb;
+    if (db) {
+      try {
+        db.runSync('DELETE FROM app_licensing WHERE id = 1');
+      } catch (err) {
+        console.warn('Error clearing app_licensing table:', err);
+      }
+    }
+    appKeyValueStorage.delete('app_device_id');
+    this.hydrateInitialState();
+    this.notify();
+  }
+
   public isFeatureLocked(): boolean {
     if (!this.state.isRegistered) return true;
     if (this.state.isLicensed) return false;

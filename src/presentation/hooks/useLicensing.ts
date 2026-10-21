@@ -9,6 +9,8 @@ export function useLicensing(): LicensingState & {
   checkOnlineApproval: typeof licensingService.checkOnlineApproval;
   updateClockCheck: typeof licensingService.updateClockCheck;
   isFeatureLocked: typeof licensingService.isFeatureLocked;
+  syncTrialStatusWithServer: typeof licensingService.syncTrialStatusWithServer;
+  resetLicensingForTesting: typeof licensingService.resetLicensingForTesting;
 } {
   const state = useSyncExternalStore(
     licensingService.subscribe,
@@ -23,5 +25,7 @@ export function useLicensing(): LicensingState & {
     checkOnlineApproval: licensingService.checkOnlineApproval.bind(licensingService),
     updateClockCheck: licensingService.updateClockCheck.bind(licensingService),
     isFeatureLocked: licensingService.isFeatureLocked.bind(licensingService),
+    syncTrialStatusWithServer: licensingService.syncTrialStatusWithServer.bind(licensingService),
+    resetLicensingForTesting: licensingService.resetLicensingForTesting.bind(licensingService),
   };
 }
