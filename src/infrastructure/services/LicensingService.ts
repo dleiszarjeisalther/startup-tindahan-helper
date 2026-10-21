@@ -945,7 +945,7 @@ export class LicensingService {
    * If admin changed expiry or approved license on server, updates immediately without app restart.
    */
   public async syncTrialStatusWithServer(): Promise<boolean> {
-    if (!this.state.isRegistered || this.state.isLicensed) return false;
+    if (!this.state.isRegistered) return false;
 
     const cleanDevId = this.state.deviceId.trim().toUpperCase();
 

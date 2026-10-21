@@ -41,9 +41,9 @@ export function LicensingGate({ children }: LicensingGateProps) {
       }
     }, 1000);
 
-    // Fast 4-second server polling while active in trial mode so changes in gg.php apply live!
+    // Fast 4-second server polling so changes in gg.php (Approve, Disable, Extensions) apply live!
     const syncInterval = setInterval(() => {
-      if (isRegistered && !isLicensed) {
+      if (isRegistered) {
         syncTrialStatusWithServer();
       }
     }, 4000);
