@@ -8,7 +8,8 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import * as Haptics from 'expo-haptics';
 import { useRouter, useIsFocused } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,8 +27,15 @@ import { useLicensing } from '@/presentation/hooks/useLicensing';
 import { useLicensingGate } from '@/presentation/components/LicensingGate';
 
 export default function PosScanProductScreen() {
+  const isFocused = useIsFocused();
+
+  return isFocused ? <FocusedPosScanProductScreen /> : null;
+}
+
+function FocusedPosScanProductScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
+  const insets = useSafeAreaInsets();
   const {
     products,
     addToCart,
@@ -44,7 +52,7 @@ export default function PosScanProductScreen() {
     updateProductDetails,
   } = useTindahanStore();
   const t = getTranslations(settings?.language);
-  const { isFeatureLocked } = useLicensing();
+  const { isFeatureLocked, isLicensed, isRegistered } = useLicensing();
   const { openUpgradeModal } = useLicensingGate();
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyTingi, setOnlyTingi] = useState(false);
@@ -231,10 +239,17 @@ export default function PosScanProductScreen() {
       return 0;
     });
 
+  const showTrialBanner = !isLicensed && isRegistered;
+  const scannerTopInset = showTrialBanner ? 0 : insets.top;
+
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <ScreenSafeAreaView style={styles.safeArea} edges={[]}>
       {/* Trial Status Header Pill */}
-      <TrialBanner onPressUpgrade={openUpgradeModal} />
+      {showTrialBanner ? (
+        <View style={{ paddingTop: insets.top }}>
+          <TrialBanner onPressUpgrade={openUpgradeModal} />
+        </View>
+      ) : null}
 
       {/* TOP HALF: Camera Barcode Viewfinder with Animated Sweeping Laser (OOP Shared Component) */}
       <BarcodeScannerViewfinder
@@ -242,6 +257,8 @@ export default function PosScanProductScreen() {
         onToggleActive={setLiveCameraActive}
         onBarcodeScanned={handleBarcodeDetected}
         toastMessage={scanToast}
+        containerHeight={230 + scannerTopInset}
+        topControlInset={scannerTopInset}
         topCenterAction={
           <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
             {isStoreSecurityEnabled ? (
@@ -630,7 +647,7 @@ export default function PosScanProductScreen() {
           onCancel={() => setAlertModal(null)}
         />
       ) : null}
-    </SafeAreaView>
+    </ScreenSafeAreaView>
   );
 }
 
@@ -1128,4 +1145,3 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-

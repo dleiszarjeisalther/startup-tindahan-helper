@@ -12,7 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -580,7 +580,7 @@ export default function SalesHistoryScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <ScreenSafeAreaView style={styles.safeArea}>
       <FloatingToast
         message={toastMsg}
         type={toastType}
@@ -2898,7 +2898,7 @@ export default function SalesHistoryScreen() {
           onClose={() => setReprintTx(null)}
         />
       ) : null}
-    </SafeAreaView>
+    </ScreenSafeAreaView>
   );
 }
 

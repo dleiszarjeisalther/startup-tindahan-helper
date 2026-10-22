@@ -8,7 +8,7 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
@@ -210,7 +210,7 @@ export default function ProductListScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <ScreenSafeAreaView style={styles.safeArea}>
       <FloatingToast
         message={addedBanner}
         type={addedBanner?.startsWith('⚠️') ? 'warning' : 'success'}
@@ -685,7 +685,7 @@ export default function ProductListScreen() {
           onCancel={() => setAlertModal(null)}
         />
       ) : null}
-    </SafeAreaView>
+    </ScreenSafeAreaView>
   );
 }
 

@@ -42,6 +42,8 @@ export interface BarcodeScannerViewfinderProps {
   reticleHeight?: number;
   /** Overall scanner container height (default: 230) */
   containerHeight?: number;
+  /** Safe-area offset for controls over a full-bleed camera (default: 0) */
+  topControlInset?: number;
   /** Custom container style */
   style?: StyleProp<ViewStyle>;
 }
@@ -66,6 +68,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
   reticleWidth = 270,
   reticleHeight = 130,
   containerHeight = 230,
+  topControlInset = 0,
   style,
 }) => {
   const [torchOn, setTorchOn] = useState(false);
@@ -173,7 +176,13 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
   };
 
   return (
-    <View style={[styles.container, { height: containerHeight }, style]}>
+    <View
+      style={[
+        styles.container,
+        { height: containerHeight, paddingTop: topControlInset },
+        style,
+      ]}
+    >
       {/* Background Camera View or Standby Backdrop */}
       {isActive ? (
         <CameraView
@@ -199,7 +208,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
       )}
 
       {/* Top Controls Row */}
-      <View style={styles.topBar}>
+      <View style={[styles.topBar, { top: 10 + topControlInset }]}>
         <View style={styles.topActionLeft}>
           {showTorchButton ? (
             <Pressable
@@ -299,7 +308,6 @@ const styles = StyleSheet.create({
   },
   topBar: {
     position: 'absolute',
-    top: 10,
     left: 14,
     right: 14,
     flexDirection: 'row',

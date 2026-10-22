@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
@@ -1140,7 +1140,7 @@ export default function InventoryManagementScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <ScreenSafeAreaView style={styles.safeArea}>
       <FloatingToast
         message={toastMsg}
         type={toastType}
@@ -3944,7 +3944,7 @@ export default function InventoryManagementScreen() {
         }}
         onCancel={() => setPinChallengeAction(null)}
       />
-    </SafeAreaView>
+    </ScreenSafeAreaView>
   );
 }
 

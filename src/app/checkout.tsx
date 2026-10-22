@@ -11,7 +11,7 @@ import {
   Platform,
   Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import * as Haptics from 'expo-haptics';
 import * as Clipboard from 'expo-clipboard';
 import * as Sharing from 'expo-sharing';
@@ -490,7 +490,7 @@ export default function CheckoutNewSaleScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <ScreenSafeAreaView style={styles.safeArea}>
       <FloatingToast
         message={toastMsg}
         type={toastType}
@@ -1534,7 +1534,7 @@ export default function CheckoutNewSaleScreen() {
           showToast('✓ Na-update ang QR code ng tindahan!');
         }}
       />
-    </SafeAreaView>
+    </ScreenSafeAreaView>
   );
 }
 

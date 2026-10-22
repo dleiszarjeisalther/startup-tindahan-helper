@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Modal,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -200,7 +200,7 @@ export default function SeasonalForecastScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <ScreenSafeAreaView style={styles.safeArea}>
       <FloatingToast
         message={restockToast}
         type="success"
@@ -622,7 +622,7 @@ export default function SeasonalForecastScreen() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </ScreenSafeAreaView>
   );
 }
 

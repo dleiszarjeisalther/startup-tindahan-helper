@@ -11,7 +11,7 @@ import {
   Modal,
   Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
@@ -188,7 +188,7 @@ export default function StoreSettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <ScreenSafeAreaView style={styles.safeArea}>
       <FloatingToast
         message={toastMsg}
         type={toastType}
@@ -1159,7 +1159,7 @@ export default function StoreSettingsScreen() {
         visible={showPrivacyPolicyModal}
         onClose={() => setShowPrivacyPolicyModal(false)}
       />
-    </SafeAreaView>
+    </ScreenSafeAreaView>
   );
 }
 

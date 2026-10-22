@@ -9,7 +9,7 @@ import {
   Linking,
   Share,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
@@ -89,7 +89,7 @@ export default function MenuProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <ScreenSafeAreaView style={styles.safeArea}>
       {/* Top Emerald Green Owner Profile Banner */}
       <Pressable
         style={styles.greenBanner}
@@ -450,7 +450,7 @@ export default function MenuProfileScreen() {
         visible={showPrivacyPolicyModal}
         onClose={() => setShowPrivacyPolicyModal(false)}
       />
-    </SafeAreaView>
+    </ScreenSafeAreaView>
   );
 }
 
