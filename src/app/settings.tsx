@@ -932,7 +932,7 @@ export default function StoreSettingsScreen() {
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>Patakaran sa Privacy (Data Privacy Act RA 10173)</Text>
               <Text style={styles.rowValue}>
-                100% offline-first SQLite, proteksyon sa suki utang at datos
+                100% offline, ligtas ang listahan ng utang at benta sa cellphone mo
               </Text>
             </View>
             <Ionicons name="shield-checkmark-outline" size={20} color="#0D7A52" />

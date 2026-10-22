@@ -111,13 +111,13 @@ export function PrivacyPolicyModal({ visible, onClose }: PrivacyPolicyModalProps
                 <Ionicons name="server-outline" size={18} color="#059669" />
               </View>
               <Text style={styles.sectionTitle}>
-                2. 100% Offline-First: Walang Cloud Data Selling
+                2. 100% Offline: Ligtas ang Benta at Paninda sa Telepono Mo
               </Text>
             </View>
             <Text style={styles.paragraph}>
               Iba ang Tindahan Helper sa ibang apps na nagpapadala ng bawat benta mo sa internet.
-              Ang iyong <Text style={styles.bold}>SQLite database</Text> ay nananatili nang 100%
-              offline sa loob ng iyong telepono.
+              Ang lahat ng iyong paninda, benta, at listahan ng utang ay nananatiling{' '}
+              <Text style={styles.bold}>100% offline at ligtas na nakatago sa mismong telepono mo</Text>.
             </Text>
             <Text style={styles.paragraph}>
               Hindi namin sinusubaybayan, kinokolekta, o ibinebenta ang iyong puhunan, arawang
@@ -167,8 +167,8 @@ export function PrivacyPolicyModal({ visible, onClose }: PrivacyPolicyModalProps
               </Text>
             </View>
             <Text style={styles.paragraph}>
-              Ang talaan ng pautang (Utang Ledger) at mga pangalan ng iyong suki ay mahigpit na
-              kompidensyal. Maaari kang mag-export ng backup JSON file o maglagay ng Owner PIN
+              Ang listahan ng pautang at mga pangalan ng iyong mga suki ay mahigpit na
+              kompidensyal. Maaari kang mag-save ng backup copy ng iyong tindahan o maglagay ng Owner PIN
               upang walang ibang makakita sa listahan ng iyong benta at pautang.
             </Text>
           </View>

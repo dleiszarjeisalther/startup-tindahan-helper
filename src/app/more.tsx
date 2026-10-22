@@ -293,7 +293,7 @@ export default function MenuProfileScreen() {
               <Ionicons name="shield-checkmark-outline" size={22} color="#0D7A52" />
               <View>
                 <Text style={styles.menuLabel}>Patakaran sa Privacy (DPA RA 10173)</Text>
-                <Text style={styles.menuSubLabel}>100% offline-first SQLite, proteksyon ng datos</Text>
+                <Text style={styles.menuSubLabel}>100% offline, ligtas ang datos sa cellphone mo</Text>
               </View>
             </View>
             <Text style={styles.menuChevron}>›</Text>
