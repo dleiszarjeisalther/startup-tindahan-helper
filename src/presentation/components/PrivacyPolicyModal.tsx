@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface PrivacyPolicyModalProps {
   visible: boolean;
@@ -19,12 +20,16 @@ export interface PrivacyPolicyModalProps {
 }
 
 export function PrivacyPolicyModal({ visible, onClose }: PrivacyPolicyModalProps) {
+  const insets = useSafeAreaInsets();
+
   if (!visible) return null;
 
   const handleClose = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     onClose();
   };
+
+  const bottomInset = Math.max(insets.bottom, Platform.OS === 'android' ? 32 : 16);
 
   return (
     <Modal
@@ -229,7 +234,7 @@ export function PrivacyPolicyModal({ visible, onClose }: PrivacyPolicyModalProps
         </ScrollView>
 
         {/* Footer Dismiss Button */}
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: bottomInset + 12 }]}>
           <Pressable style={styles.primaryBtn} onPress={handleClose}>
             <Ionicons name="checkmark-circle-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
             <Text style={styles.primaryBtnText}>Naiintindihan Ko</Text>

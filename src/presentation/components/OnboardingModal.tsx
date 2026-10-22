@@ -34,7 +34,7 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [privacyModalVisible, setPrivacyModalVisible] = useState(false);
-  const [agreedToPrivacy, setAgreedToPrivacy] = useState(true);
+  const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
 
   const handleSubmit = async () => {
     if (!ownerName.trim()) {
@@ -214,7 +214,7 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
                   >
                     Patakaran sa Privacy (DPA RA 10173)
                   </Text>
-                  . Naiintindihan ko na 100% offline-first ang benta at utang ng aking tindahan.
+                  . Naiintindihan ko na 100% offline at ligtas sa aking telepono ang paninda at benta ng aking tindahan.
                 </Text>
               </View>
             </View>
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 24,
     paddingTop: 48,
-    paddingBottom: 40,
+    paddingBottom: 64,
     justifyContent: 'center',
   },
   headerArea: {
