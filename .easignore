@@ -1,6 +1,8 @@
 # Ignore local generated folders, dependencies, and build outputs for EAS upload
+.git/
 node_modules/
 *.apk
+*.zip
 tindahan-helper.apk
 android/
 ios/
