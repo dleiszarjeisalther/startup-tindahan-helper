@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import { isRunningInExpoGo } from 'expo';
 import {
   ILocalNotificationScheduler,
   LocalNotificationRequest,
@@ -40,7 +41,7 @@ export class ExpoLocalNotificationScheduler implements ILocalNotificationSchedul
   }
 
   public async requestPermission(): Promise<boolean> {
-    if (Platform.OS === 'web') return false;
+    if (Platform.OS === 'web' || isRunningInExpoGo()) return false;
     const Notifications = await this.loadModule();
     await this.ensureChannel(Notifications);
     const current = await Notifications.getPermissionsAsync();
@@ -50,7 +51,7 @@ export class ExpoLocalNotificationScheduler implements ILocalNotificationSchedul
   }
 
   public async clearSchedule(): Promise<void> {
-    if (Platform.OS === 'web') return;
+    if (Platform.OS === 'web' || isRunningInExpoGo()) return;
     const Notifications = await this.loadModule();
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();
     const owned = scheduled.filter(

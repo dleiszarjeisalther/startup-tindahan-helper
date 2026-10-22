@@ -73,6 +73,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
 }) => {
   const [torchOn, setTorchOn] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
+  const cameraPermissionRequestedRef = useRef(false);
   const scanLockRef = useRef(false);
   const lastScannedBarcodeRef = useRef<{ code: string; time: number } | null>(null);
 
@@ -114,6 +115,22 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
       console.log('[BarcodeScannerViewfinder] Camera deactivated / standby.');
     }
   }, [isActive]);
+
+  useEffect(() => {
+    if (
+      !isActive ||
+      !permission ||
+      permission.granted ||
+      cameraPermissionRequestedRef.current
+    ) {
+      return;
+    }
+
+    cameraPermissionRequestedRef.current = true;
+    requestPermission().catch((error: unknown) => {
+      console.warn('[BarcodeScannerViewfinder] Camera permission request failed:', error);
+    });
+  }, [isActive, permission, requestPermission]);
 
   const handleToggleCamera = async () => {
     if (!isActive) {

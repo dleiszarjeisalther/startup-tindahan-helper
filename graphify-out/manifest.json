@@ -450,9 +450,9 @@
     "semantic_hash": "c62d22797f3002396754d8cc55b0ae1a"
   },
   "src/presentation/components/BarcodeScannerViewfinder.tsx": {
-    "mtime": 1792659573.62581,
-    "seen": 1792677665.0422676,
-    "ast_hash": "9106a86bd4b5183ef0cc433c66f47b89",
+    "mtime": 1792708025.4215417,
+    "seen": 1792708129.9024744,
+    "ast_hash": "1f13225af844e16e1e3fde71429da7ed",
     "semantic_hash": ""
   },
   "src/infrastructure/services/OpenFoodFactsApiClient.ts": {
@@ -1296,15 +1296,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/ExpoLocalNotificationScheduler.ts": {
-    "mtime": 1792705902.4733393,
-    "seen": 1792706416.359386,
-    "ast_hash": "f3cebba9f0edcfe044648ca5ab9e548e",
-    "semantic_hash": ""
-  },
-  ".expo-fix-check/metadata.json": {
-    "mtime": 1792706278.5223978,
-    "seen": 1792706416.358844,
-    "ast_hash": "57dfe82bf107109cf0cba12d14446dd5",
+    "mtime": 1792708025.4170454,
+    "seen": 1792708129.9024508,
+    "ast_hash": "48d9322ed48c5ffaf84b9261d5391683",
     "semantic_hash": ""
   }
 }

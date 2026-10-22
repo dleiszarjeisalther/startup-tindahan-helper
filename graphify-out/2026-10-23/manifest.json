@@ -60,9 +60,9 @@
     "semantic_hash": "b713dd66aa3ad59ed5098d7b9f8dc202"
   },
   "package.json": {
-    "mtime": 1792681109.5020125,
-    "seen": 1792705325.838397,
-    "ast_hash": "19c4431616e9a95b63fcba6f9feea977",
+    "mtime": 1792705789.2712872,
+    "seen": 1792706416.358968,
+    "ast_hash": "d4afd8b18737ac32cd34d9e040c39f7f",
     "semantic_hash": ""
   },
   "scripts/reset-project.js": {
@@ -72,9 +72,9 @@
     "semantic_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275"
   },
   "src/app/_layout.tsx": {
-    "mtime": 1792681244.3027346,
-    "seen": 1792705325.838465,
-    "ast_hash": "c34be103e29533d2a2299f9b71d3d21b",
+    "mtime": 1792706035.0436368,
+    "seen": 1792706416.359044,
+    "ast_hash": "85c7250a896a99ca7a33e6dd93002675",
     "semantic_hash": ""
   },
   "src/app/checkout.tsx": {
@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "src/application/TindahanStoreService.ts": {
-    "mtime": 1792705200.8119936,
-    "seen": 1792705325.8385637,
-    "ast_hash": "06d8c8a262b4a474f6dfd3ff92620e50",
+    "mtime": 1792706306.9812949,
+    "seen": 1792706416.3591535,
+    "ast_hash": "cde33bee39e07c8e42fdaf3c770b2a02",
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
@@ -1296,9 +1296,15 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/ExpoLocalNotificationScheduler.ts": {
-    "mtime": 1792681185.3465617,
-    "seen": 1792705325.8387773,
-    "ast_hash": "a631a48fdbcbb31b41e0d9ebe80c6925",
+    "mtime": 1792705902.4733393,
+    "seen": 1792706416.359386,
+    "ast_hash": "f3cebba9f0edcfe044648ca5ab9e548e",
+    "semantic_hash": ""
+  },
+  ".expo-fix-check/metadata.json": {
+    "mtime": 1792706278.5223978,
+    "seen": 1792706416.358844,
+    "ast_hash": "57dfe82bf107109cf0cba12d14446dd5",
     "semantic_hash": ""
   }
 }
