@@ -1,5 +1,4 @@
 import { Platform } from 'react-native';
-import * as Notifications from 'expo-notifications';
 import {
   ILocalNotificationScheduler,
   LocalNotificationRequest,
@@ -8,17 +7,28 @@ import {
 const CHANNEL_ID = 'store-alerts';
 const SUMMARY_KIND = 'STORE_ALERT_SUMMARY';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
-
 export class ExpoLocalNotificationScheduler implements ILocalNotificationScheduler {
-  private async ensureChannel(): Promise<void> {
+  private handlerConfigured = false;
+
+  private async loadModule(): Promise<typeof import('expo-notifications')> {
+    const Notifications = await import('expo-notifications');
+    if (!this.handlerConfigured) {
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldPlaySound: false,
+          shouldSetBadge: false,
+          shouldShowBanner: true,
+          shouldShowList: true,
+        }),
+      });
+      this.handlerConfigured = true;
+    }
+    return Notifications;
+  }
+
+  private async ensureChannel(
+    Notifications: typeof import('expo-notifications')
+  ): Promise<void> {
     if (Platform.OS !== 'android') return;
     await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
       name: 'Mga Abiso ng Tindahan',
@@ -31,7 +41,8 @@ export class ExpoLocalNotificationScheduler implements ILocalNotificationSchedul
 
   public async requestPermission(): Promise<boolean> {
     if (Platform.OS === 'web') return false;
-    await this.ensureChannel();
+    const Notifications = await this.loadModule();
+    await this.ensureChannel(Notifications);
     const current = await Notifications.getPermissionsAsync();
     if (current.status === 'granted') return true;
     const requested = await Notifications.requestPermissionsAsync();
@@ -40,6 +51,7 @@ export class ExpoLocalNotificationScheduler implements ILocalNotificationSchedul
 
   public async clearSchedule(): Promise<void> {
     if (Platform.OS === 'web') return;
+    const Notifications = await this.loadModule();
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();
     const owned = scheduled.filter(
       (item) => item.content.data?.kind === SUMMARY_KIND
@@ -51,8 +63,13 @@ export class ExpoLocalNotificationScheduler implements ILocalNotificationSchedul
 
   public async replaceSchedule(requests: readonly LocalNotificationRequest[]): Promise<void> {
     if (Platform.OS === 'web') return;
-    await this.ensureChannel();
-    await this.clearSchedule();
+    const Notifications = await this.loadModule();
+    await this.ensureChannel(Notifications);
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+    const owned = scheduled.filter((item) => item.content.data?.kind === SUMMARY_KIND);
+    await Promise.all(
+      owned.map((item) => Notifications.cancelScheduledNotificationAsync(item.identifier))
+    );
     for (const request of requests) {
       await Notifications.scheduleNotificationAsync({
         identifier: request.id,

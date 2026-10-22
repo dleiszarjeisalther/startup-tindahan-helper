@@ -948,6 +948,10 @@ export class TindahanStoreService {
         this.publishSchedulerStatus();
       }
     } catch (error) {
+      if (!this.settings.phoneNotifications) {
+        this.notificationScheduleError = null;
+        return;
+      }
       this.notificationScheduleError =
         error instanceof Error ? error.message : 'Hindi ma-schedule ang phone notifications.';
       this.publishSchedulerStatus();
