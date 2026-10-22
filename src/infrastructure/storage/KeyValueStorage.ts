@@ -210,6 +210,21 @@ class SynchronousKeyValueStorage implements IKeyValueStorage {
       address: this.getString('setting_address', defaultSettings.address) || defaultSettings.address,
       language,
       notifications: this.getBoolean('setting_notifications', defaultSettings.notifications) ?? defaultSettings.notifications,
+      phoneNotifications:
+        this.getBoolean('setting_phone_notifications', defaultSettings.phoneNotifications) ??
+        defaultSettings.phoneNotifications,
+      notificationTimes: (() => {
+        const raw = this.getString('setting_notification_times');
+        if (!raw) return [...defaultSettings.notificationTimes];
+        try {
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) && parsed.length > 0
+            ? parsed.filter((time) => typeof time === 'string').slice(0, 3)
+            : [...defaultSettings.notificationTimes];
+        } catch {
+          return [...defaultSettings.notificationTimes];
+        }
+      })(),
       schoolOpeningMonth: this.getNumber('setting_school_month', defaultSettings.schoolOpeningMonth) ?? defaultSettings.schoolOpeningMonth,
       wholesaleBudgetPhp: this.getNumber('setting_wholesale_budget', defaultSettings.wholesaleBudgetPhp) ?? defaultSettings.wholesaleBudgetPhp,
       gcashNumber: this.getString('setting_gcash_number', defaultSettings.gcashNumber) || defaultSettings.gcashNumber,
@@ -224,6 +239,8 @@ class SynchronousKeyValueStorage implements IKeyValueStorage {
     this.setString('setting_address', settings.address);
     this.setString('setting_language', settings.language);
     this.setBoolean('setting_notifications', settings.notifications);
+    this.setBoolean('setting_phone_notifications', settings.phoneNotifications);
+    this.setString('setting_notification_times', JSON.stringify(settings.notificationTimes));
     this.setNumber('setting_school_month', settings.schoolOpeningMonth);
     this.setNumber('setting_wholesale_budget', settings.wholesaleBudgetPhp);
     if (settings.gcashNumber !== undefined) this.setString('setting_gcash_number', settings.gcashNumber);

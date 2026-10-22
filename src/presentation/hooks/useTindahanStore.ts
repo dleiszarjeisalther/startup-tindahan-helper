@@ -60,8 +60,9 @@ const adjustInventoryStock = (
 const addUtangCustomer = (
   name: string,
   creditLimitPhp?: number,
-  initialBalancePhp?: number
-) => tindahanStoreService.addUtangCustomer(name, creditLimitPhp, initialBalancePhp);
+  initialBalancePhp?: number,
+  dueDate?: string
+) => tindahanStoreService.addUtangCustomer(name, creditLimitPhp, initialBalancePhp, dueDate);
 const updateUtangCustomer = (
   customerId: string,
   updates: Parameters<typeof tindahanStoreService.updateUtangCustomer>[1]
@@ -84,6 +85,11 @@ const addOrUpdateMonthlySalesRecord = (productId: string, rec: MonthlySalesRecor
   tindahanStoreService.addOrUpdateMonthlySalesRecord(productId, rec);
 const updateSettings = (partial: Parameters<typeof tindahanStoreService.updateSettings>[0]) =>
   tindahanStoreService.updateSettings(partial);
+const setPhoneNotificationsEnabled = (enabled: boolean) =>
+  tindahanStoreService.setPhoneNotificationsEnabled(enabled);
+const markAlertRead = (alertId: string) => tindahanStoreService.markAlertRead(alertId);
+const markAllAlertsRead = () => tindahanStoreService.markAllAlertsRead();
+const retryNotificationSchedule = () => tindahanStoreService.retryNotificationSchedule();
 const addCashAdjustment = (
   type: Parameters<typeof tindahanStoreService.addCashAdjustment>[0],
   amountPhp: number,
@@ -147,6 +153,10 @@ export function useTindahanStore() {
     categories: snapshot.categories,
     cashDrawerAdjustments: snapshot.cashDrawerAdjustments,
     stockMovements: snapshot.stockMovements,
+    activeAlerts: snapshot.activeAlerts,
+    unreadAlertCount: snapshot.unreadAlertCount,
+    notificationPreferences: snapshot.notificationPreferences,
+    notificationScheduleError: snapshot.notificationScheduleError,
     recordStockMovement,
     refreshFromSqlite,
     getSalesSummary,
@@ -182,6 +192,10 @@ export function useTindahanStore() {
     getMonthlySalesHistory,
     addOrUpdateMonthlySalesRecord,
     updateSettings,
+    setPhoneNotificationsEnabled,
+    markAlertRead,
+    markAllAlertsRead,
+    retryNotificationSchedule,
     clearAllDatabaseData,
     exportDatabaseBackup,
     restoreDatabaseBackup,

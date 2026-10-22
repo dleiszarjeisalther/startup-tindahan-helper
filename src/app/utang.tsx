@@ -70,6 +70,7 @@ export default function SukiUtangLedgerScreen() {
   const [newCustName, setNewCustName] = useState('');
   const [newCustLimit, setNewCustLimit] = useState('500');
   const [newCustInitial, setNewCustInitial] = useState('0');
+  const [newCustDueDate, setNewCustDueDate] = useState('');
   const [addModalError, setAddModalError] = useState<string | null>(null);
 
   // Styled Confirmation Dialog State
@@ -94,6 +95,7 @@ export default function SukiUtangLedgerScreen() {
   const [editingCustomer, setEditingCustomer] = useState<UtangCustomerRecord | null>(null);
   const [editCustName, setEditCustName] = useState('');
   const [editCustLimit, setEditCustLimit] = useState('');
+  const [editCustDueDate, setEditCustDueDate] = useState('');
   const [editCustError, setEditCustError] = useState<string | null>(null);
 
   // Toast / Feedback
@@ -157,14 +159,25 @@ export default function SukiUtangLedgerScreen() {
     }
     const limit = parseFloat(newCustLimit.replace(/[^0-9.]/g, '') || '500');
     const initial = parseFloat(newCustInitial.replace(/[^0-9.]/g, '') || '0');
+    const dueDate = newCustDueDate.trim();
+    if (dueDate && !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
+      setAddModalError('Gamitin ang due date format na YYYY-MM-DD.');
+      return;
+    }
 
-    addUtangCustomer(cleanName, isNaN(limit) ? 500 : limit, isNaN(initial) ? 0 : initial);
+    addUtangCustomer(
+      cleanName,
+      isNaN(limit) ? 500 : limit,
+      isNaN(initial) ? 0 : initial,
+      dueDate || undefined
+    );
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     showToast(`✓ Nailista na si ${cleanName} sa Suki Ledger!`);
     setShowAddModal(false);
     setNewCustName('');
     setNewCustLimit('500');
     setNewCustInitial('0');
+    setNewCustDueDate('');
     setAddModalError(null);
   };
 
@@ -177,15 +190,25 @@ export default function SukiUtangLedgerScreen() {
       return;
     }
     const limit = parseFloat(editCustLimit.replace(/[^0-9.]/g, '') || '500');
+    const dueDate = editCustDueDate.trim();
+    if (dueDate && !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
+      setEditCustError('Gamitin ang due date format na YYYY-MM-DD.');
+      return;
+    }
 
     updateUtangCustomer(editingCustomer.id, {
       name: cleanName,
       creditLimitPhp: isNaN(limit) ? 500 : limit,
+      dueDate: dueDate || null,
     });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     showToast(`✓ Na-update ang profile ni ${cleanName}`);
     if (selectedCustomer?.id === editingCustomer.id) {
-      setSelectedCustomer((prev) => (prev ? { ...prev, name: cleanName, creditLimitPhp: limit } : null));
+      setSelectedCustomer((prev) =>
+        prev
+          ? { ...prev, name: cleanName, creditLimitPhp: limit, dueDate: dueDate || undefined }
+          : null
+      );
     }
     setEditingCustomer(null);
   };
@@ -654,6 +677,7 @@ export default function SukiUtangLedgerScreen() {
                         setEditingCustomer(selectedCustomer);
                         setEditCustName(selectedCustomer.name);
                         setEditCustLimit(selectedCustomer.creditLimitPhp.toString());
+                        setEditCustDueDate(selectedCustomer.dueDate ?? '');
                         setEditCustError(null);
                       }}
                       hitSlop={8}
@@ -1084,6 +1108,17 @@ export default function SukiUtangLedgerScreen() {
               </View>
             </View>
 
+            <Text style={[styles.modalInputLabel, { marginTop: 12 }]}>Due Date (Opsyonal)</Text>
+            <TextInput
+              style={styles.modalInputField}
+              value={newCustDueDate}
+              onChangeText={setNewCustDueDate}
+              placeholder="YYYY-MM-DD — fallback ay 7 araw"
+              placeholderTextColor="#9CA3AF"
+              keyboardType="numbers-and-punctuation"
+              maxLength={10}
+            />
+
             {addModalError ? (
               <View style={styles.modalErrorContainer}>
                 <Ionicons name="alert-circle" size={16} color="#DC2626" />
@@ -1164,6 +1199,17 @@ export default function SukiUtangLedgerScreen() {
                   placeholder="500"
                   placeholderTextColor="#9CA3AF"
                   keyboardType="decimal-pad"
+                />
+
+                <Text style={[styles.modalInputLabel, { marginTop: 12 }]}>Due Date (Opsyonal)</Text>
+                <TextInput
+                  style={styles.modalInputField}
+                  value={editCustDueDate}
+                  onChangeText={setEditCustDueDate}
+                  placeholder="YYYY-MM-DD — fallback ay 7 araw"
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="numbers-and-punctuation"
+                  maxLength={10}
                 />
 
                 {editCustError ? (

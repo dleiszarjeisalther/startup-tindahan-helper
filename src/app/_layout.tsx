@@ -1,5 +1,6 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, ThemeProvider, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
@@ -21,6 +22,20 @@ export default function TabLayout() {
     SplashScreen.hideAsync().catch(() => {
       // Ignore if already hidden in Expo Go
     });
+  }, []);
+
+  useEffect(() => {
+    const openNotificationCenter = (notification: Notifications.Notification) => {
+      if (notification.request.content.data?.url === '/notifications') {
+        router.push('/notifications');
+      }
+    };
+    const initial = Notifications.getLastNotificationResponse();
+    if (initial?.notification) openNotificationCenter(initial.notification);
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      openNotificationCenter(response.notification);
+    });
+    return () => subscription.remove();
   }, []);
 
   return (

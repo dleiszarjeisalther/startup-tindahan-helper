@@ -38,6 +38,7 @@ export function TrialExpiredModal({
     maxTrialSales,
     gcashNumber,
     gcashName,
+    gcashQrUrl,
     proPrice,
     verifyPin,
     submitPaymentProof,
@@ -50,6 +51,7 @@ export function TrialExpiredModal({
   const [submittingRef, setSubmittingRef] = useState(false);
   const [checkingApproval, setCheckingApproval] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [qrExpanded, setQrExpanded] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -161,6 +163,10 @@ export function TrialExpiredModal({
       animationType="fade"
       transparent={false}
       onRequestClose={() => {
+        if (qrExpanded) {
+          setQrExpanded(false);
+          return;
+        }
         if (!isStrictLock && onClose) onClose();
       }}
     >
@@ -268,11 +274,23 @@ export function TrialExpiredModal({
             </View>
 
             <View style={styles.qrRow}>
-              <Image
-                source={{ uri: 'https://tindahanhelper.wuaze.com/assets/images/gcash_qr.png' }}
-                style={styles.qrImage}
-                resizeMode="contain"
-              />
+              <TouchableOpacity
+                style={styles.qrThumbnailButton}
+                onPress={() => {
+                  setQrExpanded(true);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                }}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                accessibilityLabel="Palakihin ang GCash QR Code"
+              >
+                <Image
+                  source={{ uri: gcashQrUrl }}
+                  style={styles.qrImage}
+                  resizeMode="contain"
+                />
+                <Text style={styles.qrExpandLabel}>Palakihin</Text>
+              </TouchableOpacity>
               <View style={styles.gcashDetails}>
                 <Text style={styles.gcashInfoLabel}>GCash Number:</Text>
                 <View style={styles.gcashNumRow}>
@@ -409,6 +427,29 @@ export function TrialExpiredModal({
             </Text>
           </View>
         </ScrollView>
+
+        {qrExpanded ? (
+          <View style={styles.qrPreviewOverlay} accessibilityViewIsModal>
+            <TouchableOpacity
+              style={styles.qrPreviewClose}
+              onPress={() => setQrExpanded(false)}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel="Isara ang malaking GCash QR Code"
+            >
+              <Ionicons name="close" size={30} color="#111827" />
+            </TouchableOpacity>
+            <Text style={styles.qrPreviewTitle}>GCash QR Code</Text>
+            <View style={styles.qrPreviewFrame}>
+              <Image
+                source={{ uri: gcashQrUrl }}
+                style={styles.qrPreviewImage}
+                resizeMode="contain"
+              />
+            </View>
+            <Text style={styles.qrPreviewHint}>I-scan gamit ang GCash app</Text>
+          </View>
+        ) : null}
       </View>
     </Modal>
   );
@@ -602,11 +643,71 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  qrThumbnailButton: {
+    alignItems: 'center',
+    minWidth: 110,
+    minHeight: 136,
+  },
   qrImage: {
     width: 110,
     height: 110,
     borderRadius: 12,
     backgroundColor: '#F3F4F6',
+  },
+  qrExpandLabel: {
+    marginTop: 6,
+    color: '#047857',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  qrPreviewOverlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 100,
+    elevation: 20,
+    backgroundColor: 'rgba(17, 24, 39, 0.96)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  qrPreviewClose: {
+    position: 'absolute',
+    top: 48,
+    right: 20,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  qrPreviewTitle: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: '800',
+    marginBottom: 20,
+  },
+  qrPreviewFrame: {
+    width: '100%',
+    maxWidth: 360,
+    aspectRatio: 1,
+    padding: 16,
+    borderRadius: 24,
+    backgroundColor: '#FFFFFF',
+  },
+  qrPreviewImage: {
+    width: '100%',
+    height: '100%',
+  },
+  qrPreviewHint: {
+    color: '#D1FAE5',
+    fontSize: 16,
+    fontWeight: '700',
+    marginTop: 18,
+    textAlign: 'center',
   },
   gcashDetails: {
     flex: 1,

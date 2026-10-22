@@ -15,6 +15,11 @@ import {
   PinVerificationOutcome,
 } from '../domain/services/PinSecurityEngine';
 import { databaseBackupService } from '../infrastructure/services/DatabaseBackupService';
+import { StoreAlert, StoreAlertPolicy } from '../domain/services/StoreAlertPolicy';
+import {
+  ILocalNotificationScheduler,
+  LocalNotificationRequest,
+} from './ILocalNotificationScheduler';
 
 export interface CartItemDTO {
   cartKey?: string;
@@ -153,6 +158,8 @@ export interface UtangCustomerRecord {
   balancePhp: number;
   creditLimitPhp: number;
   lastUpdated: string;
+  dueDate?: string;
+  debtStartedAt?: string;
 }
 
 export interface StoreSettingsState {
@@ -161,6 +168,8 @@ export interface StoreSettingsState {
   address: string;
   language: 'English' | 'Taglish' | 'Filipino';
   notifications: boolean;
+  phoneNotifications: boolean;
+  notificationTimes: string[];
   schoolOpeningMonth: number;
   wholesaleBudgetPhp: number;
   gcashNumber?: string;
@@ -205,6 +214,14 @@ export interface StoreSnapshot {
   categories: string[];
   cashDrawerAdjustments: CashDrawerAdjustmentRecord[];
   stockMovements: StockMovementRecord[];
+  activeAlerts: StoreAlert[];
+  unreadAlertCount: number;
+  notificationPreferences: {
+    inAppEnabled: boolean;
+    phoneEnabled: boolean;
+    dailyTimes: string[];
+  };
+  notificationScheduleError: string | null;
 }
 
 type Listener = () => void;
@@ -216,6 +233,10 @@ export class TindahanStoreService {
   private cartRevision = 0;
   private snapshot!: StoreSnapshot;
   private isCompletingSale = false;
+  private activeAlerts: StoreAlert[] = [];
+  private readAlertIds = new Set<string>();
+  private notificationScheduleError: string | null = null;
+  private notificationSyncSignature = '';
 
   private cartMap = new Map<string, number>();
   private parkedCartMap: Map<string, number> | null = null;
@@ -234,6 +255,8 @@ export class TindahanStoreService {
     address: 'Enter Store Address',
     language: 'English',
     notifications: true,
+    phoneNotifications: false,
+    notificationTimes: ['07:00'],
     schoolOpeningMonth: 7,
     wholesaleBudgetPhp: 3000,
   };
@@ -253,12 +276,23 @@ export class TindahanStoreService {
 
   constructor(
     private readonly productRepo: IProductRepository,
-    public readonly onboardingService: ProductOnboardingService
+    public readonly onboardingService: ProductOnboardingService,
+    private readonly notificationScheduler?: ILocalNotificationScheduler
   ) {
     this.operatingMode = appKeyValueStorage.getOperatingMode();
     this.isBrownoutSaverActive = appKeyValueStorage.isBrownoutSaverActive();
+    try {
+      const storedReadIds = JSON.parse(appKeyValueStorage.getString('notification_read_ids', '[]') ?? '[]');
+      if (Array.isArray(storedReadIds)) {
+        this.readAlertIds = new Set(storedReadIds.filter((id) => typeof id === 'string'));
+      }
+    } catch {
+      this.readAlertIds = new Set();
+    }
     this.hydrateAllFromSqlite(true);
+    this.refreshAlertState();
     this.snapshot = this.createSnapshot();
+    void this.syncNotificationSchedule(true);
     this.trace('initialized');
   }
 
@@ -384,6 +418,8 @@ export class TindahanStoreService {
         balance_php: number;
         credit_limit_php: number;
         last_updated: string;
+        due_date: string | null;
+        debt_started_at: string | null;
       }>('SELECT * FROM utang_customers ORDER BY rowid DESC');
 
       this.utangCustomers = custRows.map((c) => ({
@@ -392,6 +428,8 @@ export class TindahanStoreService {
         balancePhp: c.balance_php,
         creditLimitPhp: c.credit_limit_php,
         lastUpdated: c.last_updated,
+        dueDate: c.due_date ?? undefined,
+        debtStartedAt: c.debt_started_at ?? new Date(0).toISOString(),
       }));
 
       // 4. Hydrate Store Settings & Categories (Synchronous Key-Value Storage)
@@ -421,6 +459,8 @@ export class TindahanStoreService {
           address: mmkvSettings.address || settingsRow.address,
           language: resolvedLanguage,
           notifications: mmkvSettings.notifications,
+          phoneNotifications: mmkvSettings.phoneNotifications,
+          notificationTimes: mmkvSettings.notificationTimes,
           schoolOpeningMonth: mmkvSettings.schoolOpeningMonth,
           wholesaleBudgetPhp: mmkvSettings.wholesaleBudgetPhp,
           gcashNumber: mmkvSettings.gcashNumber,
@@ -700,9 +740,18 @@ export class TindahanStoreService {
     const db = SqliteDatabase.getInstance().rawDb;
     if (!db) return;
     db.runSync(
-      `INSERT OR REPLACE INTO utang_customers (id, name, balance_php, credit_limit_php, last_updated)
-       VALUES (?, ?, ?, ?, ?)`,
-      [c.id, c.name, c.balancePhp, c.creditLimitPhp, c.lastUpdated]
+      `INSERT OR REPLACE INTO utang_customers
+       (id, name, balance_php, credit_limit_php, last_updated, due_date, debt_started_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        c.id,
+        c.name,
+        c.balancePhp,
+        c.creditLimitPhp,
+        c.lastUpdated,
+        c.dueDate ?? null,
+        c.debtStartedAt ?? new Date().toISOString(),
+      ]
     );
   }
 
@@ -789,7 +838,120 @@ export class TindahanStoreService {
       stockMovements: Object.freeze(
         this.stockMovements.map((mov) => ({ ...mov }))
       ) as StockMovementRecord[],
+      activeAlerts: Object.freeze(this.activeAlerts.map((alert) => ({ ...alert }))) as StoreAlert[],
+      unreadAlertCount: this.settings.notifications
+        ? this.activeAlerts.filter((alert) => !alert.isRead).length
+        : 0,
+      notificationPreferences: Object.freeze({
+        inAppEnabled: this.settings.notifications,
+        phoneEnabled: this.settings.phoneNotifications,
+        dailyTimes: Object.freeze([...this.settings.notificationTimes]) as string[],
+      }),
+      notificationScheduleError: this.notificationScheduleError,
     });
+  }
+
+  private evaluateAlerts(now = new Date()): StoreAlert[] {
+    return StoreAlertPolicy.evaluate({
+      now,
+      readAlertIds: this.readAlertIds,
+      products: this.readProducts().map((product) => ({
+        id: product.id,
+        name: product.name,
+        stockCount: product.stockCount,
+        lowStockThreshold: product.ordinaryLowStockThreshold,
+      })),
+      utangCustomers: this.utangCustomers.map((customer) => ({
+        id: customer.id,
+        name: customer.name,
+        balanceCentavos: Money.fromPhp(customer.balancePhp).centavos,
+        dueDate: customer.dueDate,
+        debtStartedAt: customer.debtStartedAt ?? new Date(0).toISOString(),
+      })),
+    });
+  }
+
+  private refreshAlertState(): void {
+    const nextAlerts = this.evaluateAlerts();
+    const activeIds = new Set(nextAlerts.map((alert) => alert.id));
+    const prunedReadIds = new Set([...this.readAlertIds].filter((id) => activeIds.has(id)));
+    if (prunedReadIds.size !== this.readAlertIds.size) {
+      this.readAlertIds = prunedReadIds;
+      appKeyValueStorage.setString('notification_read_ids', JSON.stringify([...prunedReadIds]));
+    }
+    this.activeAlerts = nextAlerts.map((alert) => ({
+      ...alert,
+      isRead: prunedReadIds.has(alert.id),
+    }));
+  }
+
+  private buildNotificationRequests(): LocalNotificationRequest[] {
+    const requests: LocalNotificationRequest[] = [];
+    const now = new Date();
+    const times = this.settings.notificationTimes.slice(0, 3);
+    for (let dayOffset = 0; dayOffset < 14; dayOffset++) {
+      for (const time of times) {
+        const [hours, minutes] = time.split(':').map(Number);
+        const fireAt = new Date(now);
+        fireAt.setDate(now.getDate() + dayOffset);
+        fireAt.setHours(hours, minutes, 0, 0);
+        if (fireAt.getTime() <= now.getTime()) continue;
+        const alerts = this.evaluateAlerts(fireAt);
+        if (alerts.length === 0) continue;
+        const stockCount = alerts.filter((alert) => alert.kind === 'LOW_STOCK').length;
+        const overdue = alerts.filter((alert) => alert.kind === 'OVERDUE_UTANG');
+        const total = overdue.reduce(
+          (sum, alert) => sum.add(Money.fromCentavos(alert.balanceCentavos ?? 0)),
+          Money.zero()
+        );
+        const parts: string[] = [];
+        if (stockCount > 0) parts.push(`${stockCount} produktong kailangang i-restock`);
+        if (overdue.length > 0) {
+          parts.push(`${overdue.length} overdue na utang (${total.format()})`);
+        }
+        requests.push({
+          id: `store-summary-${fireAt.getTime()}`,
+          fireAt,
+          title: 'Abiso ng Tindahan',
+          body: `May ${parts.join(' at ')}.`,
+          url: '/notifications',
+        });
+      }
+    }
+    return requests;
+  }
+
+  private publishSchedulerStatus(): void {
+    this.version++;
+    this.snapshot = this.createSnapshot();
+    this.listeners.forEach((listener) => listener());
+  }
+
+  private async syncNotificationSchedule(force = false): Promise<void> {
+    if (!this.notificationScheduler) return;
+    const signature = JSON.stringify({
+      enabled: this.settings.phoneNotifications,
+      times: this.settings.notificationTimes,
+      products: this.readProducts().map((p) => [p.id, p.stockCount, p.ordinaryLowStockThreshold]),
+      debts: this.utangCustomers.map((c) => [c.id, c.balancePhp, c.dueDate, c.debtStartedAt]),
+    });
+    if (!force && signature === this.notificationSyncSignature) return;
+    this.notificationSyncSignature = signature;
+    try {
+      if (this.settings.phoneNotifications) {
+        await this.notificationScheduler.replaceSchedule(this.buildNotificationRequests());
+      } else {
+        await this.notificationScheduler.clearSchedule();
+      }
+      if (this.notificationScheduleError) {
+        this.notificationScheduleError = null;
+        this.publishSchedulerStatus();
+      }
+    } catch (error) {
+      this.notificationScheduleError =
+        error instanceof Error ? error.message : 'Hindi ma-schedule ang phone notifications.';
+      this.publishSchedulerStatus();
+    }
   }
 
   public recordStockMovement(params: {
@@ -916,6 +1078,7 @@ export class TindahanStoreService {
 
   private notify(): void {
     this.version++;
+    this.refreshAlertState();
     this.snapshot = this.createSnapshot();
     this.trace('published', { subscribers: this.listeners.size });
     this.listeners.forEach((fn) => {
@@ -925,6 +1088,7 @@ export class TindahanStoreService {
         console.warn('Store subscriber callback warning:', err);
       }
     });
+    void this.syncNotificationSchedule();
   }
 
   /**
@@ -1755,19 +1919,34 @@ export class TindahanStoreService {
               (customer) => customer.name.toLowerCase() === cleanName.toLowerCase()
             );
             const customer: UtangCustomerRecord = existing
-              ? { ...existing, balancePhp: existing.balancePhp + utangAmountToRecord, lastUpdated: 'Just now' }
+              ? {
+                  ...existing,
+                  balancePhp: existing.balancePhp + utangAmountToRecord,
+                  lastUpdated: 'Just now',
+                  debtStartedAt:
+                    existing.balancePhp <= 0 ? now.toISOString() : existing.debtStartedAt,
+                }
               : {
                   id: `cust_${txTime}`,
                   name: cleanName,
                   balancePhp: utangAmountToRecord,
                   creditLimitPhp: 500,
                   lastUpdated: 'Just now',
+                  debtStartedAt: now.toISOString(),
                 };
             db.runSync(
               `INSERT OR REPLACE INTO utang_customers
-                (id, name, balance_php, credit_limit_php, last_updated)
-               VALUES (?, ?, ?, ?, ?)`,
-              [customer.id, customer.name, customer.balancePhp, customer.creditLimitPhp, customer.lastUpdated]
+                (id, name, balance_php, credit_limit_php, last_updated, due_date, debt_started_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?)`,
+              [
+                customer.id,
+                customer.name,
+                customer.balancePhp,
+                customer.creditLimitPhp,
+                customer.lastUpdated,
+                customer.dueDate ?? null,
+                customer.debtStartedAt ?? now.toISOString(),
+              ]
             );
           }
 
@@ -1805,6 +1984,7 @@ export class TindahanStoreService {
             (customer) => customer.name.toLowerCase() === cleanName.toLowerCase()
           );
           if (existing) {
+            if (existing.balancePhp <= 0) existing.debtStartedAt = now.toISOString();
             existing.balancePhp += utangAmountToRecord;
             existing.lastUpdated = 'Just now';
           } else {
@@ -1814,6 +1994,7 @@ export class TindahanStoreService {
               balancePhp: utangAmountToRecord,
               creditLimitPhp: 500,
               lastUpdated: 'Just now',
+              debtStartedAt: now.toISOString(),
             });
           }
         }
@@ -2589,7 +2770,8 @@ export class TindahanStoreService {
   public addUtangCustomer(
     name: string,
     creditLimitPhp = 500,
-    initialBalancePhp = 0
+    initialBalancePhp = 0,
+    dueDate?: string
   ): void {
     const clean = name.trim();
     if (!clean) return;
@@ -2597,8 +2779,12 @@ export class TindahanStoreService {
       (c) => c.name.toLowerCase() === clean.toLowerCase()
     );
     if (existing) {
+      if (existing.balancePhp <= 0 && initialBalancePhp > 0) {
+        existing.debtStartedAt = new Date().toISOString();
+      }
       existing.creditLimitPhp = creditLimitPhp;
       existing.balancePhp += Math.max(0, initialBalancePhp);
+      existing.dueDate = dueDate || existing.dueDate;
       existing.lastUpdated = 'Updated just now';
       this.persistCustomerToSqlite(existing);
       this.notify();
@@ -2611,6 +2797,8 @@ export class TindahanStoreService {
       balancePhp: Math.max(0, initialBalancePhp),
       creditLimitPhp: Math.max(50, creditLimitPhp),
       lastUpdated: 'Added just now',
+      dueDate: dueDate || undefined,
+      debtStartedAt: new Date().toISOString(),
     };
     this.utangCustomers.unshift(newCust);
     this.persistCustomerToSqlite(newCust);
@@ -2619,7 +2807,7 @@ export class TindahanStoreService {
 
   public updateUtangCustomer(
     customerId: string,
-    updates: { name?: string; creditLimitPhp?: number }
+    updates: { name?: string; creditLimitPhp?: number; dueDate?: string | null }
   ): void {
     const cust = this.utangCustomers.find((c) => c.id === customerId);
     if (!cust) return;
@@ -2628,6 +2816,9 @@ export class TindahanStoreService {
     }
     if (updates.creditLimitPhp !== undefined && updates.creditLimitPhp >= 0) {
       cust.creditLimitPhp = updates.creditLimitPhp;
+    }
+    if (updates.dueDate !== undefined) {
+      cust.dueDate = updates.dueDate || undefined;
     }
     cust.lastUpdated = 'Updated just now';
     this.persistCustomerToSqlite(cust);
@@ -2641,6 +2832,7 @@ export class TindahanStoreService {
   ): void {
     const cust = this.utangCustomers.find((c) => c.id === customerId);
     if (!cust || amountPhp <= 0) return;
+    if (cust.balancePhp <= 0) cust.debtStartedAt = new Date().toISOString();
     cust.balancePhp += amountPhp;
     cust.lastUpdated = 'Bagong Utang just now';
     this.persistCustomerToSqlite(cust);
@@ -2716,6 +2908,7 @@ export class TindahanStoreService {
     const actualPayment = Math.min(amountPhp, cust.balancePhp > 0 ? cust.balancePhp : amountPhp);
     cust.balancePhp = Math.max(0, cust.balancePhp - actualPayment);
     cust.lastUpdated = 'Bayad just now';
+    if (cust.balancePhp <= 0) cust.dueDate = undefined;
 
     const now = new Date();
     const curYear = now.getFullYear();
@@ -2756,9 +2949,18 @@ export class TindahanStoreService {
     if (db) {
       db.withTransactionSync(() => {
         db.runSync(
-          `INSERT OR REPLACE INTO utang_customers (id, name, balance_php, credit_limit_php, last_updated)
-           VALUES (?, ?, ?, ?, ?)`,
-          [cust.id, cust.name, cust.balancePhp, cust.creditLimitPhp, cust.lastUpdated]
+          `INSERT OR REPLACE INTO utang_customers
+           (id, name, balance_php, credit_limit_php, last_updated, due_date, debt_started_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [
+            cust.id,
+            cust.name,
+            cust.balancePhp,
+            cust.creditLimitPhp,
+            cust.lastUpdated,
+            cust.dueDate ?? null,
+            cust.debtStartedAt ?? now.toISOString(),
+          ]
         );
         this.persistTransactionToSqlite(payTx, txTime);
       });
@@ -3007,10 +3209,54 @@ export class TindahanStoreService {
   }
 
   public updateSettings(partial: Partial<StoreSettingsState>): void {
-    this.settings = { ...this.settings, ...partial, ownerTitle: 'Owner' };
+    const notificationTimes = partial.notificationTimes
+      ? [...new Set(partial.notificationTimes)]
+          .filter((time) => /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time))
+          .sort()
+          .slice(0, 3)
+      : this.settings.notificationTimes;
+    this.settings = {
+      ...this.settings,
+      ...partial,
+      notificationTimes: notificationTimes.length > 0 ? notificationTimes : ['07:00'],
+      ownerTitle: 'Owner',
+    };
     appKeyValueStorage.saveSettings(this.settings);
     this.persistSettingsToSqlite();
     this.notify();
+  }
+
+  public async setPhoneNotificationsEnabled(enabled: boolean): Promise<boolean> {
+    if (!this.notificationScheduler) return false;
+    if (enabled) {
+      const granted = await this.notificationScheduler.requestPermission();
+      if (!granted) {
+        this.notificationScheduleError =
+          'Hindi pinayagan ang phone notifications. Buksan ang permission sa phone settings.';
+        this.publishSchedulerStatus();
+        return false;
+      }
+    }
+    this.updateSettings({ phoneNotifications: enabled });
+    await this.syncNotificationSchedule();
+    return true;
+  }
+
+  public markAlertRead(alertId: string): void {
+    if (!this.activeAlerts.some((alert) => alert.id === alertId)) return;
+    this.readAlertIds.add(alertId);
+    appKeyValueStorage.setString('notification_read_ids', JSON.stringify([...this.readAlertIds]));
+    this.notify();
+  }
+
+  public markAllAlertsRead(): void {
+    this.activeAlerts.forEach((alert) => this.readAlertIds.add(alert.id));
+    appKeyValueStorage.setString('notification_read_ids', JSON.stringify([...this.readAlertIds]));
+    this.notify();
+  }
+
+  public async retryNotificationSchedule(): Promise<void> {
+    await this.syncNotificationSchedule(true);
   }
 
   public notifyCatalogChanged(): void {

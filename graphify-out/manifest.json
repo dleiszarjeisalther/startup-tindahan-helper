@@ -42,9 +42,9 @@
     "semantic_hash": "6b9302c1f72c315e90233c7539c48c9f"
   },
   "app.json": {
-    "mtime": 1792672666.6419015,
-    "seen": 1792677665.041755,
-    "ast_hash": "18ab3c9c690f5de05e1f9aff43794f94",
+    "mtime": 1792681190.4917428,
+    "seen": 1792705325.8383183,
+    "ast_hash": "382dff743adcc0108757bf12f994d7ba",
     "semantic_hash": ""
   },
   "assets/expo.icon/icon.json": {
@@ -60,9 +60,9 @@
     "semantic_hash": "b713dd66aa3ad59ed5098d7b9f8dc202"
   },
   "package.json": {
-    "mtime": 1792573645.9488156,
-    "seen": 1792677665.0418463,
-    "ast_hash": "280d2ba55fb8dbc7a987c91edde5f010",
+    "mtime": 1792681109.5020125,
+    "seen": 1792705325.838397,
+    "ast_hash": "19c4431616e9a95b63fcba6f9feea977",
     "semantic_hash": ""
   },
   "scripts/reset-project.js": {
@@ -72,9 +72,9 @@
     "semantic_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275"
   },
   "src/app/_layout.tsx": {
-    "mtime": 1792672666.653639,
-    "seen": 1792677665.0419276,
-    "ast_hash": "70f6b27b6b5cf071dd76b788ff16f777",
+    "mtime": 1792681244.3027346,
+    "seen": 1792705325.838465,
+    "ast_hash": "c34be103e29533d2a2299f9b71d3d21b",
     "semantic_hash": ""
   },
   "src/app/checkout.tsx": {
@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1792678031.4502845,
-    "seen": 1792678332.013692,
-    "ast_hash": "71f097cd7598cdf7bd00580f944f2930",
+    "mtime": 1792681275.2336793,
+    "seen": 1792705325.8384929,
+    "ast_hash": "da53b30f8aba40f9811c1e93e36093e3",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
-    "mtime": 1792658734.19917,
-    "seen": 1792677665.0420048,
-    "ast_hash": "4d98d4f6b7347a8f93743691ee234c3c",
+    "mtime": 1792681295.0154407,
+    "seen": 1792705325.8385363,
+    "ast_hash": "4239ab696e09e1120f8b763b54ef398f",
     "semantic_hash": ""
   },
   "src/application/ProductOnboardingService.ts": {
@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "src/application/TindahanStoreService.ts": {
-    "mtime": 1792591299.0403743,
-    "seen": 1792677665.0420275,
-    "ast_hash": "9e9f03a527603480a9c7a05902de0bc2",
+    "mtime": 1792705200.8119936,
+    "seen": 1792705325.8385637,
+    "ast_hash": "06d8c8a262b4a474f6dfd3ff92620e50",
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
@@ -252,15 +252,15 @@
     "semantic_hash": "e058af4f5801bcaa97dad62f12085a27"
   },
   "src/infrastructure/container.ts": {
-    "mtime": 1791880843.3069837,
-    "seen": 1791881424.753699,
-    "ast_hash": "7e9628b847b0d517d948a6d238d419ac",
+    "mtime": 1792681240.6228857,
+    "seen": 1792705325.8387349,
+    "ast_hash": "844b21602746f93ea3cc0f4e41307e30",
     "semantic_hash": ""
   },
   "src/infrastructure/database/SqliteDatabase.ts": {
-    "mtime": 1792573772.200671,
-    "seen": 1792677665.0421994,
-    "ast_hash": "535b834adb6f222a8b73b5d318a0764b",
+    "mtime": 1792681190.4761424,
+    "seen": 1792705325.838741,
+    "ast_hash": "384aa51932b5663deef227254ef80c01",
     "semantic_hash": ""
   },
   "src/infrastructure/repositories/InMemoryProductRepository.ts": {
@@ -288,9 +288,9 @@
     "semantic_hash": "370d505d4eca4ae08bde70346f96bad6"
   },
   "src/presentation/hooks/useTindahanStore.ts": {
-    "mtime": 1792395143.5207844,
-    "seen": 1792677665.042387,
-    "ast_hash": "7ef9e8a878b6b6567e8d862f2e48ea05",
+    "mtime": 1792681305.1967866,
+    "seen": 1792705325.838946,
+    "ast_hash": "e43af70daccfcdc8fb4fd173ce406104",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -480,9 +480,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/storage/KeyValueStorage.ts": {
-    "mtime": 1792591248.5470073,
-    "seen": 1792677665.0422535,
-    "ast_hash": "2af83ae9ccb4c1294ec36024c7f03d1f",
+    "mtime": 1792681190.4675288,
+    "seen": 1792705325.8388047,
+    "ast_hash": "55b673f3e3a9a584b2725d9da8debd83",
     "semantic_hash": ""
   },
   "src/presentation/providers/TindahanStoreProvider.tsx": {
@@ -492,9 +492,9 @@
     "semantic_hash": ""
   },
   "src/app/utang.tsx": {
-    "mtime": 1792658734.5092373,
-    "seen": 1792677665.0420132,
-    "ast_hash": "dfefb89e861a24ff1fd9b81093a8c7b0",
+    "mtime": 1792681302.7790601,
+    "seen": 1792705325.8385427,
+    "ast_hash": "c4f71b30caaa5dd3c8acf543623acafc",
     "semantic_hash": ""
   },
   "src/presentation/components/FloatingToast.tsx": {
@@ -1182,9 +1182,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/LicensingService.ts": {
-    "mtime": 1792582970.7105074,
-    "seen": 1792677665.0422323,
-    "ast_hash": "1ef7a730cc5884931ea8091453a98999",
+    "mtime": 1792679563.2670279,
+    "seen": 1792705325.8387842,
+    "ast_hash": "9241efe53ff4ad31002aecf1705dac66",
     "semantic_hash": ""
   },
   "src/presentation/components/GcashQrModal.tsx": {
@@ -1224,9 +1224,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/TrialExpiredModal.tsx": {
-    "mtime": 1792581633.7350402,
-    "seen": 1792677665.0423555,
-    "ast_hash": "7715426ad7c119315ac6b634772c0caa",
+    "mtime": 1792679979.5809658,
+    "seen": 1792705325.8389091,
+    "ast_hash": "053b8c611741408af244b49123cbb546",
     "semantic_hash": ""
   },
   "src/presentation/components/UnitSelectionModal.tsx": {
@@ -1236,9 +1236,9 @@
     "semantic_hash": ""
   },
   "src/presentation/hooks/useLicensing.ts": {
-    "mtime": 1792580931.760555,
-    "seen": 1792677665.0423794,
-    "ast_hash": "15d3a55b74c0e8fed5aa9230dfa12022",
+    "mtime": 1792679008.5375962,
+    "seen": 1792679110.350394,
+    "ast_hash": "763053d17f53accfe20080f9a069e642",
     "semantic_hash": ""
   },
   "supabase/migrations/20261021000000_trial_licensing_schema.sql": {
@@ -1275,6 +1275,30 @@
     "mtime": 1792599722.4351811,
     "seen": 1792677665.0433867,
     "ast_hash": "12e4cb7860307e51aa3bc5d681185665",
+    "semantic_hash": ""
+  },
+  "src/app/notifications.tsx": {
+    "mtime": 1792681260.757636,
+    "seen": 1792705325.838514,
+    "ast_hash": "0b297b5d7dd5ff059c08dc253ec9d635",
+    "semantic_hash": ""
+  },
+  "src/application/ILocalNotificationScheduler.ts": {
+    "mtime": 1792681185.3435638,
+    "seen": 1792705325.8385496,
+    "ast_hash": "fed9a41fdf7f5358b38d614e072efca4",
+    "semantic_hash": ""
+  },
+  "src/domain/services/StoreAlertPolicy.ts": {
+    "mtime": 1792681185.3295183,
+    "seen": 1792705325.838683,
+    "ast_hash": "f6a797815df9a64c93e6e29307aa1c35",
+    "semantic_hash": ""
+  },
+  "src/infrastructure/services/ExpoLocalNotificationScheduler.ts": {
+    "mtime": 1792681185.3465617,
+    "seen": 1792705325.8387773,
+    "ast_hash": "a631a48fdbcbb31b41e0d9ebe80c6925",
     "semantic_hash": ""
   }
 }

@@ -30,6 +30,7 @@ export interface LicensingState {
   timeRemainingLabel: string;
   gcashNumber: string;
   gcashName: string;
+  gcashQrUrl: string;
   proPrice: number;
 }
 
@@ -53,6 +54,15 @@ export interface VerificationResult {
 
 const SUPABASE_URL = 'https://eitqtggytkosvdgfeqap.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_71hwmfru1nxpm2OMNU3W_w_EPV2HhOz';
+const DEFAULT_GCASH_QR_URL = 'https://tindahanhelper.wuaze.com/assets/images/gcash_qr.png';
+
+function resolveGcashQrUrl(value: unknown, updatedAt?: unknown): string {
+  const url = typeof value === 'string' && value.trim() ? value.trim() : DEFAULT_GCASH_QR_URL;
+  if (!updatedAt || url.startsWith('data:') || url.startsWith('file:')) return url;
+
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}v=${encodeURIComponent(String(updatedAt))}`;
+}
 const MASTER_PIN = '985421';
 export const MAX_TRIAL_SALES = 200;
 
@@ -422,6 +432,7 @@ export class LicensingService {
 
     const gcashNumber = appKeyValueStorage.getString('cfg_gcash_number', '0991 658 9854') || '0991 658 9854';
     const gcashName = appKeyValueStorage.getString('cfg_gcash_name', 'Tindahan Helper Support') || 'Tindahan Helper Support';
+    const gcashQrUrl = appKeyValueStorage.getString('cfg_gcash_qr_url', DEFAULT_GCASH_QR_URL) || DEFAULT_GCASH_QR_URL;
     const proPrice = appKeyValueStorage.getNumber('cfg_pro_price', 299.00) || 299.00;
 
     this.state = Object.freeze({
@@ -451,6 +462,7 @@ export class LicensingService {
       timeRemainingLabel,
       gcashNumber,
       gcashName,
+      gcashQrUrl,
       proPrice,
     });
   }
@@ -533,6 +545,7 @@ export class LicensingService {
       let freeDays = 7;
       let gcashNum = '0991 658 9854';
       let gcashNm = 'Tindahan Helper Support';
+      let gcashQrUrl = DEFAULT_GCASH_QR_URL;
       let proPrc = 299.00;
 
       try {
@@ -548,6 +561,7 @@ export class LicensingService {
             freeDays = Math.max(1, Number(row.free_trial_days || 7));
             gcashNum = row.gcash_number || gcashNum;
             gcashNm = row.gcash_name || gcashNm;
+            gcashQrUrl = resolveGcashQrUrl(row.gcash_qr_url, row.updated_at);
             proPrc = Number(row.pro_price || proPrc);
           }
         }
@@ -557,6 +571,7 @@ export class LicensingService {
 
       appKeyValueStorage.setString('cfg_gcash_number', gcashNum);
       appKeyValueStorage.setString('cfg_gcash_name', gcashNm);
+      appKeyValueStorage.setString('cfg_gcash_qr_url', gcashQrUrl);
       appKeyValueStorage.setNumber('cfg_pro_price', proPrc);
       appKeyValueStorage.setNumber('cfg_trial_duration_value', durationValue);
       appKeyValueStorage.setString('cfg_trial_duration_unit', durationUnit);
@@ -948,6 +963,7 @@ export class LicensingService {
     if (!this.state.isRegistered) return false;
 
     const cleanDevId = this.state.deviceId.trim().toUpperCase();
+    let configChanged = false;
 
     try {
       const controller = new AbortController();
@@ -962,11 +978,58 @@ export class LicensingService {
           const cfgData = await cfgRes.json();
           if (Array.isArray(cfgData) && cfgData.length > 0) {
             const row = cfgData[0];
-            if (row.gcash_number) appKeyValueStorage.setString('cfg_gcash_number', row.gcash_number);
-            if (row.gcash_name) appKeyValueStorage.setString('cfg_gcash_name', row.gcash_name);
-            if (row.pro_price) appKeyValueStorage.setNumber('cfg_pro_price', Number(row.pro_price));
-            if (row.trial_duration_value) appKeyValueStorage.setNumber('cfg_trial_duration_value', Number(row.trial_duration_value));
-            if (row.trial_duration_unit) appKeyValueStorage.setString('cfg_trial_duration_unit', row.trial_duration_unit);
+            const gcashNumber =
+              typeof row.gcash_number === 'string' && row.gcash_number.trim()
+                ? row.gcash_number.trim()
+                : this.state.gcashNumber;
+            const gcashName =
+              typeof row.gcash_name === 'string' && row.gcash_name.trim()
+                ? row.gcash_name.trim()
+                : this.state.gcashName;
+            const gcashQrUrl = row.gcash_qr_url
+              ? resolveGcashQrUrl(row.gcash_qr_url, row.updated_at)
+              : this.state.gcashQrUrl;
+            const parsedProPrice = Number(row.pro_price);
+            const proPrice =
+              Number.isFinite(parsedProPrice) && parsedProPrice > 0
+                ? parsedProPrice
+                : this.state.proPrice;
+            const parsedTrialDuration = Number(row.trial_duration_value);
+            const trialDurationValue =
+              Number.isFinite(parsedTrialDuration) && parsedTrialDuration > 0
+                ? parsedTrialDuration
+                : this.state.trialDurationValue;
+            const trialDurationUnit =
+              typeof row.trial_duration_unit === 'string' && row.trial_duration_unit.trim()
+                ? row.trial_duration_unit.trim()
+                : this.state.trialDurationUnit;
+
+            configChanged =
+              gcashNumber !== this.state.gcashNumber ||
+              gcashName !== this.state.gcashName ||
+              gcashQrUrl !== this.state.gcashQrUrl ||
+              proPrice !== this.state.proPrice ||
+              trialDurationValue !== this.state.trialDurationValue ||
+              trialDurationUnit !== this.state.trialDurationUnit;
+
+            appKeyValueStorage.setString('cfg_gcash_number', gcashNumber);
+            appKeyValueStorage.setString('cfg_gcash_name', gcashName);
+            appKeyValueStorage.setString('cfg_gcash_qr_url', gcashQrUrl);
+            appKeyValueStorage.setNumber('cfg_pro_price', proPrice);
+            appKeyValueStorage.setNumber('cfg_trial_duration_value', trialDurationValue);
+            appKeyValueStorage.setString('cfg_trial_duration_unit', trialDurationUnit);
+
+            if (configChanged) {
+              this.state = Object.freeze({
+                ...this.state,
+                gcashNumber,
+                gcashName,
+                gcashQrUrl,
+                proPrice,
+                trialDurationValue,
+                trialDurationUnit,
+              });
+            }
           }
         }
       } catch {
@@ -1048,6 +1111,11 @@ export class LicensingService {
       }
     } catch {
       // Offline fallback
+    }
+
+    if (configChanged) {
+      this.notify();
+      return true;
     }
 
     return false;

@@ -50,6 +50,8 @@ function FocusedPosScanProductScreen() {
     lockStore,
     unlockStore,
     updateProductDetails,
+    activeAlerts,
+    unreadAlertCount,
   } = useTindahanStore();
   const t = getTranslations(settings?.language);
   const { isFeatureLocked, isLicensed, isRegistered } = useLicensing();
@@ -329,6 +331,33 @@ function FocusedPosScanProductScreen() {
 
       {/* BOTTOM HALF: White Rounded Sheet with Search & SQLite Product Grid */}
       <View style={styles.bottomSheet}>
+        {settings.notifications && activeAlerts.length > 0 ? (
+          <Pressable
+            style={styles.alertSummaryCard}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              router.push('/notifications');
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={`${unreadAlertCount} bagong abiso ng tindahan`}
+          >
+            <View style={styles.alertSummaryIcon}>
+              <Ionicons name="notifications" size={20} color="#B45309" />
+              {unreadAlertCount > 0 ? (
+                <View style={styles.alertBadge}>
+                  <Text style={styles.alertBadgeText}>{Math.min(99, unreadAlertCount)}</Text>
+                </View>
+              ) : null}
+            </View>
+            <View style={styles.alertSummaryCopy}>
+              <Text style={styles.alertSummaryTitle}>Kailangang Asikasuhin</Text>
+              <Text style={styles.alertSummaryText} numberOfLines={1}>
+                {activeAlerts[0]?.message}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#92400E" />
+          </Pressable>
+        ) : null}
         {/* Search Bar + Barcode Icon Button */}
         <View style={styles.searchRow}>
           <View style={styles.searchInputContainer}>
@@ -347,6 +376,20 @@ function FocusedPosScanProductScreen() {
               </Pressable>
             ) : null}
           </View>
+
+          <Pressable
+            style={styles.notificationQuickBtn}
+            onPress={() => router.push('/notifications')}
+            accessibilityRole="button"
+            accessibilityLabel={`${unreadAlertCount} hindi pa nababasang abiso`}
+          >
+            <Ionicons name="notifications-outline" size={21} color="#0D7A52" />
+            {unreadAlertCount > 0 ? (
+              <View style={styles.quickBadge}>
+                <Text style={styles.quickBadgeText}>{Math.min(99, unreadAlertCount)}</Text>
+              </View>
+            ) : null}
+          </Pressable>
 
           <Pressable
             style={styles.barcodeQuickBtn}
@@ -863,6 +906,40 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingHorizontal: 14,
   },
+  alertSummaryCard: {
+    minHeight: 64,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    borderRadius: 16,
+    backgroundColor: '#FFFBEB',
+    borderWidth: 1,
+    borderColor: '#FCD34D',
+  },
+  alertSummaryIcon: {
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  alertBadge: {
+    position: 'absolute',
+    right: 2,
+    top: 2,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    paddingHorizontal: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#DC2626',
+  },
+  alertBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' },
+  alertSummaryCopy: { flex: 1, paddingHorizontal: 8 },
+  alertSummaryTitle: { color: '#78350F', fontSize: 14, fontWeight: '900' },
+  alertSummaryText: { color: '#92400E', fontSize: 12, marginTop: 2 },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -895,8 +972,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   barcodeQuickBtn: {
-    width: 44,
-    height: 44,
+    width: 48,
+    height: 48,
     borderRadius: 14,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -904,6 +981,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  notificationQuickBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  quickBadge: {
+    position: 'absolute',
+    top: 3,
+    right: 3,
+    minWidth: 17,
+    height: 17,
+    borderRadius: 9,
+    paddingHorizontal: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#DC2626',
+  },
+  quickBadgeText: { color: '#FFFFFF', fontSize: 9, fontWeight: '900' },
   barcodeQuickIcon: {
     fontSize: 12,
     fontWeight: '900',

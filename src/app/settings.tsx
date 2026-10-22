@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Modal,
   Image,
+  Linking,
 } from 'react-native';
 import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import { useRouter } from 'expo-router';
@@ -61,6 +62,9 @@ export default function StoreSettingsScreen() {
     lockStore,
     isBrownoutSaverActive,
     toggleBrownoutBatterySaver,
+    setPhoneNotificationsEnabled,
+    retryNotificationSchedule,
+    notificationScheduleError,
   } = useTindahanStore();
   const t = getTranslations(settings.language);
   const licensing = useLicensing();
@@ -82,6 +86,7 @@ export default function StoreSettingsScreen() {
   const [toastType, setToastType] = useState<ToastType>('success');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
   const [pinChallengeAction, setPinChallengeAction] = useState<(() => void) | null>(null);
+  const [draftNotificationTime, setDraftNotificationTime] = useState('');
 
   const [biometricInfo, setBiometricInfo] = useState<{
     hasHardware: boolean;
@@ -536,11 +541,11 @@ export default function StoreSettingsScreen() {
             <Text style={styles.chevron}>›</Text>
           </Pressable>
 
-          {/* Notifications Switch */}
+          {/* In-app notification center */}
           <View style={[styles.settingRow, styles.rowBorder]}>
             <View style={styles.rowTextCol}>
-              <Text style={styles.rowTitle}>{t.notifications}</Text>
-              <Text style={styles.rowValue}>{t.notificationsSub}</Text>
+              <Text style={styles.rowTitle}>In-app alerts</Text>
+              <Text style={styles.rowValue}>Low stock at overdue utang sa notification center</Text>
             </View>
             <Switch
               value={settings.notifications}
@@ -553,6 +558,110 @@ export default function StoreSettingsScreen() {
               thumbColor="#FFFFFF"
             />
           </View>
+
+          {/* Local phone notifications */}
+          <View style={[styles.settingRow, styles.rowBorder]}>
+            <View style={styles.rowTextCol}>
+              <Text style={styles.rowTitle}>Phone notifications</Text>
+              <Text style={styles.rowValue}>Private daily summary sa notification tray</Text>
+            </View>
+            <Switch
+              value={settings.phoneNotifications}
+              onValueChange={async (val) => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                const changed = await setPhoneNotificationsEnabled(val);
+                if (!changed && val) {
+                  showToast('Kailangan ang notification permission ng phone.', 'error');
+                } else {
+                  showToast(val ? 'Naka-on ang phone summaries.' : 'Naka-off ang phone summaries.', 'info');
+                }
+              }}
+              trackColor={{ false: '#D1D5DB', true: '#0D7A52' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          <View style={[styles.notificationScheduleBox, styles.rowBorder]}>
+            <Text style={styles.rowTitle}>Oras ng daily summary</Text>
+            <Text style={styles.rowValue}>Magdagdag ng hanggang 3 oras sa 24-hour format.</Text>
+            <View style={styles.notificationTimeInputRow}>
+              <TextInput
+                style={styles.notificationTimeInput}
+                value={draftNotificationTime}
+                onChangeText={setDraftNotificationTime}
+                placeholder="hal. 12:00"
+                placeholderTextColor="#9CA3AF"
+                keyboardType="numbers-and-punctuation"
+                maxLength={5}
+              />
+              <Pressable
+                style={styles.addTimeButton}
+                disabled={settings.notificationTimes.length >= 3}
+                onPress={() => {
+                  const clean = draftNotificationTime.trim();
+                  if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(clean)) {
+                    showToast('Gamitin ang format na HH:MM, hal. 07:00.', 'error');
+                    return;
+                  }
+                  if (settings.notificationTimes.includes(clean)) {
+                    showToast('Nakalista na ang oras na ito.', 'info');
+                    return;
+                  }
+                  updateSettings({ notificationTimes: [...settings.notificationTimes, clean] });
+                  setDraftNotificationTime('');
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                }}
+              >
+                <Text style={styles.addTimeButtonText}>Idagdag</Text>
+              </Pressable>
+            </View>
+            <View style={styles.notificationTimeChips}>
+              {settings.notificationTimes.map((time) => (
+                <View key={time} style={styles.notificationTimeChip}>
+                  <Ionicons name="time-outline" size={17} color="#0D7A52" />
+                  <Text style={styles.notificationTimeText}>{time}</Text>
+                  <Pressable
+                    style={styles.removeTimeButton}
+                    disabled={settings.notificationTimes.length === 1}
+                    onPress={() =>
+                      updateSettings({
+                        notificationTimes: settings.notificationTimes.filter((item) => item !== time),
+                      })
+                    }
+                    accessibilityLabel={`Alisin ang ${time}`}
+                  >
+                    <Ionicons
+                      name="close"
+                      size={18}
+                      color={settings.notificationTimes.length === 1 ? '#CBD5E1' : '#64748B'}
+                    />
+                  </Pressable>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {notificationScheduleError ? (
+            <View style={styles.notificationErrorBox}>
+              <Ionicons name="warning-outline" size={20} color="#B91C1C" />
+              <View style={styles.notificationErrorCopy}>
+                <Text style={styles.notificationErrorTitle}>Hindi ma-schedule ang phone alerts</Text>
+                <Text style={styles.notificationErrorText}>{notificationScheduleError}</Text>
+              </View>
+              <Pressable
+                style={styles.notificationRetryButton}
+                onPress={async () => {
+                  await retryNotificationSchedule();
+                  showToast('Sinubukang muli ang notification schedule.', 'info');
+                }}
+              >
+                <Text style={styles.notificationRetryText}>Retry</Text>
+              </Pressable>
+              <Pressable style={styles.notificationSettingsButton} onPress={() => Linking.openSettings()}>
+                <Ionicons name="settings-outline" size={18} color="#B91C1C" />
+              </Pressable>
+            </View>
+          ) : null}
 
           {/* AMOLED True-Black Brownout Battery Saver (NFR-ENV-003) */}
           <View style={styles.settingRow}>
@@ -1239,6 +1348,59 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6B7280',
   },
+  notificationScheduleBox: { paddingVertical: 14, gap: 8 },
+  notificationTimeInputRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  notificationTimeInput: {
+    flex: 1,
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    fontSize: 15,
+    color: '#111827',
+    backgroundColor: '#F8FAFC',
+  },
+  addTimeButton: {
+    minHeight: 48,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    backgroundColor: '#0D7A52',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addTimeButtonText: { color: '#FFFFFF', fontWeight: '800' },
+  notificationTimeChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  notificationTimeChip: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 12,
+    borderRadius: 24,
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  notificationTimeText: { marginLeft: 6, color: '#065F46', fontWeight: '800' },
+  removeTimeButton: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
+  notificationErrorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    backgroundColor: '#FEF2F2',
+  },
+  notificationErrorCopy: { flex: 1 },
+  notificationErrorTitle: { color: '#991B1B', fontSize: 12, fontWeight: '900' },
+  notificationErrorText: { color: '#B91C1C', fontSize: 11, marginTop: 2 },
+  notificationRetryButton: {
+    minHeight: 48,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  notificationRetryText: { color: '#B91C1C', fontWeight: '900' },
+  notificationSettingsButton: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   logoRight: {
     flexDirection: 'row',
     alignItems: 'center',

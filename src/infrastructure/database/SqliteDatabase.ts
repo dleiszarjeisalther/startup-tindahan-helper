@@ -96,7 +96,9 @@ export class SqliteDatabase {
         name TEXT NOT NULL,
         balance_php REAL NOT NULL DEFAULT 0,
         credit_limit_php REAL NOT NULL DEFAULT 500,
-        last_updated TEXT NOT NULL
+        last_updated TEXT NOT NULL,
+        due_date TEXT,
+        debt_started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
 
       CREATE TABLE IF NOT EXISTS store_settings (
@@ -210,6 +212,19 @@ export class SqliteDatabase {
 
     try {
       this.db.execSync('ALTER TABLE products ADD COLUMN expiry_date TEXT;');
+    } catch {
+      // Column already exists
+    }
+
+    try {
+      this.db.execSync('ALTER TABLE utang_customers ADD COLUMN due_date TEXT;');
+    } catch {
+      // Column already exists
+    }
+
+    try {
+      this.db.execSync('ALTER TABLE utang_customers ADD COLUMN debt_started_at TEXT;');
+      this.db.execSync("UPDATE utang_customers SET debt_started_at = datetime('now') WHERE debt_started_at IS NULL;");
     } catch {
       // Column already exists
     }

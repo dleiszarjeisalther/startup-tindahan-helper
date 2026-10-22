@@ -51,7 +51,8 @@
       ],
       "expo-audio",
       "expo-asset",
-      "expo-sharing"
+      "expo-sharing",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,
