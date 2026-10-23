@@ -6,6 +6,7 @@ import { useColorScheme } from 'react-native';
 import AppTabs from '@/components/app-tabs';
 import { TindahanStoreProvider } from '@/presentation/providers/TindahanStoreProvider';
 import { LicensingGate } from '@/presentation/components/LicensingGate';
+import { AppUpdatePrompt } from '@/presentation/components/AppUpdatePrompt';
 import '@/infrastructure/services/SoundFeedbackService';
 
 export { ErrorBoundary } from 'expo-router';
@@ -56,6 +57,7 @@ export default function TabLayout() {
       <TindahanStoreProvider>
         <LicensingGate>
           <AppTabs />
+          <AppUpdatePrompt />
         </LicensingGate>
       </TindahanStoreProvider>
     </ThemeProvider>

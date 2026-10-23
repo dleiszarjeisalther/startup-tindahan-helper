@@ -5,6 +5,8 @@ import { TindahanStoreService } from '../application/TindahanStoreService';
 import { SeasonalForecastEngine } from '../domain/strategies/SeasonalForecastEngine';
 import { OpenFoodFactsApiClient } from './services/OpenFoodFactsApiClient';
 import { ExpoLocalNotificationScheduler } from './services/ExpoLocalNotificationScheduler';
+import { AppUpdateService } from '../application/AppUpdateService';
+import { AndroidAppUpdatePort } from './services/AndroidAppUpdatePort';
 
 export const openFoodFactsApiClient = new OpenFoodFactsApiClient();
 export const productRepository = new InMemoryProductRepository();
@@ -19,3 +21,7 @@ export const tindahanStoreService = new TindahanStoreService(
   localNotificationScheduler
 );
 export const seasonalForecastEngine = new SeasonalForecastEngine();
+export const appUpdateService = new AppUpdateService(
+  new AndroidAppUpdatePort(),
+  () => tindahanStoreService.getSnapshot().cartSummary.items.length === 0
+);
