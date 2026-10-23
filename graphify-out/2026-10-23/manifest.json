@@ -42,9 +42,9 @@
     "semantic_hash": "6b9302c1f72c315e90233c7539c48c9f"
   },
   "app.json": {
-    "mtime": 1792681190.4917428,
-    "seen": 1792705325.8383183,
-    "ast_hash": "382dff743adcc0108757bf12f994d7ba",
+    "mtime": 1792743384.3117206,
+    "seen": 1792752065.3407667,
+    "ast_hash": "b20826aba8bc56a8aae0ccbd99defa56",
     "semantic_hash": ""
   },
   "assets/expo.icon/icon.json": {
@@ -60,9 +60,9 @@
     "semantic_hash": "b713dd66aa3ad59ed5098d7b9f8dc202"
   },
   "package.json": {
-    "mtime": 1792705789.2712872,
-    "seen": 1792706416.358968,
-    "ast_hash": "d4afd8b18737ac32cd34d9e040c39f7f",
+    "mtime": 1792750636.385474,
+    "seen": 1792752065.3408802,
+    "ast_hash": "76669cd9aa359f57619dba650316eb6e",
     "semantic_hash": ""
   },
   "scripts/reset-project.js": {
@@ -72,39 +72,39 @@
     "semantic_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275"
   },
   "src/app/_layout.tsx": {
-    "mtime": 1792706035.0436368,
-    "seen": 1792706416.359044,
-    "ast_hash": "85c7250a896a99ca7a33e6dd93002675",
+    "mtime": 1792753668.4563582,
+    "seen": 1792753928.6935682,
+    "ast_hash": "8842fd62fcb2746e694caafa15e93b8c",
     "semantic_hash": ""
   },
   "src/app/checkout.tsx": {
-    "mtime": 1792658733.9207814,
-    "seen": 1792677665.0419345,
-    "ast_hash": "fdc59a2a1e3efb21804cbb4cb4815d95",
+    "mtime": 1792753590.0742342,
+    "seen": 1792753928.6935775,
+    "ast_hash": "5a255429078c78b89b5af38c86985313",
     "semantic_hash": ""
   },
   "src/app/explore.tsx": {
-    "mtime": 1792658733.9277778,
-    "seen": 1792677665.0419438,
-    "ast_hash": "996e9954ff2de892fba784b2580eff79",
+    "mtime": 1792753557.4554722,
+    "seen": 1792753928.693585,
+    "ast_hash": "f4ef864e426ded0bceff804f843efd8c",
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1792681275.2336793,
-    "seen": 1792705325.8384929,
-    "ast_hash": "da53b30f8aba40f9811c1e93e36093e3",
+    "mtime": 1792753335.1970367,
+    "seen": 1792753928.6936023,
+    "ast_hash": "64d166ec86c8b3843a95361560a288b7",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1792672666.481344,
-    "seen": 1792677665.0419717,
-    "ast_hash": "70359aafa79aa44e3dc6c3e1f91cc0dd",
+    "mtime": 1792753444.9461665,
+    "seen": 1792753928.69361,
+    "ast_hash": "493c967c2e6158221e81171718ea0d07",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
-    "mtime": 1792672666.5391662,
-    "seen": 1792677665.0419807,
-    "ast_hash": "39d0222dd95a6fb8505312ff7cfd02a3",
+    "mtime": 1792753197.4305675,
+    "seen": 1792753928.6936178,
+    "ast_hash": "e8a7f151e8a795c24431aeb0af0f450e",
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
@@ -114,15 +114,15 @@
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {
-    "mtime": 1792658734.19917,
-    "seen": 1792677665.0419967,
-    "ast_hash": "15af5a48a65031e035953013fdfe19e1",
+    "mtime": 1792753417.1113026,
+    "seen": 1792753928.6936455,
+    "ast_hash": "7368856a4aa1eeab7ee3d741a7399d12",
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
-    "mtime": 1792681295.0154407,
-    "seen": 1792705325.8385363,
-    "ast_hash": "4239ab696e09e1120f8b763b54ef398f",
+    "mtime": 1792753653.6368208,
+    "seen": 1792753928.6936533,
+    "ast_hash": "582a85b88cf4bde1a7125113ec85ad23",
     "semantic_hash": ""
   },
   "src/application/ProductOnboardingService.ts": {
@@ -150,16 +150,16 @@
     "semantic_hash": "2defa175163e104a6e2232436fa77e30"
   },
   "src/components/app-tabs.tsx": {
-    "mtime": 1792274012.3316174,
-    "seen": 1792274234.8637035,
-    "ast_hash": "8b1dde2490e004193e3aa9f8acc34133",
+    "mtime": 1792753785.3861034,
+    "seen": 1792753928.6937199,
+    "ast_hash": "586c8ded39ef408ae032e59ecc228ee8",
     "semantic_hash": ""
   },
   "src/components/app-tabs.web.tsx": {
-    "mtime": 1791869029.514047,
-    "seen": 1791873707.9412615,
-    "ast_hash": "d197b6fde1ead811d986e454f2e27064",
-    "semantic_hash": "d197b6fde1ead811d986e454f2e27064"
+    "mtime": 1792750951.111786,
+    "seen": 1792752065.341138,
+    "ast_hash": "951d855451b295a86707f5e73b1fa60c",
+    "semantic_hash": ""
   },
   "src/components/external-link.tsx": {
     "mtime": 1791869029.5240402,
@@ -246,15 +246,15 @@
     "semantic_hash": "fb7613eac9acca14b5bdf14d34b68708"
   },
   "src/hooks/use-theme.ts": {
-    "mtime": 1791869029.4943712,
-    "seen": 1791873707.9413106,
-    "ast_hash": "e058af4f5801bcaa97dad62f12085a27",
-    "semantic_hash": "e058af4f5801bcaa97dad62f12085a27"
+    "mtime": 1792750936.682654,
+    "seen": 1792752065.341298,
+    "ast_hash": "7444e9ea782c250974529826427944cd",
+    "semantic_hash": ""
   },
   "src/infrastructure/container.ts": {
-    "mtime": 1792681240.6228857,
-    "seen": 1792705325.8387349,
-    "ast_hash": "844b21602746f93ea3cc0f4e41307e30",
+    "mtime": 1792739307.9349513,
+    "seen": 1792752065.3413053,
+    "ast_hash": "bc7acaa9d6e422eadb3547d915edc94f",
     "semantic_hash": ""
   },
   "src/infrastructure/database/SqliteDatabase.ts": {
@@ -450,9 +450,9 @@
     "semantic_hash": "c62d22797f3002396754d8cc55b0ae1a"
   },
   "src/presentation/components/BarcodeScannerViewfinder.tsx": {
-    "mtime": 1792659573.62581,
-    "seen": 1792677665.0422676,
-    "ast_hash": "9106a86bd4b5183ef0cc433c66f47b89",
+    "mtime": 1792708025.4215417,
+    "seen": 1792708129.9024744,
+    "ast_hash": "1f13225af844e16e1e3fde71429da7ed",
     "semantic_hash": ""
   },
   "src/infrastructure/services/OpenFoodFactsApiClient.ts": {
@@ -492,9 +492,9 @@
     "semantic_hash": ""
   },
   "src/app/utang.tsx": {
-    "mtime": 1792681302.7790601,
-    "seen": 1792705325.8385427,
-    "ast_hash": "c4f71b30caaa5dd3c8acf543623acafc",
+    "mtime": 1792753705.5556364,
+    "seen": 1792753928.6936607,
+    "ast_hash": "4237eaa6f8969a31083da4add80884c2",
     "semantic_hash": ""
   },
   "src/presentation/components/FloatingToast.tsx": {
@@ -570,9 +570,9 @@
     "semantic_hash": ""
   },
   "src/app/history.tsx": {
-    "mtime": 1792658733.9307752,
-    "seen": 1792677665.0419538,
-    "ast_hash": "e572f113c201e772ad403b15f302512e",
+    "mtime": 1792753687.379749,
+    "seen": 1792753928.693595,
+    "ast_hash": "06bc81dd60926ac6a2396b4e17b15f0d",
     "semantic_hash": ""
   },
   "scripts/sound-feedback.test.cjs": {
@@ -732,9 +732,9 @@
     "semantic_hash": ""
   },
   "eas.json": {
-    "mtime": 1792335954.6597362,
-    "seen": 1792374322.9725575,
-    "ast_hash": "f2eb02aac9c72e83c58dbfbc3b9d88e4",
+    "mtime": 1792739307.9449422,
+    "seen": 1792752065.3407857,
+    "ast_hash": "35f68e8e05a4592d15328c94edd77c34",
     "semantic_hash": ""
   },
   "marketing/video/ad_render_result.json": {
@@ -1278,9 +1278,9 @@
     "semantic_hash": ""
   },
   "src/app/notifications.tsx": {
-    "mtime": 1792681260.757636,
-    "seen": 1792705325.838514,
-    "ast_hash": "0b297b5d7dd5ff059c08dc253ec9d635",
+    "mtime": 1792753620.4844847,
+    "seen": 1792753928.6936255,
+    "ast_hash": "7120881e5f7252c5ccdc11034d004865",
     "semantic_hash": ""
   },
   "src/application/ILocalNotificationScheduler.ts": {
@@ -1296,15 +1296,81 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/ExpoLocalNotificationScheduler.ts": {
-    "mtime": 1792705902.4733393,
-    "seen": 1792706416.359386,
-    "ast_hash": "f3cebba9f0edcfe044648ca5ab9e548e",
+    "mtime": 1792708025.4170454,
+    "seen": 1792708129.9024508,
+    "ast_hash": "48d9322ed48c5ffaf84b9261d5391683",
     "semantic_hash": ""
   },
-  ".expo-fix-check/metadata.json": {
-    "mtime": 1792706278.5223978,
-    "seen": 1792706416.358844,
-    "ast_hash": "57dfe82bf107109cf0cba12d14446dd5",
+  "modules/apk-updater/android/build.gradle": {
+    "mtime": 1792739250.977934,
+    "seen": 1792752065.3408575,
+    "ast_hash": "527b6c131003a7eccecc6026339de5e1",
+    "semantic_hash": ""
+  },
+  "modules/apk-updater/android/src/main/java/expo/modules/apkupdater/ApkUpdaterModule.kt": {
+    "mtime": 1792739251.0808723,
+    "seen": 1792752065.3408654,
+    "ast_hash": "4941c240e48cdeaeecd0dd5c86ddb75c",
+    "semantic_hash": ""
+  },
+  "modules/apk-updater/expo-module.config.json": {
+    "mtime": 1792739250.9669402,
+    "seen": 1792752065.3408725,
+    "ast_hash": "e3bf2c2ea520bd335ce6811b9deccf76",
+    "semantic_hash": ""
+  },
+  "scripts/patch-expo-notifications.cjs": {
+    "mtime": 1792750625.8156703,
+    "seen": 1792752065.3409047,
+    "ast_hash": "06f45fa8e1770e7af366e0578f1d102e",
+    "semantic_hash": ""
+  },
+  "scripts/test-app-updates.cjs": {
+    "mtime": 1792739503.0058887,
+    "seen": 1792752065.3409393,
+    "ast_hash": "b250a724a3832fdf361075f66076aaa4",
+    "semantic_hash": ""
+  },
+  "src/application/AppUpdateService.ts": {
+    "mtime": 1792739502.6301215,
+    "seen": 1792752065.3410788,
+    "ast_hash": "a7f612194c5bee2e3a4ecd546534f2be",
+    "semantic_hash": ""
+  },
+  "src/domain/entities/AppRelease.ts": {
+    "mtime": 1792739815.9811897,
+    "seen": 1792752065.3412044,
+    "ast_hash": "3d1e07da55c83954cbc858697009b77a",
+    "semantic_hash": ""
+  },
+  "src/infrastructure/services/AndroidAppUpdatePort.ts": {
+    "mtime": 1792739307.923954,
+    "seen": 1792752065.3413289,
+    "ast_hash": "f322419bd423e585aeadb98fa4016857",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/AppUpdatePrompt.tsx": {
+    "mtime": 1792739816.0011756,
+    "seen": 1792752065.3414078,
+    "ast_hash": "71d3e99fe96fe971a69aabe4be8eaa04",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20261023000000_app_releases.sql": {
+    "mtime": 1792739250.9239676,
+    "seen": 1792752065.3416245,
+    "ast_hash": "0856653ef090e7e17fc2640c969594d4",
+    "semantic_hash": ""
+  },
+  "docs/apk-updates.md": {
+    "mtime": 1792739503.347677,
+    "seen": 1792752065.341726,
+    "ast_hash": "37e6a6922cedcee72d1cf14c6c95725c",
+    "semantic_hash": ""
+  },
+  "src/app/+not-found.tsx": {
+    "mtime": 1792752416.8885934,
+    "seen": 1792753928.6935556,
+    "ast_hash": "aa1d7296b670717e431ba9411b391c33",
     "semantic_hash": ""
   }
 }

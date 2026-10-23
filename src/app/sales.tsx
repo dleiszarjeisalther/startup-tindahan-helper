@@ -603,7 +603,7 @@ export default function SalesHistoryScreen() {
 
           <Pressable
             style={styles.forecastBtn}
-            onPress={() => router.push('/explore')}
+            onPress={() => router.navigate('/explore')}
           >
             <Ionicons name="trending-up" size={15} color="#0D7A52" style={{ marginRight: 4 }} />
             <Text style={styles.forecastBtnText}>Forecast</Text>
@@ -1413,7 +1413,7 @@ export default function SalesHistoryScreen() {
                                               2
                                             )} Exchange Credit to New Sale`
                                           );
-                                          router.push('/checkout');
+                                          router.navigate('/checkout');
                                         },
                                       });
                                     }}

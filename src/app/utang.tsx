@@ -342,7 +342,7 @@ export default function SukiUtangLedgerScreen() {
       <View style={styles.headerBar}>
         <Pressable
           style={styles.backBtn}
-          onPress={() => router.back()}
+          onPress={() => (router.canGoBack() ? router.back() : router.navigate('/more'))}
           hitSlop={10}
           accessibilityRole="button"
           accessibilityLabel="Back"

@@ -1176,7 +1176,7 @@ export default function InventoryManagementScreen() {
         <View style={styles.headerRightActions}>
           <Pressable
             style={styles.manageCatHeaderBtn}
-            onPress={() => router.push('/history')}
+            onPress={() => router.navigate('/history')}
             hitSlop={8}
             accessibilityRole="button"
             accessibilityLabel="Stock Movement History"
@@ -2816,7 +2816,7 @@ export default function InventoryManagementScreen() {
         {/* Seasonal Forecast Navigation Card */}
         <Pressable
           style={styles.seasonalAlertBanner}
-          onPress={() => router.push('/explore')}
+          onPress={() => router.navigate('/explore')}
         >
           <View style={styles.seasonalAlertLeft}>
             <Text style={styles.seasonalAlertTitle}>

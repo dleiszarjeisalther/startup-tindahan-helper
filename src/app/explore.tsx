@@ -322,7 +322,7 @@ export default function SeasonalForecastScreen() {
             </Text>
             <Pressable
               style={styles.emptyBtn}
-              onPress={() => router.push('/inventory')}
+              onPress={() => router.navigate('/inventory')}
             >
               <Text style={styles.emptyBtnText}>{t.addProductsInventoryBtn}</Text>
             </Pressable>

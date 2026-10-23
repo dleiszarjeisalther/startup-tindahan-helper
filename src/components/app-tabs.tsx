@@ -80,8 +80,8 @@ function CustomTindahanTabBar(props: any) {
   const isScan = currentRouteName === 'index' || currentRouteName === 'products';
   const isSales = currentRouteName === 'sales' || currentRouteName === 'explore';
   const isCheckout = currentRouteName === 'checkout';
-  const isInventory = currentRouteName === 'inventory';
-  const isMore = currentRouteName === 'more' || currentRouteName === 'settings';
+  const isInventory = currentRouteName === 'inventory' || currentRouteName === 'history';
+  const isMore = currentRouteName === 'more' || currentRouteName === 'settings' || currentRouteName === 'utang' || currentRouteName === 'notifications';
 
   const handleTabPress = (routeTarget: string) => {
     try {
@@ -228,14 +228,16 @@ export default function AppTabs() {
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Scan' }} />
-      <Tabs.Screen name="products" options={{ title: 'Products', href: null }} />
+      <Tabs.Screen name="products" options={{ title: 'Products' }} />
       <Tabs.Screen name="checkout" options={{ title: 'New Sale' }} />
       <Tabs.Screen name="inventory" options={{ title: 'Inventory' }} />
       <Tabs.Screen name="sales" options={{ title: 'Sales' }} />
       <Tabs.Screen name="more" options={{ title: 'More' }} />
-      <Tabs.Screen name="settings" options={{ title: 'Store Settings', href: null }} />
-      <Tabs.Screen name="explore" options={{ title: 'Seasonal Forecast', href: null }} />
-      <Tabs.Screen name="utang" options={{ title: 'Suki Utang Ledger', href: null }} />
+      <Tabs.Screen name="settings" options={{ title: 'Store Settings' }} />
+      <Tabs.Screen name="explore" options={{ title: 'Seasonal Forecast' }} />
+      <Tabs.Screen name="utang" options={{ title: 'Suki Utang Ledger' }} />
+      <Tabs.Screen name="history" options={{ title: 'History' }} />
+      <Tabs.Screen name="notifications" options={{ title: 'Notifications' }} />
     </Tabs>
   );
 }

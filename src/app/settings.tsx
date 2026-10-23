@@ -532,7 +532,7 @@ export default function StoreSettingsScreen() {
           {/* Manage Categories Shortcut Row */}
           <Pressable
             style={[styles.settingRow, styles.rowBorder]}
-            onPress={() => router.push('/inventory')}
+            onPress={() => router.navigate('/inventory')}
           >
             <View style={styles.rowTextCol}>
               <Text style={styles.rowTitle}>{t.manageCategories}</Text>

@@ -27,12 +27,6 @@ import { useLicensing } from '@/presentation/hooks/useLicensing';
 import { useLicensingGate } from '@/presentation/components/LicensingGate';
 
 export default function PosScanProductScreen() {
-  const isFocused = useIsFocused();
-
-  return isFocused ? <FocusedPosScanProductScreen /> : null;
-}
-
-function FocusedPosScanProductScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
@@ -299,7 +293,7 @@ function FocusedPosScanProductScreen() {
             </Pressable>
             <Pressable
               style={styles.addDbQuickBtn}
-              onPress={() => router.push('/inventory')}
+              onPress={() => router.navigate('/inventory')}
             >
               <Text style={styles.addDbQuickText}>{t.addProductToDb}</Text>
             </Pressable>
@@ -316,7 +310,7 @@ function FocusedPosScanProductScreen() {
                 onPress={() => {
                   const codeToRegister = unknownBarcode;
                   setUnknownBarcode(null);
-                  router.push({
+                  router.navigate({
                     pathname: '/inventory',
                     params: { autoBarcode: codeToRegister },
                   });
@@ -336,7 +330,7 @@ function FocusedPosScanProductScreen() {
             style={styles.alertSummaryCard}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-              router.push('/notifications');
+              router.navigate('/notifications');
             }}
             accessibilityRole="button"
             accessibilityLabel={`${unreadAlertCount} bagong abiso ng tindahan`}
@@ -379,7 +373,7 @@ function FocusedPosScanProductScreen() {
 
           <Pressable
             style={styles.notificationQuickBtn}
-            onPress={() => router.push('/notifications')}
+            onPress={() => router.navigate('/notifications')}
             accessibilityRole="button"
             accessibilityLabel={`${unreadAlertCount} hindi pa nababasang abiso`}
           >
@@ -393,7 +387,7 @@ function FocusedPosScanProductScreen() {
 
           <Pressable
             style={styles.barcodeQuickBtn}
-            onPress={() => router.push('/products')}
+            onPress={() => router.navigate('/products')}
             hitSlop={6}
           >
             <Ionicons name="barcode-outline" size={20} color="#0D7A52" />
@@ -425,7 +419,7 @@ function FocusedPosScanProductScreen() {
             </Pressable>
           </View>
 
-          <Pressable onPress={() => router.push('/products')} hitSlop={6}>
+          <Pressable onPress={() => router.navigate('/products')} hitSlop={6}>
             <Text style={styles.viewAllLink}>+ Add / View All ›</Text>
           </Pressable>
         </View>
@@ -450,7 +444,7 @@ function FocusedPosScanProductScreen() {
               </Text>
               <Pressable
                 style={styles.emptyCatalogBtn}
-                onPress={() => router.push('/inventory')}
+                onPress={() => router.navigate('/inventory')}
               >
                 <Text style={styles.emptyCatalogBtnText}>
                   {t.addProductToDb}

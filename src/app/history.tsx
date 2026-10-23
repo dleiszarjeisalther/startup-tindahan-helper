@@ -263,7 +263,7 @@ export default function StockMovementHistoryScreen() {
       <View style={styles.header}>
         <Pressable
           style={styles.backBtn}
-          onPress={() => router.back()}
+          onPress={() => (router.canGoBack() ? router.back() : router.navigate('/inventory'))}
           hitSlop={12}
           accessibilityRole="button"
           accessibilityLabel="Go back"

@@ -82,7 +82,7 @@ export default function NotificationsScreen() {
             <Ionicons name="notifications-off-outline" size={42} color="#94A3B8" />
             <Text style={styles.emptyTitle}>Naka-off ang in-app alerts</Text>
             <Text style={styles.emptyBody}>I-on ito sa Settings para makita ang stock at utang alerts.</Text>
-            <Pressable style={styles.settingsButton} onPress={() => router.push('/settings')}>
+            <Pressable style={styles.settingsButton} onPress={() => router.navigate('/settings')}>
               <Text style={styles.settingsButtonText}>Buksan ang Settings</Text>
             </Pressable>
           </View>
@@ -100,7 +100,7 @@ export default function NotificationsScreen() {
               onPress={() => {
                 markAlertRead(alert.id);
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                router.push(alert.targetRoute);
+                router.navigate(alert.targetRoute as any);
               }}
               accessibilityRole="button"
               accessibilityLabel={`${alert.title}. ${alert.message}`}

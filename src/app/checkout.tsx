@@ -1168,7 +1168,7 @@ export default function CheckoutNewSaleScreen() {
 
           <Pressable
             style={styles.addMoreBtn}
-            onPress={() => router.push('/')}
+            onPress={() => router.navigate('/')}
           >
             <Ionicons name="add" size={20} color="#0D7A52" style={{ marginRight: 4 }} />
             <Text style={styles.addMoreText}>{t.addMoreItemsBtn}</Text>

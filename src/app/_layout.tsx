@@ -34,7 +34,7 @@ export default function TabLayout() {
           notification: import('expo-notifications').Notification
         ) => {
           if (notification.request.content.data?.url === '/notifications') {
-            router.push('/notifications');
+            router.navigate('/notifications');
           }
         };
         const initial = Notifications.getLastNotificationResponse();

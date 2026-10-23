@@ -94,7 +94,7 @@ export default function MenuProfileScreen() {
       {/* Top Emerald Green Owner Profile Banner */}
       <Pressable
         style={styles.greenBanner}
-        onPress={() => router.push('/settings')}
+        onPress={() => router.navigate('/settings')}
       >
         <View style={styles.storeAvatar}>
           <View style={styles.awningTop}>
@@ -122,7 +122,7 @@ export default function MenuProfileScreen() {
           <AppUpdateMenuItem />
           <Pressable
             style={styles.menuRow}
-            onPress={() => router.push('/settings')}
+            onPress={() => router.navigate('/settings')}
           >
             <View style={styles.menuLeft}>
               <Ionicons name="settings-outline" size={22} color="#0D7A52" />
@@ -134,7 +134,7 @@ export default function MenuProfileScreen() {
           {/* 2. Products -> Screen 2 */}
           <Pressable
             style={styles.menuRow}
-            onPress={() => router.push('/products')}
+            onPress={() => router.navigate('/products')}
           >
             <View style={styles.menuLeft}>
               <Ionicons name="pricetags-outline" size={22} color="#0D7A52" />
@@ -146,7 +146,7 @@ export default function MenuProfileScreen() {
           {/* 3. Sales Reports -> Feature C: Seasonal Product Forecast */}
           <Pressable
             style={styles.menuRow}
-            onPress={() => router.push('/explore')}
+            onPress={() => router.navigate('/explore')}
           >
             <View style={styles.menuLeft}>
               <Ionicons name="bar-chart-outline" size={22} color="#0D7A52" />
@@ -163,7 +163,7 @@ export default function MenuProfileScreen() {
           {/* 4. Inventory -> Screen 4 */}
           <Pressable
             style={styles.menuRow}
-            onPress={() => router.push('/inventory')}
+            onPress={() => router.navigate('/inventory')}
           >
             <View style={styles.menuLeft}>
               <Ionicons name="cube-outline" size={22} color="#0D7A52" />
@@ -175,7 +175,7 @@ export default function MenuProfileScreen() {
           {/* 5. Stock Movement History & Audit Log */}
           <Pressable
             style={styles.menuRow}
-            onPress={() => router.push('/history')}
+            onPress={() => router.navigate('/history')}
           >
             <View style={styles.menuLeft}>
               <Ionicons name="time-outline" size={22} color="#0D7A52" />
@@ -192,7 +192,7 @@ export default function MenuProfileScreen() {
           {/* 6. Suki Utang Ledger (Dedicated Screen) */}
           <Pressable
             style={styles.menuRow}
-            onPress={() => router.push('/utang')}
+            onPress={() => router.navigate('/utang')}
           >
             <View style={styles.menuLeft}>
               <Ionicons name="people-outline" size={22} color="#0D7A52" />
@@ -399,7 +399,7 @@ export default function MenuProfileScreen() {
                 cancelText: 'Kanselahin',
                 onConfirm: () => {
                   setConfirmDialog(null);
-                  router.push('/');
+                  router.navigate('/');
                 },
               });
             }}
