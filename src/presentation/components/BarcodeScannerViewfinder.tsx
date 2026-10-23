@@ -201,17 +201,22 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
       ]}
     >
       {/* Background Camera View or Standby Backdrop */}
-      {isActive ? (
+      {permission?.granted ? (
         <CameraView
-          key="camera-view-live"
-          style={StyleSheet.absoluteFill}
+          style={[StyleSheet.absoluteFill, { backgroundColor: '#0F172A' }]}
+          active={isActive}
           facing="back"
           enableTorch={torchOn}
           mute={true}
-          barcodeScannerSettings={{
-            barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'qr'],
-          }}
+          barcodeScannerSettings={
+            isActive
+              ? {
+                  barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'qr'],
+                }
+              : undefined
+          }
           onBarcodeScanned={(res) => {
+            if (!isActive) return;
             console.log('[BarcodeScannerViewfinder] Raw scan event captured from CameraView:', {
               data: res.data,
               type: res.type,
@@ -220,9 +225,8 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
             if (res.data) handleDetected(res.data);
           }}
         />
-      ) : (
-        <View style={styles.standbyBackdrop} />
-      )}
+      ) : null}
+      {!isActive && <View style={styles.standbyBackdrop} />}
 
       {/* Top Controls Row */}
       <View style={[styles.topBar, { top: 10 + topControlInset }]}>

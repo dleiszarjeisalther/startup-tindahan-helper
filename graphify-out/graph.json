@@ -8143,7 +8143,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
-      "source_location": "L310"
+      "source_location": "L314"
     },
     {
       "id": "ref_expo_audio",
@@ -8209,7 +8209,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L245"
+      "source_location": "L247"
     },
     {
       "id": "src_infrastructure_container_appupdateservice",
@@ -37313,7 +37313,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L245",
+      "source_location": "L247",
       "weight": 1.0
     },
     {
@@ -38699,7 +38699,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
-      "source_location": "L310",
+      "source_location": "L314",
       "weight": 1.0
     },
     {
@@ -44832,5 +44832,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c2645ba384dbcbb70134fedb7ac80e4e777d9acb"
+  "built_at_commit": "3a57d4feec1b4b7484b5a6f89f2c6b4795780d2c"
 }

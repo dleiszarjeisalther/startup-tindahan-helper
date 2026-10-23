@@ -225,6 +225,8 @@ export default function AppTabs() {
       tabBar={(props) => <CustomTindahanTabBar {...props} />}
       screenOptions={{
         headerShown: false,
+        animation: 'none',
+        sceneStyle: { backgroundColor: '#0F172A' },
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Scan' }} />

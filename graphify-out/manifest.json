@@ -150,9 +150,9 @@
     "semantic_hash": "2defa175163e104a6e2232436fa77e30"
   },
   "src/components/app-tabs.tsx": {
-    "mtime": 1792754366.7537005,
-    "seen": 1792754740.658813,
-    "ast_hash": "af9b95affe77c216d4a2c6be3967c38d",
+    "mtime": 1792755514.8163085,
+    "seen": 1792755901.6411986,
+    "ast_hash": "98e4afcce89354dca9947f815134a09a",
     "semantic_hash": ""
   },
   "src/components/app-tabs.web.tsx": {
@@ -450,9 +450,9 @@
     "semantic_hash": "c62d22797f3002396754d8cc55b0ae1a"
   },
   "src/presentation/components/BarcodeScannerViewfinder.tsx": {
-    "mtime": 1792708025.4215417,
-    "seen": 1792708129.9024744,
-    "ast_hash": "1f13225af844e16e1e3fde71429da7ed",
+    "mtime": 1792755639.2709472,
+    "seen": 1792755901.6414819,
+    "ast_hash": "6ccdf314af541ceba23724a9e1e9bb0b",
     "semantic_hash": ""
   },
   "src/infrastructure/services/OpenFoodFactsApiClient.ts": {
