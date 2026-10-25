@@ -85,14 +85,35 @@ function CustomTindahanTabBar(props: any) {
 
   const handleTabPress = (routeTarget: string) => {
     try {
+      const targetRoute = props?.state?.routes?.find((r: any) => r.name === routeTarget);
+      if (targetRoute && typeof props?.navigateToTab === 'function') {
+        const isCurrentTab = props?.state?.routes?.[props?.state?.index]?.name === routeTarget;
+        if (typeof props?.emitter?.emit === 'function') {
+          const event = props.emitter.emit({
+            type: 'tabPress',
+            target: targetRoute.key,
+            canPreventDefault: true,
+          });
+          if (event?.defaultPrevented) {
+            return;
+          }
+        }
+        if (!isCurrentTab) {
+          props.navigateToTab(targetRoute.key);
+        }
+        return;
+      }
+
       if (props?.navigation?.navigate) {
         props.navigation.navigate(routeTarget);
       } else {
-        router.navigate(`/${routeTarget}` as any);
+        const path = routeTarget === 'index' ? '/' : `/${routeTarget}`;
+        router.navigate(path as any);
       }
     } catch {
       try {
-        router.navigate(`/${routeTarget}` as any);
+        const path = routeTarget === 'index' ? '/' : `/${routeTarget}`;
+        router.navigate(path as any);
       } catch {
         // Fallback safe no-op
       }
