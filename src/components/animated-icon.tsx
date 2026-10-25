@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Animated, Image, Modal, StyleSheet, Text, View } from 'react-native';
+import { Animated, Image, StyleSheet, Text, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 
 export function AnimatedSplashOverlay() {
@@ -15,14 +15,14 @@ export function AnimatedSplashOverlay() {
     Animated.parallel([
       Animated.timing(scaleAnim, {
         toValue: 1,
-        duration: 350,
+        duration: 400,
         useNativeDriver: true,
       }),
       Animated.sequence([
-        Animated.delay(400),
+        Animated.delay(1100),
         Animated.timing(fadeAnim, {
           toValue: 0,
-          duration: 300,
+          duration: 350,
           useNativeDriver: true,
         }),
       ]),
@@ -34,16 +34,15 @@ export function AnimatedSplashOverlay() {
   if (!visible) return null;
 
   return (
-    <Modal visible={visible} transparent animationType="none" statusBarTranslucent>
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          styles.splashOverlay,
-          {
-            opacity: fadeAnim,
-          },
-        ]}
-      >
+    <Animated.View
+      pointerEvents={visible ? 'auto' : 'none'}
+      style={[
+        styles.splashOverlay,
+        {
+          opacity: fadeAnim,
+        },
+      ]}
+    >
       <Animated.View
         style={[
           styles.contentBox,
@@ -53,7 +52,7 @@ export function AnimatedSplashOverlay() {
         ]}
       >
         <Image
-          source={require('@/assets/images/icon.png')}
+          source={require('@/assets/images/splash-icon.png')}
           style={styles.logoImage}
           resizeMode="contain"
         />
@@ -64,8 +63,7 @@ export function AnimatedSplashOverlay() {
         <Text style={styles.brandTagline}>Sari-sari Store POS & Inventory</Text>
       </Animated.View>
     </Animated.View>
-  </Modal>
-);
+  );
 }
 
 export function AnimatedIcon() {
@@ -90,16 +88,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#0D7A52',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 99999,
-    elevation: 99999,
+    zIndex: 999999,
+    elevation: 999999,
   },
   contentBox: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoImage: {
-    width: 104,
-    height: 104,
+    width: 112,
+    height: 112,
     borderRadius: 24,
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.25)',

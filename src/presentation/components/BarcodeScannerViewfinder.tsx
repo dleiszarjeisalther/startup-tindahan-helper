@@ -15,6 +15,7 @@ import {
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { soundFeedbackService } from '@/infrastructure/services/SoundFeedbackService';
 
 export interface BarcodeScannerViewfinderProps {
   /** Callback when a valid barcode string is detected */
@@ -203,8 +204,9 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
 
     scanLockRef.current = true;
     lastScannedBarcodeRef.current = { code: clean, time: Date.now() };
-    console.log(`[BarcodeScannerViewfinder] ✓ Barcode accepted: "${clean}". Triggering tactile feedback...`);
+    console.log(`[BarcodeScannerViewfinder] ✓ Barcode accepted: "${clean}". Triggering audio & tactile feedback...`);
 
+    soundFeedbackService.playBarcodeBeep();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch((err) => {
       console.log('[BarcodeScannerViewfinder] Haptics error:', err);
     });

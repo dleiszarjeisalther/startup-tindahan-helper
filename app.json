@@ -16,6 +16,11 @@
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "splash": {
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#0D7A52"
+      },
       "adaptiveIcon": {
         "backgroundColor": "#0D7A52",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

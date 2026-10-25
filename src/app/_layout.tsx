@@ -1,7 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, View } from 'react-native';
 
 import AppTabs from '@/components/app-tabs';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
@@ -50,11 +50,13 @@ export default function TabLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <TindahanStoreProvider>
-        <LicensingGate>
-          <AppTabs />
-          <AppUpdatePrompt />
-        </LicensingGate>
-        <AnimatedSplashOverlay />
+        <View style={{ flex: 1, backgroundColor: '#0D7A52' }}>
+          <LicensingGate>
+            <AppTabs />
+            <AppUpdatePrompt />
+          </LicensingGate>
+          <AnimatedSplashOverlay />
+        </View>
       </TindahanStoreProvider>
     </ThemeProvider>
   );

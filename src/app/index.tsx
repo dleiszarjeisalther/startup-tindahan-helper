@@ -105,7 +105,8 @@ export default function PosScanProductScreen() {
   const tryAddToCart = (
     productId: string,
     successMessage: string,
-    unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece'
+    unit: 'piece' | 'bundle' | 'pack' | 'box' | 'case' = 'piece',
+    options?: { playSound?: boolean }
   ) => {
     if (isFeatureLocked()) {
       openUpgradeModal();
@@ -150,7 +151,9 @@ export default function PosScanProductScreen() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         triggerScanToast(successMessage);
       }
-      soundFeedbackService.playBarcodeBeep();
+      if (options?.playSound !== false) {
+        soundFeedbackService.playBarcodeBeep();
+      }
       console.log(`[POS Screen] ✓ Added to cart: productId=${productId}, unit=${result?.unitAdded ?? unit}`);
       return true;
     } catch (error) {
@@ -237,7 +240,8 @@ export default function PosScanProductScreen() {
           tryAddToCart(
             matched.id,
             `✓ Scanned +1 ${tierLabel} ${matched.name}`,
-            tierName as 'piece' | 'bundle' | 'pack' | 'box' | 'case'
+            tierName as 'piece' | 'bundle' | 'pack' | 'box' | 'case',
+            { playSound: false }
           )
         ) {
           setUnknownBarcode(null);
@@ -250,7 +254,14 @@ export default function PosScanProductScreen() {
         setUnknownBarcode(null);
         return;
       }
-      if (tryAddToCart(matched.id, `✓ Scanned +1 ${matched.name} (${matched.formattedPrice})`)) {
+      if (
+        tryAddToCart(
+          matched.id,
+          `✓ Scanned +1 ${matched.name} (${matched.formattedPrice})`,
+          'piece',
+          { playSound: false }
+        )
+      ) {
         setUnknownBarcode(null);
       }
     } else {
