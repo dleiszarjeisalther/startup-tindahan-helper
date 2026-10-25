@@ -31,6 +31,7 @@ class SoundFeedbackService {
         }
       }
       this.players = [];
+      this.activePlayerIndex = 0;
       for (let i = 0; i < this.poolSize; i++) {
         const player = createAudioPlayer(sourceToUse);
         player.loop = false;
@@ -64,6 +65,7 @@ class SoundFeedbackService {
 
         console.log(`[SoundFeedbackService] ✓ Barcode beep pool (${this.players.length} players) initialized.`);
       } catch (err) {
+        this.initPromise = null;
         console.log('[SoundFeedbackService] ⚠️ Failed to init audio player pool:', err);
       }
     })();
@@ -106,13 +108,25 @@ class SoundFeedbackService {
 
       if (this.players.length === 0) return;
 
-      const player = this.players[this.activePlayerIndex];
-      void player.seekTo(0).catch(() => {});
+      const playerIndex = this.activePlayerIndex % this.players.length;
+      const player = this.players[playerIndex];
+      this.activePlayerIndex = (playerIndex + 1) % this.players.length;
+
+      try {
+        void player.seekTo(0)?.catch?.(() => {});
+      } catch {
+        // Safe fallback if seekTo throws synchronously or fails
+      }
+
       player.volume = 1;
-      this.activePlayerIndex = (this.activePlayerIndex + 1) % this.players.length;
       player.play();
     } catch (error) {
       console.log('[SoundFeedbackService] Playback notice:', error);
+      try {
+        this.createPool();
+      } catch {
+        // ignore
+      }
     }
   }
 }

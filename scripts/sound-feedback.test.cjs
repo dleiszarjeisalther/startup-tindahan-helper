@@ -146,8 +146,12 @@ test('does not pause player asynchronously after playback (no destructive timeou
   assert.equal(h.players[0].pauses, 0, 'Must NOT pause player via timeout (avoids audio focus stripping)');
 });
 
-test('cleans up existing players by calling remove() on pool recreation', () => {
+test('cleans up existing players by calling remove() on pool recreation and resets activePlayerIndex', () => {
   const h = setup();
+  // Play scan 1 (player 0)
+  h.service.playBarcodeBeep();
+  // activePlayerIndex was advanced to 1
+
   const initialPlayers = [...h.players];
   assert.equal(initialPlayers.length, 3);
   assert.ok(initialPlayers.every((p) => !p.removed), 'Initial players should not be removed yet');
@@ -159,4 +163,58 @@ test('cleans up existing players by calling remove() on pool recreation', () => 
   assert.equal(h.players.length, 6, 'Total players created should now be 6');
   const newPlayers = h.players.slice(3);
   assert.ok(newPlayers.every((p) => !p.removed), 'New players should be active');
+
+  // Next scan must start from index 0 of the new pool
+  h.service.playBarcodeBeep();
+  assert.equal(newPlayers[0].plays, 1, 'Next scan after createPool must play player 0 of new pool');
+  assert.equal(newPlayers[1].plays, 0);
+  assert.equal(newPlayers[2].plays, 0);
+});
+
+test('handles synchronous seekTo errors and non-promise returns without aborting play()', () => {
+  const h = setup();
+  // Corrupt player 0's seekTo to throw synchronously
+  h.players[0].seekTo = () => {
+    throw new Error('Simulated synchronous seek failure');
+  };
+  // Corrupt player 1's seekTo to return void (non-promise)
+  h.players[1].seekTo = () => {
+    return undefined;
+  };
+
+  // Scan 1: player 0 must still play even if seekTo threw synchronously
+  assert.doesNotThrow(() => {
+    h.service.playBarcodeBeep();
+  });
+  assert.equal(h.players[0].plays, 1, 'Player 0 must still play despite synchronous seekTo throw');
+
+  // Scan 2: player 1 must still play even if seekTo returned void
+  assert.doesNotThrow(() => {
+    h.service.playBarcodeBeep();
+  });
+  assert.equal(h.players[1].plays, 1, 'Player 1 must still play despite non-promise seekTo');
+});
+
+test('recovers by recreating pool when play() encounters an unhandled runtime error', () => {
+  const h = setup();
+  const initialPlayers = [...h.players];
+
+  // Force player 0 play to throw
+  h.players[0].play = () => {
+    throw new Error('ExoPlayer fatal native crash');
+  };
+
+  // Trigger scan - should catch and recover pool
+  assert.doesNotThrow(() => {
+    h.service.playBarcodeBeep();
+  });
+
+  // Old players should have been torn down
+  assert.ok(initialPlayers.every((p) => p.removed), 'Failed pool should be torn down');
+  assert.equal(h.players.length, 6, 'A fresh 3-player pool must be created on recovery');
+
+  // Subsequent scan works normally on the recovered pool
+  const recoveredPlayers = h.players.slice(3);
+  h.service.playBarcodeBeep();
+  assert.equal(recoveredPlayers[0].plays, 1, 'Subsequent scan must play cleanly on recovered pool');
 });
