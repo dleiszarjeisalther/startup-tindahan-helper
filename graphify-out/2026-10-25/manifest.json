@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1792754391.0951586,
-    "seen": 1792754740.6586866,
-    "ast_hash": "db338f90f2c4d1ef9f24598701954649",
+    "mtime": 1792899884.3497117,
+    "seen": 1792900197.880524,
+    "ast_hash": "486f5cc53d62c2b8702e24a2ab394d07",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
@@ -1218,9 +1218,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/TrialBanner.tsx": {
-    "mtime": 1792899182.0564303,
-    "seen": 1792899525.3333707,
-    "ast_hash": "fc8152b8293cc4b018ad0d964f609653",
+    "mtime": 1792899589.629855,
+    "seen": 1792900197.8809915,
+    "ast_hash": "53b300dbbe7861c9d405ff90958be11a",
     "semantic_hash": ""
   },
   "src/presentation/components/TrialExpiredModal.tsx": {

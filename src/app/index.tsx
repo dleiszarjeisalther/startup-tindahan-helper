@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
+  Image,
   TextInput,
   Pressable,
   ScrollView,
@@ -242,7 +243,22 @@ export default function PosScanProductScreen() {
     <ScreenSafeAreaView style={styles.safeArea} edges={[]}>
       {/* Top App Header Branding — Tindahan Helper */}
       <View style={[styles.topAppHeader, { paddingTop: insets.top + 4 }]}>
-        <Text style={styles.topAppBrandTitle}>🏪 Tindahan Helper</Text>
+        <View style={styles.brandingRow}>
+          <Image
+            source={require('@/assets/images/icon.png')}
+            style={styles.headerLogoIcon}
+            resizeMode="contain"
+          />
+          <View style={styles.brandingTextContainer}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+              <Text style={styles.brandTitleWhite}>Tindahan</Text>
+              <Text style={styles.brandTitleAccent}>Helper</Text>
+              <View style={styles.brandUtilityPill}>
+                <Text style={styles.brandUtilityPillText}>POS</Text>
+              </View>
+            </View>
+          </View>
+        </View>
       </View>
 
       {/* Trial Status Header Pill */}
@@ -701,11 +717,52 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  topAppBrandTitle: {
-    color: '#F8FAFC',
+  brandingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerLogoIcon: {
+    width: 26,
+    height: 26,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.18)',
+    shadowColor: '#208AEF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.45,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  brandingTextContainer: {
+    justifyContent: 'center',
+  },
+  brandTitleWhite: {
+    color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+  brandTitleAccent: {
+    color: '#F59E0B',
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+  brandUtilityPill: {
+    backgroundColor: 'rgba(32, 138, 239, 0.22)',
+    borderWidth: 1,
+    borderColor: 'rgba(56, 189, 248, 0.45)',
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 6,
+    marginLeft: 2,
+  },
+  brandUtilityPillText: {
+    color: '#38BDF8',
+    fontSize: 9,
     fontWeight: '800',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
   },
   safeArea: {
     flex: 1,
