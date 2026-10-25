@@ -10,9 +10,12 @@ const source = ts.transpileModule(
   { compilerOptions: { module: ts.ModuleKind.CommonJS } },
 ).outputText;
 
+const MOCK_DATA_URI = 'data:audio/wav;base64,UklGRnwpAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YVgpAAAA';
+
 function setup({ modeFailure = false } = {}) {
   const players = [];
   const sources = [];
+  const audioModes = [];
   let failMode = modeFailure;
   const exports = {};
 
@@ -23,15 +26,12 @@ function setup({ modeFailure = false } = {}) {
     clearTimeout,
     require(name) {
       if (name === 'react-native') return { Platform: { OS: 'android' } };
-      if (name === 'expo-asset') return {
-        Asset: {
-          fromModule: () => ({
-            downloadAsync: async () => {},
-          }),
-        },
-      };
+      if (name === './barcodeBeepDataUri' || name.includes('barcodeBeepDataUri')) {
+        return { BARCODE_BEEP_DATA_URI: MOCK_DATA_URI };
+      }
       if (name === 'expo-audio') return {
-        async setAudioModeAsync() {
+        async setAudioModeAsync(mode) {
+          audioModes.push(mode);
           if (failMode) { failMode = false; throw new Error('mode failed'); }
         },
         createAudioPlayer(sourceArg) {
@@ -41,20 +41,33 @@ function setup({ modeFailure = false } = {}) {
             volume: 0,
             plays: 0,
             seeks: 0,
+            seekPositions: [],
             pauses: 0,
             removed: false,
+            callLog: [],
             isLoaded: true,
             listeners: new Set(),
             addListener(event, listener) {
               this.listeners.add(listener);
               return { remove: () => this.listeners.delete(listener) };
             },
-            pause() { this.pauses++; },
-            async seekTo() { this.seeks++; },
+            pause() {
+              this.pauses++;
+              this.callLog.push({ action: 'pause' });
+            },
+            async seekTo(pos = 0) {
+              this.seeks++;
+              this.seekPositions.push(pos);
+              this.callLog.push({ action: 'seekTo', pos });
+            },
             play() {
               this.plays++;
+              this.callLog.push({ action: 'play' });
             },
-            remove() { this.removed = true; },
+            remove() {
+              this.removed = true;
+              this.callLog.push({ action: 'remove' });
+            },
           };
           players.push(player);
           return player;
@@ -64,79 +77,86 @@ function setup({ modeFailure = false } = {}) {
     },
   });
 
-  return { service: exports.soundFeedbackService, players, sources };
+  return { service: exports.soundFeedbackService, players, sources, audioModes };
 }
 
-test('initializes 3-player round-robin pool with loop disabled and volume 1', async () => {
+test('initializes 3-player round-robin pool with base64 data URI, loop disabled, and volume 1', () => {
   const h = setup();
   assert.equal(h.players.length, 3, 'Must initialize exactly 3 players for round-robin pool');
   for (let i = 0; i < 3; i++) {
+    assert.equal(h.sources[i], MOCK_DATA_URI, `Player ${i} must be initialized with base64 data URI`);
     assert.equal(h.players[i].loop, false, `Player ${i} loop MUST be false`);
     assert.equal(h.players[i].volume, 1, `Player ${i} volume MUST be 1`);
   }
 });
 
-test('plays immediately with zero awaits and rotates round-robin across players', () => {
+test('configures audio mode with duckOthers on native platforms during initialization', async () => {
+  const h = setup();
+  await h.service.initPlayer();
+  assert.ok(h.audioModes.length > 0, 'setAudioModeAsync must be called');
+  const lastMode = h.audioModes[h.audioModes.length - 1];
+  assert.equal(lastMode.playsInSilentMode, true, 'Must play in silent mode');
+  assert.equal(lastMode.interruptionMode, 'duckOthers', 'Must use duckOthers for OEM camera scanner compatibility');
+  assert.equal(lastMode.shouldPlayInBackground, false);
+  assert.equal(lastMode.shouldRouteThroughEarpiece, false, 'Must not route through earpiece');
+});
+
+test('pre-seeks to 0 and ensures volume 1 before calling play() with round-robin rotation', () => {
   const h = setup();
 
   // Scan 1: player 0
   h.service.playBarcodeBeep();
   assert.equal(h.players[0].plays, 1, 'Scan 1 should play player 0');
+  assert.equal(h.players[0].seeks, 1, 'Scan 1 should pre-seek player 0 to 0');
+  assert.equal(h.players[0].seekPositions[0], 0);
+  assert.equal(h.players[0].volume, 1);
+  assert.deepEqual(h.players[0].callLog, [{ action: 'seekTo', pos: 0 }, { action: 'play' }], 'Pre-seek must occur before play()');
   assert.equal(h.players[1].plays, 0);
   assert.equal(h.players[2].plays, 0);
-  assert.equal(h.players[0].seeks, 0, 'Must NOT synchronously await seek before play');
 
   // Scan 2: player 1
   h.service.playBarcodeBeep();
-  assert.equal(h.players[0].plays, 1);
   assert.equal(h.players[1].plays, 1, 'Scan 2 should play player 1');
+  assert.equal(h.players[1].seeks, 1, 'Scan 2 should pre-seek player 1 to 0');
+  assert.deepEqual(h.players[1].callLog, [{ action: 'seekTo', pos: 0 }, { action: 'play' }]);
+  assert.equal(h.players[0].plays, 1);
   assert.equal(h.players[2].plays, 0);
-  assert.equal(h.players[1].seeks, 0, 'Must NOT synchronously await seek before play');
 
   // Scan 3: player 2
   h.service.playBarcodeBeep();
-  assert.equal(h.players[0].plays, 1);
-  assert.equal(h.players[1].plays, 1);
   assert.equal(h.players[2].plays, 1, 'Scan 3 should play player 2');
-  assert.equal(h.players[2].seeks, 0, 'Must NOT synchronously await seek before play');
+  assert.equal(h.players[2].seeks, 1, 'Scan 3 should pre-seek player 2 to 0');
+  assert.deepEqual(h.players[2].callLog, [{ action: 'seekTo', pos: 0 }, { action: 'play' }]);
 
   // Scan 4: rotates back to player 0
   h.service.playBarcodeBeep();
   assert.equal(h.players[0].plays, 2, 'Scan 4 should rotate back to player 0');
+  assert.equal(h.players[0].seeks, 2, 'Scan 4 should pre-seek player 0 to 0 again');
 });
 
-test('asynchronously pauses and rewinds player after 140ms timeout', async () => {
+test('does not pause player asynchronously after playback (no destructive timeouts)', async () => {
   const h = setup();
-  h.service.playBarcodeBeep(); // triggers player 0
-
-  assert.equal(h.players[0].pauses, 0, 'Should not pause immediately');
-  assert.equal(h.players[0].seeks, 0, 'Should not seek immediately');
-
-  // Wait for 150ms timeout to fire
-  await new Promise((resolve) => setTimeout(resolve, 160));
-
-  assert.equal(h.players[0].pauses, 1, 'Should pause after 140ms');
-  assert.equal(h.players[0].seeks, 1, 'Should seek to 0 after 140ms');
-});
-
-test('cancels pending reset timer when player is reused during rapid burst scan', async () => {
-  const h = setup();
-
-  // Burst scan 1: player 0
   h.service.playBarcodeBeep();
-  assert.equal(h.players[0].plays, 1);
-  assert.equal(h.players[0].pauses, 0);
 
-  // Rapidly trigger 3 more scans so player 0 is reused before 140ms elapses
-  h.service.playBarcodeBeep(); // player 1
-  h.service.playBarcodeBeep(); // player 2
-  h.service.playBarcodeBeep(); // player 0 reused!
+  assert.equal(h.players[0].pauses, 0, 'Must not pause immediately');
 
-  assert.equal(h.players[0].plays, 2, 'Player 0 should be played a second time');
-  assert.equal(h.players[0].pauses, 0, 'Player 0 should NOT be paused when reused');
-  assert.equal(h.players[0].seeks, 1, 'Player 0 should be rewound before second play');
+  // Wait beyond previous 140ms timeout window
+  await new Promise((resolve) => setTimeout(resolve, 200));
 
-  // Wait 160ms for second timer to fire
-  await new Promise((resolve) => setTimeout(resolve, 160));
-  assert.equal(h.players[0].pauses, 1, 'Player 0 should have paused once after full duration');
+  assert.equal(h.players[0].pauses, 0, 'Must NOT pause player via timeout (avoids audio focus stripping)');
+});
+
+test('cleans up existing players by calling remove() on pool recreation', () => {
+  const h = setup();
+  const initialPlayers = [...h.players];
+  assert.equal(initialPlayers.length, 3);
+  assert.ok(initialPlayers.every((p) => !p.removed), 'Initial players should not be removed yet');
+
+  // Re-create pool
+  h.service.createPool();
+
+  assert.ok(initialPlayers.every((p) => p.removed), 'All previous players must have remove() called on teardown');
+  assert.equal(h.players.length, 6, 'Total players created should now be 6');
+  const newPlayers = h.players.slice(3);
+  assert.ok(newPlayers.every((p) => !p.removed), 'New players should be active');
 });

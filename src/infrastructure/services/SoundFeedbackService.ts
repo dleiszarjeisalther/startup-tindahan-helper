@@ -1,14 +1,13 @@
 import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
-import { Asset } from 'expo-asset';
 import { Platform } from 'react-native';
+import { BARCODE_BEEP_DATA_URI } from './barcodeBeepDataUri';
 
-const soundSource = require('../../../assets/sounds/barcode-beep.wav');
 type BeepPlayer = ReturnType<typeof createAudioPlayer>;
 
 /**
  * SoundFeedbackService
  * Delivers immediate auditory confirmation (POS scanner beep) upon successful barcode scan.
- * Uses a 3-player round-robin pool and expo-asset preloading for zero-latency burst scanning.
+ * Uses a 3-player round-robin pool and RFC 2397 base64 data URI for zero-latency burst scanning.
  * Works seamlessly across iOS, Android, and Web.
  */
 class SoundFeedbackService {
@@ -16,15 +15,21 @@ class SoundFeedbackService {
   private activePlayerIndex = 0;
   private readonly poolSize = 3;
   private initPromise: Promise<void> | null = null;
-  private resetTimers: (ReturnType<typeof setTimeout> | null)[] = [null, null, null];
 
   constructor() {
-    this.createPool(soundSource);
+    this.createPool(BARCODE_BEEP_DATA_URI);
     void this.initPlayer();
   }
 
-  private createPool(sourceToUse: any = soundSource): void {
+  public createPool(sourceToUse: any = BARCODE_BEEP_DATA_URI): void {
     try {
+      for (const player of this.players) {
+        try {
+          player.remove();
+        } catch {
+          // ignore
+        }
+      }
       this.players = [];
       for (let i = 0; i < this.poolSize; i++) {
         const player = createAudioPlayer(sourceToUse);
@@ -42,30 +47,19 @@ class SoundFeedbackService {
 
     this.initPromise = (async () => {
       try {
-        let uriToUse: string | null = null;
-        try {
-          const assets = await Asset.loadAsync(soundSource);
-          if (assets && assets[0]) {
-            uriToUse = assets[0].localUri || assets[0].uri;
-          }
-        } catch (assetErr) {
-          console.log('[SoundFeedbackService] Asset load notice:', assetErr);
-        }
-
         if (Platform.OS !== 'web') {
           await setAudioModeAsync({
             playsInSilentMode: true,
-            interruptionMode: 'mixWithOthers',
+            interruptionMode: 'duckOthers',
             shouldPlayInBackground: false,
+            shouldRouteThroughEarpiece: false,
           }).catch((err) => {
             console.log('[SoundFeedbackService] setAudioModeAsync notice:', err);
           });
         }
 
-        if (uriToUse) {
-          this.createPool(uriToUse);
-        } else if (this.players.length === 0) {
-          this.createPool(soundSource);
+        if (this.players.length === 0) {
+          this.createPool(BARCODE_BEEP_DATA_URI);
         }
 
         console.log(`[SoundFeedbackService] ✓ Barcode beep pool (${this.players.length} players) initialized.`);
@@ -112,35 +106,11 @@ class SoundFeedbackService {
 
       if (this.players.length === 0) return;
 
-      const playerIndex = this.activePlayerIndex;
-      const player = this.players[playerIndex];
-      this.activePlayerIndex = (this.activePlayerIndex + 1) % this.players.length;
-
-      // Cancel any pending reset timer for this player so a previous burst scan
-      // does not prematurely silence or rewind the new playback
-      if (this.resetTimers[playerIndex] !== null) {
-        clearTimeout(this.resetTimers[playerIndex]!);
-        this.resetTimers[playerIndex] = null;
-        try {
-          void player.seekTo(0).catch(() => {});
-        } catch {
-          // ignore
-        }
-      }
-
+      const player = this.players[this.activePlayerIndex];
+      void player.seekTo(0).catch(() => {});
       player.volume = 1;
+      this.activePlayerIndex = (this.activePlayerIndex + 1) % this.players.length;
       player.play();
-
-      // Asynchronously reset player position for next rotation after 140ms
-      this.resetTimers[playerIndex] = setTimeout(() => {
-        this.resetTimers[playerIndex] = null;
-        try {
-          player.pause();
-          void player.seekTo(0).catch(() => {});
-        } catch {
-          // ignore
-        }
-      }, 140);
     } catch (error) {
       console.log('[SoundFeedbackService] Playback notice:', error);
     }
@@ -148,4 +118,3 @@ class SoundFeedbackService {
 }
 
 export const soundFeedbackService = new SoundFeedbackService();
-
