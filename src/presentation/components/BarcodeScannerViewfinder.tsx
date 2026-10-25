@@ -8,10 +8,12 @@ import {
   StyleSheet,
   Animated,
   Easing,
+  ActivityIndicator,
   StyleProp,
   ViewStyle,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { soundFeedbackService } from '@/infrastructure/services/SoundFeedbackService';
 
@@ -72,6 +74,9 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
   style,
 }) => {
   const [torchOn, setTorchOn] = useState(false);
+  const [isCameraReady, setIsCameraReady] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraMountKey, setCameraMountKey] = useState(0);
   const [permission, requestPermission] = useCameraPermissions();
   const cameraPermissionRequestedRef = useRef(false);
   const scanLockRef = useRef(false);
@@ -107,6 +112,18 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
     outputRange: [6, maxTravel],
   });
 
+  // Synchronize state adjustments when isActive prop changes (React 19 render pattern)
+  const [prevIsActive, setPrevIsActive] = useState(isActive);
+  if (prevIsActive !== isActive) {
+    setPrevIsActive(isActive);
+    if (!isActive) {
+      setTorchOn(false);
+      setIsCameraReady(false);
+    } else {
+      setCameraError(null);
+    }
+  }
+
   useEffect(() => {
     if (isActive) {
       scanLockRef.current = false;
@@ -115,6 +132,20 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
       console.log('[BarcodeScannerViewfinder] Camera deactivated / standby.');
     }
   }, [isActive]);
+
+  // Safety fallback: If camera ready event is delayed past 2500ms on slower hardware, release backdrop gracefully
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    if (isActive && !isCameraReady && !cameraError && permission?.granted) {
+      timer = setTimeout(() => {
+        console.warn('[BarcodeScannerViewfinder] Camera ready timeout reached (2500ms); falling back to ready state.');
+        setIsCameraReady(true);
+      }, 2500);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isActive, isCameraReady, cameraError, permission?.granted]);
 
   useEffect(() => {
     if (
@@ -139,6 +170,8 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
         if (!res.granted) return;
       }
       scanLockRef.current = false;
+      setCameraError(null);
+      setIsCameraReady(false);
       onToggleActive?.(true);
     } else {
       onToggleActive?.(false);
@@ -200,23 +233,28 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
         style,
       ]}
     >
-      {/* Background Camera View or Standby Backdrop */}
-      {permission?.granted ? (
+      {/* Background Camera View (Only mounted when active, permission granted, and no error) */}
+      {isActive && permission?.granted && !cameraError ? (
         <CameraView
+          key={`camera-${cameraMountKey}`}
           style={[StyleSheet.absoluteFill, { backgroundColor: '#0F172A' }]}
-          active={isActive}
           facing="back"
           enableTorch={torchOn}
           mute={true}
-          barcodeScannerSettings={
-            isActive
-              ? {
-                  barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'qr'],
-                }
-              : undefined
-          }
+          barcodeScannerSettings={{
+            barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'qr'],
+          }}
+          onCameraReady={() => {
+            console.log('[BarcodeScannerViewfinder] Camera preview ready.');
+            setIsCameraReady(true);
+          }}
+          onMountError={(error) => {
+            console.error('[BarcodeScannerViewfinder] Camera mount error:', error);
+            setCameraError(error?.message || 'Hindi ma-load ang camera.');
+            setIsCameraReady(false);
+          }}
           onBarcodeScanned={(res) => {
-            if (!isActive) return;
+            if (!isActive || !isCameraReady) return;
             console.log('[BarcodeScannerViewfinder] Raw scan event captured from CameraView:', {
               data: res.data,
               type: res.type,
@@ -226,7 +264,11 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
           }}
         />
       ) : null}
-      {!isActive && <View style={styles.standbyBackdrop} />}
+
+      {/* Standby / Initializing Backdrop (prevents native SurfaceView hole-punching to white window) */}
+      {(!isActive || !isCameraReady || !!cameraError || !permission?.granted) && (
+        <View style={styles.standbyBackdrop} />
+      )}
 
       {/* Top Controls Row */}
       <View style={[styles.topBar, { top: 10 + topControlInset }]}>
@@ -261,34 +303,77 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
         </View>
       </View>
 
-      {/* Center Barcode Reticle with Smooth Animated Sweeping Laser Line */}
-      <Pressable
-        style={[styles.reticleWrapper, { width: reticleWidth, height: reticleHeight }]}
-        onPress={handleToggleCamera}
-        hitSlop={8}
-      >
-        {/* 4 Green Corner Brackets */}
-        <View style={styles.cornerTL} />
-        <View style={styles.cornerTR} />
-        <View style={styles.cornerBL} />
-        <View style={styles.cornerBR} />
-
-        {/* Animated Sweeping Red Laser Beam */}
-        <Animated.View
-          style={[
-            styles.laserBeamWrapper,
-            { transform: [{ translateY }] },
-          ]}
-        >
-          <View style={styles.laserCoreLine} />
-          <View style={styles.laserGlowAura} />
-        </Animated.View>
-
-        {/* Center Target Indicator */}
-        <View style={styles.reticleCenterGuide}>
-          <Text style={styles.reticleCenterText}>[  +  ]</Text>
+      {/* State / Reticle Area */}
+      {cameraError ? (
+        <View style={styles.stateContainer}>
+          <Ionicons name="alert-circle-outline" size={36} color="#EF4444" />
+          <Text style={styles.stateTitle}>Problema sa Camera</Text>
+          <Text style={styles.stateSubText}>{cameraError}</Text>
+          <Pressable
+            style={styles.stateActionBtn}
+            onPress={() => {
+              setCameraError(null);
+              setIsCameraReady(false);
+              setCameraMountKey((k) => k + 1);
+            }}
+          >
+            <Ionicons name="refresh" size={16} color="#FFFFFF" />
+            <Text style={styles.stateActionBtnText}>Subukan Muli</Text>
+          </Pressable>
         </View>
-      </Pressable>
+      ) : !permission?.granted && isActive ? (
+        <View style={styles.stateContainer}>
+          <Ionicons name="camera-outline" size={36} color="#F59E0B" />
+          <Text style={styles.stateTitle}>Kailangan ng Permiso sa Camera</Text>
+          <Text style={styles.stateSubText}>
+            Pahintulutan ang app na gamitin ang camera para makapag-scan ng barcode ng mga paninda.
+          </Text>
+          <Pressable
+            style={styles.stateActionBtn}
+            onPress={() => {
+              requestPermission().catch((err) => {
+                console.warn('[BarcodeScannerViewfinder] Manual permission request failed:', err);
+              });
+            }}
+          >
+            <Ionicons name="checkmark-circle-outline" size={16} color="#FFFFFF" />
+            <Text style={styles.stateActionBtnText}>Payagan ang Camera</Text>
+          </Pressable>
+        </View>
+      ) : (
+        /* Center Barcode Reticle with Smooth Animated Sweeping Laser Line */
+        <Pressable
+          style={[styles.reticleWrapper, { width: reticleWidth, height: reticleHeight }]}
+          onPress={handleToggleCamera}
+          hitSlop={8}
+        >
+          {/* 4 Green Corner Brackets */}
+          <View style={styles.cornerTL} />
+          <View style={styles.cornerTR} />
+          <View style={styles.cornerBL} />
+          <View style={styles.cornerBR} />
+
+          {/* Sweeping Red Laser Beam Line */}
+          {isActive && isCameraReady && (
+            <Animated.View style={[styles.laserBeamWrapper, { transform: [{ translateY }] }]}>
+              <View style={styles.laserCoreLine} />
+              <View style={styles.laserGlowAura} />
+            </Animated.View>
+          )}
+
+          {/* Reticle Guide Text or Initializing Indicator */}
+          {isActive && !isCameraReady ? (
+            <View style={styles.reticleInitializingOverlay}>
+              <ActivityIndicator size="small" color="#22C55E" />
+              <Text style={styles.cameraInitializingText}>Inihahanda ang camera...</Text>
+            </View>
+          ) : (
+            <View style={styles.reticleCenterGuide}>
+              <Text style={styles.reticleCenterText}>{isActive ? '[  +  ]' : 'OFF'}</Text>
+            </View>
+          )}
+        </Pressable>
+      )}
 
       {/* Hint text below reticle */}
       <Text style={styles.hintText}>
@@ -475,5 +560,64 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 12,
+  },
+  stateContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    zIndex: 10,
+    backgroundColor: '#0F172A',
+  },
+  stateTitle: {
+    color: '#F8FAFC',
+    fontSize: 15,
+    fontWeight: '700',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  stateSubText: {
+    color: '#94A3B8',
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 6,
+    lineHeight: 18,
+    maxWidth: 280,
+  },
+  stateActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#0D7A52',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginTop: 14,
+  },
+  stateActionBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  reticleInitializingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    zIndex: 6,
+  },
+  cameraInitializingText: {
+    color: '#86EFAC',
+    fontSize: 12,
+    fontWeight: '600',
   },
 });

@@ -25,7 +25,8 @@
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
       ],
-      "package": "com.jesar.tindahanhelper"
+      "package": "com.jesar.tindahanhelper",
+      "backgroundColor": "#0F172A"
     },
     "web": {
       "output": "static",
@@ -64,6 +65,7 @@
         "projectId": "f1261f4f-b912-44f4-af8c-3a199520ceba"
       }
     },
-    "owner": "jesar"
+    "owner": "jesar",
+    "backgroundColor": "#0F172A"
   }
 }
