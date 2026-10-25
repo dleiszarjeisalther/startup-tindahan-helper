@@ -236,13 +236,18 @@ export default function PosScanProductScreen() {
     });
 
   const showTrialBanner = !isLicensed && isRegistered;
-  const scannerTopInset = showTrialBanner ? 0 : insets.top;
+  const scannerTopInset = 4;
 
   return (
     <ScreenSafeAreaView style={styles.safeArea} edges={[]}>
+      {/* Top App Header Branding — Tindahan Helper */}
+      <View style={[styles.topAppHeader, { paddingTop: insets.top + 4 }]}>
+        <Text style={styles.topAppBrandTitle}>🏪 Tindahan Helper</Text>
+      </View>
+
       {/* Trial Status Header Pill */}
       {showTrialBanner ? (
-        <View style={{ paddingTop: insets.top }}>
+        <View style={{ paddingTop: 2 }}>
           <TrialBanner onPressUpgrade={openUpgradeModal} />
         </View>
       ) : null}
@@ -689,6 +694,19 @@ export default function PosScanProductScreen() {
 }
 
 const styles = StyleSheet.create({
+  topAppHeader: {
+    backgroundColor: '#0F172A',
+    paddingHorizontal: 16,
+    paddingBottom: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  topAppBrandTitle: {
+    color: '#F8FAFC',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 0.6,
+  },
   safeArea: {
     flex: 1,
     backgroundColor: '#0F172A',

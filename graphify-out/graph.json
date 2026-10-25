@@ -15833,7 +15833,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/index.tsx",
-      "source_location": "L691"
+      "source_location": "L696"
     },
     {
       "id": "src_presentation_components_productthumbnail",
@@ -17422,7 +17422,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L270",
+      "source_location": "L275",
       "weight": 1.0
     },
     {
@@ -17434,7 +17434,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L286",
+      "source_location": "L291",
       "weight": 1.0
     },
     {
@@ -17494,7 +17494,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L608",
+      "source_location": "L613",
       "weight": 1.0
     },
     {
@@ -17506,7 +17506,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L634",
+      "source_location": "L639",
       "weight": 1.0
     },
     {
@@ -17518,7 +17518,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L665",
+      "source_location": "L670",
       "weight": 1.0
     },
     {
@@ -36532,7 +36532,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/index.tsx",
-      "source_location": "L691",
+      "source_location": "L696",
       "weight": 1.0
     },
     {
@@ -44876,5 +44876,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "3b2b9958c04c2e9ea7f810ac8db877bdd848f934"
+  "built_at_commit": "e4a762b0a8ad6e2347441f16552fdec108a42322"
 }
