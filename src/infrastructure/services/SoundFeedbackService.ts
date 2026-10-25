@@ -19,16 +19,15 @@ class SoundFeedbackService {
   private resetTimers: (ReturnType<typeof setTimeout> | null)[] = [null, null, null];
 
   constructor() {
-    this.createPool();
+    this.createPool(soundSource);
     void this.initPlayer();
   }
 
-  private createPool(): void {
-    if (this.players.length >= this.poolSize) return;
+  private createPool(sourceToUse: any = soundSource): void {
     try {
       this.players = [];
       for (let i = 0; i < this.poolSize; i++) {
-        const player = createAudioPlayer(soundSource, { downloadFirst: true });
+        const player = createAudioPlayer(sourceToUse);
         player.loop = false;
         player.volume = 1;
         this.players.push(player);
@@ -43,17 +42,14 @@ class SoundFeedbackService {
 
     this.initPromise = (async () => {
       try {
-        let localSource: any = soundSource;
+        let uriToUse: string | null = null;
         try {
-          const asset = Asset.fromModule(soundSource);
-          await asset.downloadAsync();
-          if (asset.localUri) {
-            localSource = { uri: asset.localUri };
-          } else if (asset.uri) {
-            localSource = { uri: asset.uri };
+          const assets = await Asset.loadAsync(soundSource);
+          if (assets && assets[0]) {
+            uriToUse = assets[0].localUri || assets[0].uri;
           }
         } catch (assetErr) {
-          console.log('[SoundFeedbackService] Asset preload notice:', assetErr);
+          console.log('[SoundFeedbackService] Asset load notice:', assetErr);
         }
 
         if (Platform.OS !== 'web') {
@@ -66,24 +62,13 @@ class SoundFeedbackService {
           });
         }
 
-        if (this.players.length === 0) {
-          this.createPool();
+        if (uriToUse) {
+          this.createPool(uriToUse);
+        } else if (this.players.length === 0) {
+          this.createPool(soundSource);
         }
 
-        // Ensure all players are linked to the locally downloaded audio asset
-        for (const player of this.players) {
-          try {
-            if (typeof player.replace === 'function') {
-              player.replace(localSource);
-            }
-            player.loop = false;
-            player.volume = 1;
-          } catch (e) {
-            console.log('[SoundFeedbackService] Player replace error:', e);
-          }
-        }
-
-        console.log(`[SoundFeedbackService] ✓ Barcode beep pool (${this.players.length} players) initialized with local asset.`);
+        console.log(`[SoundFeedbackService] ✓ Barcode beep pool (${this.players.length} players) initialized.`);
       } catch (err) {
         console.log('[SoundFeedbackService] ⚠️ Failed to init audio player pool:', err);
       }

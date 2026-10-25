@@ -42,9 +42,9 @@
     "semantic_hash": "6b9302c1f72c315e90233c7539c48c9f"
   },
   "app.json": {
-    "mtime": 1792923263.459437,
-    "seen": 1792923667.239034,
-    "ast_hash": "5c3c1e3e07d9af0abaac3b36e04587bc",
+    "mtime": 1792930973.5205946,
+    "seen": 1792931478.6835213,
+    "ast_hash": "589acb935d64dabc3e47baaf7eed81a6",
     "semantic_hash": ""
   },
   "assets/expo.icon/icon.json": {
@@ -72,9 +72,9 @@
     "semantic_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275"
   },
   "src/app/_layout.tsx": {
-    "mtime": 1792926463.1361313,
-    "seen": 1792927120.0741513,
-    "ast_hash": "76d04739e15c1356ed109a7443240cf6",
+    "mtime": 1792931020.0580828,
+    "seen": 1792931478.6836803,
+    "ast_hash": "21e882451f999b971ba5a5cf5d864c16",
     "semantic_hash": ""
   },
   "src/app/checkout.tsx": {
@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1792928261.7426715,
-    "seen": 1792928782.3837197,
-    "ast_hash": "ee5153d7142053a1656378dcd437ac4d",
+    "mtime": 1792931106.4876058,
+    "seen": 1792931478.6836956,
+    "ast_hash": "1d39224fe09424c15c5f7e29a4e4c31c",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
@@ -138,9 +138,9 @@
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
-    "mtime": 1792928293.8051882,
-    "seen": 1792928782.3838575,
-    "ast_hash": "77820084b4cc494afb6b4d80b4545d61",
+    "mtime": 1792932596.2753344,
+    "seen": 1792932793.7354372,
+    "ast_hash": "a2808890018cf6ac96e244e4018e9687",
     "semantic_hash": ""
   },
   "src/components/animated-icon.web.tsx": {
@@ -450,9 +450,9 @@
     "semantic_hash": "c62d22797f3002396754d8cc55b0ae1a"
   },
   "src/presentation/components/BarcodeScannerViewfinder.tsx": {
-    "mtime": 1792926631.5690882,
-    "seen": 1792927120.0743518,
-    "ast_hash": "4846b762a59ec1fe63798ca43abb3c75",
+    "mtime": 1792931049.452877,
+    "seen": 1792931478.6838894,
+    "ast_hash": "6ded5606a3e274cd632d732babb8704c",
     "semantic_hash": ""
   },
   "src/infrastructure/services/OpenFoodFactsApiClient.ts": {
@@ -462,9 +462,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/SoundFeedbackService.ts": {
-    "mtime": 1792927932.1876116,
-    "seen": 1792928782.384259,
-    "ast_hash": "ed06b10460749b9b1dc6d117493a0dd7",
+    "mtime": 1792933644.5128992,
+    "seen": 1792933836.8800085,
+    "ast_hash": "965f1af894de804ee315093092364ffc",
     "semantic_hash": ""
   },
   "src/presentation/localization/i18n.ts": {
@@ -576,8 +576,8 @@
     "semantic_hash": ""
   },
   "scripts/sound-feedback.test.cjs": {
-    "mtime": 1792927950.9825754,
-    "seen": 1792928782.3836048,
+    "mtime": 1792933372.2127688,
+    "seen": 1792933836.8795514,
     "ast_hash": "a281a3802e62f5896b971aa38c26212c",
     "semantic_hash": ""
   },
@@ -1383,6 +1383,18 @@
     "mtime": 1792922322.5836208,
     "seen": 1792922493.8294215,
     "ast_hash": "c5ac2b7d5d528291f460bbcf60154eaa",
+    "semantic_hash": ""
+  },
+  "entry.js": {
+    "mtime": 1792932519.0471818,
+    "seen": 1792932793.7350993,
+    "ast_hash": "ea818533070acd2721343306a272caf7",
+    "semantic_hash": ""
+  },
+  "index.js": {
+    "mtime": 1792932508.106613,
+    "seen": 1792932793.735125,
+    "ast_hash": "f798a1eb01a53f712745a160f208143b",
     "semantic_hash": ""
   }
 }
