@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Animated, Image, StyleSheet, Text, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
+import { Asset } from 'expo-asset';
 
 export function AnimatedSplashOverlay() {
   const [visible, setVisible] = useState(true);
@@ -8,27 +9,45 @@ export function AnimatedSplashOverlay() {
   const scaleAnim = useState(() => new Animated.Value(0.92))[0];
 
   useEffect(() => {
-    // Hide the native OS splash screen as soon as our React in-app branding mounts
-    SplashScreen.hideAsync().catch(() => {});
+    let isCancelled = false;
 
-    // Gentle scale and clean fade transition
-    Animated.parallel([
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      }),
+    async function prepareAndDisplaySplash() {
+      try {
+        await Asset.fromModule(require('@/assets/images/splash-icon.png')).downloadAsync();
+      } catch (err) {
+        console.log('[SplashOverlay] Asset preload notice:', err);
+      }
+
+      // Hide the native OS splash screen once the in-app logo is guaranteed loaded
+      await SplashScreen.hideAsync().catch(() => {});
+
+      if (isCancelled) return;
+
+      // Display the Emerald Green Logo screen prominently for ~1.8 seconds before fading
       Animated.sequence([
-        Animated.delay(1100),
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 350,
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 450,
           useNativeDriver: true,
         }),
-      ]),
-    ]).start(() => {
-      setVisible(false);
-    });
+        Animated.delay(1800),
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        if (!isCancelled) {
+          setVisible(false);
+        }
+      });
+    }
+
+    void prepareAndDisplaySplash();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [fadeAnim, scaleAnim]);
 
   if (!visible) return null;

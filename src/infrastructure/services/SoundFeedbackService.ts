@@ -28,7 +28,7 @@ class SoundFeedbackService {
     try {
       this.players = [];
       for (let i = 0; i < this.poolSize; i++) {
-        const player = createAudioPlayer(soundSource);
+        const player = createAudioPlayer(soundSource, { downloadFirst: true });
         player.loop = false;
         player.volume = 1;
         this.players.push(player);
@@ -43,9 +43,15 @@ class SoundFeedbackService {
 
     this.initPromise = (async () => {
       try {
-        // Preload asset through expo-asset for instant playback readiness
+        let localSource: any = soundSource;
         try {
-          await Asset.fromModule(soundSource).downloadAsync();
+          const asset = Asset.fromModule(soundSource);
+          await asset.downloadAsync();
+          if (asset.localUri) {
+            localSource = { uri: asset.localUri };
+          } else if (asset.uri) {
+            localSource = { uri: asset.uri };
+          }
         } catch (assetErr) {
           console.log('[SoundFeedbackService] Asset preload notice:', assetErr);
         }
@@ -60,11 +66,24 @@ class SoundFeedbackService {
           });
         }
 
-        if (this.players.length < this.poolSize) {
+        if (this.players.length === 0) {
           this.createPool();
         }
 
-        console.log(`[SoundFeedbackService] ✓ Barcode beep pool (${this.players.length} players) initialized.`);
+        // Ensure all players are linked to the locally downloaded audio asset
+        for (const player of this.players) {
+          try {
+            if (typeof player.replace === 'function') {
+              player.replace(localSource);
+            }
+            player.loop = false;
+            player.volume = 1;
+          } catch (e) {
+            console.log('[SoundFeedbackService] Player replace error:', e);
+          }
+        }
+
+        console.log(`[SoundFeedbackService] ✓ Barcode beep pool (${this.players.length} players) initialized with local asset.`);
       } catch (err) {
         console.log('[SoundFeedbackService] ⚠️ Failed to init audio player pool:', err);
       }
