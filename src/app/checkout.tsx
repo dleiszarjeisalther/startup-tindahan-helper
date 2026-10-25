@@ -221,6 +221,10 @@ export default function CheckoutNewSaleScreen() {
   const [toastType, setToastType] = useState<ToastType>('success');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
 
+  const handleDismissToast = useCallback(() => {
+    setToastMsg(null);
+  }, []);
+
   const showToast = useCallback((msg: string, type: ToastType = 'success') => {
     setToastMsg(msg);
     setToastType(type);
@@ -530,7 +534,7 @@ export default function CheckoutNewSaleScreen() {
       <FloatingToast
         message={toastMsg}
         type={toastType}
-        onDismiss={() => setToastMsg(null)}
+        onDismiss={handleDismissToast}
       />
       {/* Top Bar: <- New Sale  |  Trash Icon */}
       <View style={styles.headerRow}>

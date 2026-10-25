@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Animated,
   Text,
@@ -27,27 +27,43 @@ export const FloatingToast: React.FC<FloatingToastProps> = ({
 }) => {
   const [opacityAnim] = useState(() => new Animated.Value(0));
   const [translateYAnim] = useState(() => new Animated.Value(-16));
+  const onDismissRef = useRef(onDismiss);
+  const prevMessageRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!message) return;
+    onDismissRef.current = onDismiss;
+  }, [onDismiss]);
 
-    // Reset and animate in
-    opacityAnim.setValue(0);
-    translateYAnim.setValue(-16);
+  useEffect(() => {
+    if (!message) {
+      prevMessageRef.current = null;
+      opacityAnim.setValue(0);
+      translateYAnim.setValue(-16);
+      return;
+    }
 
-    Animated.parallel([
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 220,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateYAnim, {
-        toValue: 0,
-        friction: 8,
-        tension: 60,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    const isNewMessage = prevMessageRef.current !== message;
+    prevMessageRef.current = message;
+
+    if (isNewMessage) {
+      // Reset and animate in only when a new message appears
+      opacityAnim.setValue(0);
+      translateYAnim.setValue(-16);
+
+      Animated.parallel([
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 220,
+          useNativeDriver: true,
+        }),
+        Animated.spring(translateYAnim, {
+          toValue: 0,
+          friction: 8,
+          tension: 60,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
 
     const timer = setTimeout(() => {
       Animated.parallel([
@@ -62,12 +78,13 @@ export const FloatingToast: React.FC<FloatingToastProps> = ({
           useNativeDriver: true,
         }),
       ]).start(() => {
-        onDismiss();
+        prevMessageRef.current = null;
+        onDismissRef.current();
       });
     }, durationMs);
 
     return () => clearTimeout(timer);
-  }, [message, durationMs, onDismiss, opacityAnim, translateYAnim]);
+  }, [message, durationMs, opacityAnim, translateYAnim]);
 
   if (!message) return null;
 
@@ -132,11 +149,21 @@ export const FloatingToast: React.FC<FloatingToastProps> = ({
           },
         ]}
         onPress={() => {
-          Animated.timing(opacityAnim, {
-            toValue: 0,
-            duration: 150,
-            useNativeDriver: true,
-          }).start(() => onDismiss());
+          Animated.parallel([
+            Animated.timing(opacityAnim, {
+              toValue: 0,
+              duration: 150,
+              useNativeDriver: true,
+            }),
+            Animated.timing(translateYAnim, {
+              toValue: -12,
+              duration: 150,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            prevMessageRef.current = null;
+            onDismissRef.current();
+          });
         }}
       >
         <Ionicons
