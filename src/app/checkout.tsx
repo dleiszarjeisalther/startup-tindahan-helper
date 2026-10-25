@@ -268,18 +268,54 @@ export default function CheckoutNewSaleScreen() {
 
   const handleUnitSwitch = (
     newUnit: 'piece' | 'pack' | 'box',
-    _multiplier: number,
-    _price: number,
+    multiplier: number,
+    price: number,
     fellBackToPiece?: boolean
   ) => {
     if (!unitModalSelection) return;
     const { product, item } = unitModalSelection;
     if (item.unit !== newUnit || fellBackToPiece) {
       runCartAction(() => {
-        // Reset the old unit cart entry to 0
+        // 1. If product doesn't have this tier saved yet in sellingTiers, save to SQLite!
+        const existingTier = product.sellingTiers?.find((t) => t.unitName === newUnit);
+        if (!existingTier && newUnit === 'pack') {
+          const packMult = multiplier > 0 ? multiplier : 10;
+          const packPr = price > 0 ? price : Math.round(product.defaultPricePhp * packMult * 100) / 100;
+          const updatedTiers: SellingUnitTier[] = [
+            ...(product.sellingTiers?.filter((t) => t.unitName !== 'pack') ?? []),
+            {
+              unitName: 'pack',
+              baseUnitMultiplier: packMult,
+              unitPricePhp: packPr,
+            },
+          ];
+          if (!updatedTiers.some((t) => t.unitName === 'piece')) {
+            updatedTiers.unshift({
+              unitName: 'piece',
+              baseUnitMultiplier: 1,
+              unitPricePhp: product.defaultPricePhp,
+            });
+          }
+          updateProductDetails(product.id, { sellingTiers: updatedTiers }).catch((err) =>
+            console.error('[Checkout] Failed to save auto-computed pack tier to SQLite:', err)
+          );
+        }
+
+        // 2. Proportional quantity conversion (as agreed in /grill-me)
+        // - From piece to pack: 20 pcs -> 2 packs, 1 to 9 pcs -> 1 pack
+        // - From pack to piece: 2 packs -> 20 pcs
+        const mult = multiplier > 0 ? multiplier : (item.unitMultiplier || 10);
+        let targetQty = item.quantity;
+        if (item.unit === 'piece' && newUnit === 'pack') {
+          targetQty = Math.max(1, Math.floor(item.quantity / mult));
+        } else if (item.unit === 'pack' && newUnit === 'piece') {
+          targetQty = Math.max(1, item.quantity * mult);
+        }
+
+        // 3. Reset the old unit cart entry to 0
         setCartItemQuantity(item.cartKey ?? item.productId, 0);
-        // Add the new unit cart entry with the desired quantity
-        const result = addToCart(product.id, item.quantity, newUnit);
+        // 4. Add the new unit cart entry with the desired quantity
+        const result = addToCart(product.id, targetQty, newUnit);
         if (result?.fellBackToPiece || fellBackToPiece) {
           showToast(
             `⚠️ Kulang ang stock para sa buong ${newUnit}. Pinalitan sa Per Piece (${product.name}).`

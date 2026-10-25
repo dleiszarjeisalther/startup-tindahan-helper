@@ -88,6 +88,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
   const [laserAnim] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
+    if (!isActive) return;
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(laserAnim, {
@@ -106,7 +107,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
     );
     animation.start();
     return () => animation.stop();
-  }, [laserAnim]);
+  }, [isActive, laserAnim]);
 
   const maxTravel = Math.max(10, reticleHeight - 16);
   const translateY = laserAnim.interpolate({
@@ -120,15 +121,18 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
     setPrevIsActive(isActive);
     if (!isActive) {
       setTorchOn(false);
+      setIsCameraReady(false);
     } else {
+      setIsCameraReady(false);
       setCameraError(null);
+      setCameraMountKey((k) => k + 1);
     }
   }
 
   useEffect(() => {
     if (isActive) {
       scanLockRef.current = false;
-      console.log('[BarcodeScannerViewfinder] Camera became active.');
+      console.log('[BarcodeScannerViewfinder] Camera became active -> refreshed mount key.');
     } else {
       console.log('[BarcodeScannerViewfinder] Camera deactivated / standby.');
     }
@@ -233,21 +237,17 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
         style,
       ]}
     >
-      {/* Background Camera View (Keep mounted once permission is granted to prevent native CameraX tear-down crashes) */}
-      {permission?.granted && !cameraError ? (
+      {/* Background Camera View (Only mounted when active, permission granted, and no error to prevent Android CameraX hardware lock contention) */}
+      {isActive && permission?.granted && !cameraError ? (
         <CameraView
           key={`camera-${cameraMountKey}`}
           style={[StyleSheet.absoluteFill, { backgroundColor: '#0F172A' }]}
           facing="back"
-          enableTorch={isActive && torchOn}
+          enableTorch={torchOn}
           mute={true}
-          barcodeScannerSettings={
-            isActive
-              ? {
-                  barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'qr'],
-                }
-              : undefined
-          }
+          barcodeScannerSettings={{
+            barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'qr'],
+          }}
           onCameraReady={() => {
             console.log('[BarcodeScannerViewfinder] Camera preview ready.');
             setIsCameraReady(true);
@@ -358,7 +358,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
           <View style={styles.cornerBR} />
 
           {/* Sweeping Red Laser Beam Line */}
-          {isActive && isCameraReady && (
+          {isActive && (
             <Animated.View style={[styles.laserBeamWrapper, { transform: [{ translateY }] }]}>
               <View style={styles.laserCoreLine} />
               <View style={styles.laserGlowAura} />

@@ -1581,6 +1581,14 @@ export default function InventoryManagementScreen() {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                   setPackagingType('PACK');
                   if (!packMultiplier || packMultiplier === '0') setPackMultiplier(packPiecesCount || '10');
+                  const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
+                  if (pieceCostParsed > 0 && (!bundleCostPhp || parseFloat(bundleCostPhp) === 0)) {
+                    setBundleCostPhp((pieceCostParsed * pcs).toFixed(2));
+                  }
+                  const curStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+                  if (curStock > 0 && (!bundlePacksCount || parseInt(bundlePacksCount, 10) === 0)) {
+                    setBundlePacksCount(String(Math.max(1, Math.floor(curStock / pcs))));
+                  }
                 }}
               >
                 <Ionicons
@@ -1599,6 +1607,18 @@ export default function InventoryManagementScreen() {
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                   setPackagingType('PIECE');
+                  // Auto-fill Tingi inputs from Pack inputs
+                  const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
+                  const bCost = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
+                  if (bCost > 0) {
+                    setNewCostPhp((bCost / pcs).toFixed(2));
+                  }
+                  const bPacks = parseInt(bundlePacksCount.replace(/[^0-9]/g, '') || '0', 10);
+                  if (bPacks > 0) {
+                    setNewStock(String(bPacks * pcs));
+                  } else if (packPiecesCount) {
+                    setNewStock(String(pcs));
+                  }
                 }}
               >
                 <Ionicons
@@ -1650,6 +1670,9 @@ export default function InventoryManagementScreen() {
                           const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
                           const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
                           const costNum = bCost > 0 ? bCost / pcs : 0;
+                          if (costNum > 0) {
+                            setNewCostPhp(costNum.toFixed(2));
+                          }
                           if (tuboValue && costNum > 0) {
                             const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
                             const nextPrice =
@@ -1675,6 +1698,13 @@ export default function InventoryManagementScreen() {
                           const bCost = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
                           const pcs = parseInt(val.replace(/[^0-9]/g, '') || '10', 10);
                           const costNum = bCost > 0 && pcs > 0 ? bCost / pcs : 0;
+                          if (costNum > 0) {
+                            setNewCostPhp(costNum.toFixed(2));
+                          }
+                          const bPacks = parseInt(bundlePacksCount.replace(/[^0-9]/g, '') || '0', 10);
+                          if (bPacks > 0 && pcs > 0) {
+                            setNewStock(String(bPacks * pcs));
+                          }
                           if (tuboValue && costNum > 0) {
                             const tuboNum = parseFloat(tuboValue.replace(/[^0-9.]/g, '') || '0');
                             const nextPrice =
@@ -1694,7 +1724,14 @@ export default function InventoryManagementScreen() {
                       <TextInput
                         style={styles.textInput}
                         value={bundlePacksCount}
-                        onChangeText={(val) => setBundlePacksCount(val)}
+                        onChangeText={(val) => {
+                          setBundlePacksCount(val);
+                          const bPacks = parseInt(val.replace(/[^0-9]/g, '') || '0', 10);
+                          const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
+                          if (bPacks > 0 && pcs > 0) {
+                            setNewStock(String(bPacks * pcs));
+                          }
+                        }}
                         placeholder="5"
                         placeholderTextColor="#9CA3AF"
                         keyboardType="number-pad"
@@ -2894,6 +2931,11 @@ export default function InventoryManagementScreen() {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                     setEditPackagingType('PACK');
                     setEditUnitOfMeasure('pc');
+                    if (!editPackMultiplier || editPackMultiplier === '0') setEditPackMultiplier('10');
+                    if (editPieceCostParsed > 0 && (!editBundleCostPhp || parseFloat(editBundleCostPhp) === 0)) {
+                      const mult = parseInt(editPackMultiplier || '10', 10);
+                      setEditBundleCostPhp((editPieceCostParsed * (mult > 0 ? mult : 10)).toFixed(2));
+                    }
                   }}
                 >
                   <Ionicons
@@ -2913,6 +2955,10 @@ export default function InventoryManagementScreen() {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                     setEditPackagingType('PIECE');
                     setEditUnitOfMeasure('pc');
+                    if (editBundleCostParsed > 0) {
+                      const pMult = parseInt(editPackMultiplier.replace(/[^0-9]/g, '') || '10', 10);
+                      setEditCostPhp((editBundleCostParsed / (pMult > 0 ? pMult : 10)).toFixed(2));
+                    }
                   }}
                 >
                   <Ionicons
@@ -2994,6 +3040,9 @@ export default function InventoryManagementScreen() {
                             const bCost = parseFloat(val.replace(/[^0-9.]/g, '') || '0');
                             const mult = parseInt(editPackMultiplier.replace(/[^0-9]/g, '') || '10', 10);
                             const costNum = bCost > 0 ? bCost / (mult > 0 ? mult : 10) : 0;
+                            if (costNum > 0) {
+                              setEditCostPhp(costNum.toFixed(2));
+                            }
                             if (editTuboValue && costNum > 0) {
                               const tuboNum = parseFloat(editTuboValue.replace(/[^0-9.]/g, '') || '0');
                               const nextPrice =
@@ -3018,6 +3067,9 @@ export default function InventoryManagementScreen() {
                             const bCost = parseFloat(editBundleCostPhp.replace(/[^0-9.]/g, '') || '0');
                             const mult = parseInt(val.replace(/[^0-9]/g, '') || '10', 10);
                             const costNum = bCost > 0 && mult > 0 ? bCost / mult : 0;
+                            if (costNum > 0) {
+                              setEditCostPhp(costNum.toFixed(2));
+                            }
                             if (editTuboValue && costNum > 0) {
                               const tuboNum = parseFloat(editTuboValue.replace(/[^0-9.]/g, '') || '0');
                               const nextPrice =

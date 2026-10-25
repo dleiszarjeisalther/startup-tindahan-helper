@@ -17,6 +17,45 @@
       "source_location": "L57"
     },
     {
+      "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler",
+      "label": "ILocalNotificationScheduler",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": "ilocalnotificationscheduler",
+      "source_file": "src/application/ILocalNotificationScheduler.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_application_ilocalnotificationscheduler_localnotificationrequest",
+      "label": "LocalNotificationRequest",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": "localnotificationrequest",
+      "source_file": "src/application/ILocalNotificationScheduler.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler",
+      "label": "ExpoLocalNotificationScheduler",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": "expolocalnotificationscheduler",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L11"
+    },
+    {
       "id": "src_app_checkout_cartitemstepperprops",
       "label": "CartItemStepperProps",
       "_callable": true,
@@ -108,19 +147,6 @@
       "source_location": "L282"
     },
     {
-      "id": "src_infrastructure_services_licensingservice_licensingstate",
-      "label": "LicensingState",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": "licensingstate",
-      "source_file": "src/infrastructure/services/LicensingService.ts",
-      "source_location": "L6"
-    },
-    {
       "id": "src_infrastructure_services_licensingservice_listener",
       "label": "Listener",
       "_callable": true,
@@ -179,7 +205,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodalprops",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -192,7 +218,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "weightquantityproduct",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -205,7 +231,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "weightquantitysheetprops",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -248,7 +274,7 @@
       "file_type": "code",
       "norm_label": "barcodeinputfieldprops",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L6"
+      "source_location": "L7"
     },
     {
       "id": "src_presentation_components_barcodescannerviewfinder_barcodescannerviewfinderprops",
@@ -530,7 +556,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "appupdateport",
       "source_file": "src/application/AppUpdateService.ts",
@@ -543,7 +569,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "appupdateservice",
       "source_file": "src/application/AppUpdateService.ts",
@@ -556,7 +582,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "installedapp",
       "source_file": "src/application/AppUpdateService.ts",
@@ -569,7 +595,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "updatephase",
       "source_file": "src/application/AppUpdateService.ts",
@@ -582,7 +608,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "updatesnapshot",
       "source_file": "src/application/AppUpdateService.ts",
@@ -595,7 +621,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "apprelease",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -608,7 +634,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "releasemetadata",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -621,7 +647,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "androidappupdateport",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -634,7 +660,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "nativeupdater",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -1252,32 +1278,6 @@
       "source_location": "L14"
     },
     {
-      "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler",
-      "label": "ILocalNotificationScheduler",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "ilocalnotificationscheduler",
-      "source_file": "src/application/ILocalNotificationScheduler.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_application_ilocalnotificationscheduler_localnotificationrequest",
-      "label": "LocalNotificationRequest",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "localnotificationrequest",
-      "source_file": "src/application/ILocalNotificationScheduler.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
       "label": "SqliteDatabase",
       "_callable": true,
@@ -1341,19 +1341,6 @@
       "norm_label": "databasebackupservice",
       "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
       "source_location": "L51"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler",
-      "label": "ExpoLocalNotificationScheduler",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "expolocalnotificationscheduler",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L11"
     },
     {
       "id": "src_infrastructure_services_soundfeedbackservice_beepplayer",
@@ -1661,7 +1648,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "datefilter",
       "source_file": "src/app/history.tsx",
@@ -1674,7 +1661,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "movementfilter",
       "source_file": "src/app/history.tsx",
@@ -1687,7 +1674,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "stockmovementrecord",
       "source_file": "src/application/TindahanStoreService.ts",
@@ -1700,7 +1687,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "supportedlanguage",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -1713,7 +1700,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "translations",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -1757,6 +1744,19 @@
       "norm_label": "pinchallengemodalprops",
       "source_file": "src/presentation/components/PinChallengeModal.tsx",
       "source_location": "L16"
+    },
+    {
+      "id": "src_infrastructure_services_licensingservice_licensingstate",
+      "label": "LicensingState",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 96,
+      "community_name": "useLicensing.ts",
+      "file_type": "code",
+      "norm_label": "licensingstate",
+      "source_file": "src/infrastructure/services/LicensingService.ts",
+      "source_location": "L6"
     },
     {
       "id": "src_presentation_components_licensinggate_licensinggatecontexttype",
@@ -2136,28 +2136,16 @@
       "source_location": "L152"
     },
     {
-      "id": "src_app_explore_seasonalforecastscreen",
-      "label": "SeasonalForecastScreen()",
+      "id": "src_app_settings_storesettingsscreen",
+      "label": "StoreSettingsScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "useTindahanStore",
       "file_type": "code",
-      "norm_label": "seasonalforecastscreen()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L97"
-    },
-    {
-      "id": "src_app_inventory_inventorymanagementscreen",
-      "label": "InventoryManagementScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "inventorymanagementscreen()",
-      "source_file": "src/app/inventory.tsx",
-      "source_location": "L47"
+      "norm_label": "storesettingsscreen()",
+      "source_file": "src/app/settings.tsx",
+      "source_location": "L49"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_addcashadjustment",
@@ -2170,18 +2158,6 @@
       "norm_label": "addcashadjustment()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L93"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_addcategory",
-      "label": "addCategory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "addcategory()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L35"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_addmanualutangentry",
@@ -2220,16 +2196,16 @@
       "source_location": "L60"
     },
     {
-      "id": "src_presentation_hooks_usetindahanstore_adjustinventorystock",
-      "label": "adjustInventoryStock()",
+      "id": "src_presentation_hooks_usetindahanstore_clearalldatabasedata",
+      "label": "clearAllDatabaseData()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "useTindahanStore",
       "file_type": "code",
-      "norm_label": "adjustinventorystock()",
+      "norm_label": "clearalldatabasedata()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L57"
+      "source_location": "L105"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_clearcart",
@@ -2268,18 +2244,6 @@
       "source_location": "L101"
     },
     {
-      "id": "src_presentation_hooks_usetindahanstore_deletecategory",
-      "label": "deleteCategory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "deletecategory()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L38"
-    },
-    {
       "id": "src_presentation_hooks_usetindahanstore_deleteheldcart",
       "label": "deleteHeldCart()",
       "_callable": true,
@@ -2290,18 +2254,6 @@
       "norm_label": "deleteheldcart()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L48"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_deleteproductfromdatabase",
-      "label": "deleteProductFromDatabase()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "deleteproductfromdatabase()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L17"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_deleteutangcustomer",
@@ -2316,6 +2268,30 @@
       "source_location": "L75"
     },
     {
+      "id": "src_presentation_hooks_usetindahanstore_enablestoresecurity",
+      "label": "enableStoreSecurity()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "enablestoresecurity()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L123"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_exportdatabasebackup",
+      "label": "exportDatabaseBackup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "exportdatabasebackup()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L106"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore_getexpiringproducts",
       "label": "getExpiringProducts()",
       "_callable": true,
@@ -2326,18 +2302,6 @@
       "norm_label": "getexpiringproducts()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L119"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_getmonthlysaleshistory",
-      "label": "getMonthlySalesHistory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "getmonthlysaleshistory()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L82"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_getsalessummary",
@@ -2374,18 +2338,6 @@
       "norm_label": "isstoreunlocked()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L124"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_lookuponlinecatalog",
-      "label": "lookupOnlineCatalog()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "lookuponlinecatalog()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L15"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_notifycatalogchanged",
@@ -2472,6 +2424,18 @@
       "source_location": "L9"
     },
     {
+      "id": "src_presentation_hooks_usetindahanstore_restoredatabasebackup",
+      "label": "restoreDatabaseBackup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "restoredatabasebackup()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L107"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore_restoreheldcart",
       "label": "restoreHeldCart()",
       "_callable": true,
@@ -2494,6 +2458,18 @@
       "norm_label": "restoreparkedcart()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L45"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_retrynotificationschedule",
+      "label": "retryNotificationSchedule()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "retrynotificationschedule()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L92"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_setcashindrawer",
@@ -2520,16 +2496,28 @@
       "source_location": "L41"
     },
     {
-      "id": "src_presentation_hooks_usetindahanstore_setoperatingmode",
-      "label": "setOperatingMode()",
+      "id": "src_presentation_hooks_usetindahanstore_setownermasterpin",
+      "label": "setOwnerMasterPin()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "useTindahanStore",
       "file_type": "code",
-      "norm_label": "setoperatingmode()",
+      "norm_label": "setownermasterpin()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L113"
+      "source_location": "L109"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_setphonenotificationsenabled",
+      "label": "setPhoneNotificationsEnabled()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "setphonenotificationsenabled()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L88"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_switchoperatingmode",
@@ -2554,30 +2542,6 @@
       "norm_label": "undoremovecartitem()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L40"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_updatecategory",
-      "label": "updateCategory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "updatecategory()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L36"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_updateproductimage",
-      "label": "updateProductImage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "useTindahanStore",
-      "file_type": "code",
-      "norm_label": "updateproductimage()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L19"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_updateutangcustomer",
@@ -2628,16 +2592,112 @@
       "source_location": "L52"
     },
     {
-      "id": "src_app_not_found_notfound",
-      "label": "NotFound()",
+      "id": "src_app_layout_tablayout",
+      "label": "TabLayout()",
       "_callable": true,
       "_origin": "ast",
       "community": 10,
-      "community_name": "expo-router",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
-      "norm_label": "notfound()",
-      "source_file": "src/app/+not-found.tsx",
-      "source_location": "L9"
+      "norm_label": "tablayout()",
+      "source_file": "src/app/_layout.tsx",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler_clearschedule",
+      "label": ".clearSchedule()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".clearschedule()",
+      "source_file": "src/application/ILocalNotificationScheduler.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler_replaceschedule",
+      "label": ".replaceSchedule()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".replaceschedule()",
+      "source_file": "src/application/ILocalNotificationScheduler.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler_requestpermission",
+      "label": ".requestPermission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".requestpermission()",
+      "source_file": "src/application/ILocalNotificationScheduler.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_clearschedule",
+      "label": ".clearSchedule()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".clearschedule()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_ensurechannel",
+      "label": ".ensureChannel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".ensurechannel()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_loadmodule",
+      "label": ".loadModule()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".loadmodule()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_replaceschedule",
+      "label": ".replaceSchedule()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".replaceschedule()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L65"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_requestpermission",
+      "label": ".requestPermission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".requestpermission()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L43"
     },
     {
       "id": "scripts_render_shotstack_ad_render_from_storyboard",
@@ -2657,7 +2717,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "checkoutnewsalescreen()",
       "source_file": "src/app/checkout.tsx",
@@ -2669,11 +2729,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "posscanproductscreen()",
       "source_file": "src/app/index.tsx",
       "source_location": "L30"
+    },
+    {
+      "id": "src_app_inventory_inventorymanagementscreen",
+      "label": "InventoryManagementScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "InventoryManagementScreen",
+      "file_type": "code",
+      "norm_label": "inventorymanagementscreen()",
+      "source_file": "src/app/inventory.tsx",
+      "source_location": "L47"
     },
     {
       "id": "src_app_products_productlistscreen",
@@ -2681,7 +2753,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "productlistscreen()",
       "source_file": "src/app/products.tsx",
@@ -2693,7 +2765,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "uselicensinggate()",
       "source_file": "src/presentation/components/LicensingGate.tsx",
@@ -2705,11 +2777,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "useidempotentsubmit()",
       "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
       "source_location": "L8"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_addcategory",
+      "label": "addCategory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "InventoryManagementScreen",
+      "file_type": "code",
+      "norm_label": "addcategory()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L35"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_addproducttodatabase",
@@ -2717,7 +2801,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "addproducttodatabase()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
@@ -2729,11 +2813,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "addtocart()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L25"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_deletecategory",
+      "label": "deleteCategory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "InventoryManagementScreen",
+      "file_type": "code",
+      "norm_label": "deletecategory()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L38"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_deleteproductfromdatabase",
+      "label": "deleteProductFromDatabase()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "InventoryManagementScreen",
+      "file_type": "code",
+      "norm_label": "deleteproductfromdatabase()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L17"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_lockstore",
@@ -2741,11 +2849,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "lockstore()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L122"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_lookuponlinecatalog",
+      "label": "lookupOnlineCatalog()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "InventoryManagementScreen",
+      "file_type": "code",
+      "norm_label": "lookuponlinecatalog()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L15"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_setcartitemquantity",
@@ -2753,11 +2873,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "setcartitemquantity()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L30"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_setoperatingmode",
+      "label": "setOperatingMode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "InventoryManagementScreen",
+      "file_type": "code",
+      "norm_label": "setoperatingmode()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L113"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_togglebrownoutbatterysaver",
@@ -2765,7 +2897,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "togglebrownoutbatterysaver()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
@@ -2777,11 +2909,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "unlockstore()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L121"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_updatecategory",
+      "label": "updateCategory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "InventoryManagementScreen",
+      "file_type": "code",
+      "norm_label": "updatecategory()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L36"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_updateproductdetails",
@@ -2789,11 +2933,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "updateproductdetails()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L21"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_updateproductimage",
+      "label": "updateProductImage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "InventoryManagementScreen",
+      "file_type": "code",
+      "norm_label": "updateproductimage()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L19"
     },
     {
       "id": "src_app_checkout_cartitemstepper",
@@ -3168,12 +3324,36 @@
       "source_location": "L11"
     },
     {
+      "id": "src_presentation_components_productthumbnail_productthumbnail",
+      "label": "ProductThumbnail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 111,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "productthumbnail()",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_presentation_components_unitselectionmodal_unitselectionmodal",
+      "label": "UnitSelectionModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 111,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "unitselectionmodal()",
+      "source_file": "src/presentation/components/UnitSelectionModal.tsx",
+      "source_location": "L30"
+    },
+    {
       "id": "src_presentation_components_weightquantitymodal_weightquantitymodal",
       "label": "WeightQuantityModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodal()",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -3252,6 +3432,18 @@
       "source_location": "L128"
     },
     {
+      "id": "src_app_not_found_notfound",
+      "label": "NotFound()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 116,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "notfound()",
+      "source_file": "src/app/+not-found.tsx",
+      "source_location": "L9"
+    },
+    {
       "id": "src_presentation_components_barcodeinputfield_barcodeinputfield",
       "label": "BarcodeInputField()",
       "_callable": true,
@@ -3261,7 +3453,7 @@
       "file_type": "code",
       "norm_label": "barcodeinputfield()",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L19"
+      "source_location": "L20"
     },
     {
       "id": "src_presentation_components_barcodescannerviewfinder_barcodescannerviewfinder",
@@ -3420,6 +3612,18 @@
       "source_location": "L8"
     },
     {
+      "id": "src_app_explore_seasonalforecastscreen",
+      "label": "SeasonalForecastScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 120,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "seasonalforecastscreen()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L97"
+    },
+    {
       "id": "src_app_history_stockmovementhistoryscreen",
       "label": "StockMovementHistoryScreen()",
       "_callable": true,
@@ -3430,6 +3634,18 @@
       "norm_label": "stockmovementhistoryscreen()",
       "source_file": "src/app/history.tsx",
       "source_location": "L35"
+    },
+    {
+      "id": "src_app_more_menuprofilescreen",
+      "label": "MenuProfileScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 120,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "menuprofilescreen()",
+      "source_file": "src/app/more.tsx",
+      "source_location": "L39"
     },
     {
       "id": "src_app_sales_saleshistoryscreen",
@@ -3480,6 +3696,54 @@
       "source_location": "L10"
     },
     {
+      "id": "src_presentation_components_onboardingmodal_onboardingmodal",
+      "label": "OnboardingModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 120,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "onboardingmodal()",
+      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_adjustinventorystock",
+      "label": "adjustInventoryStock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 120,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "adjustinventorystock()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L57"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_getmonthlysaleshistory",
+      "label": "getMonthlySalesHistory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 120,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "getmonthlysaleshistory()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L82"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_updatesettings",
+      "label": "updateSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 120,
+      "community_name": "getTranslations",
+      "file_type": "code",
+      "norm_label": "updatesettings()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L86"
+    },
+    {
       "id": "src_presentation_localization_i18n_gettranslations",
       "label": "getTranslations()",
       "_callable": true,
@@ -3490,102 +3754,6 @@
       "norm_label": "gettranslations()",
       "source_file": "src/presentation/localization/i18n.ts",
       "source_location": "L991"
-    },
-    {
-      "id": "src_app_settings_storesettingsscreen",
-      "label": "StoreSettingsScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 124,
-      "community_name": "StoreSettingsScreen",
-      "file_type": "code",
-      "norm_label": "storesettingsscreen()",
-      "source_file": "src/app/settings.tsx",
-      "source_location": "L49"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_clearalldatabasedata",
-      "label": "clearAllDatabaseData()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 124,
-      "community_name": "StoreSettingsScreen",
-      "file_type": "code",
-      "norm_label": "clearalldatabasedata()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L105"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_enablestoresecurity",
-      "label": "enableStoreSecurity()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 124,
-      "community_name": "StoreSettingsScreen",
-      "file_type": "code",
-      "norm_label": "enablestoresecurity()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L123"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_exportdatabasebackup",
-      "label": "exportDatabaseBackup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 124,
-      "community_name": "StoreSettingsScreen",
-      "file_type": "code",
-      "norm_label": "exportdatabasebackup()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L106"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_restoredatabasebackup",
-      "label": "restoreDatabaseBackup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 124,
-      "community_name": "StoreSettingsScreen",
-      "file_type": "code",
-      "norm_label": "restoredatabasebackup()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L107"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_retrynotificationschedule",
-      "label": "retryNotificationSchedule()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 124,
-      "community_name": "StoreSettingsScreen",
-      "file_type": "code",
-      "norm_label": "retrynotificationschedule()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L92"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_setownermasterpin",
-      "label": "setOwnerMasterPin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 124,
-      "community_name": "StoreSettingsScreen",
-      "file_type": "code",
-      "norm_label": "setownermasterpin()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L109"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_setphonenotificationsenabled",
-      "label": "setPhoneNotificationsEnabled()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 124,
-      "community_name": "StoreSettingsScreen",
-      "file_type": "code",
-      "norm_label": "setphonenotificationsenabled()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L88"
     },
     {
       "id": "src_app_notifications_notificationsscreen",
@@ -4317,7 +4485,7 @@
       "file_type": "code",
       "norm_label": ".addcashadjustment()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3008"
+      "source_location": "L3023"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addcategory",
@@ -4341,7 +4509,7 @@
       "file_type": "code",
       "norm_label": ".addmanualutangentry()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2832"
+      "source_location": "L2847"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addorupdatemonthlysalesrecord",
@@ -4353,7 +4521,7 @@
       "file_type": "code",
       "norm_label": ".addorupdatemonthlysalesrecord()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3162"
+      "source_location": "L3177"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addproducttodatabase",
@@ -4377,7 +4545,7 @@
       "file_type": "code",
       "norm_label": ".addtocart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1356"
+      "source_location": "L1363"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addutangcustomer",
@@ -4389,7 +4557,7 @@
       "file_type": "code",
       "norm_label": ".addutangcustomer()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2774"
+      "source_location": "L2789"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_adjustinventorystock",
@@ -4401,7 +4569,7 @@
       "file_type": "code",
       "norm_label": ".adjustinventorystock()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2676"
+      "source_location": "L2691"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_buildnotificationrequests",
@@ -4437,7 +4605,7 @@
       "file_type": "code",
       "norm_label": ".calculatecartsummary()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1330"
+      "source_location": "L1337"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_clearalldatabasedata",
@@ -4461,7 +4629,7 @@
       "file_type": "code",
       "norm_label": ".clearcart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1588"
+      "source_location": "L1603"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_completesale",
@@ -4473,7 +4641,7 @@
       "file_type": "code",
       "norm_label": ".completesale()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1714"
+      "source_location": "L1729"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_constructor",
@@ -4521,7 +4689,7 @@
       "file_type": "code",
       "norm_label": ".deletecashadjustment()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3067"
+      "source_location": "L3082"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_deletecategory",
@@ -4545,7 +4713,7 @@
       "file_type": "code",
       "norm_label": ".deleteheldcart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1681"
+      "source_location": "L1696"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_deleteproductfromdatabase",
@@ -4569,7 +4737,7 @@
       "file_type": "code",
       "norm_label": ".deleteutangcustomer()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2895"
+      "source_location": "L2910"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_enablestoresecurity",
@@ -4581,7 +4749,7 @@
       "file_type": "code",
       "norm_label": ".enablestoresecurity()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3375"
+      "source_location": "L3390"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_evaluatealerts",
@@ -4629,7 +4797,7 @@
       "file_type": "code",
       "norm_label": ".getcartsummary()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1326"
+      "source_location": "L1333"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getcashadjustments",
@@ -4641,7 +4809,7 @@
       "file_type": "code",
       "norm_label": ".getcashadjustments()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2980"
+      "source_location": "L2995"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getmonthlysaleshistory",
@@ -4653,7 +4821,7 @@
       "file_type": "code",
       "norm_label": ".getmonthlysaleshistory()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3207"
+      "source_location": "L3222"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getsalessummary",
@@ -4665,7 +4833,7 @@
       "file_type": "code",
       "norm_label": ".getsalessummary()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2031"
+      "source_location": "L2046"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getsettings",
@@ -4677,7 +4845,7 @@
       "file_type": "code",
       "norm_label": ".getsettings()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3211"
+      "source_location": "L3226"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getsnapshot",
@@ -4701,7 +4869,7 @@
       "file_type": "code",
       "norm_label": ".gettransactionssnapshot()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2027"
+      "source_location": "L2042"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getutangcustomers",
@@ -4713,7 +4881,7 @@
       "file_type": "code",
       "norm_label": ".getutangcustomers()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2770"
+      "source_location": "L2785"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getversion",
@@ -4749,7 +4917,7 @@
       "file_type": "code",
       "norm_label": ".isprivilegeallowed()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3402"
+      "source_location": "L3417"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_issqliteactive",
@@ -4773,7 +4941,7 @@
       "file_type": "code",
       "norm_label": ".isstoreunlocked()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3343"
+      "source_location": "L3358"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_lockstore",
@@ -4785,7 +4953,7 @@
       "file_type": "code",
       "norm_label": ".lockstore()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3364"
+      "source_location": "L3379"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_lookuponlinecatalog",
@@ -4809,7 +4977,7 @@
       "file_type": "code",
       "norm_label": ".markalertread()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3249"
+      "source_location": "L3264"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_markallalertsread",
@@ -4821,7 +4989,7 @@
       "file_type": "code",
       "norm_label": ".markallalertsread()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3256"
+      "source_location": "L3271"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_notify",
@@ -4845,7 +5013,7 @@
       "file_type": "code",
       "norm_label": ".notifycatalogchanged()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3266"
+      "source_location": "L3281"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_parkcurrentcart",
@@ -4857,7 +5025,7 @@
       "file_type": "code",
       "norm_label": ".parkcurrentcart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1601"
+      "source_location": "L1616"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_persistcarttosqlite",
@@ -4893,7 +5061,7 @@
       "file_type": "code",
       "norm_label": ".persistmonthlyhistoryrow()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3181"
+      "source_location": "L3196"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_persistsettingstosqlite",
@@ -4929,7 +5097,7 @@
       "file_type": "code",
       "norm_label": ".processreturnorexchange()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2553"
+      "source_location": "L2568"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_publishschedulerstatus",
@@ -4953,7 +5121,7 @@
       "file_type": "code",
       "norm_label": ".quicklocktocashiermode()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3387"
+      "source_location": "L3402"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_readproducts",
@@ -4977,7 +5145,7 @@
       "file_type": "code",
       "norm_label": ".recordmonthlyreturnincrement()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3080"
+      "source_location": "L3095"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_recordmonthlysaleincrement",
@@ -4989,7 +5157,7 @@
       "file_type": "code",
       "norm_label": ".recordmonthlysaleincrement()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3135"
+      "source_location": "L3150"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_recordstockmovement",
@@ -5013,7 +5181,7 @@
       "file_type": "code",
       "norm_label": ".recordutangpayment()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2904"
+      "source_location": "L2919"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_refreshalertstate",
@@ -5061,7 +5229,7 @@
       "file_type": "code",
       "norm_label": ".restoreheldcart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1655"
+      "source_location": "L1670"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_restoreparkedcart",
@@ -5073,7 +5241,7 @@
       "file_type": "code",
       "norm_label": ".restoreparkedcart()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1699"
+      "source_location": "L1714"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_retrynotificationschedule",
@@ -5085,7 +5253,7 @@
       "file_type": "code",
       "norm_label": ".retrynotificationschedule()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3262"
+      "source_location": "L3277"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_setcartitemquantity",
@@ -5097,7 +5265,7 @@
       "file_type": "code",
       "norm_label": ".setcartitemquantity()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1485"
+      "source_location": "L1496"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_setcashindrawer",
@@ -5109,7 +5277,7 @@
       "file_type": "code",
       "norm_label": ".setcashindrawer()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2988"
+      "source_location": "L3003"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_setdiscountphp",
@@ -5121,7 +5289,7 @@
       "file_type": "code",
       "norm_label": ".setdiscountphp()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1583"
+      "source_location": "L1598"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_setoperatingmode",
@@ -5133,7 +5301,7 @@
       "file_type": "code",
       "norm_label": ".setoperatingmode()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3391"
+      "source_location": "L3406"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_setphonenotificationsenabled",
@@ -5145,7 +5313,7 @@
       "file_type": "code",
       "norm_label": ".setphonenotificationsenabled()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3233"
+      "source_location": "L3248"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_subscribe",
@@ -5169,7 +5337,7 @@
       "file_type": "code",
       "norm_label": ".switchoperatingmode()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3329"
+      "source_location": "L3344"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_syncnotificationschedule",
@@ -5193,7 +5361,7 @@
       "file_type": "code",
       "norm_label": ".togglebrownoutbatterysaver()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3417"
+      "source_location": "L3432"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_trace",
@@ -5217,7 +5385,7 @@
       "file_type": "code",
       "norm_label": ".undoremovecartitem()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1571"
+      "source_location": "L1586"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_unlockstore",
@@ -5229,7 +5397,7 @@
       "file_type": "code",
       "norm_label": ".unlockstore()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3353"
+      "source_location": "L3368"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_updatecategory",
@@ -5277,7 +5445,7 @@
       "file_type": "code",
       "norm_label": ".updatesettings()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3215"
+      "source_location": "L3230"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_updateutangcustomer",
@@ -5289,7 +5457,7 @@
       "file_type": "code",
       "norm_label": ".updateutangcustomer()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2812"
+      "source_location": "L2827"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_verifyownermasterpin",
@@ -5301,7 +5469,7 @@
       "file_type": "code",
       "norm_label": ".verifyownermasterpin()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3292"
+      "source_location": "L3307"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_voidentiretransaction",
@@ -5313,7 +5481,7 @@
       "file_type": "code",
       "norm_label": ".voidentiretransaction()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2477"
+      "source_location": "L2492"
     },
     {
       "id": "src_domain_entities_product_product_calculatelinetotal",
@@ -5541,7 +5709,7 @@
       "file_type": "code",
       "norm_label": ".setownermasterpin()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3277"
+      "source_location": "L3292"
     },
     {
       "id": "src_domain_services_pinsecurityengine_pinsecurityengine_checklockout",
@@ -5633,7 +5801,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "setup()",
       "source_file": "scripts/test-app-updates.cjs",
@@ -5645,7 +5813,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".clean()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5657,7 +5825,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".download()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5669,7 +5837,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".install()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5681,7 +5849,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".installed()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5693,7 +5861,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".latest()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5705,7 +5873,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".check()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5717,7 +5885,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5729,7 +5897,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".dismiss()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5741,7 +5909,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".download()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5753,7 +5921,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".getsnapshot()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5765,7 +5933,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".install()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5777,7 +5945,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".publish()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5789,7 +5957,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".show()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5801,7 +5969,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".subscribe()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -5813,7 +5981,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -5825,7 +5993,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".isnewerthan()",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -5837,7 +6005,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".parse()",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -5849,7 +6017,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".clean()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5861,7 +6029,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".download()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5873,7 +6041,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".install()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5885,7 +6053,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".installed()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5897,7 +6065,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".latest()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5909,7 +6077,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".native()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5921,7 +6089,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".addlistener()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5933,7 +6101,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".clean()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5945,7 +6113,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".download()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5957,7 +6125,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".install()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -5969,7 +6137,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".installed()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6801,7 +6969,7 @@
       "file_type": "code",
       "norm_label": ".getexpiringproducts()",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3427"
+      "source_location": "L3442"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getproductssnapshot",
@@ -6936,54 +7104,6 @@
       "source_location": "L53"
     },
     {
-      "id": "src_app_layout_tablayout",
-      "label": "TabLayout()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "tablayout()",
-      "source_file": "src/app/_layout.tsx",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler_clearschedule",
-      "label": ".clearSchedule()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".clearschedule()",
-      "source_file": "src/application/ILocalNotificationScheduler.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler_replaceschedule",
-      "label": ".replaceSchedule()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".replaceschedule()",
-      "source_file": "src/application/ILocalNotificationScheduler.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler_requestpermission",
-      "label": ".requestPermission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".requestpermission()",
-      "source_file": "src/application/ILocalNotificationScheduler.ts",
-      "source_location": "L10"
-    },
-    {
       "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_clearalltablesforreset",
       "label": ".clearAllTablesForReset()",
       "_callable": true,
@@ -7080,66 +7200,6 @@
       "source_location": "L167"
     },
     {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_clearschedule",
-      "label": ".clearSchedule()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".clearschedule()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L53"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_ensurechannel",
-      "label": ".ensureChannel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".ensurechannel()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L30"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_loadmodule",
-      "label": ".loadModule()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".loadmodule()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_replaceschedule",
-      "label": ".replaceSchedule()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".replaceschedule()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L65"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_requestpermission",
-      "label": ".requestPermission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": ".requestpermission()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L43"
-    },
-    {
       "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -7193,7 +7253,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "appupdatemenuitem()",
       "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
@@ -7205,7 +7265,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "appupdateprompt()",
       "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
@@ -7217,7 +7277,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "tindahanstoreprovider()",
       "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
@@ -7229,7 +7289,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "usetindahanstoreservice()",
       "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
@@ -7265,7 +7325,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "getlocalizedmonths()",
       "source_file": "src/app/explore.tsx",
@@ -7277,23 +7337,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "getphilippineseasoninfo()",
       "source_file": "src/app/explore.tsx",
       "source_location": "L56"
-    },
-    {
-      "id": "src_presentation_components_productthumbnail_productthumbnail",
-      "label": "ProductThumbnail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "productthumbnail()",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L13"
     },
     {
       "id": "src_presentation_components_screensafeareaview_screensafeareaview",
@@ -7301,23 +7349,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "screensafeareaview()",
       "source_file": "src/presentation/components/ScreenSafeAreaView.tsx",
       "source_location": "L15"
-    },
-    {
-      "id": "src_presentation_components_unitselectionmodal_unitselectionmodal",
-      "label": "UnitSelectionModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "unitselectionmodal()",
-      "source_file": "src/presentation/components/UnitSelectionModal.tsx",
-      "source_location": "L30"
     },
     {
       "id": "src_infrastructure_services_biometricauthservice_biometricauthservice_authenticate",
@@ -7500,18 +7536,6 @@
       "source_location": "L60"
     },
     {
-      "id": "src_app_more_menuprofilescreen",
-      "label": "MenuProfileScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 96,
-      "community_name": "useLicensing.ts",
-      "file_type": "code",
-      "norm_label": "menuprofilescreen()",
-      "source_file": "src/app/more.tsx",
-      "source_location": "L39"
-    },
-    {
       "id": "src_presentation_components_licensinggate_licensinggate",
       "label": "LicensingGate()",
       "_callable": true,
@@ -7522,18 +7546,6 @@
       "norm_label": "licensinggate()",
       "source_file": "src/presentation/components/LicensingGate.tsx",
       "source_location": "L22"
-    },
-    {
-      "id": "src_presentation_components_onboardingmodal_onboardingmodal",
-      "label": "OnboardingModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 96,
-      "community_name": "useLicensing.ts",
-      "file_type": "code",
-      "norm_label": "onboardingmodal()",
-      "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L26"
     },
     {
       "id": "src_presentation_components_trialbanner_trialbanner",
@@ -7572,18 +7584,6 @@
       "source_location": "L14"
     },
     {
-      "id": "src_presentation_hooks_usetindahanstore_updatesettings",
-      "label": "updateSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 96,
-      "community_name": "useLicensing.ts",
-      "file_type": "code",
-      "norm_label": "updatesettings()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L86"
-    },
-    {
       "id": "scripts_generate_logos_create_th_icons",
       "label": "create_th_icons()",
       "_callable": true,
@@ -7607,35 +7607,35 @@
       "source_location": "L1"
     },
     {
-      "id": "src_app_not_found",
-      "label": "+not-found.tsx",
+      "id": "src_application_ilocalnotificationscheduler",
+      "label": "ILocalNotificationScheduler.ts",
       "_origin": "ast",
       "community": 10,
-      "community_name": "expo-router",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
-      "norm_label": "+not-found.tsx",
-      "source_file": "src/app/+not-found.tsx",
+      "norm_label": "ilocalnotificationscheduler.ts",
+      "source_file": "src/application/ILocalNotificationScheduler.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_app_not_found_styles",
-      "label": "styles",
+      "id": "src_infrastructure_services_expolocalnotificationscheduler",
+      "label": "ExpoLocalNotificationScheduler.ts",
       "_origin": "ast",
       "community": 10,
-      "community_name": "expo-router",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/+not-found.tsx",
-      "source_location": "L25"
+      "norm_label": "expolocalnotificationscheduler.ts",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L1"
     },
     {
-      "id": "ref_expo_router",
-      "label": "expo-router",
+      "id": "ref_expo_notifications",
+      "label": "expo-notifications",
       "_origin": "ast",
       "community": 10,
-      "community_name": "expo-router",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "concept",
-      "norm_label": "expo-router",
+      "norm_label": "expo-notifications",
       "source_file": "app.json",
       "source_location": "L35"
     },
@@ -7710,7 +7710,7 @@
       "label": "isFeatureLocked",
       "_origin": "ast",
       "community": 106,
-      "community_name": "PosScanProductScreen",
+      "community_name": "InventoryManagementScreen",
       "file_type": "code",
       "norm_label": "isfeaturelocked",
       "source_file": "src/presentation/hooks/useLicensing.ts",
@@ -7736,7 +7736,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L1541"
+      "source_location": "L1577"
     },
     {
       "id": "src_presentation_components_floatingtoast",
@@ -7860,11 +7860,33 @@
       "source_location": null
     },
     {
+      "id": "src_app_index",
+      "label": "index.tsx",
+      "_origin": "ast",
+      "community": 111,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "index.tsx",
+      "source_file": "src/app/index.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_index_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 111,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/index.tsx",
+      "source_location": "L715"
+    },
+    {
       "id": "src_app_products",
       "label": "products.tsx",
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "products.tsx",
       "source_file": "src/app/products.tsx",
@@ -7875,18 +7897,40 @@
       "label": "styles",
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/products.tsx",
       "source_location": "L692"
     },
     {
+      "id": "src_presentation_components_productthumbnail",
+      "label": "ProductThumbnail.tsx",
+      "_origin": "ast",
+      "community": 111,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "productthumbnail.tsx",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_productthumbnail_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 111,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L65"
+    },
+    {
       "id": "src_presentation_components_weightquantitymodal",
       "label": "WeightQuantityModal.tsx",
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodal.tsx",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -7897,7 +7941,7 @@
       "label": "PRESET_PESO_AMOUNTS",
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "preset_peso_amounts",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -7908,7 +7952,7 @@
       "label": "PRESET_WEIGHTS",
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "preset_weights",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -7919,7 +7963,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 111,
-      "community_name": "products.tsx",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -8077,7 +8121,29 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L3951"
+      "source_location": "L4003"
+    },
+    {
+      "id": "src_app_not_found",
+      "label": "+not-found.tsx",
+      "_origin": "ast",
+      "community": 116,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "+not-found.tsx",
+      "source_file": "src/app/+not-found.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_not_found_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 116,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/+not-found.tsx",
+      "source_location": "L25"
     },
     {
       "id": "src_presentation_components_barcodeinputfield",
@@ -8099,7 +8165,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L105"
+      "source_location": "L116"
     },
     {
       "id": "src_presentation_components_barcodescannerviewfinder",
@@ -8133,6 +8199,17 @@
       "norm_label": "useidempotentsubmit.ts",
       "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "ref_expo_router",
+      "label": "expo-router",
+      "_origin": "ast",
+      "community": 116,
+      "community_name": "inventory.tsx",
+      "file_type": "concept",
+      "norm_label": "expo-router",
+      "source_file": "app.json",
+      "source_location": "L35"
     },
     {
       "id": "src_app_utang",
@@ -9671,7 +9748,7 @@
       "label": "test-app-updates.cjs",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "test-app-updates.cjs",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9682,7 +9759,7 @@
       "label": "active",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "active",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9693,7 +9770,7 @@
       "label": "{ AppRelease }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "{ apprelease }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9704,7 +9781,7 @@
       "label": "{ AppUpdateService }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "{ appupdateservice }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9715,7 +9792,7 @@
       "label": "assert",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "assert",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9726,7 +9803,7 @@
       "label": "before",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "before",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9737,7 +9814,7 @@
       "label": "fs",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "fs",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9748,7 +9825,7 @@
       "label": "release",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "release",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9759,7 +9836,7 @@
       "label": "{ service }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "{ service }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9770,7 +9847,7 @@
       "label": "{ service, installs }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "{ service, installs }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9781,7 +9858,7 @@
       "label": "{ test }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "{ test }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9792,7 +9869,7 @@
       "label": "ts",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "ts",
       "source_file": "scripts/test-app-updates.cjs",
@@ -9803,7 +9880,7 @@
       "label": "AppUpdateService.ts",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "appupdateservice.ts",
       "source_file": "src/application/AppUpdateService.ts",
@@ -9814,18 +9891,84 @@
       "label": "AppRelease.ts",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "apprelease.ts",
       "source_file": "src/domain/entities/AppRelease.ts",
       "source_location": "L1"
     },
     {
+      "id": "src_infrastructure_container",
+      "label": "container.ts",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "container.ts",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_container_localnotificationscheduler",
+      "label": "localNotificationScheduler",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "localnotificationscheduler",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_infrastructure_container_openfoodfactsapiclient",
+      "label": "openFoodFactsApiClient",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_infrastructure_container_productonboardingservice",
+      "label": "productOnboardingService",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "productonboardingservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_infrastructure_container_productrepository",
+      "label": "productRepository",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "productrepository",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_infrastructure_container_seasonalforecastengine",
+      "label": "seasonalForecastEngine",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "seasonalforecastengine",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L23"
+    },
+    {
       "id": "src_infrastructure_services_androidappupdateport",
       "label": "AndroidAppUpdatePort.ts",
       "_origin": "ast",
       "community": 29,
-      "community_name": "test-app-updates.cjs",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "androidappupdateport.ts",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -15369,17 +15512,6 @@
       "source_location": "L35"
     },
     {
-      "id": "src_application_ilocalnotificationscheduler",
-      "label": "ILocalNotificationScheduler.ts",
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "ilocalnotificationscheduler.ts",
-      "source_file": "src/application/ILocalNotificationScheduler.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_infrastructure_database_sqlitedatabase",
       "label": "SqliteDatabase.ts",
       "_origin": "ast",
@@ -15399,17 +15531,6 @@
       "file_type": "code",
       "norm_label": "databasebackupservice.ts",
       "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler",
-      "label": "ExpoLocalNotificationScheduler.ts",
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "code",
-      "norm_label": "expolocalnotificationscheduler.ts",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
       "source_location": "L1"
     },
     {
@@ -15453,17 +15574,6 @@
       "community_name": "SqliteDatabase",
       "file_type": "concept",
       "norm_label": "expo-audio",
-      "source_file": "app.json",
-      "source_location": "L35"
-    },
-    {
-      "id": "ref_expo_notifications",
-      "label": "expo-notifications",
-      "_origin": "ast",
-      "community": 75,
-      "community_name": "SqliteDatabase",
-      "file_type": "concept",
-      "norm_label": "expo-notifications",
       "source_file": "app.json",
       "source_location": "L35"
     },
@@ -15565,21 +15675,10 @@
       "label": "_layout.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "_layout.tsx",
       "source_file": "src/app/_layout.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_container",
-      "label": "container.ts",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "container.ts",
-      "source_file": "src/infrastructure/container.ts",
       "source_location": "L1"
     },
     {
@@ -15587,73 +15686,18 @@
       "label": "appUpdateService",
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "appupdateservice",
       "source_file": "src/infrastructure/container.ts",
       "source_location": "L24"
     },
     {
-      "id": "src_infrastructure_container_localnotificationscheduler",
-      "label": "localNotificationScheduler",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "localnotificationscheduler",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_infrastructure_container_openfoodfactsapiclient",
-      "label": "openFoodFactsApiClient",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_infrastructure_container_productonboardingservice",
-      "label": "productOnboardingService",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "productonboardingservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_infrastructure_container_productrepository",
-      "label": "productRepository",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "productrepository",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_infrastructure_container_seasonalforecastengine",
-      "label": "seasonalForecastEngine",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "seasonalforecastengine",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L23"
-    },
-    {
       "id": "src_infrastructure_container_tindahanstoreservice",
       "label": "tindahanStoreService",
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "tindahanstoreservice",
       "source_file": "src/infrastructure/container.ts",
@@ -15664,7 +15708,7 @@
       "label": "AppUpdatePrompt.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "appupdateprompt.tsx",
       "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
@@ -15675,7 +15719,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
@@ -15686,7 +15730,7 @@
       "label": "TindahanStoreProvider.tsx",
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "tindahanstoreprovider.tsx",
       "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
@@ -15697,7 +15741,7 @@
       "label": "TindahanStoreContext",
       "_origin": "ast",
       "community": 78,
-      "community_name": "container.ts",
+      "community_name": "_layout.tsx",
       "file_type": "code",
       "norm_label": "tindahanstorecontext",
       "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
@@ -15774,7 +15818,7 @@
       "label": "explore.tsx",
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "explore.tsx",
       "source_file": "src/app/explore.tsx",
@@ -15785,7 +15829,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/explore.tsx",
@@ -15796,7 +15840,7 @@
       "label": "history.tsx",
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "history.tsx",
       "source_file": "src/app/history.tsx",
@@ -15807,62 +15851,18 @@
       "label": "styles",
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/history.tsx",
       "source_location": "L547"
     },
     {
-      "id": "src_app_index",
-      "label": "index.tsx",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "index.tsx",
-      "source_file": "src/app/index.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_index_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/index.tsx",
-      "source_location": "L715"
-    },
-    {
-      "id": "src_presentation_components_productthumbnail",
-      "label": "ProductThumbnail.tsx",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "productthumbnail.tsx",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_productthumbnail_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L65"
-    },
-    {
       "id": "src_presentation_components_screensafeareaview",
       "label": "ScreenSafeAreaView.tsx",
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "screensafeareaview.tsx",
       "source_file": "src/presentation/components/ScreenSafeAreaView.tsx",
@@ -15873,7 +15873,7 @@
       "label": "i18n.ts",
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "i18n.ts",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -15884,7 +15884,7 @@
       "label": "dictionaries",
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "dictionaries",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -15895,7 +15895,7 @@
       "label": "en",
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "en",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -15906,7 +15906,7 @@
       "label": "taglish",
       "_origin": "ast",
       "community": 80,
-      "community_name": "index.tsx",
+      "community_name": "explore.tsx",
       "file_type": "code",
       "norm_label": "taglish",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -17194,7 +17194,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L1079",
+      "source_location": "L1115",
       "weight": 1.0
     },
     {
@@ -17254,7 +17254,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L356",
+      "source_location": "L392",
       "weight": 1.0
     },
     {
@@ -17266,7 +17266,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L374",
+      "source_location": "L410",
       "weight": 1.0
     },
     {
@@ -17278,7 +17278,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L398",
+      "source_location": "L434",
       "weight": 1.0
     },
     {
@@ -17602,7 +17602,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2604",
+      "source_location": "L2641",
       "weight": 1.0
     },
     {
@@ -17614,7 +17614,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2743",
+      "source_location": "L2780",
       "weight": 1.0
     },
     {
@@ -17626,7 +17626,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L3942",
+      "source_location": "L3994",
       "weight": 1.0
     },
     {
@@ -18238,7 +18238,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3041",
+      "source_location": "L3056",
       "weight": 1.0
     },
     {
@@ -18250,7 +18250,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3064",
+      "source_location": "L3079",
       "weight": 1.0
     },
     {
@@ -18274,7 +18274,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2842",
+      "source_location": "L2857",
       "weight": 1.0
     },
     {
@@ -18286,7 +18286,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2867",
+      "source_location": "L2882",
       "weight": 1.0
     },
     {
@@ -18298,7 +18298,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2891",
+      "source_location": "L2906",
       "weight": 1.0
     },
     {
@@ -18310,7 +18310,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2892",
+      "source_location": "L2907",
       "weight": 1.0
     },
     {
@@ -18322,7 +18322,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3177",
+      "source_location": "L3192",
       "weight": 1.0
     },
     {
@@ -18334,7 +18334,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3178",
+      "source_location": "L3193",
       "weight": 1.0
     },
     {
@@ -18370,7 +18370,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1466",
+      "source_location": "L1477",
       "weight": 1.0
     },
     {
@@ -18382,7 +18382,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1470",
+      "source_location": "L1481",
       "weight": 1.0
     },
     {
@@ -18394,7 +18394,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2793",
+      "source_location": "L2808",
       "weight": 1.0
     },
     {
@@ -18406,7 +18406,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2794",
+      "source_location": "L2809",
       "weight": 1.0
     },
     {
@@ -18418,7 +18418,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2687",
+      "source_location": "L2702",
       "weight": 1.0
     },
     {
@@ -18430,7 +18430,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2691",
+      "source_location": "L2706",
       "weight": 1.0
     },
     {
@@ -18442,7 +18442,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2767",
+      "source_location": "L2782",
       "weight": 1.0
     },
     {
@@ -18490,7 +18490,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1313",
+      "source_location": "L1320",
       "weight": 1.0
     },
     {
@@ -18502,7 +18502,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1316",
+      "source_location": "L1323",
       "weight": 1.0
     },
     {
@@ -18514,7 +18514,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1331",
+      "source_location": "L1338",
       "weight": 1.0
     },
     {
@@ -18526,7 +18526,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1343",
+      "source_location": "L1350",
       "weight": 1.0
     },
     {
@@ -18574,7 +18574,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1591",
+      "source_location": "L1606",
       "weight": 1.0
     },
     {
@@ -18586,7 +18586,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1598",
+      "source_location": "L1613",
       "weight": 1.0
     },
     {
@@ -18598,7 +18598,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1841",
+      "source_location": "L1856",
       "weight": 1.0
     },
     {
@@ -18610,7 +18610,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1843",
+      "source_location": "L1858",
       "weight": 1.0
     },
     {
@@ -18622,7 +18622,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1957",
+      "source_location": "L1972",
       "weight": 1.0
     },
     {
@@ -18634,7 +18634,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1963",
+      "source_location": "L1978",
       "weight": 1.0
     },
     {
@@ -18646,7 +18646,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1970",
+      "source_location": "L1985",
       "weight": 1.0
     },
     {
@@ -18658,7 +18658,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1982",
+      "source_location": "L1997",
       "weight": 1.0
     },
     {
@@ -18670,7 +18670,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2014",
+      "source_location": "L2029",
       "weight": 1.0
     },
     {
@@ -18778,7 +18778,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3069",
+      "source_location": "L3084",
       "weight": 1.0
     },
     {
@@ -18790,7 +18790,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3077",
+      "source_location": "L3092",
       "weight": 1.0
     },
     {
@@ -18826,7 +18826,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1687",
+      "source_location": "L1702",
       "weight": 1.0
     },
     {
@@ -18838,7 +18838,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1696",
+      "source_location": "L1711",
       "weight": 1.0
     },
     {
@@ -18874,7 +18874,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2897",
+      "source_location": "L2912",
       "weight": 1.0
     },
     {
@@ -18886,7 +18886,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2901",
+      "source_location": "L2916",
       "weight": 1.0
     },
     {
@@ -18898,7 +18898,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3378",
+      "source_location": "L3393",
       "weight": 1.0
     },
     {
@@ -18910,7 +18910,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3380",
+      "source_location": "L3395",
       "weight": 1.0
     },
     {
@@ -18958,7 +18958,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2094",
+      "source_location": "L2109",
       "weight": 1.0
     },
     {
@@ -18970,7 +18970,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2422",
+      "source_location": "L2437",
       "weight": 1.0
     },
     {
@@ -19018,7 +19018,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3411",
+      "source_location": "L3426",
       "weight": 1.0
     },
     {
@@ -19042,7 +19042,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3368",
+      "source_location": "L3383",
       "weight": 1.0
     },
     {
@@ -19054,7 +19054,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3369",
+      "source_location": "L3384",
       "weight": 1.0
     },
     {
@@ -19066,7 +19066,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3253",
+      "source_location": "L3268",
       "weight": 1.0
     },
     {
@@ -19078,7 +19078,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3259",
+      "source_location": "L3274",
       "weight": 1.0
     },
     {
@@ -19138,7 +19138,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3271",
+      "source_location": "L3286",
       "weight": 1.0
     },
     {
@@ -19150,7 +19150,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1605",
+      "source_location": "L1620",
       "weight": 1.0
     },
     {
@@ -19162,7 +19162,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1606",
+      "source_location": "L1621",
       "weight": 1.0
     },
     {
@@ -19174,7 +19174,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1625",
+      "source_location": "L1640",
       "weight": 1.0
     },
     {
@@ -19186,7 +19186,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1645",
+      "source_location": "L1660",
       "weight": 1.0
     },
     {
@@ -19198,7 +19198,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1651",
+      "source_location": "L1666",
       "weight": 1.0
     },
     {
@@ -19258,7 +19258,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3185",
+      "source_location": "L3200",
       "weight": 1.0
     },
     {
@@ -19294,7 +19294,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2600",
+      "source_location": "L2615",
       "weight": 1.0
     },
     {
@@ -19306,7 +19306,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2606",
+      "source_location": "L2621",
       "weight": 1.0
     },
     {
@@ -19318,7 +19318,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2649",
+      "source_location": "L2664",
       "weight": 1.0
     },
     {
@@ -19330,7 +19330,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2667",
+      "source_location": "L2682",
       "weight": 1.0
     },
     {
@@ -19342,7 +19342,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2671",
+      "source_location": "L2686",
       "weight": 1.0
     },
     {
@@ -19354,7 +19354,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2672",
+      "source_location": "L2687",
       "weight": 1.0
     },
     {
@@ -19378,7 +19378,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3388",
+      "source_location": "L3403",
       "weight": 1.0
     },
     {
@@ -19390,7 +19390,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3087",
+      "source_location": "L3102",
       "weight": 1.0
     },
     {
@@ -19402,7 +19402,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3145",
+      "source_location": "L3160",
       "weight": 1.0
     },
     {
@@ -19426,7 +19426,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2939",
+      "source_location": "L2954",
       "weight": 1.0
     },
     {
@@ -19438,7 +19438,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2952",
+      "source_location": "L2967",
       "weight": 1.0
     },
     {
@@ -19450,7 +19450,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2969",
+      "source_location": "L2984",
       "weight": 1.0
     },
     {
@@ -19462,7 +19462,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2972",
+      "source_location": "L2987",
       "weight": 1.0
     },
     {
@@ -19474,7 +19474,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2976",
+      "source_location": "L2991",
       "weight": 1.0
     },
     {
@@ -19486,7 +19486,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2977",
+      "source_location": "L2992",
       "weight": 1.0
     },
     {
@@ -19558,7 +19558,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1661",
+      "source_location": "L1676",
       "weight": 1.0
     },
     {
@@ -19570,7 +19570,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1674",
+      "source_location": "L1689",
       "weight": 1.0
     },
     {
@@ -19582,7 +19582,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1678",
+      "source_location": "L1693",
       "weight": 1.0
     },
     {
@@ -19594,7 +19594,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1702",
+      "source_location": "L1717",
       "weight": 1.0
     },
     {
@@ -19606,7 +19606,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1707",
+      "source_location": "L1722",
       "weight": 1.0
     },
     {
@@ -19618,7 +19618,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1711",
+      "source_location": "L1726",
       "weight": 1.0
     },
     {
@@ -19630,7 +19630,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3263",
+      "source_location": "L3278",
       "weight": 1.0
     },
     {
@@ -19642,7 +19642,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1564",
+      "source_location": "L1579",
       "weight": 1.0
     },
     {
@@ -19654,7 +19654,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1568",
+      "source_location": "L1583",
       "weight": 1.0
     },
     {
@@ -19666,7 +19666,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2993",
+      "source_location": "L3008",
       "weight": 1.0
     },
     {
@@ -19678,7 +19678,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3004",
+      "source_location": "L3019",
       "weight": 1.0
     },
     {
@@ -19690,7 +19690,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1585",
+      "source_location": "L1600",
       "weight": 1.0
     },
     {
@@ -19702,7 +19702,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3393",
+      "source_location": "L3408",
       "weight": 1.0
     },
     {
@@ -19714,7 +19714,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3278",
+      "source_location": "L3293",
       "weight": 1.0
     },
     {
@@ -19726,7 +19726,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3281",
+      "source_location": "L3296",
       "weight": 1.0
     },
     {
@@ -19738,7 +19738,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3282",
+      "source_location": "L3297",
       "weight": 1.0
     },
     {
@@ -19750,7 +19750,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3285",
+      "source_location": "L3300",
       "weight": 1.0
     },
     {
@@ -19762,7 +19762,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3240",
+      "source_location": "L3255",
       "weight": 1.0
     },
     {
@@ -19774,7 +19774,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3244",
+      "source_location": "L3259",
       "weight": 1.0
     },
     {
@@ -19786,7 +19786,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3245",
+      "source_location": "L3260",
       "weight": 1.0
     },
     {
@@ -19798,7 +19798,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3330",
+      "source_location": "L3345",
       "weight": 1.0
     },
     {
@@ -19810,7 +19810,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3335",
+      "source_location": "L3350",
       "weight": 1.0
     },
     {
@@ -19822,7 +19822,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3336",
+      "source_location": "L3351",
       "weight": 1.0
     },
     {
@@ -19870,7 +19870,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3420",
+      "source_location": "L3435",
       "weight": 1.0
     },
     {
@@ -19894,7 +19894,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1576",
+      "source_location": "L1591",
       "weight": 1.0
     },
     {
@@ -19906,7 +19906,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1580",
+      "source_location": "L1595",
       "weight": 1.0
     },
     {
@@ -19918,7 +19918,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3358",
+      "source_location": "L3373",
       "weight": 1.0
     },
     {
@@ -19978,7 +19978,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3229",
+      "source_location": "L3244",
       "weight": 1.0
     },
     {
@@ -19990,7 +19990,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3230",
+      "source_location": "L3245",
       "weight": 1.0
     },
     {
@@ -20002,7 +20002,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2828",
+      "source_location": "L2843",
       "weight": 1.0
     },
     {
@@ -20014,7 +20014,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2829",
+      "source_location": "L2844",
       "weight": 1.0
     },
     {
@@ -20026,7 +20026,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3304",
+      "source_location": "L3319",
       "weight": 1.0
     },
     {
@@ -20038,7 +20038,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3322",
+      "source_location": "L3337",
       "weight": 1.0
     },
     {
@@ -20050,7 +20050,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2489",
+      "source_location": "L2504",
       "weight": 1.0
     },
     {
@@ -20062,7 +20062,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2494",
+      "source_location": "L2509",
       "weight": 1.0
     },
     {
@@ -20074,7 +20074,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2495",
+      "source_location": "L2510",
       "weight": 1.0
     },
     {
@@ -20086,7 +20086,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2511",
+      "source_location": "L2526",
       "weight": 1.0
     },
     {
@@ -20098,7 +20098,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2524",
+      "source_location": "L2539",
       "weight": 1.0
     },
     {
@@ -26664,7 +26664,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -29441,7 +29441,7 @@
     },
     {
       "source": "src_presentation_components_barcodeinputfield",
-      "target": "src_presentation_components_barcodescannerviewfinder",
+      "target": "ref_expo_router",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -29449,6 +29449,18 @@
       "context": "import",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_barcodeinputfield",
+      "target": "src_presentation_components_barcodescannerviewfinder",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/presentation/components/BarcodeInputField.tsx",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -29832,7 +29844,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3162",
+      "source_location": "L3177",
       "weight": 1.0
     },
     {
@@ -29868,7 +29880,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1330",
+      "source_location": "L1337",
       "weight": 1.0
     },
     {
@@ -29916,7 +29928,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3181",
+      "source_location": "L3196",
       "weight": 1.0
     },
     {
@@ -30132,7 +30144,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3427",
+      "source_location": "L3442",
       "weight": 1.0
     },
     {
@@ -30144,7 +30156,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3207",
+      "source_location": "L3222",
       "weight": 1.0
     },
     {
@@ -30180,7 +30192,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3292",
+      "source_location": "L3307",
       "weight": 1.0
     },
     {
@@ -36378,7 +36390,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L1541",
+      "source_location": "L1577",
       "weight": 1.0
     },
     {
@@ -36554,7 +36566,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L3951",
+      "source_location": "L4003",
       "weight": 1.0
     },
     {
@@ -38699,7 +38711,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L105",
+      "source_location": "L116",
       "weight": 1.0
     },
     {
@@ -38710,7 +38722,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -38721,7 +38733,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -40811,7 +40823,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1326",
+      "source_location": "L1333",
       "weight": 1.0
     },
     {
@@ -40822,7 +40834,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1330",
+      "source_location": "L1337",
       "weight": 1.0
     },
     {
@@ -40833,7 +40845,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1356",
+      "source_location": "L1363",
       "weight": 1.0
     },
     {
@@ -40844,7 +40856,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1485",
+      "source_location": "L1496",
       "weight": 1.0
     },
     {
@@ -40855,7 +40867,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1571",
+      "source_location": "L1586",
       "weight": 1.0
     },
     {
@@ -40866,7 +40878,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1583",
+      "source_location": "L1598",
       "weight": 1.0
     },
     {
@@ -40877,7 +40889,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1588",
+      "source_location": "L1603",
       "weight": 1.0
     },
     {
@@ -40888,7 +40900,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1601",
+      "source_location": "L1616",
       "weight": 1.0
     },
     {
@@ -40899,7 +40911,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1655",
+      "source_location": "L1670",
       "weight": 1.0
     },
     {
@@ -40910,7 +40922,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1681",
+      "source_location": "L1696",
       "weight": 1.0
     },
     {
@@ -40921,7 +40933,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1699",
+      "source_location": "L1714",
       "weight": 1.0
     },
     {
@@ -40932,7 +40944,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1714",
+      "source_location": "L1729",
       "weight": 1.0
     },
     {
@@ -40943,7 +40955,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2027",
+      "source_location": "L2042",
       "weight": 1.0
     },
     {
@@ -40954,7 +40966,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2031",
+      "source_location": "L2046",
       "weight": 1.0
     },
     {
@@ -40965,7 +40977,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2477",
+      "source_location": "L2492",
       "weight": 1.0
     },
     {
@@ -40976,7 +40988,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2553",
+      "source_location": "L2568",
       "weight": 1.0
     },
     {
@@ -40987,7 +40999,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2676",
+      "source_location": "L2691",
       "weight": 1.0
     },
     {
@@ -41009,7 +41021,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2770",
+      "source_location": "L2785",
       "weight": 1.0
     },
     {
@@ -41020,7 +41032,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2774",
+      "source_location": "L2789",
       "weight": 1.0
     },
     {
@@ -41031,7 +41043,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2812",
+      "source_location": "L2827",
       "weight": 1.0
     },
     {
@@ -41042,7 +41054,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2832",
+      "source_location": "L2847",
       "weight": 1.0
     },
     {
@@ -41053,7 +41065,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2895",
+      "source_location": "L2910",
       "weight": 1.0
     },
     {
@@ -41064,29 +41076,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2904",
-      "weight": 1.0
-    },
-    {
-      "source": "src_application_tindahanstoreservice_tindahanstoreservice",
-      "target": "src_application_tindahanstoreservice_tindahanstoreservice_getcashadjustments",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2980",
-      "weight": 1.0
-    },
-    {
-      "source": "src_application_tindahanstoreservice_tindahanstoreservice",
-      "target": "src_application_tindahanstoreservice_tindahanstoreservice_setcashindrawer",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2988",
+      "source_location": "L2919",
       "weight": 1.0
     },
     {
@@ -41102,13 +41092,35 @@
     },
     {
       "source": "src_application_tindahanstoreservice_tindahanstoreservice",
+      "target": "src_application_tindahanstoreservice_tindahanstoreservice_getcashadjustments",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L2995",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_tindahanstoreservice_tindahanstoreservice",
+      "target": "src_application_tindahanstoreservice_tindahanstoreservice_setcashindrawer",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L3003",
+      "weight": 1.0
+    },
+    {
+      "source": "src_application_tindahanstoreservice_tindahanstoreservice",
       "target": "src_application_tindahanstoreservice_tindahanstoreservice_addcashadjustment",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3008",
+      "source_location": "L3023",
       "weight": 1.0
     },
     {
@@ -41130,7 +41142,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3067",
+      "source_location": "L3082",
       "weight": 1.0
     },
     {
@@ -41141,7 +41153,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3080",
+      "source_location": "L3095",
       "weight": 1.0
     },
     {
@@ -41152,7 +41164,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3135",
+      "source_location": "L3150",
       "weight": 1.0
     },
     {
@@ -41163,7 +41175,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3162",
+      "source_location": "L3177",
       "weight": 1.0
     },
     {
@@ -41174,7 +41186,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3181",
+      "source_location": "L3196",
       "weight": 1.0
     },
     {
@@ -41185,7 +41197,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3207",
+      "source_location": "L3222",
       "weight": 1.0
     },
     {
@@ -41196,7 +41208,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3211",
+      "source_location": "L3226",
       "weight": 1.0
     },
     {
@@ -41207,7 +41219,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3215",
+      "source_location": "L3230",
       "weight": 1.0
     },
     {
@@ -41218,7 +41230,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3233",
+      "source_location": "L3248",
       "weight": 1.0
     },
     {
@@ -41229,7 +41241,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3249",
+      "source_location": "L3264",
       "weight": 1.0
     },
     {
@@ -41240,7 +41252,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3256",
+      "source_location": "L3271",
       "weight": 1.0
     },
     {
@@ -41251,7 +41263,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3262",
+      "source_location": "L3277",
       "weight": 1.0
     },
     {
@@ -41262,7 +41274,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3266",
+      "source_location": "L3281",
       "weight": 1.0
     },
     {
@@ -41273,7 +41285,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3277",
+      "source_location": "L3292",
       "weight": 1.0
     },
     {
@@ -41284,7 +41296,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3292",
+      "source_location": "L3307",
       "weight": 1.0
     },
     {
@@ -41295,7 +41307,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3329",
+      "source_location": "L3344",
       "weight": 1.0
     },
     {
@@ -41306,7 +41318,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3343",
+      "source_location": "L3358",
       "weight": 1.0
     },
     {
@@ -41317,7 +41329,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3353",
+      "source_location": "L3368",
       "weight": 1.0
     },
     {
@@ -41328,7 +41340,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3364",
+      "source_location": "L3379",
       "weight": 1.0
     },
     {
@@ -41339,7 +41351,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3375",
+      "source_location": "L3390",
       "weight": 1.0
     },
     {
@@ -41350,7 +41362,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3387",
+      "source_location": "L3402",
       "weight": 1.0
     },
     {
@@ -41361,7 +41373,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3391",
+      "source_location": "L3406",
       "weight": 1.0
     },
     {
@@ -41372,7 +41384,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3402",
+      "source_location": "L3417",
       "weight": 1.0
     },
     {
@@ -41383,7 +41395,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3417",
+      "source_location": "L3432",
       "weight": 1.0
     },
     {
@@ -41394,7 +41406,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3427",
+      "source_location": "L3442",
       "weight": 1.0
     },
     {
@@ -43947,7 +43959,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2681",
+      "source_location": "L2696",
       "weight": 1.0
     },
     {
@@ -43959,7 +43971,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2690",
+      "source_location": "L2705",
       "weight": 1.0
     },
     {
@@ -43971,7 +43983,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1965",
+      "source_location": "L1980",
       "weight": 1.0
     },
     {
@@ -43983,7 +43995,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1969",
+      "source_location": "L1984",
       "weight": 1.0
     },
     {
@@ -44031,7 +44043,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2598",
+      "source_location": "L2613",
       "weight": 1.0
     },
     {
@@ -44043,7 +44055,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2605",
+      "source_location": "L2620",
       "weight": 1.0
     },
     {
@@ -44055,7 +44067,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3236",
+      "source_location": "L3251",
       "weight": 1.0
     },
     {
@@ -44163,7 +44175,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2503",
+      "source_location": "L2518",
       "weight": 1.0
     },
     {
@@ -44175,7 +44187,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L2510",
+      "source_location": "L2525",
       "weight": 1.0
     },
     {
@@ -44876,5 +44888,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "0d23798a16f7023348a2daf023d4e7c05b381862"
+  "built_at_commit": "e4f4f87c56709c1d9bfc154b2ad0ac041bca2d56"
 }

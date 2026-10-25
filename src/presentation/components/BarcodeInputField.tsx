@@ -1,6 +1,7 @@
 // src/presentation/components/BarcodeInputField.tsx
 import React, { useState } from 'react';
 import { View, TextInput, Pressable, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { useIsFocused } from 'expo-router';
 import { BarcodeScannerViewfinder } from './BarcodeScannerViewfinder';
 
 interface BarcodeInputFieldProps {
@@ -29,6 +30,16 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
   containerStyle,
 }) => {
   const [scannerOpen, setScannerOpen] = useState(false);
+  const isFocused = useIsFocused();
+
+  // Adjust state during render when focus changes (React 19 pattern)
+  const [prevIsFocused, setPrevIsFocused] = useState(isFocused);
+  if (prevIsFocused !== isFocused) {
+    setPrevIsFocused(isFocused);
+    if (!isFocused && scannerOpen) {
+      setScannerOpen(false);
+    }
+  }
 
   const handleBarcodeScanned = (scannedCode: string) => {
     console.log(`[BarcodeInputField] Barcode scanned from camera viewfinder: "${scannedCode}"`);
@@ -76,7 +87,7 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
       {/* Shared OOP Barcode Scanner Viewfinder with Animated Sweeping Laser Line */}
-      {scannerOpen && (
+      {scannerOpen && isFocused && (
         <View style={styles.cameraWrapper}>
           <BarcodeScannerViewfinder
             isActive={true}

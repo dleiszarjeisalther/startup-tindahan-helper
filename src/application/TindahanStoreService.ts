@@ -1289,10 +1289,17 @@ export class TindahanStoreService {
         continue;
       }
       const tier = p.sellingTiers?.find((t) => t.unitName === unit);
-      const unitMultiplier =
-        tier?.baseUnitMultiplier && tier.baseUnitMultiplier > 0 ? tier.baseUnitMultiplier : 1;
-      const unitPricePhp =
-        tier && Number(tier.unitPricePhp) > 0 ? Number(tier.unitPricePhp) : p.defaultPricePhp;
+      let unitMultiplier = 1;
+      let unitPricePhp = p.defaultPricePhp;
+
+      if (tier && tier.baseUnitMultiplier && tier.baseUnitMultiplier > 0) {
+        unitMultiplier = tier.baseUnitMultiplier;
+        unitPricePhp = Number(tier.unitPricePhp) > 0 ? Number(tier.unitPricePhp) : p.defaultPricePhp * unitMultiplier;
+      } else if (unit === 'pack' || unit === 'bundle') {
+        // Auto-computed pack tier for products registered as tingi
+        unitMultiplier = 10;
+        unitPricePhp = Math.round(p.defaultPricePhp * 10 * 100) / 100;
+      }
 
       const isKg = p.unitOfMeasure === 'kg';
       const totalCentavos = Math.round(unitPricePhp * 100 * qty);
@@ -1376,8 +1383,12 @@ export class TindahanStoreService {
     }
 
     let tier = prod.sellingTiers?.find((t) => t.unitName === selectedUnit);
-    let unitMultiplier =
-      tier?.baseUnitMultiplier && tier.baseUnitMultiplier > 0 ? tier.baseUnitMultiplier : 1;
+    let unitMultiplier = 1;
+    if (tier?.baseUnitMultiplier && tier.baseUnitMultiplier > 0) {
+      unitMultiplier = tier.baseUnitMultiplier;
+    } else if (selectedUnit === 'pack' || selectedUnit === 'bundle') {
+      unitMultiplier = 10;
+    }
 
     const isKg = prod.unitOfMeasure === 'kg';
     let cartKey = selectedUnit === 'piece' ? productId : `${productId}__${selectedUnit}`;
@@ -1413,7 +1424,7 @@ export class TindahanStoreService {
           const kMultiplier =
             kTier?.baseUnitMultiplier && kTier.baseUnitMultiplier > 0
               ? kTier.baseUnitMultiplier
-              : 1;
+              : (kUnit === 'pack' || kUnit === 'bundle') ? 10 : 1;
           otherBaseUnits += q * kMultiplier;
         }
       }
@@ -1505,8 +1516,12 @@ export class TindahanStoreService {
     }
 
     const tier = prod.sellingTiers?.find((t) => t.unitName === selectedUnit);
-    const unitMultiplier =
-      tier?.baseUnitMultiplier && tier.baseUnitMultiplier > 0 ? tier.baseUnitMultiplier : 1;
+    let unitMultiplier = 1;
+    if (tier?.baseUnitMultiplier && tier.baseUnitMultiplier > 0) {
+      unitMultiplier = tier.baseUnitMultiplier;
+    } else if (selectedUnit === 'pack' || selectedUnit === 'bundle') {
+      unitMultiplier = 10;
+    }
 
     const isKg = prod.unitOfMeasure === 'kg';
     const targetQty = isKg
@@ -1533,7 +1548,7 @@ export class TindahanStoreService {
             const kMultiplier =
               kTier?.baseUnitMultiplier && kTier.baseUnitMultiplier > 0
                 ? kTier.baseUnitMultiplier
-                : 1;
+                : (kUnit === 'pack' || kUnit === 'bundle') ? 10 : 1;
             totalBaseUnits += q * kMultiplier;
           }
         }
