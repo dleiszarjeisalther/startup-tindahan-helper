@@ -8,6 +8,8 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  ActivityIndicator,
+  Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
@@ -76,6 +78,36 @@ export default function PosScanProductScreen() {
   useEffect(() => {
     console.log(`[POS Screen] Screen focus changed: isFocused = ${isFocused}`);
   }, [isFocused]);
+
+  // Dedicated fast loading state for Scan screen to prevent blank screens when switching tabs (React 19 safe pattern)
+  const [isScanPageLoading, setIsScanPageLoading] = useState(true);
+  const [loadingFadeAnim] = useState(() => new Animated.Value(1));
+  const [prevIsFocused, setPrevIsFocused] = useState(isFocused);
+
+  if (prevIsFocused !== isFocused) {
+    setPrevIsFocused(isFocused);
+    if (isFocused) {
+      setIsScanPageLoading(true);
+      loadingFadeAnim.setValue(1);
+    }
+  }
+
+  useEffect(() => {
+    if (!isFocused || !isScanPageLoading) return;
+
+    // Fast, smooth grace period (280ms) for CameraView and native UI to paint
+    const timeoutId = setTimeout(() => {
+      Animated.timing(loadingFadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => {
+        setIsScanPageLoading(false);
+      });
+    }, 280);
+
+    return () => clearTimeout(timeoutId);
+  }, [isFocused, isScanPageLoading, loadingFadeAnim]);
 
   const triggerScanToast = (msg: string) => {
     setScanToast(msg);
@@ -241,6 +273,36 @@ export default function PosScanProductScreen() {
 
   return (
     <ScreenSafeAreaView style={styles.safeArea} edges={[]}>
+      {/* Dedicated Fast Loading Overlay (Eliminates Blank Screen on Tab Switching) */}
+      {isScanPageLoading ? (
+        <Animated.View
+          style={[styles.loadingOverlay, { opacity: loadingFadeAnim }]}
+          pointerEvents="auto"
+        >
+          <View style={styles.loadingCard}>
+            <View style={styles.loadingLogoGlow}>
+              <Image
+                source={require('@/assets/images/icon.png')}
+                style={styles.loadingLogoIcon}
+                resizeMode="contain"
+              />
+            </View>
+            <View style={styles.loadingTitleRow}>
+              <Text style={styles.brandTitleWhite}>Tindahan</Text>
+              <Text style={styles.brandTitleAccent}>Helper</Text>
+              <View style={styles.brandUtilityPill}>
+                <Text style={styles.brandUtilityPillText}>POS</Text>
+              </View>
+            </View>
+            <ActivityIndicator size="large" color="#10B981" style={{ marginTop: 22 }} />
+            <Text style={styles.loadingStatusText}>Inihahanda ang Barcode Scanner...</Text>
+            <Text style={styles.loadingSubText}>
+              Sandali lamang, binubuksan ang camera at mga paninda...
+            </Text>
+          </View>
+        </Animated.View>
+      ) : null}
+
       {/* Top App Header Branding — Tindahan Helper */}
       <View style={[styles.topAppHeader, { paddingTop: insets.top + 4 }]}>
         <View style={styles.brandingRow}>
@@ -763,6 +825,63 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.8,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#0F172A',
+    zIndex: 9999,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingCard: {
+    alignItems: 'center',
+    paddingHorizontal: 28,
+    paddingVertical: 24,
+  },
+  loadingLogoGlow: {
+    width: 80,
+    height: 80,
+    borderRadius: 22,
+    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 1.5,
+    borderColor: 'rgba(16, 185, 129, 0.35)',
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  loadingLogoIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+  },
+  loadingTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  loadingStatusText: {
+    color: '#F8FAFC',
+    fontSize: 16,
+    fontWeight: '700',
+    marginTop: 18,
+    textAlign: 'center',
+    letterSpacing: 0.2,
+  },
+  loadingSubText: {
+    color: '#94A3B8',
+    fontSize: 13,
+    marginTop: 6,
+    textAlign: 'center',
+    lineHeight: 18,
   },
   safeArea: {
     flex: 1,

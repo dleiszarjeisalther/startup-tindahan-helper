@@ -2673,7 +2673,7 @@
       "file_type": "code",
       "norm_label": "posscanproductscreen()",
       "source_file": "src/app/index.tsx",
-      "source_location": "L29"
+      "source_location": "L30"
     },
     {
       "id": "src_app_products_productlistscreen",
@@ -15833,7 +15833,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/index.tsx",
-      "source_location": "L696"
+      "source_location": "L712"
     },
     {
       "id": "src_presentation_components_productthumbnail",
@@ -17410,7 +17410,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L116",
+      "source_location": "L117",
       "weight": 1.0
     },
     {
@@ -17422,7 +17422,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L275",
+      "source_location": "L291",
       "weight": 1.0
     },
     {
@@ -17434,7 +17434,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L291",
+      "source_location": "L307",
       "weight": 1.0
     },
     {
@@ -17446,7 +17446,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -17458,7 +17458,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -17470,7 +17470,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -17482,7 +17482,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -17494,7 +17494,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L613",
+      "source_location": "L629",
       "weight": 1.0
     },
     {
@@ -17506,7 +17506,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L639",
+      "source_location": "L655",
       "weight": 1.0
     },
     {
@@ -17518,7 +17518,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L670",
+      "source_location": "L686",
       "weight": 1.0
     },
     {
@@ -17530,7 +17530,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/index.tsx",
-      "source_location": "L91",
+      "source_location": "L92",
       "weight": 1.0
     },
     {
@@ -24468,7 +24468,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -24480,7 +24480,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -24492,7 +24492,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -24504,7 +24504,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -24516,7 +24516,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -24528,7 +24528,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -24540,7 +24540,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -24552,7 +24552,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -24564,7 +24564,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -24576,7 +24576,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -24588,7 +24588,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -24600,7 +24600,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -24612,7 +24612,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -24624,7 +24624,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -27540,7 +27540,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -27552,7 +27552,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -27564,7 +27564,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -27576,7 +27576,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -27588,7 +27588,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -27600,7 +27600,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -27612,7 +27612,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -27624,7 +27624,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -27636,7 +27636,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -27648,7 +27648,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -27660,7 +27660,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -27672,7 +27672,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -27684,7 +27684,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -27696,7 +27696,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/index.tsx",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -36521,7 +36521,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/index.tsx",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -36532,7 +36532,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/index.tsx",
-      "source_location": "L696",
+      "source_location": "L712",
       "weight": 1.0
     },
     {
@@ -44876,5 +44876,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "e4a762b0a8ad6e2347441f16552fdec108a42322"
+  "built_at_commit": "a8e78fe72dd9bd90b4e50e9e3dd544a31d91120e"
 }
