@@ -78,6 +78,8 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [cameraMountKey, setCameraMountKey] = useState(0);
   const [permission, requestPermission] = useCameraPermissions();
+  const isPermissionDetermined = permission !== null;
+  const isPermissionDenied = isPermissionDetermined && !permission.granted;
   const cameraPermissionRequestedRef = useRef(false);
   const scanLockRef = useRef(false);
   const lastScannedBarcodeRef = useRef<{ code: string; time: number } | null>(null);
@@ -118,7 +120,6 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
     setPrevIsActive(isActive);
     if (!isActive) {
       setTorchOn(false);
-      setIsCameraReady(false);
     } else {
       setCameraError(null);
     }
@@ -171,7 +172,6 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
       }
       scanLockRef.current = false;
       setCameraError(null);
-      setIsCameraReady(false);
       onToggleActive?.(true);
     } else {
       onToggleActive?.(false);
@@ -233,17 +233,21 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
         style,
       ]}
     >
-      {/* Background Camera View (Only mounted when active, permission granted, and no error) */}
-      {isActive && permission?.granted && !cameraError ? (
+      {/* Background Camera View (Keep mounted once permission is granted to prevent native CameraX tear-down crashes) */}
+      {permission?.granted && !cameraError ? (
         <CameraView
           key={`camera-${cameraMountKey}`}
           style={[StyleSheet.absoluteFill, { backgroundColor: '#0F172A' }]}
           facing="back"
-          enableTorch={torchOn}
+          enableTorch={isActive && torchOn}
           mute={true}
-          barcodeScannerSettings={{
-            barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'qr'],
-          }}
+          barcodeScannerSettings={
+            isActive
+              ? {
+                  barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'qr'],
+                }
+              : undefined
+          }
           onCameraReady={() => {
             console.log('[BarcodeScannerViewfinder] Camera preview ready.');
             setIsCameraReady(true);
@@ -266,7 +270,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
       ) : null}
 
       {/* Standby / Initializing Backdrop (prevents native SurfaceView hole-punching to white window) */}
-      {(!isActive || !isCameraReady || !!cameraError || !permission?.granted) && (
+      {(!isActive || !isCameraReady || !!cameraError || isPermissionDenied) && (
         <View style={styles.standbyBackdrop} />
       )}
 
@@ -321,7 +325,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
             <Text style={styles.stateActionBtnText}>Subukan Muli</Text>
           </Pressable>
         </View>
-      ) : !permission?.granted && isActive ? (
+      ) : isPermissionDenied && isActive ? (
         <View style={styles.stateContainer}>
           <Ionicons name="camera-outline" size={36} color="#F59E0B" />
           <Text style={styles.stateTitle}>Kailangan ng Permiso sa Camera</Text>

@@ -8121,7 +8121,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
-      "source_location": "L399"
+      "source_location": "L403"
     },
     {
       "id": "src_presentation_hooks_useidempotentsubmit",
@@ -38743,7 +38743,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
-      "source_location": "L399",
+      "source_location": "L403",
       "weight": 1.0
     },
     {
@@ -44876,5 +44876,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "44603491bf2fe917074707b7088faf32b459e701"
+  "built_at_commit": "3b2b9958c04c2e9ea7f810ac8db877bdd848f934"
 }
