@@ -1,5 +1,4 @@
 // src/app/more.tsx — Screen 6: Menu / Profile ("Juan's Store — Owner")
-import { AppUpdateMenuItem } from '@/presentation/components/AppUpdatePrompt';
 import React, { useState } from 'react';
 import {
   View,
@@ -119,7 +118,6 @@ export default function MenuProfileScreen() {
           keyboardShouldPersistTaps="handled"
         >
           {/* 1. Store Settings -> Screen 7 */}
-          <AppUpdateMenuItem />
           <Pressable
             style={styles.menuRow}
             onPress={() => router.navigate('/settings')}

@@ -280,32 +280,7 @@ export default function CheckoutNewSaleScreen() {
     const { product, item } = unitModalSelection;
     if (item.unit !== newUnit || fellBackToPiece) {
       runCartAction(() => {
-        // 1. If product doesn't have this tier saved yet in sellingTiers, save to SQLite!
-        const existingTier = product.sellingTiers?.find((t) => t.unitName === newUnit);
-        if (!existingTier && newUnit === 'pack') {
-          const packMult = multiplier > 0 ? multiplier : 10;
-          const packPr = price > 0 ? price : Math.round(product.defaultPricePhp * packMult * 100) / 100;
-          const updatedTiers: SellingUnitTier[] = [
-            ...(product.sellingTiers?.filter((t) => t.unitName !== 'pack') ?? []),
-            {
-              unitName: 'pack',
-              baseUnitMultiplier: packMult,
-              unitPricePhp: packPr,
-            },
-          ];
-          if (!updatedTiers.some((t) => t.unitName === 'piece')) {
-            updatedTiers.unshift({
-              unitName: 'piece',
-              baseUnitMultiplier: 1,
-              unitPricePhp: product.defaultPricePhp,
-            });
-          }
-          updateProductDetails(product.id, { sellingTiers: updatedTiers }).catch((err) =>
-            console.error('[Checkout] Failed to save auto-computed pack tier to SQLite:', err)
-          );
-        }
-
-        // 2. Proportional quantity conversion (as agreed in /grill-me)
+        // Proportional quantity conversion (cart-scoped only; does NOT modify product in SQLite catalog)
         // - From piece to pack: 20 pcs -> 2 packs, 1 to 9 pcs -> 1 pack
         // - From pack to piece: 2 packs -> 20 pcs
         const mult = multiplier > 0 ? multiplier : (item.unitMultiplier || 10);
