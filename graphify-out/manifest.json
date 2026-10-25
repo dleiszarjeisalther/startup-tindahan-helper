@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
-    "mtime": 1792914778.2456324,
-    "seen": 1792915005.9657078,
-    "ast_hash": "337e7e6a9e4bb5b919f0298bd0065a16",
+    "mtime": 1792935403.181016,
+    "seen": 1792940751.9890974,
+    "ast_hash": "1d886a263dc32ec9c0d5312e43e319e9",
     "semantic_hash": ""
   },
   "src/application/ProductOnboardingService.ts": {
@@ -462,9 +462,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/SoundFeedbackService.ts": {
-    "mtime": 1792933644.5128992,
-    "seen": 1792933836.8800085,
-    "ast_hash": "965f1af894de804ee315093092364ffc",
+    "mtime": 1792940022.595738,
+    "seen": 1792940751.9894233,
+    "ast_hash": "4a81854d348659491b49e1751dd1584e",
     "semantic_hash": ""
   },
   "src/presentation/localization/i18n.ts": {
@@ -576,9 +576,9 @@
     "semantic_hash": ""
   },
   "scripts/sound-feedback.test.cjs": {
-    "mtime": 1792933372.2127688,
-    "seen": 1792933836.8795514,
-    "ast_hash": "a281a3802e62f5896b971aa38c26212c",
+    "mtime": 1792940068.3475008,
+    "seen": 1792940751.9889688,
+    "ast_hash": "266e47ac1b3ecdf04bbcbfb853dbd1ea",
     "semantic_hash": ""
   },
   "src/presentation/components/ConfirmationModal.tsx": {
@@ -1395,6 +1395,12 @@
     "mtime": 1792932508.106613,
     "seen": 1792932793.735125,
     "ast_hash": "f798a1eb01a53f712745a160f208143b",
+    "semantic_hash": ""
+  },
+  "src/infrastructure/services/barcodeBeepDataUri.ts": {
+    "mtime": 1792937891.6750581,
+    "seen": 1792940751.989432,
+    "ast_hash": "1d99f7185f592a332aa07cf1586c39d8",
     "semantic_hash": ""
   }
 }
