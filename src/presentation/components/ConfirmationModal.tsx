@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   View,
   Text,
+  TextInput,
   Pressable,
   StyleSheet,
   ActivityIndicator,
@@ -28,6 +29,13 @@ export interface ConfirmationModalDetail {
   highlight?: boolean;
 }
 
+export interface ReasonSelectorConfig {
+  options: string[];
+  placeholder?: string;
+  defaultReason?: string;
+  label?: string;
+}
+
 export interface ConfirmationModalProps {
   visible: boolean;
   type?: ConfirmationType;
@@ -38,8 +46,9 @@ export interface ConfirmationModalProps {
   confirmText?: string;
   cancelText?: string | null;
   isLoading?: boolean;
-  onConfirm: () => void | Promise<void>;
+  onConfirm: (reason?: string) => void | Promise<void>;
   onCancel: () => void;
+  reasonSelector?: ReasonSelectorConfig;
 }
 
 interface TypeTheme {
@@ -118,13 +127,32 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isLoading = false,
   onConfirm,
   onCancel,
+  reasonSelector,
 }) => {
   const theme = THEMES[type] || THEMES.info;
+  const [selectedReason, setSelectedReason] = useState<string>('');
+  const [customReasonText, setCustomReasonText] = useState<string>('');
+
+  const [prevVisible, setPrevVisible] = useState(visible);
+  if (prevVisible !== visible) {
+    setPrevVisible(visible);
+    if (visible && reasonSelector) {
+      setSelectedReason(reasonSelector.defaultReason || reasonSelector.options[0] || '');
+      setCustomReasonText('');
+    }
+  }
 
   const handleConfirm = () => {
     if (isLoading) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    void onConfirm();
+    let finalReason: string | undefined = undefined;
+    if (reasonSelector) {
+      const trimmed = customReasonText.trim();
+      finalReason = trimmed
+        ? (selectedReason ? `${selectedReason} - ${trimmed}` : trimmed)
+        : (selectedReason || 'Manual Adjustment');
+    }
+    void onConfirm(finalReason);
   };
 
   const handleCancel = () => {
@@ -194,6 +222,53 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                   </Text>
                 </View>
               ))}
+            </View>
+          ) : null}
+
+          {/* Optional Reason Selector with Fast Chips & Custom Note */}
+          {reasonSelector && reasonSelector.options.length > 0 ? (
+            <View style={styles.reasonSection}>
+              <Text style={styles.reasonSectionLabel}>
+                {reasonSelector.label || 'Dahilan ng Pag-update (Reason):'}
+              </Text>
+              <View style={styles.reasonChipsWrap}>
+                {reasonSelector.options.map((option) => {
+                  const isSelected = selectedReason === option;
+                  return (
+                    <Pressable
+                      key={option}
+                      style={[
+                        styles.reasonChip,
+                        isSelected && {
+                          backgroundColor: theme.primaryLight,
+                          borderColor: theme.primary,
+                        },
+                      ]}
+                      onPress={() => {
+                        setSelectedReason(option);
+                        Haptics.selectionAsync().catch(() => {});
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.reasonChipText,
+                          isSelected && { color: theme.primary, fontWeight: '700' },
+                        ]}
+                      >
+                        {option}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              <TextInput
+                style={styles.reasonInput}
+                placeholder={reasonSelector.placeholder || 'Karagdagang detalye / note (opsyonal)...'}
+                placeholderTextColor="#94A3B8"
+                value={customReasonText}
+                onChangeText={setCustomReasonText}
+                maxLength={80}
+              />
             </View>
           ) : null}
 
@@ -403,5 +478,49 @@ const styles = StyleSheet.create({
   },
   btnDisabled: {
     opacity: 0.5,
+  },
+  reasonSection: {
+    width: '100%',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  reasonSectionLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#475569',
+    marginBottom: 8,
+  },
+  reasonChipsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 10,
+  },
+  reasonChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+  },
+  reasonChipText: {
+    fontSize: 12,
+    color: '#475569',
+    fontWeight: '500',
+  },
+  reasonInput: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 13,
+    color: '#0F172A',
   },
 });

@@ -28,6 +28,7 @@ import {
   ConfirmationModal,
   ConfirmationType,
   ConfirmationModalDetail,
+  ReasonSelectorConfig,
 } from '@/presentation/components/ConfirmationModal';
 import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 
@@ -39,7 +40,8 @@ interface ConfirmationState {
   details?: ConfirmationModalDetail[];
   confirmText?: string;
   cancelText?: string | null;
-  onConfirm: () => void | Promise<void>;
+  onConfirm: (reason?: string) => void | Promise<void>;
+  reasonSelector?: ReasonSelectorConfig;
 }
 
 const STOCK_FILTERS = ['All', 'In Stock', 'Low Stock', 'Out of Stock', 'Expiring Soon'] as const;
@@ -2611,191 +2613,223 @@ export default function InventoryManagementScreen() {
                     </View>
                   ) : null}
 
-                  {/* Custom Restock Input Row */}
-                  <View style={styles.customRestockRow}>
-                    <TextInput
-                      style={styles.customRestockInput}
-                      value={customRestockQty}
-                      onChangeText={setCustomRestockQty}
-                      placeholder="Qty"
-                      keyboardType="number-pad"
-                    />
-                    <Pressable
-                      style={styles.adjBtnGreen}
-                      onPress={() => {
-                        const qty = Math.max(1, parseInt(customRestockQty || '1', 10) || 1);
-                        setConfirmDialog({
-                          type: 'restock',
-                          title: 'Kumpirmahin ang Restock',
-                          itemName: item.name,
-                          message: 'Sigurado ka bang nais mong magdagdag ng stock sa panindang ito?',
-                          details: [
-                            { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                            { label: 'Dami ng Idaragdag', value: `+${qty} pcs` },
-                            { label: 'Magiging Kabuuan', value: `${item.stockCount + qty} pcs`, highlight: true },
-                          ],
-                          confirmText: 'Itala ang Stock',
-                          cancelText: 'Kanselahin',
-                          onConfirm: async () => {
-                            setConfirmDialog(null);
-                            await adjustInventoryStock({
-                              productId: item.id,
-                              mode: 'RESTOCK',
-                              quantity: qty,
-                            });
-                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                            showToast(`✓ Naidagdag +${qty} ${item.name} sa stock (Total: ${item.stockCount + qty} pcs)`, 'success');
-                          },
-                        });
-                      }}
-                    >
-                      <Text style={styles.adjBtnGreenText}>
-                        +{Math.max(1, parseInt(customRestockQty || '1', 10) || 1)} Restock
-                      </Text>
-                    </Pressable>
+                  {/* Custom Restock / Adjustment Input Row */}
+                  {(() => {
+                    const inputQty = Math.max(1, parseInt(customRestockQty || '1', 10) || 1);
+                    return (
+                      <>
+                        <View style={styles.customRestockRow}>
+                          <TextInput
+                            style={styles.customRestockInput}
+                            value={customRestockQty}
+                            onChangeText={setCustomRestockQty}
+                            placeholder="Qty"
+                            keyboardType="number-pad"
+                          />
+                          <Pressable
+                            style={styles.adjBtnGreen}
+                            onPress={() => {
+                              setConfirmDialog({
+                                type: 'restock',
+                                title: 'Kumpirmahin ang Restock',
+                                itemName: item.name,
+                                message: 'Sigurado ka bang nais mong magdagdag ng stock sa panindang ito?',
+                                details: [
+                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
+                                  { label: 'Dami ng Idaragdag', value: `+${inputQty} pcs` },
+                                  { label: 'Magiging Kabuuan', value: `${item.stockCount + inputQty} pcs`, highlight: true },
+                                ],
+                                reasonSelector: {
+                                  label: 'Dahilan ng Restock (Reason):',
+                                  options: ['Bagong Delivery', 'Replenishment', 'Return to Shelf', 'Physical Count Correction'],
+                                  defaultReason: 'Bagong Delivery',
+                                  placeholder: 'Hal. galing sa supplier / resibo #...',
+                                },
+                                confirmText: 'Itala ang Stock',
+                                cancelText: 'Kanselahin',
+                                onConfirm: async (reason) => {
+                                  setConfirmDialog(null);
+                                  await adjustInventoryStock({
+                                    productId: item.id,
+                                    mode: 'RESTOCK',
+                                    quantity: inputQty,
+                                    reason,
+                                  });
+                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                                  showToast(`✓ Naidagdag +${inputQty} ${item.name} sa stock (Total: ${item.stockCount + inputQty} pcs)`, 'success');
+                                },
+                              });
+                            }}
+                          >
+                            <Text style={styles.adjBtnGreenText}>
+                              +{inputQty} Restock
+                            </Text>
+                          </Pressable>
 
-                    <Pressable
-                      style={styles.adjBtnBlue}
-                      onPress={() => {
-                        setConfirmDialog({
-                          type: 'unpack',
-                          title: 'Kumpirmahin ang Pag-unpack',
-                          itemName: item.name,
-                          message: 'Nais mo bang buksan ang 1 bulk pack para maging +10 tingi piraso?',
-                          details: [
-                            { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                            { label: 'Mababawas na Pack', value: '-1 pack' },
-                            { label: 'Dagdag sa Tingi', value: '+10 piraso', highlight: true },
-                          ],
-                          confirmText: 'I-unpack ang Tingi',
-                          cancelText: 'Kanselahin',
-                          onConfirm: async () => {
-                            setConfirmDialog(null);
-                            await adjustInventoryStock({
-                              productId: item.id,
-                              mode: 'UNPACK_TINGI',
-                              quantity: 1,
-                            });
-                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                            showToast(
-                              `✓ Na-unpack ang 1 bulk pack sa +10 tingi piraso ng ${item.name}`,
-                              'success'
-                            );
-                          },
-                        });
-                      }}
-                    >
-                      <Text style={styles.adjBtnBlueText}>📦 +10 Tingi</Text>
-                    </Pressable>
-                  </View>
+                          <Pressable
+                            style={styles.adjBtnBlue}
+                            onPress={() => {
+                              setConfirmDialog({
+                                type: 'unpack',
+                                title: 'Kumpirmahin ang Pag-unpack',
+                                itemName: item.name,
+                                message: `Nais mo bang buksan ang ${inputQty} bulk pack para maging +${inputQty * 10} tingi piraso?`,
+                                details: [
+                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
+                                  { label: 'Mababawas na Pack', value: `-${inputQty} pack` },
+                                  { label: 'Dagdag sa Tingi', value: `+${inputQty * 10} piraso`, highlight: true },
+                                ],
+                                reasonSelector: {
+                                  label: 'Dahilan ng Pag-unpack:',
+                                  options: ['Binuksang Pack para sa Tingi', 'Replenish Tingi Shelf', 'Pabor sa Suki'],
+                                  defaultReason: 'Binuksang Pack para sa Tingi',
+                                },
+                                confirmText: 'I-unpack ang Tingi',
+                                cancelText: 'Kanselahin',
+                                onConfirm: async (reason) => {
+                                  setConfirmDialog(null);
+                                  await adjustInventoryStock({
+                                    productId: item.id,
+                                    mode: 'UNPACK_TINGI',
+                                    quantity: inputQty,
+                                    reason,
+                                  });
+                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                                  showToast(
+                                    `✓ Na-unpack ang ${inputQty} bulk pack sa +${inputQty * 10} tingi piraso ng ${item.name}`,
+                                    'success'
+                                  );
+                                },
+                              });
+                            }}
+                          >
+                            <Text style={styles.adjBtnBlueText}>📦 +{inputQty * 10} Tingi</Text>
+                          </Pressable>
+                        </View>
 
-                  <View style={styles.adjustBtnsRow}>
-                    <Pressable
-                      style={styles.adjBtnAmber}
-                      onPress={() => {
-                        const remaining = Math.max(0, item.stockCount - 1);
-                        setConfirmDialog({
-                          type: 'home_use',
-                          title: 'Gamit sa Bahay (Home Use)',
-                          itemName: item.name,
-                          message: 'Ibabawas ba ang 1 pc ng paninda para sa pansariling gamit sa bahay?',
-                          details: [
-                            { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                            { label: 'Ibabawas', value: '-1 pc' },
-                            { label: 'Matitirang Stock', value: `${remaining} pcs`, highlight: true },
-                          ],
-                          confirmText: 'I-bawas sa Stock',
-                          cancelText: 'Kanselahin',
-                          onConfirm: async () => {
-                            setConfirmDialog(null);
-                            await adjustInventoryStock({
-                              productId: item.id,
-                              mode: 'HOME_USE',
-                              quantity: 1,
-                            });
-                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-                            showToast(
-                              `✓ Naitala ang -1 ${item.name} bilang Gamit sa Bahay (Tira: ${remaining} pcs)`,
-                              'warning'
-                            );
-                          },
-                        });
-                      }}
-                    >
-                      <Text style={styles.adjBtnAmberText}>−1 Gamit sa Bahay</Text>
-                    </Pressable>
+                        <View style={styles.adjustBtnsRow}>
+                          <Pressable
+                            style={styles.adjBtnAmber}
+                            onPress={() => {
+                              const remaining = Math.max(0, item.stockCount - inputQty);
+                              setConfirmDialog({
+                                type: 'home_use',
+                                title: 'Gamit sa Bahay (Home Use)',
+                                itemName: item.name,
+                                message: `Ibabawas ba ang ${inputQty} pc ng paninda para sa pansariling gamit sa bahay?`,
+                                details: [
+                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
+                                  { label: 'Ibabawas', value: `-${inputQty} pc` },
+                                  { label: 'Matitirang Stock', value: `${remaining} pcs`, highlight: true },
+                                ],
+                                reasonSelector: {
+                                  label: 'Dahilan ng Bawas (Home Use):',
+                                  options: ['Pansariling Gamit', 'Kusina / Pananghalian', 'Pamilya / Suki Sample'],
+                                  defaultReason: 'Pansariling Gamit',
+                                  placeholder: 'Hal. ulam ng pamilya, meryenda...',
+                                },
+                                confirmText: 'I-bawas sa Stock',
+                                cancelText: 'Kanselahin',
+                                onConfirm: async (reason) => {
+                                  setConfirmDialog(null);
+                                  await adjustInventoryStock({
+                                    productId: item.id,
+                                    mode: 'HOME_USE',
+                                    quantity: inputQty,
+                                    reason,
+                                  });
+                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                                  showToast(
+                                    `✓ Naitala ang -${inputQty} ${item.name} bilang Gamit sa Bahay (Tira: ${remaining} pcs)`,
+                                    'warning'
+                                  );
+                                },
+                              });
+                            }}
+                          >
+                            <Text style={styles.adjBtnAmberText}>−{inputQty} Gamit sa Bahay</Text>
+                          </Pressable>
 
-                    <Pressable
-                      style={styles.adjBtnRed}
-                      onPress={() => {
-                        const remaining = Math.max(0, item.stockCount - 1);
-                        setConfirmDialog({
-                          type: 'damaged',
-                          title: 'Sira o Expired na Paninda',
-                          itemName: item.name,
-                          message: 'Sigurado ka bang sira o expired ang 1 pc? Ibabawas ito sa mabebentang stock.',
-                          details: [
-                            { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                            { label: 'Ibabawas', value: '-1 pc' },
-                            { label: 'Matitirang Stock', value: `${remaining} pcs`, highlight: true },
-                          ],
-                          confirmText: 'Itala bilang Sira',
-                          cancelText: 'Kanselahin',
-                          onConfirm: async () => {
-                            setConfirmDialog(null);
-                            await adjustInventoryStock({
-                              productId: item.id,
-                              mode: 'DAMAGED_EXPIRED',
-                              quantity: 1,
-                            });
-                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-                            showToast(
-                              `✓ Inilipat ang 1 ${item.name} sa Sira/Expired (Tira: ${remaining} pcs)`,
-                              'warning'
-                            );
-                          },
-                        });
-                      }}
-                    >
-                      <Text style={styles.adjBtnRedText}>⚠ −1 Sira/Expired</Text>
-                    </Pressable>
-
-                    <Pressable
-                      style={styles.deleteBtn}
-                      onPress={() => {
-                        setConfirmDialog({
-                          type: 'delete',
-                          title: 'Alisin ang Paninda?',
-                          itemName: item.name,
-                          message: `Sigurado ka bang nais mong tanggalin ang "${item.name}" sa iyong paninda? Hindi na ito maibabalik.`,
-                          details: [
-                            { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                            { label: 'Barcode', value: item.barcode || 'Wala' },
-                          ],
-                          confirmText: 'Oo, Alisin',
-                          cancelText: 'Huwag',
-                          onConfirm: async () => {
-                            setConfirmDialog(null);
-                            try {
-                              await deleteProductFromDatabase(item.id);
-                              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                              setExpandedProductId(null);
-                              showToast(`🗑️ Naalis ang "${item.name}" sa imbentaryo`, 'warning');
-                              setErrorMsg(null);
-                            } catch (error) {
-                              setErrorMsg(
-                                error instanceof Error
-                                  ? error.message
-                                  : 'Hindi maalis ang paninda. Subukang muli.'
-                              );
-                            }
-                          },
-                        });
-                      }}
-                    >
-                      <Text style={styles.deleteBtnText}>🗑 Delete</Text>
-                    </Pressable>
-                  </View>
+                          <Pressable
+                            style={styles.adjBtnRed}
+                            onPress={() => {
+                              const remaining = Math.max(0, item.stockCount - inputQty);
+                              setConfirmDialog({
+                                type: 'damaged',
+                                title: 'Sira o Expired na Paninda',
+                                itemName: item.name,
+                                message: `Sigurado ka bang sira o expired ang ${inputQty} pc? Ibabawas ito sa mabebentang stock.`,
+                                details: [
+                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
+                                  { label: 'Ibabawas', value: `-${inputQty} pc` },
+                                  { label: 'Matitirang Stock', value: `${remaining} pcs`, highlight: true },
+                                ],
+                                reasonSelector: {
+                                  label: 'Dahilan ng Pagkasira/Expired:',
+                                  options: ['Basag / Depektibo', 'Lampas na sa Expiry', 'Daga / Insekto / Nabasa'],
+                                  defaultReason: 'Lampas na sa Expiry',
+                                  placeholder: 'Hal. may tagas ang supot, expired noong...',
+                                },
+                                confirmText: 'Itala bilang Sira',
+                                cancelText: 'Kanselahin',
+                                onConfirm: async (reason) => {
+                                  setConfirmDialog(null);
+                                  await adjustInventoryStock({
+                                    productId: item.id,
+                                    mode: 'DAMAGED_EXPIRED',
+                                    quantity: inputQty,
+                                    reason,
+                                  });
+                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+                                  showToast(
+                                    `✓ Inilipat ang ${inputQty} ${item.name} sa Sira/Expired (Tira: ${remaining} pcs)`,
+                                    'warning'
+                                  );
+                                },
+                              });
+                            }}
+                          >
+                            <Text style={styles.adjBtnRedText}>⚠ −{inputQty} Sira/Expired</Text>
+                          </Pressable>
+                          <Pressable
+                            style={styles.deleteBtn}
+                            onPress={() => {
+                              setConfirmDialog({
+                                type: 'delete',
+                                title: 'Alisin ang Paninda?',
+                                itemName: item.name,
+                                message: `Sigurado ka bang nais mong tanggalin ang "${item.name}" sa iyong paninda? Hindi na ito maibabalik.`,
+                                details: [
+                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
+                                  { label: 'Barcode', value: item.barcode || 'Wala' },
+                                ],
+                                confirmText: 'Oo, Alisin',
+                                cancelText: 'Huwag',
+                                onConfirm: async () => {
+                                  setConfirmDialog(null);
+                                  try {
+                                    await deleteProductFromDatabase(item.id);
+                                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                                    setExpandedProductId(null);
+                                    showToast(`🗑️ Naalis ang "${item.name}" sa imbentaryo`, 'warning');
+                                    setErrorMsg(null);
+                                  } catch (error) {
+                                    setErrorMsg(
+                                      error instanceof Error
+                                        ? error.message
+                                        : 'Hindi maalis ang paninda. Subukang muli.'
+                                    );
+                                  }
+                                },
+                              });
+                            }}
+                          >
+                            <Text style={styles.deleteBtnText}>🗑 Delete</Text>
+                          </Pressable>
+                        </View>
+                      </>
+                    );
+                  })()}
                 </View>
               ) : null}
             </View>
@@ -3981,6 +4015,7 @@ export default function InventoryManagementScreen() {
           cancelText={confirmDialog.cancelText}
           onConfirm={confirmDialog.onConfirm}
           onCancel={() => setConfirmDialog(null)}
+          reasonSelector={confirmDialog.reasonSelector}
         />
       ) : null}
 

@@ -180,11 +180,21 @@ export interface StoreSettingsState {
 
 export const DEFAULT_CATEGORIES: string[] = ['Snacks', 'Beverages', 'Groceries', 'School Supplies'];
 
+export type StockMovementType =
+  | 'RESTOCK'
+  | 'SALE'
+  | 'HOME_USE'
+  | 'DAMAGED_EXPIRED'
+  | 'UNPACK_TINGI'
+  | 'RETURN'
+  | 'PRODUCT_ADD'
+  | 'PRODUCT_EDIT';
+
 export interface StockMovementRecord {
   id: string;
   productId: string;
   productName: string;
-  movementType: 'RESTOCK' | 'SALE' | 'HOME_USE' | 'DAMAGED_EXPIRED' | 'UNPACK_TINGI' | 'RETURN';
+  movementType: StockMovementType;
   quantityDelta: number;
   previousStock: number;
   resultingStock: number;
@@ -1105,18 +1115,19 @@ export class TindahanStoreService {
       if (repo.hydrateFromSqlite) {
         repo.hydrateFromSqlite();
       }
-      if (cmd.initialStock > 0) {
-        this.recordStockMovement({
-          productId: result.product.id,
-          productName: result.product.name,
-          movementType: 'RESTOCK',
-          quantityDelta: cmd.initialStock,
-          previousStock: 0,
-          resultingStock: cmd.initialStock,
-          unitCostPhp: result.product.unitCostPhp,
-          reason: 'Initial Stock Entry',
-        });
-      }
+      this.recordStockMovement({
+        productId: result.product.id,
+        productName: result.product.name,
+        movementType: 'PRODUCT_ADD',
+        quantityDelta: cmd.initialStock,
+        previousStock: 0,
+        resultingStock: cmd.initialStock,
+        unitCostPhp: result.product.unitCostPhp,
+        reason:
+          cmd.initialStock > 0
+            ? `Bagong Rehistro (Simulang Stock: ${cmd.initialStock})`
+            : 'Bagong Rehistro sa Tindahan',
+      });
       this.notify();
     }
     return result;
@@ -1187,6 +1198,27 @@ export class TindahanStoreService {
     if (!prod) return;
     const updated = prod.updateDetails(updates);
     await this.productRepo.save(updated);
+
+    const changes: string[] = [];
+    if (updates.name && updates.name !== prod.name) changes.push(`Pangalan (${prod.name} ➔ ${updates.name})`);
+    if (updates.pricePhp !== undefined && updates.pricePhp !== prod.defaultPricePhp) changes.push(`Presyo (₱${prod.defaultPricePhp} ➔ ₱${updates.pricePhp})`);
+    if (updates.unitCostPhp !== undefined && updates.unitCostPhp !== prod.unitCostPhp) changes.push(`Puhunan (₱${prod.unitCostPhp} ➔ ₱${updates.unitCostPhp})`);
+    if (updates.baseStockCount !== undefined && updates.baseStockCount !== prod.baseStockCount) changes.push(`Stock (${prod.baseStockCount} ➔ ${updates.baseStockCount})`);
+    if (updates.lowStockThreshold !== undefined && updates.lowStockThreshold !== prod.toDTO().ordinaryLowStockThreshold) {
+      changes.push(`Threshold (${prod.toDTO().ordinaryLowStockThreshold} ➔ ${updates.lowStockThreshold})`);
+    }
+
+    this.recordStockMovement({
+      productId: prod.id,
+      productName: updates.name || prod.name,
+      movementType: 'PRODUCT_EDIT',
+      quantityDelta: updates.baseStockCount !== undefined ? updates.baseStockCount - prod.baseStockCount : 0,
+      previousStock: prod.baseStockCount,
+      resultingStock: updates.baseStockCount ?? prod.baseStockCount,
+      unitCostPhp: updates.unitCostPhp ?? prod.unitCostPhp,
+      reason: changes.length > 0 ? changes.join('; ') : 'In-update ang mga detalye ng produkto',
+    });
+
     this.notify();
   }
 
@@ -2692,6 +2724,7 @@ export class TindahanStoreService {
     productId: string;
     mode: 'RESTOCK' | 'HOME_USE' | 'DAMAGED_EXPIRED' | 'UNPACK_TINGI';
     quantity: number;
+    reason?: string;
   }): Promise<void> {
     const allProducts = await this.productRepo.getAll();
     const prod = allProducts.find((p) => p.id === params.productId);
@@ -2711,7 +2744,7 @@ export class TindahanStoreService {
         previousStock: prevStock,
         resultingStock: prevStock + qty,
         unitCostPhp: prod.unitCostPhp,
-        reason: 'Store Inventory Restock',
+        reason: params.reason || 'Store Inventory Restock',
       });
     } else if (params.mode === 'UNPACK_TINGI') {
       const tingiQty = qty * 10;
@@ -2724,7 +2757,7 @@ export class TindahanStoreService {
         previousStock: prevStock,
         resultingStock: prevStock + tingiQty,
         unitCostPhp: prod.unitCostPhp,
-        reason: `Unpacked ${qty} pack(s) into tingi pieces`,
+        reason: params.reason || `Unpacked ${qty} pack(s) into tingi pieces`,
       });
     } else if (params.mode === 'HOME_USE') {
       await this.productRepo.save(prod.adjustStock(-qty));
@@ -2732,7 +2765,7 @@ export class TindahanStoreService {
         id: `shk_${Date.now()}`,
         productName: prod.name,
         qty,
-        reason: 'Owner / Household Consumption (Sariling Gamit)',
+        reason: params.reason || 'Owner / Household Consumption (Sariling Gamit)',
         timestamp: 'Just now',
       };
       this.shrinkageLog.unshift(shk);
@@ -2750,7 +2783,7 @@ export class TindahanStoreService {
         previousStock: prevStock,
         resultingStock: Math.max(0, prevStock - qty),
         unitCostPhp: prod.unitCostPhp,
-        reason: 'Owner / Household Consumption (Sariling Gamit)',
+        reason: params.reason || 'Owner / Household Consumption (Sariling Gamit)',
       });
     } else if (params.mode === 'DAMAGED_EXPIRED') {
       await this.productRepo.save(prod.addQuarantineStock(qty, true));
@@ -2758,7 +2791,7 @@ export class TindahanStoreService {
         id: `shk_${Date.now()}`,
         productName: prod.name,
         qty,
-        reason: 'Shelf Expired / Damaged (Moved to Quarantine)',
+        reason: params.reason || 'Shelf Expired / Damaged (Moved to Quarantine)',
         timestamp: 'Just now',
       };
       this.shrinkageLog.unshift(shk);
@@ -2776,7 +2809,7 @@ export class TindahanStoreService {
         previousStock: prevStock,
         resultingStock: Math.max(0, prevStock - qty),
         unitCostPhp: prod.unitCostPhp,
-        reason: 'Shelf Expired / Damaged (Moved to Quarantine)',
+        reason: params.reason || 'Shelf Expired / Damaged (Moved to Quarantine)',
       });
     }
     this.notify();

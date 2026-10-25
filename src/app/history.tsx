@@ -1,4 +1,4 @@
-// src/app/history.tsx — Screen: Inventory Stock Movement & Audit Log
+// src/app/history.tsx — Screen: Store Activity, Stock Movement & Cash Drawer Audit Log
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   View,
@@ -8,7 +8,6 @@ import {
   ScrollView,
   StyleSheet,
   Share,
-  Platform,
 } from 'react-native';
 import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import { useRouter } from 'expo-router';
@@ -17,9 +16,16 @@ import * as Haptics from 'expo-haptics';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
-import { StockMovementRecord } from '@/application/TindahanStoreService';
+import {
+  StockMovementRecord,
+  DateRangeFilter,
+  CashDrawerAdjustmentRecord,
+} from '@/application/TindahanStoreService';
 import { Money } from '@/domain/value-objects/Money';
 import { ProductVisual } from '@/domain/entities/Product';
+import { DateRangeCalendarModal } from '@/presentation/components/DateRangeCalendarModal';
+
+export type HistoryCategoryFilter = 'ALL' | 'STOCK' | 'PRODUCT' | 'EXPENSE';
 
 type MovementFilter =
   | 'ALL'
@@ -32,14 +38,41 @@ type MovementFilter =
 
 type DateFilter = 'ALL' | 'TODAY' | 'YESTERDAY' | 'THIS_WEEK' | 'THIS_MONTH';
 
+export interface UnifiedActivityItem {
+  id: string;
+  category: 'STOCK' | 'PRODUCT' | 'EXPENSE';
+  activityType: string;
+  title: string;
+  subtitle?: string;
+  quantityDelta?: number;
+  amountPhp?: number;
+  previousStock?: number;
+  resultingStock?: number;
+  badgeLabel: string;
+  badgeBg: string;
+  badgeColor: string;
+  badgeBorder: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  timestampMs: number;
+  createdAt: string;
+  reason?: string;
+  referenceId?: string;
+  productId?: string;
+  rawMovement?: StockMovementRecord;
+  rawCashAdj?: CashDrawerAdjustmentRecord;
+}
+
 export default function StockMovementHistoryScreen() {
   const router = useRouter();
-  const { stockMovements, products, settings } = useTindahanStore();
+  const { stockMovements, cashDrawerAdjustments, products, settings } = useTindahanStore();
   const t = getTranslations(settings?.language);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<HistoryCategoryFilter>('ALL');
   const [movementFilter, setMovementFilter] = useState<MovementFilter>('ALL');
   const [dateFilter, setDateFilter] = useState<DateFilter>('ALL');
+  const [customDateRange, setCustomDateRange] = useState<DateRangeFilter | null>(null);
+  const [dateFilterModalVisible, setDateFilterModalVisible] = useState(false);
 
   // Fast Product Lookup Map
   const productMap = useMemo(() => {
@@ -50,8 +83,177 @@ export default function StockMovementHistoryScreen() {
     return map;
   }, [products]);
 
-  // Date Filtering Helpers
-  const filteredMovements = useMemo(() => {
+  // Available Years for the Calendar Selector
+  const availableYears = useMemo(() => {
+    const yearSet = new Set<number>();
+    yearSet.add(new Date().getFullYear());
+    for (const mov of stockMovements) {
+      const y = new Date(mov.createdAt).getFullYear();
+      if (!isNaN(y)) yearSet.add(y);
+    }
+    for (const adj of cashDrawerAdjustments) {
+      const y = new Date(adj.timestampMs).getFullYear();
+      if (!isNaN(y)) yearSet.add(y);
+    }
+    return Array.from(yearSet).sort((a, b) => b - a);
+  }, [stockMovements, cashDrawerAdjustments]);
+
+  // Transform and Unify All Activity Items (OOP Polymorphic Model)
+  const unifiedActivities = useMemo(() => {
+    const items: UnifiedActivityItem[] = [];
+
+    // 1. Process Stock Movements & Product Add/Edit logs
+    for (const mov of stockMovements) {
+      const timeMs = new Date(mov.createdAt).getTime();
+
+      if (mov.movementType === 'PRODUCT_ADD') {
+        items.push({
+          id: mov.id,
+          category: 'PRODUCT',
+          activityType: 'PRODUCT_ADD',
+          title: mov.productName,
+          subtitle: 'Bagong Rehistro sa Tindahan',
+          quantityDelta: mov.quantityDelta,
+          previousStock: mov.previousStock,
+          resultingStock: mov.resultingStock,
+          badgeLabel: 'BAGONG PRODUKTO',
+          badgeBg: '#ECFDF5',
+          badgeColor: '#059669',
+          badgeBorder: '#A7F3D0',
+          icon: 'add-circle-outline',
+          timestampMs: timeMs,
+          createdAt: mov.createdAt,
+          reason: mov.reason,
+          referenceId: mov.referenceId,
+          productId: mov.productId,
+          rawMovement: mov,
+        });
+      } else if (mov.movementType === 'PRODUCT_EDIT') {
+        items.push({
+          id: mov.id,
+          category: 'PRODUCT',
+          activityType: 'PRODUCT_EDIT',
+          title: mov.productName,
+          subtitle: 'Na-update ang Detalye',
+          quantityDelta: mov.quantityDelta,
+          previousStock: mov.previousStock,
+          resultingStock: mov.resultingStock,
+          badgeLabel: 'EDIT PRODUKTO',
+          badgeBg: '#EFF6FF',
+          badgeColor: '#2563EB',
+          badgeBorder: '#BFDBFE',
+          icon: 'create-outline',
+          timestampMs: timeMs,
+          createdAt: mov.createdAt,
+          reason: mov.reason,
+          referenceId: mov.referenceId,
+          productId: mov.productId,
+          rawMovement: mov,
+        });
+      } else {
+        // Regular Stock Movement (Restock, Sale, Home Use, Damaged, Unpack, Return)
+        let badgeLabel = mov.movementType as string;
+        let badgeBg = '#F3F4F6';
+        let badgeColor = '#374151';
+        let badgeBorder = '#E5E7EB';
+        let icon: keyof typeof Ionicons.glyphMap = 'cube-outline';
+
+        switch (mov.movementType) {
+          case 'RESTOCK':
+            badgeLabel = t.movementRestock;
+            badgeBg = '#ECFDF5';
+            badgeColor = '#065F46';
+            badgeBorder = '#A7F3D0';
+            icon = 'arrow-down-circle-outline';
+            break;
+          case 'SALE':
+            badgeLabel = t.movementSale;
+            badgeBg = '#EFF6FF';
+            badgeColor = '#1E40AF';
+            badgeBorder = '#BFDBFE';
+            icon = 'cart-outline';
+            break;
+          case 'HOME_USE':
+            badgeLabel = t.movementHomeUse;
+            badgeBg = '#FFFBEB';
+            badgeColor = '#92400E';
+            badgeBorder = '#FDE68A';
+            icon = 'home-outline';
+            break;
+          case 'DAMAGED_EXPIRED':
+            badgeLabel = t.movementDamagedExpired;
+            badgeBg = '#FEF2F2';
+            badgeColor = '#991B1B';
+            badgeBorder = '#FECACA';
+            icon = 'alert-circle-outline';
+            break;
+          case 'UNPACK_TINGI':
+            badgeLabel = t.movementUnpackTingi;
+            badgeBg = '#FAF5FF';
+            badgeColor = '#6B21A8';
+            badgeBorder = '#E9D5FF';
+            icon = 'cube-outline';
+            break;
+          case 'RETURN':
+            badgeLabel = t.movementReturn;
+            badgeBg = '#F0FDFA';
+            badgeColor = '#115E59';
+            badgeBorder = '#99F6E4';
+            icon = 'refresh-circle-outline';
+            break;
+        }
+
+        items.push({
+          id: mov.id,
+          category: 'STOCK',
+          activityType: mov.movementType,
+          title: mov.productName,
+          quantityDelta: mov.quantityDelta,
+          previousStock: mov.previousStock,
+          resultingStock: mov.resultingStock,
+          badgeLabel,
+          badgeBg,
+          badgeColor,
+          badgeBorder,
+          icon,
+          timestampMs: timeMs,
+          createdAt: mov.createdAt,
+          reason: mov.reason,
+          referenceId: mov.referenceId,
+          productId: mov.productId,
+          rawMovement: mov,
+        });
+      }
+    }
+
+    // 2. Process Cash Drawer Gastos & Panukli
+    for (const adj of cashDrawerAdjustments) {
+      const isGastos = adj.type === 'GASTOS';
+      items.push({
+        id: adj.id,
+        category: 'EXPENSE',
+        activityType: adj.type,
+        title: isGastos ? `Gastos sa Kaha: ${adj.category}` : `Panukli sa Kaha: ${adj.category}`,
+        subtitle: adj.note || (isGastos ? 'Cash Drawer Expense / Pera palabas' : 'Cash Drawer Float / Panukli'),
+        amountPhp: adj.amountPhp,
+        badgeLabel: isGastos ? 'GASTOS (EXPENSE)' : 'PANUKLI (FLOAT)',
+        badgeBg: isGastos ? '#FEF2F2' : '#F0FDF4',
+        badgeColor: isGastos ? '#DC2626' : '#16A34A',
+        badgeBorder: isGastos ? '#FECACA' : '#BBF7D0',
+        icon: isGastos ? 'cash-outline' : 'wallet-outline',
+        timestampMs: adj.timestampMs,
+        createdAt: new Date(adj.timestampMs).toISOString(),
+        reason: adj.note ? `Tala: ${adj.note}` : undefined,
+        rawCashAdj: adj,
+      });
+    }
+
+    // Sort newest first
+    return items.sort((a, b) => b.timestampMs - a.timestampMs);
+  }, [stockMovements, cashDrawerAdjustments, t]);
+
+  // Filtered Activities
+  const filteredActivities = useMemo(() => {
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const yesterdayStart = todayStart - 24 * 60 * 60 * 1000;
@@ -60,188 +262,159 @@ export default function StockMovementHistoryScreen() {
 
     const cleanQuery = searchQuery.trim().toLowerCase();
 
-    return stockMovements.filter((item) => {
-      // 1. Movement Type Filter
-      if (movementFilter !== 'ALL' && item.movementType !== movementFilter) {
+    return unifiedActivities.filter((item) => {
+      // 1. Category Filter
+      if (categoryFilter !== 'ALL' && item.category !== categoryFilter) {
         return false;
       }
 
-      // 2. Date Filter
-      const itemTime = new Date(item.createdAt).getTime();
-      if (dateFilter === 'TODAY' && itemTime < todayStart) {
-        return false;
-      }
-      if (dateFilter === 'YESTERDAY' && (itemTime < yesterdayStart || itemTime >= todayStart)) {
-        return false;
-      }
-      if (dateFilter === 'THIS_WEEK' && itemTime < weekStart) {
-        return false;
-      }
-      if (dateFilter === 'THIS_MONTH' && itemTime < monthStart) {
+      // 2. Sub-Movement Filter (only for Stock category)
+      if (
+        categoryFilter === 'STOCK' &&
+        movementFilter !== 'ALL' &&
+        item.activityType !== movementFilter
+      ) {
         return false;
       }
 
-      // 3. Search Query Filter
+      // 3. Date Range Filter
+      if (customDateRange) {
+        if (item.timestampMs < customDateRange.startMs || item.timestampMs > customDateRange.endMs) {
+          return false;
+        }
+      } else {
+        if (dateFilter === 'TODAY' && item.timestampMs < todayStart) {
+          return false;
+        }
+        if (
+          dateFilter === 'YESTERDAY' &&
+          (item.timestampMs < yesterdayStart || item.timestampMs >= todayStart)
+        ) {
+          return false;
+        }
+        if (dateFilter === 'THIS_WEEK' && item.timestampMs < weekStart) {
+          return false;
+        }
+        if (dateFilter === 'THIS_MONTH' && item.timestampMs < monthStart) {
+          return false;
+        }
+      }
+
+      // 4. Search Query Filter
       if (cleanQuery) {
-        const matchesName = item.productName.toLowerCase().includes(cleanQuery);
+        const matchesTitle = item.title.toLowerCase().includes(cleanQuery);
         const matchesReason = item.reason?.toLowerCase().includes(cleanQuery);
         const matchesRef = item.referenceId?.toLowerCase().includes(cleanQuery);
-        if (!matchesName && !matchesReason && !matchesRef) {
+        const matchesSubtitle = item.subtitle?.toLowerCase().includes(cleanQuery);
+        if (!matchesTitle && !matchesReason && !matchesRef && !matchesSubtitle) {
           return false;
         }
       }
 
       return true;
     });
-  }, [stockMovements, movementFilter, dateFilter, searchQuery]);
+  }, [unifiedActivities, categoryFilter, movementFilter, customDateRange, dateFilter, searchQuery]);
 
-  // KPI Computations based on current filter results
+  // KPI Computations based on filtered activities
   const kpis = useMemo(() => {
     let stockInUnits = 0;
     let soldUnits = 0;
     let shrinkageUnits = 0;
     let shrinkageCentavos = 0;
+    let totalExpenseCentavos = 0;
 
-    for (const mov of filteredMovements) {
-      if (mov.movementType === 'RESTOCK' || mov.movementType === 'UNPACK_TINGI' || mov.movementType === 'RETURN') {
-        if (mov.quantityDelta > 0) {
-          stockInUnits += mov.quantityDelta;
+    for (const item of filteredActivities) {
+      if (item.category === 'STOCK') {
+        const mov = item.rawMovement;
+        if (!mov) continue;
+        if (
+          mov.movementType === 'RESTOCK' ||
+          mov.movementType === 'UNPACK_TINGI' ||
+          mov.movementType === 'RETURN'
+        ) {
+          if (mov.quantityDelta > 0) stockInUnits += mov.quantityDelta;
+        } else if (mov.movementType === 'SALE') {
+          soldUnits += Math.abs(mov.quantityDelta);
+        } else if (mov.movementType === 'HOME_USE' || mov.movementType === 'DAMAGED_EXPIRED') {
+          const absQty = Math.abs(mov.quantityDelta);
+          shrinkageUnits += absQty;
+          const unitCostCentavos = Math.round((mov.unitCostPhp || 0) * 100);
+          shrinkageCentavos += unitCostCentavos * absQty;
         }
-      } else if (mov.movementType === 'SALE') {
-        soldUnits += Math.abs(mov.quantityDelta);
-      } else if (mov.movementType === 'HOME_USE' || mov.movementType === 'DAMAGED_EXPIRED') {
-        const absQty = Math.abs(mov.quantityDelta);
-        shrinkageUnits += absQty;
-        const unitCostCentavos = Math.round((mov.unitCostPhp || 0) * 100);
-        shrinkageCentavos += unitCostCentavos * absQty;
+      } else if (item.category === 'EXPENSE') {
+        if (item.activityType === 'GASTOS' && item.amountPhp) {
+          totalExpenseCentavos += Math.round(item.amountPhp * 100);
+        }
       }
     }
 
     const shrinkageLossPhp = shrinkageCentavos / 100;
+    const totalExpensePhp = totalExpenseCentavos / 100;
 
     return {
       stockInUnits: Math.round(stockInUnits * 100) / 100,
       soldUnits: Math.round(soldUnits * 100) / 100,
       shrinkageUnits: Math.round(shrinkageUnits * 100) / 100,
       formattedShrinkageLoss: Money.fromPhp(shrinkageLossPhp).format(),
+      formattedTotalExpense: Money.fromPhp(totalExpensePhp).format(),
+      totalExpensePhp,
     };
-  }, [filteredMovements]);
+  }, [filteredActivities]);
 
   // Share Audit Report Handler
   const handleShareReport = useCallback(async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    const dateLabel = new Date().toLocaleDateString('en-PH', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    const dateLabel = customDateRange ? customDateRange.label : new Date().toLocaleDateString('en-PH');
 
     const lines = [
-      `📊 ${settings.storeName.toUpperCase()} — INVENTORY AUDIT TRAIL`,
-      `📅 Petsa: ${dateLabel}`,
+      `📊 ${settings.storeName.toUpperCase()} — STORE AUDIT & HISTORY REPORT`,
+      `📅 Panahon: ${dateLabel}`,
       `---------------------------------`,
       `📦 Pumasok na Stock: +${kpis.stockInUnits} units`,
       `🛒 Naibenta sa POS: -${kpis.soldUnits} units`,
-      `⚠️ Kupit at Sira (Shrinkage): -${kpis.shrinkageUnits} units (Halaga: ${kpis.formattedShrinkageLoss})`,
+      `⚠️ Kupit at Sira: -${kpis.shrinkageUnits} units (Halaga: ${kpis.formattedShrinkageLoss})`,
+      `💸 Gastos sa Kaha: ${kpis.formattedTotalExpense}`,
       `---------------------------------`,
-      `HULING PAGGALAW NG STOCK:`,
+      `MGA HULING GAWAIN / LOGS:`,
     ];
 
-    const previewItems = filteredMovements.slice(0, 15);
+    const previewItems = filteredActivities.slice(0, 15);
     for (const item of previewItems) {
-      const sign = item.quantityDelta > 0 ? '+' : '';
-      const timeStr = new Date(item.createdAt).toLocaleTimeString('en-US', {
+      const timeStr = new Date(item.timestampMs).toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
         hour12: true,
       });
-      lines.push(
-        `• [${item.movementType}] ${item.productName}: ${sign}${item.quantityDelta} pcs (${item.previousStock} → ${item.resultingStock}) ${timeStr}`
-      );
+      if (item.category === 'STOCK') {
+        const sign = (item.quantityDelta ?? 0) > 0 ? '+' : '';
+        lines.push(`• [STOCK] ${item.title}: ${sign}${item.quantityDelta} pcs (${item.previousStock} → ${item.resultingStock}) ${timeStr}`);
+      } else if (item.category === 'PRODUCT') {
+        lines.push(`• [PRODUKTO] ${item.badgeLabel} — ${item.title} (${item.reason || ''}) ${timeStr}`);
+      } else if (item.category === 'EXPENSE') {
+        lines.push(`• [KAHA] ${item.title}: ₱${item.amountPhp?.toFixed(2)} (${item.reason || ''}) ${timeStr}`);
+      }
     }
 
-    if (filteredMovements.length > 15) {
-      lines.push(`... at ${filteredMovements.length - 15} pang iba.`);
+    if (filteredActivities.length > 15) {
+      lines.push(`... at ${filteredActivities.length - 15} pang iba.`);
     }
 
-    lines.push(`\nInulat mula sa ${settings.storeName} Tindahan Helper POS`);
+    lines.push(`\nInulat mula sa ${settings.storeName} Tindahan Helper`);
 
     try {
       await Share.share({
         message: lines.join('\n'),
-        title: `${settings.storeName} Stock Audit Report`,
+        title: `${settings.storeName} Store Audit Report`,
       });
     } catch {
       // ignored
     }
-  }, [settings.storeName, kpis, filteredMovements]);
+  }, [settings.storeName, kpis, filteredActivities, customDateRange]);
 
-  // Movement Type Badge Configuration
-  const getBadgeConfig = (type: StockMovementRecord['movementType']) => {
-    switch (type) {
-      case 'RESTOCK':
-        return {
-          label: t.movementRestock,
-          bgColor: '#ECFDF5',
-          textColor: '#065F46',
-          borderColor: '#A7F3D0',
-          icon: 'arrow-down-circle-outline' as const,
-        };
-      case 'SALE':
-        return {
-          label: t.movementSale,
-          bgColor: '#EFF6FF',
-          textColor: '#1E40AF',
-          borderColor: '#BFDBFE',
-          icon: 'cart-outline' as const,
-        };
-      case 'HOME_USE':
-        return {
-          label: t.movementHomeUse,
-          bgColor: '#FFFBEB',
-          textColor: '#92400E',
-          borderColor: '#FDE68A',
-          icon: 'home-outline' as const,
-        };
-      case 'DAMAGED_EXPIRED':
-        return {
-          label: t.movementDamagedExpired,
-          bgColor: '#FEF2F2',
-          textColor: '#991B1B',
-          borderColor: '#FECACA',
-          icon: 'alert-circle-outline' as const,
-        };
-      case 'UNPACK_TINGI':
-        return {
-          label: t.movementUnpackTingi,
-          bgColor: '#FAF5FF',
-          textColor: '#6B21A8',
-          borderColor: '#E9D5FF',
-          icon: 'cube-outline' as const,
-        };
-      case 'RETURN':
-        return {
-          label: t.movementReturn,
-          bgColor: '#F0FDFA',
-          textColor: '#115E59',
-          borderColor: '#99F6E4',
-          icon: 'refresh-circle-outline' as const,
-        };
-      default:
-        return {
-          label: type,
-          bgColor: '#F3F4F6',
-          textColor: '#374151',
-          borderColor: '#E5E7EB',
-          icon: 'ellipse-outline' as const,
-        };
-    }
-  };
-
-  const formatTimestamp = (isoStr: string) => {
+  const formatTimestamp = (timestampMs: number) => {
     try {
-      const d = new Date(isoStr);
-      if (isNaN(d.getTime())) return isoStr;
+      const d = new Date(timestampMs);
+      if (isNaN(d.getTime())) return '';
       const datePart = d.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -253,7 +426,7 @@ export default function StockMovementHistoryScreen() {
       });
       return `${datePart} • ${timePart}`;
     } catch {
-      return isoStr;
+      return '';
     }
   };
 
@@ -272,8 +445,8 @@ export default function StockMovementHistoryScreen() {
         </Pressable>
 
         <View style={styles.headerTextCol}>
-          <Text style={styles.headerTitle}>{t.historyTitle}</Text>
-          <Text style={styles.headerSub}>{t.historySub}</Text>
+          <Text style={styles.headerTitle}>{t.historyTitle || 'Kasaysayan ng Tindahan'}</Text>
+          <Text style={styles.headerSub}>{t.historySub || 'Talaan ng Stock, Produkto, at Gastos sa Kaha'}</Text>
         </View>
 
         <Pressable
@@ -298,32 +471,96 @@ export default function StockMovementHistoryScreen() {
           {/* 1. Stock In */}
           <View style={[styles.kpiCard, styles.kpiCardStockIn]}>
             <View style={styles.kpiIconWrapperStockIn}>
-              <Ionicons name="arrow-down" size={16} color="#065F46" />
+              <Ionicons name="arrow-down" size={15} color="#065F46" />
             </View>
             <Text style={styles.kpiValueStockIn}>+{kpis.stockInUnits}</Text>
-            <Text style={styles.kpiLabel}>{t.kpiStockIn}</Text>
+            <Text style={styles.kpiLabel}>{t.kpiStockIn || 'Pumasok'}</Text>
           </View>
 
           {/* 2. Sold */}
           <View style={[styles.kpiCard, styles.kpiCardSold]}>
             <View style={styles.kpiIconWrapperSold}>
-              <Ionicons name="cart" size={16} color="#1E40AF" />
+              <Ionicons name="cart" size={15} color="#1E40AF" />
             </View>
             <Text style={styles.kpiValueSold}>-{kpis.soldUnits}</Text>
-            <Text style={styles.kpiLabel}>{t.kpiStockOut}</Text>
+            <Text style={styles.kpiLabel}>{t.kpiStockOut || 'Benta'}</Text>
           </View>
 
           {/* 3. Shrinkage */}
           <View style={[styles.kpiCard, styles.kpiCardShrinkage]}>
             <View style={styles.kpiIconWrapperShrinkage}>
-              <Ionicons name="warning" size={16} color="#991B1B" />
+              <Ionicons name="warning" size={15} color="#991B1B" />
             </View>
             <Text style={styles.kpiValueShrinkage}>-{kpis.shrinkageUnits}</Text>
-            <Text style={styles.kpiLabel}>{t.kpiShrinkage}</Text>
+            <Text style={styles.kpiLabel}>{t.kpiShrinkage || 'Kupit/Sira'}</Text>
             {kpis.shrinkageUnits > 0 ? (
               <Text style={styles.kpiSubLoss}>{kpis.formattedShrinkageLoss}</Text>
             ) : null}
           </View>
+
+          {/* 4. Cash Drawer Expense */}
+          <View style={[styles.kpiCard, styles.kpiCardExpense]}>
+            <View style={styles.kpiIconWrapperExpense}>
+              <Ionicons name="cash-outline" size={15} color="#DC2626" />
+            </View>
+            <Text style={styles.kpiValueExpense}>{kpis.formattedTotalExpense}</Text>
+            <Text style={styles.kpiLabel}>Gastos sa Kaha</Text>
+          </View>
+        </View>
+
+        {/* Date Filter & Interactive Calendar Trigger Button (Inherited OOP Pattern) */}
+        <View style={styles.calendarCardWrapper}>
+          <Pressable
+            style={[
+              styles.calendarCard,
+              customDateRange ? styles.calendarCardActive : null,
+            ]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              setDateFilterModalVisible(true);
+            }}
+          >
+            <View style={styles.calendarLeftCol}>
+              <Ionicons
+                name={customDateRange ? 'calendar' : 'calendar-outline'}
+                size={18}
+                color={customDateRange ? '#0D7A52' : '#4B5563'}
+              />
+              <View>
+                <Text style={styles.calendarLabel}>
+                  {customDateRange ? 'SAKOP NA PETSA (CUSTOM)' : 'SALAIN AYON SA PETSA'}
+                </Text>
+                <Text
+                  style={[
+                    styles.calendarValueText,
+                    customDateRange ? styles.calendarValueTextActive : null,
+                  ]}
+                >
+                  {customDateRange ? customDateRange.label : 'I-tap para buksan ang Kalendaryo'}
+                </Text>
+              </View>
+            </View>
+
+            {customDateRange ? (
+              <Pressable
+                style={styles.clearCalendarBtn}
+                hitSlop={10}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setCustomDateRange(null);
+                }}
+              >
+                <Ionicons name="close-circle" size={18} color="#0D7A52" />
+                <Text style={styles.clearCalendarText}>I-reset</Text>
+              </Pressable>
+            ) : (
+              <View style={styles.openCalendarPill}>
+                <Text style={styles.openCalendarPillText}>Buksan</Text>
+                <Ionicons name="chevron-forward" size={14} color="#0D7A52" />
+              </View>
+            )}
+          </Pressable>
         </View>
 
         {/* Search Bar */}
@@ -333,7 +570,7 @@ export default function StockMovementHistoryScreen() {
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder={t.historySearchPlaceholder}
+            placeholder="Maghanap ng produkto, gastos, o dahilan..."
             placeholderTextColor="#9CA3AF"
             autoCorrect={false}
           />
@@ -349,109 +586,164 @@ export default function StockMovementHistoryScreen() {
           ) : null}
         </View>
 
-        {/* Date Filter Pills */}
+        {/* Category Filter Chips */}
         <View style={styles.filterPillSection}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterPillContent}>
-            {(['ALL', 'TODAY', 'YESTERDAY', 'THIS_WEEK', 'THIS_MONTH'] as DateFilter[]).map((df) => {
-              const active = dateFilter === df;
-              const label =
-                df === 'ALL'
-                  ? t.dateFilterAll
-                  : df === 'TODAY'
-                  ? t.dateFilterToday
-                  : df === 'YESTERDAY'
-                  ? t.dateFilterYesterday
-                  : df === 'THIS_WEEK'
-                  ? t.dateFilterThisWeek
-                  : t.dateFilterThisMonth;
-
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterPillContent}
+          >
+            {[
+              { key: 'ALL', label: 'Lahat ng Tala (All)', icon: 'list-outline' },
+              { key: 'STOCK', label: 'Stock Movements', icon: 'cube-outline' },
+              { key: 'PRODUCT', label: 'Produkto (Add/Edit)', icon: 'pricetag-outline' },
+              { key: 'EXPENSE', label: 'Gastos sa Kaha', icon: 'cash-outline' },
+            ].map((cat) => {
+              const active = categoryFilter === cat.key;
               return (
                 <Pressable
-                  key={df}
-                  style={[styles.datePill, active && styles.datePillActive]}
+                  key={cat.key}
+                  style={[styles.categoryPill, active && styles.categoryPillActive]}
                   onPress={() => {
                     Haptics.selectionAsync().catch(() => {});
-                    setDateFilter(df);
+                    setCategoryFilter(cat.key as HistoryCategoryFilter);
                   }}
                   hitSlop={6}
                 >
-                  <Text style={[styles.datePillText, active && styles.datePillTextActive]}>{label}</Text>
+                  <Ionicons
+                    name={cat.icon as any}
+                    size={14}
+                    color={active ? '#0D7A52' : '#64748B'}
+                    style={{ marginRight: 5 }}
+                  />
+                  <Text style={[styles.categoryPillText, active && styles.categoryPillTextActive]}>
+                    {cat.label}
+                  </Text>
                 </Pressable>
               );
             })}
           </ScrollView>
         </View>
 
-        {/* Movement Type Filter Chips */}
-        <View style={styles.filterPillSection}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterPillContent}>
-            {(
-              [
-                'ALL',
-                'RESTOCK',
-                'SALE',
-                'HOME_USE',
-                'DAMAGED_EXPIRED',
-                'UNPACK_TINGI',
-                'RETURN',
-              ] as MovementFilter[]
-            ).map((mf) => {
-              const active = movementFilter === mf;
-              const label =
-                mf === 'ALL'
-                  ? t.filterAll
-                  : mf === 'RESTOCK'
-                  ? t.movementRestock
-                  : mf === 'SALE'
-                  ? t.movementSale
-                  : mf === 'HOME_USE'
-                  ? t.movementHomeUse
-                  : mf === 'DAMAGED_EXPIRED'
-                  ? t.movementDamagedExpired
-                  : mf === 'UNPACK_TINGI'
-                  ? t.movementUnpackTingi
-                  : t.movementReturn;
+        {/* Sub-movement Type Filter Chips (When category is STOCK) */}
+        {categoryFilter === 'STOCK' ? (
+          <View style={styles.filterPillSection}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterPillContent}
+            >
+              {(
+                [
+                  'ALL',
+                  'RESTOCK',
+                  'SALE',
+                  'HOME_USE',
+                  'DAMAGED_EXPIRED',
+                  'UNPACK_TINGI',
+                  'RETURN',
+                ] as MovementFilter[]
+              ).map((mf) => {
+                const active = movementFilter === mf;
+                const label =
+                  mf === 'ALL'
+                    ? 'Lahat ng Paggalaw'
+                    : mf === 'RESTOCK'
+                    ? t.movementRestock
+                    : mf === 'SALE'
+                    ? t.movementSale
+                    : mf === 'HOME_USE'
+                    ? t.movementHomeUse
+                    : mf === 'DAMAGED_EXPIRED'
+                    ? t.movementDamagedExpired
+                    : mf === 'UNPACK_TINGI'
+                    ? t.movementUnpackTingi
+                    : t.movementReturn;
 
-              return (
-                <Pressable
-                  key={mf}
-                  style={[styles.typePill, active && styles.typePillActive]}
-                  onPress={() => {
-                    Haptics.selectionAsync().catch(() => {});
-                    setMovementFilter(mf);
-                  }}
-                  hitSlop={6}
-                >
-                  <Text style={[styles.typePillText, active && styles.typePillTextActive]}>{label}</Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
+                return (
+                  <Pressable
+                    key={mf}
+                    style={[styles.typePill, active && styles.typePillActive]}
+                    onPress={() => {
+                      Haptics.selectionAsync().catch(() => {});
+                      setMovementFilter(mf);
+                    }}
+                    hitSlop={6}
+                  >
+                    <Text style={[styles.typePillText, active && styles.typePillTextActive]}>
+                      {label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        ) : null}
+
+        {/* Quick Date Filter Pills (When no custom date range is set) */}
+        {!customDateRange ? (
+          <View style={styles.filterPillSection}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterPillContent}
+            >
+              {(['ALL', 'TODAY', 'YESTERDAY', 'THIS_WEEK', 'THIS_MONTH'] as DateFilter[]).map((df) => {
+                const active = dateFilter === df;
+                const label =
+                  df === 'ALL'
+                    ? t.dateFilterAll || 'Kailanman'
+                    : df === 'TODAY'
+                    ? t.dateFilterToday || 'Ngayon'
+                    : df === 'YESTERDAY'
+                    ? t.dateFilterYesterday || 'Kahapon'
+                    : df === 'THIS_WEEK'
+                    ? t.dateFilterThisWeek || 'Linggong Ito'
+                    : t.dateFilterThisMonth || 'Buwang Ito';
+
+                return (
+                  <Pressable
+                    key={df}
+                    style={[styles.datePill, active && styles.datePillActive]}
+                    onPress={() => {
+                      Haptics.selectionAsync().catch(() => {});
+                      setDateFilter(df);
+                    }}
+                    hitSlop={6}
+                  >
+                    <Text style={[styles.datePillText, active && styles.datePillTextActive]}>
+                      {label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        ) : null}
 
         {/* List Header Count */}
         <View style={styles.listHeaderRow}>
           <Text style={styles.listCountText}>
-            {filteredMovements.length} {filteredMovements.length === 1 ? 'record' : 'records'}
+            {filteredActivities.length} {filteredActivities.length === 1 ? 'record' : 'records'}
           </Text>
         </View>
 
         {/* Audit Log Card Items */}
-        {filteredMovements.length === 0 ? (
+        {filteredActivities.length === 0 ? (
           <View style={styles.emptyContainer}>
             <View style={styles.emptyIconCircle}>
               <Ionicons name="time-outline" size={36} color="#0D7A52" />
             </View>
-            <Text style={styles.emptyTitle}>{t.emptyHistoryTitle}</Text>
-            <Text style={styles.emptySub}>{t.emptyHistorySub}</Text>
+            <Text style={styles.emptyTitle}>{t.emptyHistoryTitle || 'Walang Tala'}</Text>
+            <Text style={styles.emptySub}>
+              {t.emptyHistorySub || 'Walang nahanap na aktibidad sa napiling filter at sakop ng petsa.'}
+            </Text>
           </View>
         ) : (
-          filteredMovements.map((mov) => {
-            const product = productMap.get(mov.productId);
-            const badge = getBadgeConfig(mov.movementType);
-            const isPositive = mov.quantityDelta > 0;
+          filteredActivities.map((item) => {
+            const product = item.productId ? productMap.get(item.productId) : undefined;
             const fallbackVisual: ProductVisual = {
-              shortLabel: mov.productName.slice(0, 3).toUpperCase(),
+              shortLabel: item.title.slice(0, 3).toUpperCase(),
               subLabel: 'ITEM',
               bgColor: '#0D7A52',
               accentColor: '#10B981',
@@ -459,79 +751,128 @@ export default function StockMovementHistoryScreen() {
               shape: 'POUCH',
             };
 
+            const isProduct = item.category === 'PRODUCT';
+            const isExpense = item.category === 'EXPENSE';
+            const isPositive = (item.quantityDelta ?? 0) > 0;
+
             return (
-              <View key={mov.id} style={styles.logCard}>
+              <View key={item.id} style={styles.logCard}>
                 <View style={styles.cardHeader}>
-                  {/* Left: Thumbnail & Name */}
+                  {/* Left: Thumbnail & Name / Title */}
                   <View style={styles.cardLeft}>
-                    <ProductThumbnail
-                      visual={product?.visual ?? fallbackVisual}
-                      imageUri={product?.imageUri}
-                      size="sm"
-                    />
+                    {isExpense ? (
+                      <View
+                        style={[
+                          styles.expenseIconCircle,
+                          {
+                            backgroundColor: item.badgeBg,
+                            borderColor: item.badgeBorder,
+                          },
+                        ]}
+                      >
+                        <Ionicons name={item.icon} size={20} color={item.badgeColor} />
+                      </View>
+                    ) : (
+                      <ProductThumbnail
+                        visual={product?.visual ?? fallbackVisual}
+                        imageUri={product?.imageUri}
+                        size="sm"
+                      />
+                    )}
                     <View style={styles.cardNameCol}>
                       <Text style={styles.productNameText} numberOfLines={1}>
-                        {mov.productName}
+                        {item.title}
                       </Text>
+                      {item.subtitle ? (
+                        <Text style={styles.cardSubtitleText} numberOfLines={1}>
+                          {item.subtitle}
+                        </Text>
+                      ) : null}
                       <View style={styles.timestampRow}>
                         <Ionicons name="time-outline" size={12} color="#6B7280" style={{ marginRight: 3 }} />
-                        <Text style={styles.timestampText}>{formatTimestamp(mov.createdAt)}</Text>
+                        <Text style={styles.timestampText}>{formatTimestamp(item.timestampMs)}</Text>
                       </View>
                     </View>
                   </View>
 
-                  {/* Right: Quantity Delta Badge */}
+                  {/* Right: Quantity Delta or Expense Amount */}
                   <View style={styles.deltaCol}>
-                    <Text
-                      style={[
-                        styles.deltaText,
-                        isPositive ? styles.deltaPositive : styles.deltaNegative,
-                      ]}
-                    >
-                      {isPositive ? `+${mov.quantityDelta}` : `${mov.quantityDelta}`}
-                    </Text>
-                    <Text style={styles.deltaUnit}>units</Text>
+                    {isExpense ? (
+                      <Text
+                        style={[
+                          styles.deltaText,
+                          item.activityType === 'GASTOS' ? styles.deltaNegative : styles.deltaPositive,
+                        ]}
+                      >
+                        {item.activityType === 'GASTOS' ? '-' : '+'}₱{item.amountPhp?.toFixed(2)}
+                      </Text>
+                    ) : isProduct ? (
+                      item.quantityDelta && item.quantityDelta !== 0 ? (
+                        <Text
+                          style={[
+                            styles.deltaText,
+                            item.quantityDelta > 0 ? styles.deltaPositive : styles.deltaNegative,
+                          ]}
+                        >
+                          {item.quantityDelta > 0 ? `+${item.quantityDelta}` : `${item.quantityDelta}`}
+                        </Text>
+                      ) : (
+                        <Ionicons name="checkmark-circle-outline" size={20} color="#059669" />
+                      )
+                    ) : (
+                      <Text
+                        style={[
+                          styles.deltaText,
+                          isPositive ? styles.deltaPositive : styles.deltaNegative,
+                        ]}
+                      >
+                        {isPositive ? `+${item.quantityDelta}` : `${item.quantityDelta}`}
+                      </Text>
+                    )}
+                    <Text style={styles.deltaUnit}>{isExpense ? 'cash' : 'units'}</Text>
                   </View>
                 </View>
 
-                {/* Card Details & Metadata */}
+                {/* Card Footer Details */}
                 <View style={styles.cardFooter}>
-                  {/* Movement Type Pill */}
+                  {/* Activity Badge */}
                   <View
                     style={[
                       styles.typeBadge,
                       {
-                        backgroundColor: badge.bgColor,
-                        borderColor: badge.borderColor,
+                        backgroundColor: item.badgeBg,
+                        borderColor: item.badgeBorder,
                       },
                     ]}
                   >
                     <Ionicons
-                      name={badge.icon}
+                      name={item.icon}
                       size={12}
-                      color={badge.textColor}
+                      color={item.badgeColor}
                       style={{ marginRight: 4 }}
                     />
-                    <Text style={[styles.typeBadgeText, { color: badge.textColor }]}>
-                      {badge.label}
+                    <Text style={[styles.typeBadgeText, { color: item.badgeColor }]}>
+                      {item.badgeLabel}
                     </Text>
                   </View>
 
-                  {/* Stock Progression */}
-                  <View style={styles.progressionBox}>
-                    <Text style={styles.progressionText}>
-                      {t.previousStockLabel}: <Text style={styles.progressionBold}>{mov.previousStock}</Text>
-                      {'  '}→{'  '}
-                      {t.resultingStockLabel}: <Text style={styles.progressionBold}>{mov.resultingStock}</Text>
-                    </Text>
-                  </View>
+                  {/* Stock Progression (if stock was tracked) */}
+                  {item.previousStock !== undefined && item.resultingStock !== undefined ? (
+                    <View style={styles.progressionBox}>
+                      <Text style={styles.progressionText}>
+                        Stock: <Text style={styles.progressionBold}>{item.previousStock}</Text>
+                        {'  '}→{'  '}
+                        <Text style={styles.progressionBold}>{item.resultingStock}</Text>
+                      </Text>
+                    </View>
+                  ) : null}
                 </View>
 
-                {/* Reason Note / Reference ID */}
-                {mov.reason || mov.referenceId ? (
+                {/* Reason Note / Audit Remarks */}
+                {item.reason ? (
                   <View style={styles.noteContainer}>
-                    <Text style={styles.noteText} numberOfLines={2}>
-                      💬 {mov.reason || mov.referenceId}
+                    <Text style={styles.noteText} numberOfLines={3}>
+                      💬 {item.reason}
                     </Text>
                   </View>
                 ) : null}
@@ -540,6 +881,20 @@ export default function StockMovementHistoryScreen() {
           })
         )}
       </ScrollView>
+
+      {/* Interactive Date Range Calendar Modal */}
+      <DateRangeCalendarModal
+        visible={dateFilterModalVisible}
+        currentRange={customDateRange}
+        availableYears={availableYears}
+        title="Salain ang History ayon sa Petsa"
+        subtitle="Pumili ng preset o sariling sakop ng petsa sa kalendaryo"
+        onApply={(range) => {
+          setCustomDateRange(range);
+          setDateFilterModalVisible(false);
+        }}
+        onClose={() => setDateFilterModalVisible(false)}
+      />
     </ScreenSafeAreaView>
   );
 }
@@ -574,12 +929,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
     color: '#064E3B',
-    letterSpacing: -0.3,
   },
   headerSub: {
     fontSize: 12,
     color: '#6B7280',
-    marginTop: 1,
+    marginTop: 2,
   },
   shareBtn: {
     width: 44,
@@ -587,7 +941,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 22,
-    backgroundColor: '#E8F5E9',
+    backgroundColor: '#F0FDF4',
   },
   scrollView: {
     flex: 1,
@@ -599,56 +953,24 @@ const styles = StyleSheet.create({
   kpiContainer: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 16,
+    marginBottom: 14,
   },
   kpiCard: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
     padding: 10,
-    alignItems: 'center',
+    borderRadius: 12,
     borderWidth: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    alignItems: 'center',
   },
   kpiCardStockIn: {
+    backgroundColor: '#ECFDF5',
     borderColor: '#A7F3D0',
-    backgroundColor: '#F0FDF4',
-  },
-  kpiCardSold: {
-    borderColor: '#BFDBFE',
-    backgroundColor: '#EFF6FF',
-  },
-  kpiCardShrinkage: {
-    borderColor: '#FECACA',
-    backgroundColor: '#FEF2F2',
   },
   kpiIconWrapperStockIn: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     backgroundColor: '#D1FAE5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  kpiIconWrapperSold: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#DBEAFE',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  kpiIconWrapperShrinkage: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#FEE2E2',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 4,
@@ -658,78 +980,191 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#065F46',
   },
+  kpiCardSold: {
+    backgroundColor: '#EFF6FF',
+    borderColor: '#BFDBFE',
+  },
+  kpiIconWrapperSold: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#DBEAFE',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
   kpiValueSold: {
     fontSize: 15,
     fontWeight: '800',
     color: '#1E40AF',
+  },
+  kpiCardShrinkage: {
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FECACA',
+  },
+  kpiIconWrapperShrinkage: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#FEE2E2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   kpiValueShrinkage: {
     fontSize: 15,
     fontWeight: '800',
     color: '#991B1B',
   },
+  kpiSubLoss: {
+    fontSize: 9,
+    color: '#B91C1C',
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  kpiCardExpense: {
+    backgroundColor: '#FFF7ED',
+    borderColor: '#FFEDD5',
+  },
+  kpiIconWrapperExpense: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#FFEDD5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  kpiValueExpense: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#C2410C',
+  },
   kpiLabel: {
     fontSize: 10,
-    fontWeight: '600',
-    color: '#6B7280',
+    fontWeight: '700',
+    color: '#4B5563',
     marginTop: 2,
     textAlign: 'center',
   },
-  kpiSubLoss: {
-    fontSize: 9,
+  calendarCardWrapper: {
+    marginBottom: 12,
+  },
+  calendarCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  calendarCardActive: {
+    borderColor: '#0D7A52',
+    backgroundColor: '#F0FDF4',
+  },
+  calendarLeftCol: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1,
+  },
+  calendarLabel: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#6B7280',
+    letterSpacing: 0.5,
+  },
+  calendarValueText: {
+    fontSize: 13,
     fontWeight: '700',
-    color: '#DC2626',
+    color: '#374151',
     marginTop: 1,
+  },
+  calendarValueTextActive: {
+    color: '#0D7A52',
+    fontWeight: '800',
+  },
+  clearCalendarBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  clearCalendarText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  openCalendarPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  openCalendarPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0D7A52',
   },
   searchWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: Platform.OS === 'ios' ? 10 : 8,
     borderWidth: 1,
     borderColor: '#E5E7EB',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     marginBottom: 12,
   },
   searchInput: {
     flex: 1,
     fontSize: 14,
     color: '#1F2937',
-    padding: 0,
   },
   filterPillSection: {
     marginBottom: 10,
   },
   filterPillContent: {
+    flexDirection: 'row',
     gap: 8,
-    paddingVertical: 2,
   },
-  datePill: {
+  categoryPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 20,
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
   },
-  datePillActive: {
-    backgroundColor: '#064E3B',
-    borderColor: '#064E3B',
+  categoryPillActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#0D7A52',
   },
-  datePillText: {
+  categoryPillText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#4B5563',
+    color: '#64748B',
   },
-  datePillTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700',
+  categoryPillTextActive: {
+    color: '#0D7A52',
+    fontWeight: '800',
   },
   typePill: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 16,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#E5E7EB',
@@ -739,7 +1174,7 @@ const styles = StyleSheet.create({
     borderColor: '#0D7A52',
   },
   typePillText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     color: '#4B5563',
   },
@@ -747,34 +1182,46 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
   },
+  datePill: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  datePillActive: {
+    backgroundColor: '#1E293B',
+    borderColor: '#1E293B',
+  },
+  datePillText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#4B5563',
+  },
+  datePillTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
   listHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 6,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   listCountText: {
     fontSize: 12,
     fontWeight: '700',
     color: '#6B7280',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
   emptyContainer: {
     alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 48,
     paddingHorizontal: 24,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
   },
   emptyIconCircle: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#E8F5E9',
+    backgroundColor: '#ECFDF5',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -783,14 +1230,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '800',
     color: '#1F2937',
-    textAlign: 'center',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   emptySub: {
     fontSize: 13,
     color: '#6B7280',
     textAlign: 'center',
-    lineHeight: 18,
   },
   logCard: {
     backgroundColor: '#FFFFFF',
@@ -799,31 +1244,40 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    shadowColor: '#000',
-    shadowOpacity: 0.02,
-    shadowRadius: 3,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
   },
   cardHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   cardLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginRight: 12,
+    marginRight: 8,
+  },
+  expenseIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
   },
   cardNameCol: {
-    flex: 1,
     marginLeft: 10,
+    flex: 1,
   },
   productNameText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#111827',
+    color: '#1F2937',
+  },
+  cardSubtitleText: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
   },
   timestampRow: {
     flexDirection: 'row',
@@ -838,7 +1292,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   deltaText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
   },
   deltaPositive: {
@@ -849,14 +1303,13 @@ const styles = StyleSheet.create({
   },
   deltaUnit: {
     fontSize: 10,
-    fontWeight: '600',
     color: '#9CA3AF',
+    marginTop: 1,
   },
   cardFooter: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 10,
+    alignItems: 'center',
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#F3F4F6',
@@ -866,7 +1319,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: 8,
     borderWidth: 1,
   },
   typeBadgeText: {
@@ -881,23 +1334,23 @@ const styles = StyleSheet.create({
   },
   progressionText: {
     fontSize: 11,
-    color: '#6B7280',
+    color: '#4B5563',
   },
   progressionBold: {
     fontWeight: '700',
-    color: '#1F2937',
+    color: '#111827',
   },
   noteContainer: {
     marginTop: 8,
     padding: 8,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F8FAFC',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#F3F4F6',
+    borderColor: '#E2E8F0',
   },
   noteText: {
-    fontSize: 11,
-    color: '#4B5563',
-    lineHeight: 15,
+    fontSize: 12,
+    color: '#475569',
+    fontStyle: 'italic',
   },
 });
