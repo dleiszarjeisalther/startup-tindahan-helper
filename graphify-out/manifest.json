@@ -42,9 +42,9 @@
     "semantic_hash": "6b9302c1f72c315e90233c7539c48c9f"
   },
   "app.json": {
-    "mtime": 1792893172.3932414,
-    "seen": 1792893602.3554082,
-    "ast_hash": "724dae93607609142411f50d9992a6f1",
+    "mtime": 1792923263.459437,
+    "seen": 1792923667.239034,
+    "ast_hash": "5c3c1e3e07d9af0abaac3b36e04587bc",
     "semantic_hash": ""
   },
   "assets/expo.icon/icon.json": {
@@ -72,9 +72,9 @@
     "semantic_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275"
   },
   "src/app/_layout.tsx": {
-    "mtime": 1792753668.4563582,
-    "seen": 1792753928.6935682,
-    "ast_hash": "8842fd62fcb2746e694caafa15e93b8c",
+    "mtime": 1792923433.4946463,
+    "seen": 1792923667.2391338,
+    "ast_hash": "78496a8491913e178fdac02c462ba668",
     "semantic_hash": ""
   },
   "src/app/checkout.tsx": {
@@ -138,10 +138,10 @@
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
-    "mtime": 1791869029.5036283,
-    "seen": 1791873707.9412518,
-    "ast_hash": "46cea5b4aaa994fa61f8a3d1574b2ff8",
-    "semantic_hash": "46cea5b4aaa994fa61f8a3d1574b2ff8"
+    "mtime": 1792923539.7561693,
+    "seen": 1792923667.2391953,
+    "ast_hash": "05cc5584f878b5736edb02f6c2722f64",
+    "semantic_hash": ""
   },
   "src/components/animated-icon.web.tsx": {
     "mtime": 1791869029.5081396,
@@ -402,9 +402,9 @@
     "semantic_hash": "8a4d0e5b845044e56e3b2df627d01cfd"
   },
   "assets/images/splash-icon.png": {
-    "mtime": 1792920149.742314,
-    "seen": 1792920306.9256525,
-    "ast_hash": "915eae88c33841a878d6692af0cae3b8",
+    "mtime": 1792923139.8369577,
+    "seen": 1792923667.2396543,
+    "ast_hash": "3279e45811f4636244ba08a2cbd209a5",
     "semantic_hash": ""
   },
   "assets/images/tabIcons/explore.png": {
@@ -1200,9 +1200,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/OnboardingModal.tsx": {
-    "mtime": 1792635779.8106327,
-    "seen": 1792677665.042307,
-    "ast_hash": "32b22428474cfb5243d97c369a0c0828",
+    "mtime": 1792923387.6372416,
+    "seen": 1792923667.239359,
+    "ast_hash": "53570f5e5bd1e0847591d7de4a10e09e",
     "semantic_hash": ""
   },
   "src/presentation/components/PrivacyPolicyModal.tsx": {

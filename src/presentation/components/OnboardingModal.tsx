@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -100,9 +101,11 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
         >
           {/* Header */}
           <View style={styles.headerArea}>
-            <View style={styles.logoBadge}>
-              <Ionicons name="storefront" size={40} color="#059669" />
-            </View>
+            <Image
+              source={require('@/assets/images/icon.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
             <Text style={styles.brandTitle}>Tindahan Helper</Text>
             <Text style={styles.subtitle}>
               I-rehistro ang iyong tindahan para masimulan ang libreng 7-araw na trial!
@@ -277,6 +280,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
+  },
+  logoImage: {
+    width: 68,
+    height: 68,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: 'rgba(5, 150, 105, 0.25)',
+    marginBottom: 12,
   },
   brandTitle: {
     fontSize: 24,

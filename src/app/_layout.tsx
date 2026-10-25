@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
 import AppTabs from '@/components/app-tabs';
+import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { TindahanStoreProvider } from '@/presentation/providers/TindahanStoreProvider';
 import { LicensingGate } from '@/presentation/components/LicensingGate';
 import { AppUpdatePrompt } from '@/presentation/components/AppUpdatePrompt';
@@ -58,6 +59,7 @@ export default function TabLayout() {
         <LicensingGate>
           <AppTabs />
           <AppUpdatePrompt />
+          <AnimatedSplashOverlay />
         </LicensingGate>
       </TindahanStoreProvider>
     </ThemeProvider>
