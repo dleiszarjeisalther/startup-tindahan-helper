@@ -1,5 +1,5 @@
 // src/app/index.tsx — Screen 1: POS / Scan Product (OOP Barcode Scanner Viewfinder + SQLite Backed)
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScannerViewfinder';
+import { soundFeedbackService } from '@/infrastructure/services/SoundFeedbackService';
 import { getTranslations } from '@/presentation/localization/i18n';
 import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/components/WeightQuantityModal';
 import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
@@ -72,7 +73,6 @@ export default function PosScanProductScreen() {
   const [showAlertsModal, setShowAlertsModal] = useState(false);
   const [hasAutoOpenedAlerts, setHasAutoOpenedAlerts] = useState(false);
   const prevAlertCountRef = useRef<number>(0);
-  const lastScanTimestampRef = useRef<number>(0);
   const lastScannedBarcodeRef = useRef<string>('');
 
   useEffect(() => {
@@ -150,6 +150,7 @@ export default function PosScanProductScreen() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         triggerScanToast(successMessage);
       }
+      soundFeedbackService.playBarcodeBeep();
       console.log(`[POS Screen] ✓ Added to cart: productId=${productId}, unit=${result?.unitAdded ?? unit}`);
       return true;
     } catch (error) {
@@ -175,13 +176,6 @@ export default function PosScanProductScreen() {
     const clean = rawCode.replace(/\s+/g, '').trim().toUpperCase();
     console.log(`[POS Screen] handleBarcodeDetected received rawCode="${rawCode}", normalized="${clean}"`);
     if (!clean || clean.length < 2) return;
-
-    // Cooldown debounce: prevent duplicate scan events within 1200ms
-    const now = Date.now();
-    if (lastScannedBarcodeRef.current === clean && now - lastScanTimestampRef.current < 1200) {
-      return;
-    }
-    lastScanTimestampRef.current = now;
     lastScannedBarcodeRef.current = clean;
 
     const matched = products.find(
@@ -233,26 +227,76 @@ export default function PosScanProductScreen() {
     }
   };
 
-  const filteredProducts = products
-    .filter((p) => {
+  const filteredProducts = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return products.filter((p) => {
       if (onlyTingi && p.barcodeSource !== 'GENERATED_TINGI' && p.defaultPricePhp > 20) {
         return false;
       }
-      if (!searchQuery.trim()) return true;
-      const q = searchQuery.trim().toLowerCase();
+      if (!q) return true;
       return (
         p.name.toLowerCase().includes(q) ||
         p.barcode.toLowerCase().includes(q) ||
         p.category.toLowerCase().includes(q)
       );
-    })
-    .sort((a, b) => {
-      if (lastScannedProductId) {
-        if (a.id === lastScannedProductId) return -1;
-        if (b.id === lastScannedProductId) return 1;
-      }
-      return 0;
     });
+  }, [products, onlyTingi, searchQuery]);
+
+  const cartItemStatsByProductId = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        pieceQty: number;
+        packQty: number;
+        boxQty: number;
+        totalKg: number;
+        hasInCart: boolean;
+        inCartBadgeLabel: string;
+      }
+    >();
+
+    for (const c of cartSummary.items) {
+      let entry = map.get(c.productId);
+      if (!entry) {
+        entry = {
+          pieceQty: 0,
+          packQty: 0,
+          boxQty: 0,
+          totalKg: 0,
+          hasInCart: true,
+          inCartBadgeLabel: '',
+        };
+        map.set(c.productId, entry);
+      }
+      if (!c.unit || c.unit === 'piece') {
+        entry.pieceQty += c.quantity;
+      } else if (c.unit === 'pack' || c.unit === 'bundle') {
+        entry.packQty += c.quantity;
+      } else if (c.unit === 'box' || c.unit === 'case') {
+        entry.boxQty += c.quantity;
+      }
+      entry.totalKg += c.quantity;
+    }
+
+    for (const [productId, entry] of map.entries()) {
+      const prod = products.find((p) => p.id === productId);
+      if (prod?.unitOfMeasure === 'kg') {
+        entry.inCartBadgeLabel = `${entry.totalKg}kg`;
+      } else if (entry.packQty > 0 && entry.pieceQty > 0) {
+        entry.inCartBadgeLabel = `${entry.pieceQty}+${entry.packQty}📦`;
+      } else if (entry.packQty > 0) {
+        entry.inCartBadgeLabel = `×${entry.packQty}📦`;
+      } else if (entry.boxQty > 0 && entry.pieceQty > 0) {
+        entry.inCartBadgeLabel = `${entry.pieceQty}+${entry.boxQty}📫`;
+      } else if (entry.boxQty > 0) {
+        entry.inCartBadgeLabel = `×${entry.boxQty}📫`;
+      } else {
+        entry.inCartBadgeLabel = `×${entry.pieceQty}`;
+      }
+    }
+
+    return map;
+  }, [cartSummary.items, products]);
 
   const showTrialBanner = !isLicensed && isRegistered;
   const scannerTopInset = 4;
@@ -465,35 +509,9 @@ export default function PosScanProductScreen() {
           ) : (
             <View style={styles.gridContainer}>
               {filteredProducts.map((item) => {
-                const productCartItems = cartSummary.items.filter((c) => c.productId === item.id);
-                const pieceQty = productCartItems
-                  .filter((c) => !c.unit || c.unit === 'piece')
-                  .reduce((sum, c) => sum + c.quantity, 0);
-                const packQty = productCartItems
-                  .filter((c) => c.unit === 'pack' || c.unit === 'bundle')
-                  .reduce((sum, c) => sum + c.quantity, 0);
-                const boxQty = productCartItems
-                  .filter((c) => c.unit === 'box' || c.unit === 'case')
-                  .reduce((sum, c) => sum + c.quantity, 0);
-                const hasInCart = productCartItems.length > 0;
-
-                let inCartBadgeLabel = '';
-                if (hasInCart) {
-                  if (item.unitOfMeasure === 'kg') {
-                    const totalKg = productCartItems.reduce((sum, c) => sum + c.quantity, 0);
-                    inCartBadgeLabel = `${totalKg}kg`;
-                  } else if (packQty > 0 && pieceQty > 0) {
-                    inCartBadgeLabel = `${pieceQty}+${packQty}📦`;
-                  } else if (packQty > 0) {
-                    inCartBadgeLabel = `×${packQty}📦`;
-                  } else if (boxQty > 0 && pieceQty > 0) {
-                    inCartBadgeLabel = `${pieceQty}+${boxQty}📫`;
-                  } else if (boxQty > 0) {
-                    inCartBadgeLabel = `×${boxQty}📫`;
-                  } else {
-                    inCartBadgeLabel = `×${pieceQty}`;
-                  }
-                }
+                const cartStats = cartItemStatsByProductId.get(item.id);
+                const hasInCart = Boolean(cartStats?.hasInCart);
+                const inCartBadgeLabel = cartStats?.inCartBadgeLabel ?? '';
 
                 const hasPackTier = Boolean(
                   item.sellingTiers?.some(

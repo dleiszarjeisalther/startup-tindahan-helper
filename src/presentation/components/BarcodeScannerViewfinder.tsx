@@ -15,7 +15,6 @@ import {
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { soundFeedbackService } from '@/infrastructure/services/SoundFeedbackService';
 
 export interface BarcodeScannerViewfinderProps {
   /** Callback when a valid barcode string is detected */
@@ -189,7 +188,7 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
       return;
     }
     if (scanLockRef.current) {
-      console.log(`[BarcodeScannerViewfinder] Barcode "${clean}" ignored due to active scanLock throttle (1400ms).`);
+      console.log(`[BarcodeScannerViewfinder] Barcode "${clean}" ignored due to active scanLock throttle (350ms).`);
       return;
     }
 
@@ -197,36 +196,26 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
     if (
       lastScannedBarcodeRef.current &&
       lastScannedBarcodeRef.current.code === clean &&
-      Date.now() - lastScannedBarcodeRef.current.time < 2200
+      Date.now() - lastScannedBarcodeRef.current.time < 750
     ) {
       return;
     }
 
     scanLockRef.current = true;
     lastScannedBarcodeRef.current = { code: clean, time: Date.now() };
-    console.log(`[BarcodeScannerViewfinder] ✓ Barcode accepted: "${clean}". Triggering haptics and beep...`);
+    console.log(`[BarcodeScannerViewfinder] ✓ Barcode accepted: "${clean}". Triggering tactile feedback...`);
 
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch((err) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch((err) => {
       console.log('[BarcodeScannerViewfinder] Haptics error:', err);
     });
-
-    soundFeedbackService
-      .playBarcodeBeep()
-      .then(() => {
-        console.log(`[BarcodeScannerViewfinder] ✓ playBarcodeBeep completed for "${clean}".`);
-      })
-      .catch((err) => {
-        // Sound feedback is non-blocking; preserve the successful barcode scan.
-        console.log(`[BarcodeScannerViewfinder] Barcode beep failed for "${clean}"; next scan will retry:`, err);
-      });
 
     console.log(`[BarcodeScannerViewfinder] Dispatching onBarcodeScanned callback to parent for "${clean}"...`);
     onBarcodeScanned(clean);
 
     setTimeout(() => {
       scanLockRef.current = false;
-      console.log('[BarcodeScannerViewfinder] Scan lock released after 1400ms debounce interval.');
-    }, 1400);
+      console.log('[BarcodeScannerViewfinder] Scan lock released after 350ms debounce interval.');
+    }, 350);
   };
 
   return (

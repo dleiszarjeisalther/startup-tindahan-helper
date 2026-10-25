@@ -20,12 +20,6 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    SplashScreen.hideAsync().catch(() => {
-      // Ignore if already hidden in Expo Go
-    });
-  }, []);
-
-  useEffect(() => {
     let isMounted = true;
     let subscription: { remove: () => void } | undefined;
     void import('expo-notifications')
@@ -59,8 +53,8 @@ export default function TabLayout() {
         <LicensingGate>
           <AppTabs />
           <AppUpdatePrompt />
-          <AnimatedSplashOverlay />
         </LicensingGate>
+        <AnimatedSplashOverlay />
       </TindahanStoreProvider>
     </ThemeProvider>
   );

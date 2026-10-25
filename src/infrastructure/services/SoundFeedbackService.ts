@@ -1,4 +1,5 @@
 import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
+import { Asset } from 'expo-asset';
 import { Platform } from 'react-native';
 
 const soundSource = require('../../../assets/sounds/barcode-beep.wav');
@@ -7,16 +8,33 @@ type BeepPlayer = ReturnType<typeof createAudioPlayer>;
 /**
  * SoundFeedbackService
  * Delivers immediate auditory confirmation (POS scanner beep) upon successful barcode scan.
+ * Uses a 3-player round-robin pool and expo-asset preloading for zero-latency burst scanning.
  * Works seamlessly across iOS, Android, and Web.
  */
 class SoundFeedbackService {
-  private player: BeepPlayer | null = null;
-  private isLoaded = false;
-  private hasPlayed = false;
+  private players: BeepPlayer[] = [];
+  private activePlayerIndex = 0;
+  private readonly poolSize = 3;
   private initPromise: Promise<void> | null = null;
 
   constructor() {
+    this.createPool();
     void this.initPlayer();
+  }
+
+  private createPool(): void {
+    if (this.players.length >= this.poolSize) return;
+    try {
+      this.players = [];
+      for (let i = 0; i < this.poolSize; i++) {
+        const player = createAudioPlayer(soundSource);
+        player.loop = false;
+        player.volume = 1;
+        this.players.push(player);
+      }
+    } catch (err) {
+      console.log('[SoundFeedbackService] Failed to create player pool:', err);
+    }
   }
 
   public initPlayer(): Promise<void> {
@@ -24,6 +42,13 @@ class SoundFeedbackService {
 
     this.initPromise = (async () => {
       try {
+        // Preload asset through expo-asset for instant playback readiness
+        try {
+          await Asset.fromModule(soundSource).downloadAsync();
+        } catch (assetErr) {
+          console.log('[SoundFeedbackService] Asset preload notice:', assetErr);
+        }
+
         if (Platform.OS !== 'web') {
           await setAudioModeAsync({
             playsInSilentMode: true,
@@ -34,40 +59,13 @@ class SoundFeedbackService {
           });
         }
 
-        const player = createAudioPlayer(soundSource);
-        player.loop = false;
-        player.volume = 1;
-
-        if (player.isLoaded) {
-          this.isLoaded = true;
-        } else {
-          // If native audio buffer is still loading on startup, wait up to 400ms for isLoaded
-          await new Promise<void>((resolve) => {
-            let done = false;
-            const sub = player.addListener('playbackStatusUpdate', (status) => {
-              if (status.isLoaded) {
-                this.isLoaded = true;
-                if (!done) {
-                  done = true;
-                  sub?.remove();
-                  resolve();
-                }
-              }
-            });
-            setTimeout(() => {
-              if (!done) {
-                done = true;
-                sub?.remove();
-                resolve();
-              }
-            }, 400);
-          });
+        if (this.players.length < this.poolSize) {
+          this.createPool();
         }
 
-        this.player = player;
-        console.log('[SoundFeedbackService] ✓ Barcode beep player initialized.');
+        console.log(`[SoundFeedbackService] ✓ Barcode beep pool (${this.players.length} players) initialized.`);
       } catch (err) {
-        console.log('[SoundFeedbackService] ⚠️ Failed to init audio player:', err);
+        console.log('[SoundFeedbackService] ⚠️ Failed to init audio player pool:', err);
       }
     })();
 
@@ -75,9 +73,10 @@ class SoundFeedbackService {
   }
 
   /**
-   * Plays the crisp 120ms POS barcode scanner beep exactly ONCE per scan.
+   * Plays the crisp 120ms POS barcode scanner beep with ZERO awaits.
+   * Rotates through a 3-player round-robin pool for zero-latency burst scanning.
    */
-  public async playBarcodeBeep(): Promise<void> {
+  public playBarcodeBeep(): void {
     try {
       // 1. Web fallback using Web Audio API oscillator
       if (Platform.OS === 'web' && typeof window !== 'undefined') {
@@ -86,7 +85,7 @@ class SoundFeedbackService {
           (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         if (AudioCtx) {
           const ctx = new AudioCtx();
-          if (ctx.state === 'suspended') await ctx.resume().catch(() => {});
+          if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'sine';
@@ -101,27 +100,28 @@ class SoundFeedbackService {
         }
       }
 
-      // 2. Ensure player is initialized and buffer is ready
-      if (!this.player) {
-        if (this.initPromise) {
-          await this.initPromise;
-        } else {
-          await this.initPlayer();
-        }
+      // 2. Ensure player pool is available
+      if (this.players.length === 0) {
+        this.createPool();
       }
 
-      if (this.player) {
-        this.player.volume = 1;
-        // On subsequent scans, rewind back to 0 before playing.
-        // We do NOT seek inside didJustFinish listener because in ExoPlayer / expo-audio,
-        // seeking while playWhenReady is true restarts playback in an infinite loop.
-        if (this.hasPlayed) {
-          await this.player.seekTo(0).catch(() => {});
+      if (this.players.length === 0) return;
+
+      const player = this.players[this.activePlayerIndex];
+      this.activePlayerIndex = (this.activePlayerIndex + 1) % this.players.length;
+
+      player.volume = 1;
+      player.play();
+
+      // Asynchronously reset player position for next rotation after 140ms
+      setTimeout(() => {
+        try {
+          player.pause();
+          void player.seekTo(0).catch(() => {});
+        } catch {
+          // ignore
         }
-        this.player.play();
-        this.hasPlayed = true;
-        console.log('[SoundFeedbackService] ✓ Barcode beep played.');
-      }
+      }, 140);
     } catch (error) {
       console.log('[SoundFeedbackService] Playback notice:', error);
     }
@@ -129,3 +129,4 @@ class SoundFeedbackService {
 }
 
 export const soundFeedbackService = new SoundFeedbackService();
+

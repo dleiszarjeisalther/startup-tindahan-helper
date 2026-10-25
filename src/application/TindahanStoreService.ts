@@ -689,6 +689,24 @@ export class TindahanStoreService {
     }
   }
 
+  private persistCartItemToSqlite(productIdOrKey: string, quantity: number): void {
+    const db = SqliteDatabase.getInstance().rawDb;
+    if (!db) return;
+    try {
+      if (quantity > 0) {
+        db.runSync(
+          'INSERT OR REPLACE INTO cart_items (product_id, quantity) VALUES (?, ?)',
+          [productIdOrKey, quantity]
+        );
+      } else {
+        db.runSync('DELETE FROM cart_items WHERE product_id = ?', [productIdOrKey]);
+      }
+    } catch (err) {
+      console.warn('Failed to persist cart item to SQLite:', err);
+    }
+    this.trace('cart item persisted', { productIdOrKey, quantity });
+  }
+
   private persistCartToSqlite(cart: ReadonlyMap<string, number> = this.cartMap): void {
     const db = SqliteDatabase.getInstance().rawDb;
     if (!db) return;
@@ -1105,6 +1123,30 @@ export class TindahanStoreService {
     void this.syncNotificationSchedule();
   }
 
+  private notifyCartOnly(): void {
+    this.version++;
+    const cartSummary = this.calculateCartSummary(
+      this.snapshot?.products ? this.snapshot.products : this.readProducts()
+    );
+    this.snapshot = Object.freeze({
+      ...this.snapshot,
+      revision: this.version,
+      cartRevision: this.cartRevision,
+      cartSummary: Object.freeze({
+        ...cartSummary,
+        items: Object.freeze([...cartSummary.items]) as CartItemDTO[],
+      }),
+    });
+    this.trace('published-cart-only', { subscribers: this.listeners.size });
+    this.listeners.forEach((fn) => {
+      try {
+        fn();
+      } catch (err) {
+        console.warn('Store subscriber callback warning:', err);
+      }
+    });
+  }
+
   /**
    * Adds a new product directly into the SQLite database and notifies all active screens.
    */
@@ -1506,11 +1548,11 @@ export class TindahanStoreService {
       nextCart.set(cartKey, next);
       nextLastRemoved = null;
     }
-    this.persistCartToSqlite(nextCart);
+    this.persistCartItemToSqlite(cartKey, next);
     this.cartMap = nextCart;
     this.lastRemovedItem = nextLastRemoved;
     this.cartRevision++;
-    this.notify();
+    this.notifyCartOnly();
 
     return {
       success: true,
@@ -1608,11 +1650,11 @@ export class TindahanStoreService {
       nextLastRemoved = null;
     }
 
-    this.persistCartToSqlite(nextCart);
+    this.persistCartItemToSqlite(cartKey, targetQty);
     this.cartMap = nextCart;
     this.lastRemovedItem = nextLastRemoved;
     this.cartRevision++;
-    this.notify();
+    this.notifyCartOnly();
   }
 
   public undoRemoveCartItem(): void {
@@ -1620,11 +1662,11 @@ export class TindahanStoreService {
     if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');
     const nextCart = new Map(this.cartMap);
     nextCart.set(this.lastRemovedItem.productId, this.lastRemovedItem.qty);
-    this.persistCartToSqlite(nextCart);
+    this.persistCartItemToSqlite(this.lastRemovedItem.productId, this.lastRemovedItem.qty);
     this.cartMap = nextCart;
     this.lastRemovedItem = null;
     this.cartRevision++;
-    this.notify();
+    this.notifyCartOnly();
   }
 
   public setDiscountPhp(discount: number): void {
@@ -1642,7 +1684,7 @@ export class TindahanStoreService {
     this.exchangeSourceReceiptId = null;
     this.lastRemovedItem = null;
     this.cartRevision++;
-    this.notify();
+    this.notifyCartOnly();
   }
 
   public parkCurrentCart(customerName?: string): HeldCartRecord | null {

@@ -23,6 +23,13 @@ function setup({ modeFailure = false } = {}) {
     clearTimeout,
     require(name) {
       if (name === 'react-native') return { Platform: { OS: 'android' } };
+      if (name === 'expo-asset') return {
+        Asset: {
+          fromModule: () => ({
+            downloadAsync: async () => {},
+          }),
+        },
+      };
       if (name === 'expo-audio') return {
         async setAudioModeAsync() {
           if (failMode) { failMode = false; throw new Error('mode failed'); }
@@ -34,6 +41,7 @@ function setup({ modeFailure = false } = {}) {
             volume: 0,
             plays: 0,
             seeks: 0,
+            pauses: 0,
             removed: false,
             isLoaded: true,
             listeners: new Set(),
@@ -41,7 +49,7 @@ function setup({ modeFailure = false } = {}) {
               this.listeners.add(listener);
               return { remove: () => this.listeners.delete(listener) };
             },
-            pause() {},
+            pause() { this.pauses++; },
             async seekTo() { this.seeks++; },
             play() {
               this.plays++;
@@ -59,41 +67,54 @@ function setup({ modeFailure = false } = {}) {
   return { service: exports.soundFeedbackService, players, sources };
 }
 
-test('first scan plays directly without seeking and loop is disabled', async () => {
+test('initializes 3-player round-robin pool with loop disabled and volume 1', async () => {
   const h = setup();
-  await h.service.playBarcodeBeep();
-  assert.equal(h.players.length, 1);
-  assert.equal(h.players[0].loop, false, 'Looping MUST be false to prevent infinite playback');
-  assert.equal(h.players[0].volume, 1);
-  assert.equal(h.players[0].seeks, 0, 'First scan should NOT seek since audio starts at 0');
-  assert.equal(h.players[0].plays, 1, 'First scan should play exactly once');
-});
-
-test('subsequent scans seek to 0 and replay exactly once per scan', async () => {
-  const h = setup();
-  await h.service.playBarcodeBeep(); // 1st scan
-  assert.equal(h.players[0].plays, 1);
-  assert.equal(h.players[0].seeks, 0);
-
-  await h.service.playBarcodeBeep(); // 2nd scan
-  assert.equal(h.players.length, 1);
-  assert.equal(h.players[0].plays, 2);
-  assert.equal(h.players[0].seeks, 1, '2nd scan should seek to 0 before replay');
-
-  await h.service.playBarcodeBeep(); // 3rd scan
-  assert.equal(h.players[0].plays, 3);
-  assert.equal(h.players[0].seeks, 2, '3rd scan should seek to 0 before replay');
-});
-
-test('didJustFinish status update does not trigger infinite seek loop', async () => {
-  const h = setup();
-  await h.service.playBarcodeBeep();
-  assert.equal(h.players[0].seeks, 0);
-  
-  // Simulate playback finishing
-  for (const listener of h.players[0].listeners) {
-    listener({ didJustFinish: true, isLoaded: true });
+  assert.equal(h.players.length, 3, 'Must initialize exactly 3 players for round-robin pool');
+  for (let i = 0; i < 3; i++) {
+    assert.equal(h.players[i].loop, false, `Player ${i} loop MUST be false`);
+    assert.equal(h.players[i].volume, 1, `Player ${i} volume MUST be 1`);
   }
-  // Seeks should NOT increase on status update (preventing infinite seek-and-play loop in ExoPlayer)
-  assert.equal(h.players[0].seeks, 0, 'Must NOT seek in didJustFinish listener to avoid infinite loop');
+});
+
+test('plays immediately with zero awaits and rotates round-robin across players', () => {
+  const h = setup();
+
+  // Scan 1: player 0
+  h.service.playBarcodeBeep();
+  assert.equal(h.players[0].plays, 1, 'Scan 1 should play player 0');
+  assert.equal(h.players[1].plays, 0);
+  assert.equal(h.players[2].plays, 0);
+  assert.equal(h.players[0].seeks, 0, 'Must NOT synchronously await seek before play');
+
+  // Scan 2: player 1
+  h.service.playBarcodeBeep();
+  assert.equal(h.players[0].plays, 1);
+  assert.equal(h.players[1].plays, 1, 'Scan 2 should play player 1');
+  assert.equal(h.players[2].plays, 0);
+  assert.equal(h.players[1].seeks, 0, 'Must NOT synchronously await seek before play');
+
+  // Scan 3: player 2
+  h.service.playBarcodeBeep();
+  assert.equal(h.players[0].plays, 1);
+  assert.equal(h.players[1].plays, 1);
+  assert.equal(h.players[2].plays, 1, 'Scan 3 should play player 2');
+  assert.equal(h.players[2].seeks, 0, 'Must NOT synchronously await seek before play');
+
+  // Scan 4: rotates back to player 0
+  h.service.playBarcodeBeep();
+  assert.equal(h.players[0].plays, 2, 'Scan 4 should rotate back to player 0');
+});
+
+test('asynchronously pauses and rewinds player after 140ms timeout', async () => {
+  const h = setup();
+  h.service.playBarcodeBeep(); // triggers player 0
+
+  assert.equal(h.players[0].pauses, 0, 'Should not pause immediately');
+  assert.equal(h.players[0].seeks, 0, 'Should not seek immediately');
+
+  // Wait for 150ms timeout to fire
+  await new Promise((resolve) => setTimeout(resolve, 160));
+
+  assert.equal(h.players[0].pauses, 1, 'Should pause after 140ms');
+  assert.equal(h.players[0].seeks, 1, 'Should seek to 0 after 140ms');
 });
