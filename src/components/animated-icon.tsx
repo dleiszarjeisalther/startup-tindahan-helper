@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Animated, Image, StyleSheet, Text, View } from 'react-native';
+import { Animated, Image, Modal, StyleSheet, Text, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 
 export function AnimatedSplashOverlay() {
@@ -34,15 +34,16 @@ export function AnimatedSplashOverlay() {
   if (!visible) return null;
 
   return (
-    <Animated.View
-      pointerEvents="none"
-      style={[
-        styles.splashOverlay,
-        {
-          opacity: fadeAnim,
-        },
-      ]}
-    >
+    <Modal visible={visible} transparent animationType="none" statusBarTranslucent>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          styles.splashOverlay,
+          {
+            opacity: fadeAnim,
+          },
+        ]}
+      >
       <Animated.View
         style={[
           styles.contentBox,
@@ -63,7 +64,8 @@ export function AnimatedSplashOverlay() {
         <Text style={styles.brandTagline}>Sari-sari Store POS & Inventory</Text>
       </Animated.View>
     </Animated.View>
-  );
+  </Modal>
+);
 }
 
 export function AnimatedIcon() {

@@ -1,16 +1,16 @@
 # Graph Report - startupTindahanHelper  (2026-10-25)
 
 ## Corpus Check
-- 133 files · ~475,856 words
+- 133 files · ~476,379 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1455 nodes · 2464 edges · 136 communities (63 shown, 57 thin omitted)
+- 1455 nodes · 2465 edges · 130 communities (56 shown, 59 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 89 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f0106139`
+- Built from commit: `def8a288`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -118,23 +118,18 @@
 - react-dom
 - react-native-web
 - ApkUpdaterModule
-- android
+- Money
 - utang.tsx
-- plugins
+- .lockStore
+- _layout.tsx
 - Android APK updates
 - patch-expo-notifications.cjs
 - 20261023000000_app_releases.sql
-- Money
+- StoreAlertPolicy.ts
 - AndroidAppUpdatePort
-- permissions
 - products.tsx
 - container.ts
 - NativeUpdater
-- SoundFeedbackService
-- extra
-- splash
-- experiments
-- web
 
 ## God Nodes (most connected - your core abstractions)
 1. `TindahanStoreService` - 93 edges
@@ -163,11 +158,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (136 total, 57 thin omitted)
+## Communities (130 total, 59 thin omitted)
 
 ### Community 1 - "useTindahanStore"
-Cohesion: 0.05
-Nodes (79): getLocalizedMonths(), getPhilippineSeasonInfo(), SeasonalForecastScreen(), PosScanProductScreen(), InventoryManagementScreen(), MenuProfileScreen(), NotificationsScreen(), ProductListScreen() (+71 more)
+Cohesion: 0.06
+Nodes (71): getLocalizedMonths(), getPhilippineSeasonInfo(), SeasonalForecastScreen(), PosScanProductScreen(), InventoryManagementScreen(), MenuProfileScreen(), NotificationsScreen(), ProductListScreen() (+63 more)
 
 ### Community 2 - "sales.tsx"
 Cohesion: 0.24
@@ -178,8 +173,8 @@ Cohesion: 0.12
 Nodes (20): styles, ExternalLink(), Props, HintRowProps, styles, styles, ThemedText(), ThemedTextProps (+12 more)
 
 ### Community 4 - "expo"
-Cohesion: 0.15
-Nodes (12): expo, backgroundColor, icon, ios, name, orientation, owner, scheme (+4 more)
+Cohesion: 0.05
+Nodes (41): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, backgroundColor, package, permissions (+33 more)
 
 ### Community 5 - "scripts"
 Cohesion: 0.09
@@ -228,10 +223,6 @@ Nodes (11): expo, expo-asset, expo-crypto, expo-splash-screen, dependencies, exp
 ### Community 20 - "inventory.tsx"
 Cohesion: 0.15
 Nodes (13): expo-router, ConfirmationState, STOCK_FILTERS, styles, styles, BarcodeInputField(), BarcodeInputFieldProps, styles (+5 more)
-
-### Community 24 - "PinSecurityEngine"
-Cohesion: 0.24
-Nodes (3): PinLockoutStatus, PinSecurityEngine, PinVerificationOutcome
 
 ### Community 25 - "Data Input, Data Output & Mobile POS UX Best Practices (React Native + Expo)"
 Cohesion: 0.11
@@ -358,24 +349,20 @@ Cohesion: 0.33
 Nodes (5): InstalledApp, UpdatePhase, UpdateSnapshot, AppRelease, ReleaseMetadata
 
 ### Community 108 - "LicensingService.ts"
-Cohesion: 0.07
-Nodes (22): expo-sqlite, SqliteDatabase, BackupDataPayload, BackupExportResult, BackupRestoreResult, DatabaseBackupService, formatTimeRemaining(), getCompletedSalesCount() (+14 more)
+Cohesion: 0.12
+Nodes (16): formatTimeRemaining(), getCompletedSalesCount(), getDeviceHardwareFingerprint(), getSecretSalt(), isValidPhilippinePhoneNumber(), LicensingService, Listener, MAX_TRIAL_SALES (+8 more)
 
 ### Community 115 - "ApkUpdaterModule"
 Cohesion: 0.29
 Nodes (5): FileProvider, Module, ApkFileProvider, ApkUpdaterModule, PackageInfo
 
-### Community 116 - "android"
-Cohesion: 0.22
-Nodes (9): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, backgroundColor, package, predictiveBackGestureEnabled (+1 more)
-
 ### Community 118 - "utang.tsx"
 Cohesion: 0.20
 Nodes (15): ConfirmationState, ConfirmationState, styles, ConfirmationState, ConfirmationState, ConfirmationState, FilterType, styles (+7 more)
 
-### Community 120 - "plugins"
-Cohesion: 0.29
-Nodes (7): plugins, expo-asset, expo-audio, expo-notifications, TabLayout(), BeepPlayer, soundSource
+### Community 120 - "_layout.tsx"
+Cohesion: 0.06
+Nodes (22): plugins, expo-asset, expo-audio, expo-notifications, expo-sqlite, TabLayout(), AnimatedSplashOverlay(), styles (+14 more)
 
 ### Community 121 - "Android APK updates"
 Cohesion: 0.33
@@ -385,13 +372,9 @@ Nodes (5): Android APK updates, Configuration and builds, Device behavior and re
 Cohesion: 0.50
 Nodes (3): fs, path, targetFile
 
-### Community 125 - "Money"
-Cohesion: 0.08
-Nodes (17): AlertFilter, FILTERS, styles, StoreSnapshot, parseDueAt(), ProductAlertSource, StoreAlert, StoreAlertKind (+9 more)
-
-### Community 127 - "permissions"
-Cohesion: 0.33
-Nodes (6): permissions, android.permission.CAMERA, android.permission.FOREGROUND_SERVICE, android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK, android.permission.MODIFY_AUDIO_SETTINGS, android.permission.RECORD_AUDIO
+### Community 125 - "StoreAlertPolicy.ts"
+Cohesion: 0.13
+Nodes (15): AlertFilter, FILTERS, styles, StoreSnapshot, parseDueAt(), ProductAlertSource, StoreAlert, StoreAlertKind (+7 more)
 
 ### Community 128 - "products.tsx"
 Cohesion: 0.20
@@ -401,33 +384,17 @@ Nodes (10): styles, styles, ProductThumbnail(), styles, ScreenSafeAreaView(), di
 Cohesion: 0.33
 Nodes (5): localNotificationScheduler, openFoodFactsApiClient, productOnboardingService, productRepository, seasonalForecastEngine
 
-### Community 132 - "extra"
-Cohesion: 0.50
-Nodes (4): projectId, extra, eas, router
-
-### Community 133 - "splash"
-Cohesion: 0.50
-Nodes (4): splash, backgroundColor, image, resizeMode
-
-### Community 134 - "experiments"
-Cohesion: 0.67
-Nodes (3): reactCompiler, typedRoutes, experiments
-
-### Community 135 - "web"
-Cohesion: 0.67
-Nodes (3): web, favicon, output
-
 ## Knowledge Gaps
 - **575 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+570 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 732 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **57 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **59 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `expo-router` connect `inventory.tsx` to `index.tsx`, `products.tsx`, `useTindahanStore`, `sales.tsx`, `app-tabs.web.tsx`, `history.tsx`, `checkout.tsx`, `settings.tsx`, `utang.tsx`, `plugins`, `Money`?**
+- **Why does `expo-router` connect `inventory.tsx` to `index.tsx`, `products.tsx`, `sales.tsx`, `app-tabs.web.tsx`, `useTindahanStore`, `history.tsx`, `checkout.tsx`, `settings.tsx`, `utang.tsx`, `_layout.tsx`, `StoreAlertPolicy.ts`?**
   _High betweenness centrality (0.065) - this node is a cross-community bridge._
-- **Why does `TindahanStoreService` connect `TindahanStoreService` to `container.ts`, `useTindahanStore`, `TindahanStoreService.ts`, `.getInstance`, `.syncNotificationSchedule`, `.notify`, `.trace`, `PinSecurityEngine`, `Money`, `ProductOnboardingService.ts`?**
+- **Why does `TindahanStoreService` connect `TindahanStoreService` to `container.ts`, `TindahanStoreService.ts`, `.getInstance`, `.syncNotificationSchedule`, `.notify`, `Money`, `.lockStore`, `PinSecurityEngine`, `_layout.tsx`, `StoreAlertPolicy.ts`, `ProductOnboardingService.ts`?**
   _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Why does `IKeyValueStorage` connect `IKeyValueStorage` to `SynchronousKeyValueStorage`, `KeyValueStorage.ts`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
@@ -438,4 +405,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Product` be split into smaller, more focused modules?**
   _Cohesion score 0.09971509971509972 - nodes in this community are weakly interconnected._
 - **Should `useTindahanStore` be split into smaller, more focused modules?**
-  _Cohesion score 0.05253077975376197 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06430745814307458 - nodes in this community are weakly interconnected._

@@ -118,3 +118,25 @@ test('asynchronously pauses and rewinds player after 140ms timeout', async () =>
   assert.equal(h.players[0].pauses, 1, 'Should pause after 140ms');
   assert.equal(h.players[0].seeks, 1, 'Should seek to 0 after 140ms');
 });
+
+test('cancels pending reset timer when player is reused during rapid burst scan', async () => {
+  const h = setup();
+
+  // Burst scan 1: player 0
+  h.service.playBarcodeBeep();
+  assert.equal(h.players[0].plays, 1);
+  assert.equal(h.players[0].pauses, 0);
+
+  // Rapidly trigger 3 more scans so player 0 is reused before 140ms elapses
+  h.service.playBarcodeBeep(); // player 1
+  h.service.playBarcodeBeep(); // player 2
+  h.service.playBarcodeBeep(); // player 0 reused!
+
+  assert.equal(h.players[0].plays, 2, 'Player 0 should be played a second time');
+  assert.equal(h.players[0].pauses, 0, 'Player 0 should NOT be paused when reused');
+  assert.equal(h.players[0].seeks, 1, 'Player 0 should be rewound before second play');
+
+  // Wait 160ms for second timer to fire
+  await new Promise((resolve) => setTimeout(resolve, 160));
+  assert.equal(h.players[0].pauses, 1, 'Player 0 should have paused once after full duration');
+});

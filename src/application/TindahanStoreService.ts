@@ -334,7 +334,8 @@ export class TindahanStoreService {
         const hydratedCart = new Map<string, number>();
         for (const r of cartRows) {
           if (r.quantity > 0) {
-            if (validProductIds.size === 0 || validProductIds.has(r.product_id)) {
+            const rawId = r.product_id.includes('__') ? r.product_id.split('__')[0] : r.product_id;
+            if (validProductIds.size === 0 || validProductIds.has(rawId)) {
               hydratedCart.set(r.product_id, r.quantity);
             }
           }
@@ -692,17 +693,13 @@ export class TindahanStoreService {
   private persistCartItemToSqlite(productIdOrKey: string, quantity: number): void {
     const db = SqliteDatabase.getInstance().rawDb;
     if (!db) return;
-    try {
-      if (quantity > 0) {
-        db.runSync(
-          'INSERT OR REPLACE INTO cart_items (product_id, quantity) VALUES (?, ?)',
-          [productIdOrKey, quantity]
-        );
-      } else {
-        db.runSync('DELETE FROM cart_items WHERE product_id = ?', [productIdOrKey]);
-      }
-    } catch (err) {
-      console.warn('Failed to persist cart item to SQLite:', err);
+    if (quantity > 0) {
+      db.runSync(
+        'INSERT OR REPLACE INTO cart_items (product_id, quantity) VALUES (?, ?)',
+        [productIdOrKey, quantity]
+      );
+    } else {
+      db.runSync('DELETE FROM cart_items WHERE product_id = ?', [productIdOrKey]);
     }
     this.trace('cart item persisted', { productIdOrKey, quantity });
   }
@@ -1191,7 +1188,7 @@ export class TindahanStoreService {
     if (db) {
       db.withTransactionSync(() => {
         db.runSync('DELETE FROM products WHERE id = ?', [productId]);
-        db.runSync('DELETE FROM cart_items WHERE product_id = ?', [productId]);
+        db.runSync('DELETE FROM cart_items WHERE product_id = ? OR product_id LIKE ?', [productId, `${productId}__%`]);
         db.runSync('DELETE FROM monthly_sales_history WHERE product_id = ?', [productId]);
       });
       const repo = this.productRepo as unknown as { hydrateFromSqlite?: () => void };
@@ -1200,7 +1197,11 @@ export class TindahanStoreService {
       await this.productRepo.deleteById(productId);
     }
     const nextCart = new Map(this.cartMap);
-    nextCart.delete(productId);
+    for (const k of nextCart.keys()) {
+      if (k === productId || k.startsWith(`${productId}__`)) {
+        nextCart.delete(k);
+      }
+    }
     this.cartMap = nextCart;
     this.monthlyHistoryMap.delete(productId);
     this.cartRevision++;
@@ -1541,7 +1542,7 @@ export class TindahanStoreService {
     let nextLastRemoved = this.lastRemovedItem;
     if (next === 0) {
       if (prod && current > 0) {
-        nextLastRemoved = { productId, name: prod.name, qty: current };
+        nextLastRemoved = { productId: cartKey, name: prod.name, qty: current };
       }
       nextCart.delete(cartKey);
     } else {
@@ -1642,7 +1643,7 @@ export class TindahanStoreService {
 
     if (targetQty === 0) {
       if (prod && current > 0) {
-        nextLastRemoved = { productId, name: prod.name, qty: current };
+        nextLastRemoved = { productId: cartKey, name: prod.name, qty: current };
       }
       nextCart.delete(cartKey);
     } else {

@@ -23,7 +23,7 @@ import { WeightQuantityModal, WeightQuantityProduct } from '@/presentation/compo
 import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 import { UnitSelectionModal } from '@/presentation/components/UnitSelectionModal';
 import { ConfirmationModal } from '@/presentation/components/ConfirmationModal';
-import { ProductDTO } from '@/domain/entities/Product';
+import { ProductDTO, SellingUnitTier } from '@/domain/entities/Product';
 import { TrialBanner } from '@/presentation/components/TrialBanner';
 import { useLicensing } from '@/presentation/hooks/useLicensing';
 import { useLicensingGate } from '@/presentation/components/LicensingGate';
@@ -178,11 +178,23 @@ export default function PosScanProductScreen() {
     if (!clean || clean.length < 2) return;
     lastScannedBarcodeRef.current = clean;
 
-    const matched = products.find(
-      (p) =>
+    let matchedTier: SellingUnitTier | undefined;
+    const matched = products.find((p) => {
+      const tier = p.sellingTiers?.find(
+        (t) =>
+          t.barcode &&
+          (t.barcode.trim().toUpperCase() === clean ||
+            t.barcode.trim().toUpperCase().endsWith(clean))
+      );
+      if (tier) {
+        matchedTier = tier;
+        return true;
+      }
+      return (
         p.barcode.toUpperCase() === clean ||
         p.barcode.toUpperCase().endsWith(clean)
-    );
+      );
+    });
 
     if (matched) {
       console.log(`[POS Screen] ✓ Product matched: "${matched.name}" (ID: ${matched.id}, Price: ₱${matched.defaultPricePhp}, Stock: ${matched.stockCount})`);
@@ -209,6 +221,27 @@ export default function PosScanProductScreen() {
           unitOfMeasure: matched.unitOfMeasure,
         });
         setUnknownBarcode(null);
+        return;
+      }
+      if (matchedTier) {
+        const tierName = matchedTier.unitName;
+        const tierLabel =
+          tierName === 'pack'
+            ? 'buong pack'
+            : tierName === 'box'
+            ? 'buong box'
+            : tierName === 'bundle'
+            ? 'bundle'
+            : 'piraso';
+        if (
+          tryAddToCart(
+            matched.id,
+            `✓ Scanned +1 ${tierLabel} ${matched.name}`,
+            tierName as 'piece' | 'bundle' | 'pack' | 'box' | 'case'
+          )
+        ) {
+          setUnknownBarcode(null);
+        }
         return;
       }
       if (matched.sellingTiers && matched.sellingTiers.length > 1) {

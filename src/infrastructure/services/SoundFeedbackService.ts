@@ -16,6 +16,7 @@ class SoundFeedbackService {
   private activePlayerIndex = 0;
   private readonly poolSize = 3;
   private initPromise: Promise<void> | null = null;
+  private resetTimers: (ReturnType<typeof setTimeout> | null)[] = [null, null, null];
 
   constructor() {
     this.createPool();
@@ -107,14 +108,28 @@ class SoundFeedbackService {
 
       if (this.players.length === 0) return;
 
-      const player = this.players[this.activePlayerIndex];
+      const playerIndex = this.activePlayerIndex;
+      const player = this.players[playerIndex];
       this.activePlayerIndex = (this.activePlayerIndex + 1) % this.players.length;
+
+      // Cancel any pending reset timer for this player so a previous burst scan
+      // does not prematurely silence or rewind the new playback
+      if (this.resetTimers[playerIndex] !== null) {
+        clearTimeout(this.resetTimers[playerIndex]!);
+        this.resetTimers[playerIndex] = null;
+        try {
+          void player.seekTo(0).catch(() => {});
+        } catch {
+          // ignore
+        }
+      }
 
       player.volume = 1;
       player.play();
 
       // Asynchronously reset player position for next rotation after 140ms
-      setTimeout(() => {
+      this.resetTimers[playerIndex] = setTimeout(() => {
+        this.resetTimers[playerIndex] = null;
         try {
           player.pause();
           void player.seekTo(0).catch(() => {});

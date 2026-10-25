@@ -253,7 +253,51 @@ function runMultiUnitTests() {
   assert.strictEqual(modalPayload.details[4].value, '₱250.00');
   console.log('✓ Test 14: Sale confirmation modal breakdown and change due payload verified');
 
+  // Test 15: Multi-unit cart hydration from SQLite
+  const validProducts = [{ id: 'prod_123', name: 'Noodles' }];
+  const validProductIds = new Set(validProducts.map((p) => p.id));
+  const rawCartRows = [
+    { product_id: 'prod_123', quantity: 2 },
+    { product_id: 'prod_123__pack', quantity: 1 },
+    { product_id: 'prod_123__box', quantity: 3 },
+    { product_id: 'unknown_prod', quantity: 1 },
+    { product_id: 'unknown_prod__box', quantity: 1 },
+  ];
+  const hydratedCart = new Map();
+  for (const r of rawCartRows) {
+    if (r.quantity > 0) {
+      const rawId = r.product_id.includes('__') ? r.product_id.split('__')[0] : r.product_id;
+      if (validProductIds.size === 0 || validProductIds.has(rawId)) {
+        hydratedCart.set(r.product_id, r.quantity);
+      }
+    }
+  }
+  assert.strictEqual(hydratedCart.get('prod_123'), 2, 'Must retain piece item');
+  assert.strictEqual(hydratedCart.get('prod_123__pack'), 1, 'Must retain pack item');
+  assert.strictEqual(hydratedCart.get('prod_123__box'), 3, 'Must retain box item');
+  assert.strictEqual(hydratedCart.has('unknown_prod'), false, 'Must filter out unknown item');
+  assert.strictEqual(hydratedCart.has('unknown_prod__box'), false, 'Must filter out unknown unit item');
+  console.log('✓ Test 15: SQLite multi-unit cart hydration preserves pack and box cart keys');
+
+  // Test 16: Multi-unit undo remove preserves cartKey
+  let lastRemoved = null;
+  const cartMap = new Map([['prod_123__pack', 2]]);
+  const targetKey = 'prod_123__pack';
+  const targetQty = 0;
+  const currentQty = cartMap.get(targetKey);
+  if (targetQty === 0 && currentQty > 0) {
+    lastRemoved = { productId: targetKey, name: 'Noodles', qty: currentQty };
+    cartMap.delete(targetKey);
+  }
+  assert.strictEqual(cartMap.has(targetKey), false);
+  assert.strictEqual(lastRemoved.productId, 'prod_123__pack', 'Must preserve cartKey with unit');
+  // Undo restore
+  cartMap.set(lastRemoved.productId, lastRemoved.qty);
+  assert.strictEqual(cartMap.get('prod_123__pack'), 2, 'Undo must restore multi-unit key and quantity');
+  console.log('✓ Test 16: Multi-unit cart removal and undo restores exact unit tier');
+
   console.log('--- ALL MULTI-UNIT SELLING TESTS PASSED ---');
 }
 
 runMultiUnitTests();
+

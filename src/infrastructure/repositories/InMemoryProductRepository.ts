@@ -165,7 +165,7 @@ export class InMemoryProductRepository implements IProductRepository {
     if (db) {
       try {
         db.runSync('DELETE FROM products WHERE id = ?', [id]);
-        db.runSync('DELETE FROM cart_items WHERE product_id = ?', [id]);
+        db.runSync('DELETE FROM cart_items WHERE product_id = ? OR product_id LIKE ?', [id, `${id}__%`]);
         db.runSync('DELETE FROM monthly_sales_history WHERE product_id = ?', [id]);
       } catch (err) {
         console.error('deleteById error:', err);
