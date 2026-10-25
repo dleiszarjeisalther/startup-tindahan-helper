@@ -245,7 +245,7 @@ export default function PosScanProductScreen() {
     <ScreenSafeAreaView style={styles.safeArea} edges={[]}>
 
       {/* Top App Header Branding — Tindahan Helper */}
-      <View style={[styles.topAppHeader, { paddingTop: insets.top + 4 }]}>
+      <View style={[styles.topAppHeader, { paddingTop: insets.top + 6 }]}>
         <View style={styles.brandingRow}>
           <Image
             source={require('@/assets/images/icon.png')}
@@ -253,7 +253,7 @@ export default function PosScanProductScreen() {
             resizeMode="contain"
           />
           <View style={styles.brandingTextContainer}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <Text style={styles.brandTitleWhite}>Tindahan</Text>
               <Text style={styles.brandTitleAccent}>Helper</Text>
               <View style={styles.brandUtilityPill}>
@@ -262,6 +262,26 @@ export default function PosScanProductScreen() {
             </View>
           </View>
         </View>
+
+        {/* Right Header Notification Bell */}
+        <Pressable
+          style={styles.headerNotificationBtn}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+            router.navigate('/notifications');
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={`${unreadAlertCount} hindi pa nababasang abiso`}
+        >
+          <Ionicons name="notifications-outline" size={24} color="#FFFFFF" />
+          {unreadAlertCount > 0 ? (
+            <View style={styles.headerNotificationBadge}>
+              <Text style={styles.headerNotificationBadgeText}>
+                {Math.min(99, unreadAlertCount)}
+              </Text>
+            </View>
+          ) : null}
+        </Pressable>
       </View>
 
       {/* Trial Status Header Pill */}
@@ -376,7 +396,7 @@ export default function PosScanProductScreen() {
             <Ionicons name="chevron-forward" size={20} color="#92400E" />
           </Pressable>
         ) : null}
-        {/* Search Bar + Barcode Icon Button */}
+        {/* Search Bar */}
         <View style={styles.searchRow}>
           <View style={styles.searchInputContainer}>
             <Ionicons name="search" size={18} color="#9CA3AF" style={{ marginRight: 6 }} />
@@ -394,28 +414,6 @@ export default function PosScanProductScreen() {
               </Pressable>
             ) : null}
           </View>
-
-          <Pressable
-            style={styles.notificationQuickBtn}
-            onPress={() => router.navigate('/notifications')}
-            accessibilityRole="button"
-            accessibilityLabel={`${unreadAlertCount} hindi pa nababasang abiso`}
-          >
-            <Ionicons name="notifications-outline" size={21} color="#0D7A52" />
-            {unreadAlertCount > 0 ? (
-              <View style={styles.quickBadge}>
-                <Text style={styles.quickBadgeText}>{Math.min(99, unreadAlertCount)}</Text>
-              </View>
-            ) : null}
-          </Pressable>
-
-          <Pressable
-            style={styles.barcodeQuickBtn}
-            onPress={() => router.navigate('/products')}
-            hitSlop={6}
-          >
-            <Ionicons name="barcode-outline" size={20} color="#0D7A52" />
-          </Pressable>
         </View>
 
         {/* Sub-row: Quick Filters & Link to Screen 2 (Product List) */}
@@ -714,11 +712,12 @@ export default function PosScanProductScreen() {
 
 const styles = StyleSheet.create({
   topAppHeader: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#0D7A52',
     paddingHorizontal: 16,
-    paddingBottom: 6,
+    paddingBottom: 10,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
   brandingRow: {
     flexDirection: 'row',
@@ -726,16 +725,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   headerLogoIcon: {
-    width: 26,
-    height: 26,
-    borderRadius: 6,
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.18)',
-    shadowColor: '#208AEF',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.45,
-    shadowRadius: 5,
-    elevation: 3,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
   },
   brandingTextContainer: {
     justifyContent: 'center',
@@ -747,29 +741,53 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   brandTitleAccent: {
-    color: '#F59E0B',
+    color: '#FBBF24',
     fontSize: 16,
     fontWeight: '900',
     letterSpacing: 0.5,
   },
   brandUtilityPill: {
-    backgroundColor: 'rgba(32, 138, 239, 0.22)',
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
     borderWidth: 1,
-    borderColor: 'rgba(56, 189, 248, 0.45)',
+    borderColor: 'rgba(255, 255, 255, 0.4)',
     paddingHorizontal: 6,
     paddingVertical: 1.5,
     borderRadius: 6,
     marginLeft: 2,
   },
   brandUtilityPillText: {
-    color: '#38BDF8',
+    color: '#FFFFFF',
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.8,
   },
+  headerNotificationBtn: {
+    position: 'relative',
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerNotificationBadge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: '#EF4444',
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 3,
+  },
+  headerNotificationBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '800',
+  },
   safeArea: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#0D7A52',
   },
   scannerSection: {
     height: 254,
@@ -1042,45 +1060,6 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontWeight: '700',
     paddingHorizontal: 4,
-  },
-  barcodeQuickBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  notificationQuickBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  quickBadge: {
-    position: 'absolute',
-    top: 3,
-    right: 3,
-    minWidth: 17,
-    height: 17,
-    borderRadius: 9,
-    paddingHorizontal: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#DC2626',
-  },
-  quickBadgeText: { color: '#FFFFFF', fontSize: 9, fontWeight: '900' },
-  barcodeQuickIcon: {
-    fontSize: 12,
-    fontWeight: '900',
-    color: '#0D7A52',
   },
   quickActionRow: {
     flexDirection: 'row',

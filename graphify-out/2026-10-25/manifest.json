@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1792913050.5117483,
-    "seen": 1792913524.8991563,
-    "ast_hash": "414691fc37a4748d49e0f8d4e0267e30",
+    "mtime": 1792918296.9519951,
+    "seen": 1792918904.8421128,
+    "ast_hash": "d8914944a55f8373ada7ba9c491ff74a",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {
-    "mtime": 1792753417.1113026,
-    "seen": 1792753928.6936455,
-    "ast_hash": "7368856a4aa1eeab7ee3d741a7399d12",
+    "mtime": 1792917678.631065,
+    "seen": 1792918904.842165,
+    "ast_hash": "fb9499ac201af2d64ba205a78c0d00d3",
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "src/application/TindahanStoreService.ts": {
-    "mtime": 1792913103.7798133,
-    "seen": 1792913524.8992388,
-    "ast_hash": "b29dfe17267c75cd4c8b423cdc8fc21e",
+    "mtime": 1792918465.7469087,
+    "seen": 1792918904.8422325,
+    "ast_hash": "c9cd4a078ee95ea5e798446e58bfcc4a",
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
@@ -570,9 +570,9 @@
     "semantic_hash": ""
   },
   "src/app/history.tsx": {
-    "mtime": 1792753687.379749,
-    "seen": 1792753928.693595,
-    "ast_hash": "06bc81dd60926ac6a2396b4e17b15f0d",
+    "mtime": 1792918663.0205646,
+    "seen": 1792918904.842097,
+    "ast_hash": "d00edd2039c88a9623e95446638d8305",
     "semantic_hash": ""
   },
   "scripts/sound-feedback.test.cjs": {
@@ -582,9 +582,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/ConfirmationModal.tsx": {
-    "mtime": 1792389676.1953714,
-    "seen": 1792677665.0422764,
-    "ast_hash": "da3be9bb5dd9ed9415a046a49c7d5d07",
+    "mtime": 1792918710.3790126,
+    "seen": 1792918904.8427122,
+    "ast_hash": "24ee9df14e9007d2b271732c1b9d8cef",
     "semantic_hash": ""
   },
   "src/domain/services/EscPosReceiptFormatter.ts": {
@@ -1371,6 +1371,12 @@
     "mtime": 1792752416.8885934,
     "seen": 1792753928.6935556,
     "ast_hash": "aa1d7296b670717e431ba9411b391c33",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/DateRangeCalendarModal.tsx": {
+    "mtime": 1792918731.955531,
+    "seen": 1792918904.842719,
+    "ast_hash": "377951a367ac57326550800c168e6416",
     "semantic_hash": ""
   }
 }

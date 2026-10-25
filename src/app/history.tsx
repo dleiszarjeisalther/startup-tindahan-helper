@@ -597,7 +597,7 @@ export default function StockMovementHistoryScreen() {
               { key: 'ALL', label: 'Lahat ng Tala (All)', icon: 'list-outline' },
               { key: 'STOCK', label: 'Stock Movements', icon: 'cube-outline' },
               { key: 'PRODUCT', label: 'Produkto (Add/Edit)', icon: 'pricetag-outline' },
-              { key: 'EXPENSE', label: 'Gastos sa Kaha', icon: 'cash-outline' },
+              { key: 'EXPENSE', label: 'Kaha (Gastos at Dagdag)', icon: 'cash-outline' },
             ].map((cat) => {
               const active = categoryFilter === cat.key;
               return (
@@ -948,7 +948,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 130,
   },
   kpiContainer: {
     flexDirection: 'row',
