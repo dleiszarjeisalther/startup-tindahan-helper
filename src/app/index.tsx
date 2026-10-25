@@ -26,6 +26,7 @@ import { ProductDTO } from '@/domain/entities/Product';
 import { TrialBanner } from '@/presentation/components/TrialBanner';
 import { useLicensing } from '@/presentation/hooks/useLicensing';
 import { useLicensingGate } from '@/presentation/components/LicensingGate';
+import { StoreAlertsModal } from '@/presentation/components/StoreAlertsModal';
 
 export default function PosScanProductScreen() {
   const router = useRouter();
@@ -47,6 +48,8 @@ export default function PosScanProductScreen() {
     updateProductDetails,
     activeAlerts,
     unreadAlertCount,
+    markAlertRead,
+    markAllAlertsRead,
   } = useTindahanStore();
   const t = getTranslations(settings?.language);
   const { isFeatureLocked, isLicensed, isRegistered } = useLicensing();
@@ -66,8 +69,21 @@ export default function PosScanProductScreen() {
   const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
   const [unitModalProduct, setUnitModalProduct] = useState<ProductDTO | null>(null);
   const [showPinModal, setShowPinModal] = useState(false);
+  const [showAlertsModal, setShowAlertsModal] = useState(false);
+  const [hasAutoOpenedAlerts, setHasAutoOpenedAlerts] = useState(false);
+  const prevAlertCountRef = useRef<number>(0);
   const lastScanTimestampRef = useRef<number>(0);
   const lastScannedBarcodeRef = useRef<string>('');
+
+  useEffect(() => {
+    if (settings?.notifications && unreadAlertCount > 0) {
+      if (!hasAutoOpenedAlerts || unreadAlertCount > prevAlertCountRef.current) {
+        setShowAlertsModal(true);
+        setHasAutoOpenedAlerts(true);
+      }
+    }
+    prevAlertCountRef.current = unreadAlertCount;
+  }, [settings?.notifications, unreadAlertCount, hasAutoOpenedAlerts]);
 
   useEffect(() => {
     if (__DEV__) console.debug('[StoreRender]', { surface: 'Scan', version, cartCount: cartSummary.totalCount });
@@ -268,7 +284,7 @@ export default function PosScanProductScreen() {
           style={styles.headerNotificationBtn}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-            router.navigate('/notifications');
+            setShowAlertsModal(true);
           }}
           accessibilityRole="button"
           accessibilityLabel={`${unreadAlertCount} hindi pa nababasang abiso`}
@@ -369,33 +385,6 @@ export default function PosScanProductScreen() {
 
       {/* BOTTOM HALF: White Rounded Sheet with Search & SQLite Product Grid */}
       <View style={styles.bottomSheet}>
-        {settings.notifications && activeAlerts.length > 0 ? (
-          <Pressable
-            style={styles.alertSummaryCard}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-              router.navigate('/notifications');
-            }}
-            accessibilityRole="button"
-            accessibilityLabel={`${unreadAlertCount} bagong abiso ng tindahan`}
-          >
-            <View style={styles.alertSummaryIcon}>
-              <Ionicons name="notifications" size={20} color="#B45309" />
-              {unreadAlertCount > 0 ? (
-                <View style={styles.alertBadge}>
-                  <Text style={styles.alertBadgeText}>{Math.min(99, unreadAlertCount)}</Text>
-                </View>
-              ) : null}
-            </View>
-            <View style={styles.alertSummaryCopy}>
-              <Text style={styles.alertSummaryTitle}>Kailangang Asikasuhin</Text>
-              <Text style={styles.alertSummaryText} numberOfLines={1}>
-                {activeAlerts[0]?.message}
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#92400E" />
-          </Pressable>
-        ) : null}
         {/* Search Bar */}
         <View style={styles.searchRow}>
           <View style={styles.searchInputContainer}>
@@ -706,6 +695,25 @@ export default function PosScanProductScreen() {
           onCancel={() => setAlertModal(null)}
         />
       ) : null}
+
+      {/* Kailangang Asikasuhin Store Alerts Pop-up Modal */}
+      <StoreAlertsModal
+        visible={showAlertsModal}
+        alerts={activeAlerts}
+        unreadCount={unreadAlertCount}
+        onClose={() => setShowAlertsModal(false)}
+        onMarkAllRead={markAllAlertsRead}
+        onMarkRead={markAlertRead}
+        onViewAllNotifications={() => {
+          setShowAlertsModal(false);
+          router.navigate('/notifications');
+        }}
+        onActionAlert={(alert) => {
+          setShowAlertsModal(false);
+          markAlertRead(alert.id);
+          router.navigate(alert.targetRoute as any);
+        }}
+      />
     </ScreenSafeAreaView>
   );
 }
@@ -996,40 +1004,6 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingHorizontal: 14,
   },
-  alertSummaryCard: {
-    minHeight: 64,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    marginBottom: 10,
-    borderRadius: 16,
-    backgroundColor: '#FFFBEB',
-    borderWidth: 1,
-    borderColor: '#FCD34D',
-  },
-  alertSummaryIcon: {
-    width: 48,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  alertBadge: {
-    position: 'absolute',
-    right: 2,
-    top: 2,
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
-    paddingHorizontal: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#DC2626',
-  },
-  alertBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' },
-  alertSummaryCopy: { flex: 1, paddingHorizontal: 8 },
-  alertSummaryTitle: { color: '#78350F', fontSize: 14, fontWeight: '900' },
-  alertSummaryText: { color: '#92400E', fontSize: 12, marginTop: 2 },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
