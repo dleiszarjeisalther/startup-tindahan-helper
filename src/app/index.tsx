@@ -1,5 +1,5 @@
 // src/app/index.tsx — Screen 1: POS / Scan Product (OOP Barcode Scanner Viewfinder + SQLite Backed)
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { useRouter, useIsFocused } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
+import { useTutorial } from '@/presentation/providers/TutorialContext';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
 import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScannerViewfinder';
 import { soundFeedbackService } from '@/infrastructure/services/SoundFeedbackService';
@@ -34,6 +35,16 @@ export default function PosScanProductScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
+  const {
+    isActive: isTutorialActive,
+    currentStep: tutorialStep,
+    registerTarget: registerTutorialTarget,
+    nextStep: nextTutorialStep,
+  } = useTutorial();
+
+  const firstProductCardRef = useRef<any>(null);
+  const emptyCatalogBtnRef = useRef<any>(null);
+  const productScrollRef = useRef<any>(null);
   const {
     products,
     addToCart,
@@ -97,7 +108,29 @@ export default function PosScanProductScreen() {
     console.log(`[POS Screen] Screen focus changed: isFocused = ${isFocused}`);
   }, [isFocused]);
 
+  const measureStep2Target = useCallback(() => {
+    if (firstProductCardRef.current) {
+      firstProductCardRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
+        if (width > 0 && height > 0) {
+          registerTutorialTarget(2, { x, y, width, height, borderRadius: 16 });
+        }
+      });
+    } else if (emptyCatalogBtnRef.current) {
+      emptyCatalogBtnRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
+        if (width > 0 && height > 0) {
+          registerTutorialTarget(2, { x, y, width, height, borderRadius: 16 });
+        }
+      });
+    }
+  }, [registerTutorialTarget]);
 
+  useEffect(() => {
+    if (isTutorialActive && tutorialStep === 2) {
+      productScrollRef.current?.scrollTo({ y: 0, animated: true });
+      const timer = setTimeout(measureStep2Target, 120);
+      return () => clearTimeout(timer);
+    }
+  }, [isTutorialActive, tutorialStep, measureStep2Target]);
 
   const triggerScanToast = (msg: string) => {
     setScanToast(msg);
@@ -157,6 +190,9 @@ export default function PosScanProductScreen() {
       }
       if (options?.playSound !== false) {
         soundFeedbackService.playBarcodeBeep();
+      }
+      if (isTutorialActive && tutorialStep <= 2) {
+        nextTutorialStep();
       }
       console.log(`[POS Screen] ✓ Added to cart: productId=${productId}, unit=${result?.unitAdded ?? unit}`);
       return true;
@@ -434,6 +470,10 @@ export default function PosScanProductScreen() {
         isActive={liveCameraActive && isFocused}
         onToggleActive={setLiveCameraActive}
         onBarcodeScanned={handleBarcodeDetected}
+        onReticleLayout={(layout) => {
+          registerTutorialTarget(1, { ...layout, borderRadius: 16 });
+        }}
+        tutorialActive={isTutorialActive && tutorialStep === 1}
         toastMessage={scanToast}
         containerHeight={230 + scannerTopInset}
         topControlInset={scannerTopInset}
@@ -559,6 +599,7 @@ export default function PosScanProductScreen() {
 
         {/* 2x2 Product Grid from SQLite Database */}
         <ScrollView
+          ref={productScrollRef}
           contentContainerStyle={styles.gridScroll}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -576,6 +617,8 @@ export default function PosScanProductScreen() {
                   : 'Subukan ang ibang pangalan o barcode ng paninda.'}
               </Text>
               <Pressable
+                ref={emptyCatalogBtnRef}
+                onLayout={() => measureStep2Target()}
                 style={styles.emptyCatalogBtn}
                 onPress={() => router.navigate('/inventory')}
               >
@@ -586,7 +629,7 @@ export default function PosScanProductScreen() {
             </View>
           ) : (
             <View style={styles.gridContainer}>
-              {filteredProducts.map((item) => {
+              {filteredProducts.map((item, index) => {
                 const cartStats = cartItemStatsByProductId.get(item.id);
                 const hasInCart = Boolean(cartStats?.hasInCart);
                 const inCartBadgeLabel = cartStats?.inCartBadgeLabel ?? '';
@@ -600,6 +643,8 @@ export default function PosScanProductScreen() {
                 return (
                   <Pressable
                     key={item.id}
+                    ref={index === 0 ? firstProductCardRef : undefined}
+                    onLayout={index === 0 ? () => measureStep2Target() : undefined}
                     style={[
                       styles.productCard,
                       item.stockCount <= 0 ? styles.productCardDisabled : null,

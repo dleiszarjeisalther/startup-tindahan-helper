@@ -72,9 +72,9 @@
     "semantic_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275"
   },
   "src/app/_layout.tsx": {
-    "mtime": 1792931020.0580828,
-    "seen": 1792931478.6836803,
-    "ast_hash": "21e882451f999b971ba5a5cf5d864c16",
+    "mtime": 1793094815.11829,
+    "seen": 1793095777.1477585,
+    "ast_hash": "50eb0bd7f34b0de3b8b8ddf69e5f923d",
     "semantic_hash": ""
   },
   "src/app/checkout.tsx": {
@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1793091090.6419365,
-    "seen": 1793091242.8193052,
-    "ast_hash": "358072a79cdfb54bcb2a4d2e7b100628",
+    "mtime": 1793096899.583133,
+    "seen": 1793097143.2912767,
+    "ast_hash": "93df25f27e3af10052d891ee6aa21fb0",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
-    "mtime": 1792914889.5936737,
-    "seen": 1792915005.9656796,
-    "ast_hash": "7392567e15e83bbda35f14ae8f44d277",
+    "mtime": 1793095248.3828864,
+    "seen": 1793095777.147803,
+    "ast_hash": "c85af456a5a1424ffa4ccedd26d1c1ce",
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": "2defa175163e104a6e2232436fa77e30"
   },
   "src/components/app-tabs.tsx": {
-    "mtime": 1792909802.8218932,
-    "seen": 1792910006.7324362,
-    "ast_hash": "a837a80f39d7c2b177c2657fe710cc64",
+    "mtime": 1793096518.94372,
+    "seen": 1793097143.2913783,
+    "ast_hash": "3976382545398c8b68468017542c72f6",
     "semantic_hash": ""
   },
   "src/components/app-tabs.web.tsx": {
@@ -450,9 +450,9 @@
     "semantic_hash": "c62d22797f3002396754d8cc55b0ae1a"
   },
   "src/presentation/components/BarcodeScannerViewfinder.tsx": {
-    "mtime": 1792931049.452877,
-    "seen": 1792931478.6838894,
-    "ast_hash": "6ded5606a3e274cd632d732babb8704c",
+    "mtime": 1793096879.494091,
+    "seen": 1793097143.291666,
+    "ast_hash": "db947cf0acdfe43726ebcc4ad52d05f2",
     "semantic_hash": ""
   },
   "src/infrastructure/services/OpenFoodFactsApiClient.ts": {
@@ -480,9 +480,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/storage/KeyValueStorage.ts": {
-    "mtime": 1792681190.4675288,
-    "seen": 1792705325.8388047,
-    "ast_hash": "55b673f3e3a9a584b2725d9da8debd83",
+    "mtime": 1793094571.8512545,
+    "seen": 1793095777.148154,
+    "ast_hash": "ec18390f87bce02654590a1e42c54181",
     "semantic_hash": ""
   },
   "src/presentation/providers/TindahanStoreProvider.tsx": {
@@ -1437,6 +1437,42 @@
     "mtime": 1793090845.97356,
     "seen": 1793091242.8199053,
     "ast_hash": "5304ec0374999091053e7f785e5e5cd9",
+    "semantic_hash": ""
+  },
+  "scripts/test-tutorial-state.cjs": {
+    "mtime": 1793096808.2975743,
+    "seen": 1793097143.2912254,
+    "ast_hash": "26304255fc952a2ff10428d7f07902b5",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/tutorial/MickeyGlovePointer.tsx": {
+    "mtime": 1793095424.0605159,
+    "seen": 1793095777.1483338,
+    "ast_hash": "7f1cb76920b4d8b938bf1bb181ac9603",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/tutorial/SpotlightOverlay.tsx": {
+    "mtime": 1793096889.4398499,
+    "seen": 1793097143.2918227,
+    "ast_hash": "061da0a4cc214259739e42478baeeacd",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/tutorial/SukliSimulationSheet.tsx": {
+    "mtime": 1793096791.1345966,
+    "seen": 1793097143.29183,
+    "ast_hash": "57536c8fa9b6edafa3070583c5e5cba4",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/tutorial/TutorialTooltipCard.tsx": {
+    "mtime": 1793094738.410093,
+    "seen": 1793095777.1483536,
+    "ast_hash": "f4d0cf8602040b6cfe937d5fece3752e",
+    "semantic_hash": ""
+  },
+  "src/presentation/providers/TutorialContext.tsx": {
+    "mtime": 1793097007.8498135,
+    "seen": 1793097143.291884,
+    "ast_hash": "67cafdf82d9ddf3317f8b0b01135221e",
     "semantic_hash": ""
   }
 }

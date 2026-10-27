@@ -4,6 +4,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
+import { useTutorial } from '@/presentation/providers/TutorialContext';
 import { getTranslations } from '@/presentation/localization/i18n';
 
 // Safe custom tab bar receiving standard React Navigation BottomTabBarProps
@@ -11,6 +12,38 @@ function CustomTindahanTabBar(props: any) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { cartSummary, settings, version, products } = useTindahanStore();
+  const {
+    isActive: isTutorialActive,
+    currentStep: tutorialStep,
+    registerTarget: registerTutorialTarget,
+    nextStep: nextTutorialStep,
+  } = useTutorial();
+
+  const cartFabRef = React.useRef<any>(null);
+
+  const measureCartFab = React.useCallback(() => {
+    if (cartFabRef.current) {
+      cartFabRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
+        if (width > 0 && height > 0) {
+          registerTutorialTarget(3, {
+            x,
+            y,
+            width,
+            height,
+            borderRadius: width / 2,
+          });
+        }
+      });
+    }
+  }, [registerTutorialTarget]);
+
+  React.useEffect(() => {
+    if (isTutorialActive && tutorialStep === 3) {
+      const timer = setTimeout(measureCartFab, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isTutorialActive, tutorialStep, measureCartFab]);
+
   const outOfStockCount = products.filter((p) => p.stockStatus === 'OUT_OF_STOCK').length;
   const lowStockCount = products.filter((p) => p.stockStatus === 'LOW_STOCK').length;
   const expiringSoonCount = products.filter((p) => {
@@ -167,8 +200,16 @@ function CustomTindahanTabBar(props: any) {
         <View style={styles.centerFabContainer}>
           <Animated.View style={{ transform: [{ scale: heartbeatAnim }], overflow: 'visible' }}>
             <Pressable
+              ref={cartFabRef}
+              onLayout={() => measureCartFab()}
               style={[styles.centerFab, isCheckout ? styles.centerFabActive : null]}
-              onPress={() => handleTabPress('checkout')}
+              onPress={() => {
+                if (isTutorialActive && tutorialStep === 3) {
+                  nextTutorialStep();
+                  return; // Keep user on POS screen; Step 4 is an in-place simulation sheet
+                }
+                handleTabPress('checkout');
+              }}
               hitSlop={10}
             >
               <Ionicons name="cart" size={24} color="#FFFFFF" />

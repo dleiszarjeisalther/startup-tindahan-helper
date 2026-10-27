@@ -72,15 +72,15 @@
     "semantic_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275"
   },
   "src/app/_layout.tsx": {
-    "mtime": 1792931020.0580828,
-    "seen": 1792931478.6836803,
-    "ast_hash": "21e882451f999b971ba5a5cf5d864c16",
+    "mtime": 1793094815.11829,
+    "seen": 1793095777.1477585,
+    "ast_hash": "50eb0bd7f34b0de3b8b8ddf69e5f923d",
     "semantic_hash": ""
   },
   "src/app/checkout.tsx": {
-    "mtime": 1793089329.4711943,
-    "seen": 1793089531.3867652,
-    "ast_hash": "27655aa74ad49454b451bdd2618bb0f2",
+    "mtime": 1793091075.629782,
+    "seen": 1793091242.819269,
+    "ast_hash": "7cc75b455be34d5689aeb7c97dd3d287",
     "semantic_hash": ""
   },
   "src/app/explore.tsx": {
@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1793089152.5073504,
-    "seen": 1793089531.3868053,
-    "ast_hash": "a1ad65d0c4bdc6d73a2d6db5bc7ed198",
+    "mtime": 1793095530.6696687,
+    "seen": 1793095777.1477892,
+    "ast_hash": "bd124f11ee14db90362421e0dfbe7f31",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
-    "mtime": 1792914889.5936737,
-    "seen": 1792915005.9656796,
-    "ast_hash": "7392567e15e83bbda35f14ae8f44d277",
+    "mtime": 1793095248.3828864,
+    "seen": 1793095777.147803,
+    "ast_hash": "c85af456a5a1424ffa4ccedd26d1c1ce",
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "src/application/TindahanStoreService.ts": {
-    "mtime": 1793089001.1155386,
-    "seen": 1793089531.386941,
-    "ast_hash": "e282443b9913cfb242fcacf5831c4bf2",
+    "mtime": 1793090839.6082766,
+    "seen": 1793091242.8194432,
+    "ast_hash": "3c877ca654b92a22e69ce447f80a9b80",
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": "2defa175163e104a6e2232436fa77e30"
   },
   "src/components/app-tabs.tsx": {
-    "mtime": 1792909802.8218932,
-    "seen": 1792910006.7324362,
-    "ast_hash": "a837a80f39d7c2b177c2657fe710cc64",
+    "mtime": 1793095546.4872441,
+    "seen": 1793095777.1478975,
+    "ast_hash": "b1aed8fa513ca08f6b8ccaaf49abbf83",
     "semantic_hash": ""
   },
   "src/components/app-tabs.web.tsx": {
@@ -288,9 +288,9 @@
     "semantic_hash": "370d505d4eca4ae08bde70346f96bad6"
   },
   "src/presentation/hooks/useTindahanStore.ts": {
-    "mtime": 1793089032.079618,
-    "seen": 1793089531.3875906,
-    "ast_hash": "5d273bf2736b8884f17bdfc89e4d236a",
+    "mtime": 1793090464.9747024,
+    "seen": 1793091242.82005,
+    "ast_hash": "c8595c309d964c30370be9da5eeb9548",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -450,9 +450,9 @@
     "semantic_hash": "c62d22797f3002396754d8cc55b0ae1a"
   },
   "src/presentation/components/BarcodeScannerViewfinder.tsx": {
-    "mtime": 1792931049.452877,
-    "seen": 1792931478.6838894,
-    "ast_hash": "6ded5606a3e274cd632d732babb8704c",
+    "mtime": 1793095572.21176,
+    "seen": 1793095777.1481767,
+    "ast_hash": "12d3f172c3866689a1e58303668f940f",
     "semantic_hash": ""
   },
   "src/infrastructure/services/OpenFoodFactsApiClient.ts": {
@@ -480,9 +480,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/storage/KeyValueStorage.ts": {
-    "mtime": 1792681190.4675288,
-    "seen": 1792705325.8388047,
-    "ast_hash": "55b673f3e3a9a584b2725d9da8debd83",
+    "mtime": 1793094571.8512545,
+    "seen": 1793095777.148154,
+    "ast_hash": "ec18390f87bce02654590a1e42c54181",
     "semantic_hash": ""
   },
   "src/presentation/providers/TindahanStoreProvider.tsx": {
@@ -1416,9 +1416,9 @@
     "semantic_hash": ""
   },
   "scripts/test-multi-quantity-refund.cjs": {
-    "mtime": 1793089460.4391704,
-    "seen": 1793089531.3866985,
-    "ast_hash": "bb24b68e74b35d4c827fbf2513036a9f",
+    "mtime": 1793090742.0569253,
+    "seen": 1793091242.8192053,
+    "ast_hash": "107b2f0ec649cd88ecb9c5e0999f7901",
     "semantic_hash": ""
   },
   "src/presentation/components/ProductStockManageModal.tsx": {
@@ -1428,9 +1428,51 @@
     "semantic_hash": ""
   },
   "src/presentation/components/TransactionDetailModal.tsx": {
-    "mtime": 1793089257.3387945,
-    "seen": 1793089531.3875394,
-    "ast_hash": "eb31491eca36288ffa6e98affe3b2957",
+    "mtime": 1793091101.4536836,
+    "seen": 1793091242.8200014,
+    "ast_hash": "290839d0601d6a3de9d35db8d4037e52",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/CancelExchangeCreditModal.tsx": {
+    "mtime": 1793090845.97356,
+    "seen": 1793091242.8199053,
+    "ast_hash": "5304ec0374999091053e7f785e5e5cd9",
+    "semantic_hash": ""
+  },
+  "scripts/test-tutorial-state.cjs": {
+    "mtime": 1793095305.5620253,
+    "seen": 1793095777.1477334,
+    "ast_hash": "0fb8425beaadf1452ae1ecc7e4543b55",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/tutorial/MickeyGlovePointer.tsx": {
+    "mtime": 1793095424.0605159,
+    "seen": 1793095777.1483338,
+    "ast_hash": "7f1cb76920b4d8b938bf1bb181ac9603",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/tutorial/SpotlightOverlay.tsx": {
+    "mtime": 1793095444.012696,
+    "seen": 1793095777.148341,
+    "ast_hash": "257f414b7c7b2e02ebc776139cd0a1df",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/tutorial/SukliSimulationSheet.tsx": {
+    "mtime": 1793095501.678456,
+    "seen": 1793095777.1483474,
+    "ast_hash": "164bf64a37d32213d1c0488181246c4e",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/tutorial/TutorialTooltipCard.tsx": {
+    "mtime": 1793094738.410093,
+    "seen": 1793095777.1483536,
+    "ast_hash": "f4d0cf8602040b6cfe937d5fece3752e",
+    "semantic_hash": ""
+  },
+  "src/presentation/providers/TutorialContext.tsx": {
+    "mtime": 1793095402.3526556,
+    "seen": 1793095777.1483994,
+    "ast_hash": "036725f30008eb451e583d890fe04433",
     "semantic_hash": ""
   }
 }

@@ -37,6 +37,8 @@ export interface IKeyValueStorage {
   isGcashConvenienceFeeEnabled(): boolean;
   getQrPhImageUri(): string | undefined;
   setQrPhImageUri(uri: string): void;
+  hasSeenInteractiveTutorial(): boolean;
+  setInteractiveTutorialCompleted(completed?: boolean): void;
 }
 
 /**
@@ -371,6 +373,15 @@ class SynchronousKeyValueStorage implements IKeyValueStorage {
 
   public setQrPhImageUri(uri: string): void {
     this.setString('store_qr_ph_image_uri', uri);
+  }
+
+  public hasSeenInteractiveTutorial(): boolean {
+    this.ensureInitialized();
+    return this.getBoolean('has_seen_interactive_tutorial', false) ?? false;
+  }
+
+  public setInteractiveTutorialCompleted(completed: boolean = true): void {
+    this.setBoolean('has_seen_interactive_tutorial', completed);
   }
 }
 
