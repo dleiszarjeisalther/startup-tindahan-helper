@@ -1422,15 +1422,15 @@
     "semantic_hash": ""
   },
   "src/presentation/components/ProductStockManageModal.tsx": {
-    "mtime": 1793085326.8789387,
-    "seen": 1793086357.6993215,
-    "ast_hash": "d352d9fb9925918deb18cdb689796276",
+    "mtime": 1793088025.6149952,
+    "seen": 1793088190.0921152,
+    "ast_hash": "cc2e5e1d14ceae5b73619d44cfba840b",
     "semantic_hash": ""
   },
   "src/presentation/components/TransactionDetailModal.tsx": {
-    "mtime": 1793086199.073497,
-    "seen": 1793086357.6993403,
-    "ast_hash": "004a00f715b3f7eeee40111f1f3a856e",
+    "mtime": 1793087966.3081326,
+    "seen": 1793088190.0921726,
+    "ast_hash": "fb4d6a4a75d6e0c5d6e9e1bc47a2c7e8",
     "semantic_hash": ""
   }
 }

@@ -1428,9 +1428,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/TransactionDetailModal.tsx": {
-    "mtime": 1793087966.3081326,
-    "seen": 1793088190.0921726,
-    "ast_hash": "fb4d6a4a75d6e0c5d6e9e1bc47a2c7e8",
+    "mtime": 1793088377.9439397,
+    "seen": 1793088515.3211794,
+    "ast_hash": "66c808ac2949ca08b598f30115064d04",
     "semantic_hash": ""
   }
 }

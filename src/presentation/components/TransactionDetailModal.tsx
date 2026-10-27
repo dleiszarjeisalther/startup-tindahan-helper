@@ -10,6 +10,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { SaleTransactionRecord } from '../../application/TindahanStoreService';
+import { useTindahanStore } from '../hooks/useTindahanStore';
+import { ProductThumbnail } from './ProductThumbnail';
 import { ConfirmationModal, ConfirmationModalDetail, ConfirmationType } from './ConfirmationModal';
 
 export type ReturnDisposition = 'SELLABLE' | 'DAMAGED_QUARANTINE';
@@ -45,6 +47,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   showToast,
   showProfit = true,
 }) => {
+  const { products } = useTindahanStore();
   const [selectedProductIdOverride, setSelectedProductIdOverride] = useState<string | null>(null);
   const [returnQty, setReturnQty] = useState<number>(1);
   const [disposition, setDisposition] = useState<ReturnDisposition>('SELLABLE');
@@ -294,6 +297,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
               {/* Items List Card Container */}
               <View style={styles.itemsCardContainer}>
                 {transaction.items.map((item, index) => {
+                  const matchedProduct = products.find((p) => p.id === item.productId);
                   const isSelected = selectedProductId === item.productId;
                   const itemRemaining = Math.max(0, item.quantity - item.returnedQty);
                   const isItemDone = itemRemaining === 0;
@@ -325,9 +329,19 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
                           }
                         }}
                       >
-                        {/* Thumbnail / Product Icon */}
-                        <View style={styles.itemThumbnailBox}>
-                          <Ionicons name="bag-handle-outline" size={20} color="#3B82F6" />
+                        {/* Thumbnail / Product Image */}
+                        <View style={styles.itemThumbnailWrapper}>
+                          {matchedProduct ? (
+                            <ProductThumbnail
+                              visual={matchedProduct.visual}
+                              imageUri={matchedProduct.imageUri}
+                              size="sm"
+                            />
+                          ) : (
+                            <View style={styles.itemThumbnailBox}>
+                              <Ionicons name="bag-handle-outline" size={20} color="#3B82F6" />
+                            </View>
+                          )}
                         </View>
 
                         {/* Name and Qty Info */}
@@ -846,9 +860,15 @@ const styles = StyleSheet.create({
   itemRowPressableSelected: {
     backgroundColor: '#F8FAFC',
   },
+  itemThumbnailWrapper: {
+    width: 40,
+    height: 46,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   itemThumbnailBox: {
-    width: 42,
-    height: 42,
+    width: 40,
+    height: 46,
     borderRadius: 8,
     backgroundColor: '#EFF6FF',
     alignItems: 'center',

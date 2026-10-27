@@ -121,19 +121,6 @@
       "source_location": "L90"
     },
     {
-      "id": "src_application_tindahanstoreservice_daterangefilter",
-      "label": "DateRangeFilter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "history.tsx",
-      "file_type": "code",
-      "norm_label": "daterangefilter",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L84"
-    },
-    {
       "id": "src_application_tindahanstoreservice_stockmovementrecord",
       "label": "StockMovementRecord",
       "_callable": true,
@@ -145,19 +132,6 @@
       "norm_label": "stockmovementrecord",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L193"
-    },
-    {
-      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodalprops",
-      "label": "DateRangeCalendarModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "history.tsx",
-      "file_type": "code",
-      "norm_label": "daterangecalendarmodalprops",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L16"
     },
     {
       "id": "src_infrastructure_services_licensingservice_licensingservice",
@@ -238,6 +212,32 @@
       "source_location": "L42"
     },
     {
+      "id": "src_presentation_components_floatingtoast_floatingtoastprops",
+      "label": "FloatingToastProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "utang.tsx",
+      "file_type": "code",
+      "norm_label": "floatingtoastprops",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_presentation_components_floatingtoast_toasttype",
+      "label": "ToastType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "utang.tsx",
+      "file_type": "code",
+      "norm_label": "toasttype",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L11"
+    },
+    {
       "id": "src_presentation_localization_i18n_supportedlanguage",
       "label": "SupportedLanguage",
       "_callable": true,
@@ -309,7 +309,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "more.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/checkout.tsx",
@@ -322,7 +322,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "more.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/more.tsx",
@@ -335,7 +335,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "more.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/sales.tsx",
@@ -348,7 +348,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "more.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/settings.tsx",
@@ -361,7 +361,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "more.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/utang.tsx",
@@ -374,24 +374,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "more.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodaldetail",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
       "source_location": "L26"
-    },
-    {
-      "id": "src_presentation_components_confirmationmodal_confirmationmodalprops",
-      "label": "ConfirmationModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "ConfirmationModal.tsx",
-      "file_type": "code",
-      "norm_label": "confirmationmodalprops",
-      "source_file": "src/presentation/components/ConfirmationModal.tsx",
-      "source_location": "L39"
     },
     {
       "id": "src_presentation_components_confirmationmodal_confirmationtype",
@@ -400,24 +387,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "more.tsx",
       "file_type": "code",
       "norm_label": "confirmationtype",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
       "source_location": "L15"
-    },
-    {
-      "id": "src_presentation_components_confirmationmodal_typetheme",
-      "label": "TypeTheme",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "ConfirmationModal.tsx",
-      "file_type": "code",
-      "norm_label": "typetheme",
-      "source_file": "src/presentation/components/ConfirmationModal.tsx",
-      "source_location": "L54"
     },
     {
       "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
@@ -628,6 +602,19 @@
       "source_location": "L5"
     },
     {
+      "id": "src_application_tindahanstoreservice_daterangefilter",
+      "label": "DateRangeFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "daterangefilter",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L84"
+    },
+    {
       "id": "src_application_tindahanstoreservice_saletransactionrecord",
       "label": "SaleTransactionRecord",
       "_callable": true,
@@ -641,30 +628,17 @@
       "source_location": "L128"
     },
     {
-      "id": "src_presentation_components_floatingtoast_floatingtoastprops",
-      "label": "FloatingToastProps",
+      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodalprops",
+      "label": "DateRangeCalendarModalProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
       "community_name": "sales.tsx",
       "file_type": "code",
-      "norm_label": "floatingtoastprops",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_presentation_components_floatingtoast_toasttype",
-      "label": "ToastType",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "toasttype",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L11"
+      "norm_label": "daterangecalendarmodalprops",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L16"
     },
     {
       "id": "src_presentation_components_transactiondetailmodal_returndisposition",
@@ -745,6 +719,19 @@
       "source_location": "L20"
     },
     {
+      "id": "src_presentation_components_confirmationmodal_confirmationmodalprops",
+      "label": "ConfirmationModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "confirmationmodalprops",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L39"
+    },
+    {
       "id": "src_presentation_components_confirmationmodal_reasonselectorconfig",
       "label": "ReasonSelectorConfig",
       "_callable": true,
@@ -756,6 +743,19 @@
       "norm_label": "reasonselectorconfig",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
       "source_location": "L32"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal_typetheme",
+      "label": "TypeTheme",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "typetheme",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L54"
     },
     {
       "id": "src_domain_services_pinsecurityengine_pinsecurityengine",
@@ -1496,7 +1496,7 @@
       "file_type": "code",
       "norm_label": "productstockmanagemodalprops",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
       "id": "src_presentation_components_productthumbnail_productthumbnailprops",
@@ -3994,28 +3994,52 @@
       "source_location": "L15"
     },
     {
-      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodal",
-      "label": "DateRangeCalendarModal()",
+      "id": "src_app_history_stockmovementhistoryscreen",
+      "label": "StockMovementHistoryScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 106,
       "community_name": "history.tsx",
       "file_type": "code",
-      "norm_label": "daterangecalendarmodal()",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L34"
+      "norm_label": "stockmovementhistoryscreen()",
+      "source_file": "src/app/history.tsx",
+      "source_location": "L65"
     },
     {
-      "id": "src_presentation_components_daterangecalendarmodal_issameday",
-      "label": "isSameDay()",
+      "id": "src_app_sales_saleshistoryscreen",
+      "label": "SalesHistoryScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 106,
       "community_name": "history.tsx",
       "file_type": "code",
-      "norm_label": "issameday()",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L26"
+      "norm_label": "saleshistoryscreen()",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L67"
+    },
+    {
+      "id": "src_app_utang_sukiutangledgerscreen",
+      "label": "SukiUtangLedgerScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "sukiutangledgerscreen()",
+      "source_file": "src/app/utang.tsx",
+      "source_location": "L44"
+    },
+    {
+      "id": "src_presentation_localization_i18n_gettranslations",
+      "label": "getTranslations()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "gettranslations()",
+      "source_file": "src/presentation/localization/i18n.ts",
+      "source_location": "L991"
     },
     {
       "id": "src_infrastructure_storage_keyvaluestorage_synchronouskeyvaluestorage_savecategories",
@@ -4462,42 +4486,6 @@
       "source_location": "L190"
     },
     {
-      "id": "src_app_history_stockmovementhistoryscreen",
-      "label": "StockMovementHistoryScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "stockmovementhistoryscreen()",
-      "source_file": "src/app/history.tsx",
-      "source_location": "L65"
-    },
-    {
-      "id": "src_app_sales_saleshistoryscreen",
-      "label": "SalesHistoryScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "saleshistoryscreen()",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L67"
-    },
-    {
-      "id": "src_app_utang_sukiutangledgerscreen",
-      "label": "SukiUtangLedgerScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "sukiutangledgerscreen()",
-      "source_file": "src/app/utang.tsx",
-      "source_location": "L44"
-    },
-    {
       "id": "src_presentation_components_floatingtoast_floatingtoast",
       "label": "FloatingToast()",
       "_callable": true,
@@ -4520,18 +4508,6 @@
       "norm_label": "screensafeareaview()",
       "source_file": "src/presentation/components/ScreenSafeAreaView.tsx",
       "source_location": "L15"
-    },
-    {
-      "id": "src_presentation_localization_i18n_gettranslations",
-      "label": "getTranslations()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "gettranslations()",
-      "source_file": "src/presentation/localization/i18n.ts",
-      "source_location": "L991"
     },
     {
       "id": "src_domain_value_objects_barcode_barcode_frompersisted",
@@ -4856,18 +4832,6 @@
       "norm_label": ".setstoresecurityenabled()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L321"
-    },
-    {
-      "id": "src_presentation_components_confirmationmodal_confirmationmodal",
-      "label": "ConfirmationModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "ConfirmationModal.tsx",
-      "file_type": "code",
-      "norm_label": "confirmationmodal()",
-      "source_file": "src/presentation/components/ConfirmationModal.tsx",
-      "source_location": "L118"
     },
     {
       "id": "src_components_animated_icon_web_animatedicon",
@@ -5554,6 +5518,30 @@
       "source_location": "L15"
     },
     {
+      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodal",
+      "label": "DateRangeCalendarModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "daterangecalendarmodal()",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L34"
+    },
+    {
+      "id": "src_presentation_components_daterangecalendarmodal_issameday",
+      "label": "isSameDay()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "issameday()",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L26"
+    },
+    {
       "id": "src_presentation_components_receiptprintermodal_receiptprintermodal",
       "label": "ReceiptPrinterModal()",
       "_callable": true,
@@ -5614,6 +5602,18 @@
       "source_location": "L59"
     },
     {
+      "id": "src_presentation_components_confirmationmodal_confirmationmodal",
+      "label": "ConfirmationModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "confirmationmodal()",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L118"
+    },
+    {
       "id": "src_presentation_components_productstockmanagemodal_productstockmanagemodal",
       "label": "ProductStockManageModal()",
       "_callable": true,
@@ -5623,7 +5623,7 @@
       "file_type": "code",
       "norm_label": "productstockmanagemodal()",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L41"
+      "source_location": "L42"
     },
     {
       "id": "src_presentation_components_productthumbnail_productthumbnail",
@@ -7981,28 +7981,6 @@
       "source_location": "L902"
     },
     {
-      "id": "src_presentation_components_daterangecalendarmodal",
-      "label": "DateRangeCalendarModal.tsx",
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "history.tsx",
-      "file_type": "code",
-      "norm_label": "daterangecalendarmodal.tsx",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_daterangecalendarmodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "history.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L770"
-    },
-    {
       "id": "src_infrastructure_services_licensingservice",
       "label": "LicensingService.ts",
       "_origin": "ast",
@@ -8078,6 +8056,28 @@
       "norm_label": "styles",
       "source_file": "src/app/utang.tsx",
       "source_location": "L1277"
+    },
+    {
+      "id": "src_presentation_components_floatingtoast",
+      "label": "FloatingToast.tsx",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "utang.tsx",
+      "file_type": "code",
+      "norm_label": "floatingtoast.tsx",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_floatingtoast_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "utang.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L189"
     },
     {
       "id": "src_presentation_components_screensafeareaview",
@@ -8271,7 +8271,7 @@
       "label": "more.tsx",
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "more.tsx",
       "file_type": "code",
       "norm_label": "more.tsx",
       "source_file": "src/app/more.tsx",
@@ -8282,66 +8282,11 @@
       "label": "styles",
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "more.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/more.tsx",
       "source_location": "L457"
-    },
-    {
-      "id": "src_presentation_components_confirmationmodal",
-      "label": "ConfirmationModal.tsx",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "ConfirmationModal.tsx",
-      "file_type": "code",
-      "norm_label": "confirmationmodal.tsx",
-      "source_file": "src/presentation/components/ConfirmationModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_confirmationmodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "ConfirmationModal.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/ConfirmationModal.tsx",
-      "source_location": "L319"
-    },
-    {
-      "id": "src_presentation_components_confirmationmodal_themes",
-      "label": "THEMES",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "ConfirmationModal.tsx",
-      "file_type": "code",
-      "norm_label": "themes",
-      "source_file": "src/presentation/components/ConfirmationModal.tsx",
-      "source_location": "L61"
-    },
-    {
-      "id": "src_presentation_components_productstockmanagemodal",
-      "label": "ProductStockManageModal.tsx",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "ConfirmationModal.tsx",
-      "file_type": "code",
-      "norm_label": "productstockmanagemodal.tsx",
-      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_productstockmanagemodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "ConfirmationModal.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L561"
     },
     {
       "id": "entry",
@@ -9714,26 +9659,26 @@
       "source_location": "L1847"
     },
     {
-      "id": "src_presentation_components_floatingtoast",
-      "label": "FloatingToast.tsx",
+      "id": "src_presentation_components_daterangecalendarmodal",
+      "label": "DateRangeCalendarModal.tsx",
       "_origin": "ast",
       "community": 2,
       "community_name": "sales.tsx",
       "file_type": "code",
-      "norm_label": "floatingtoast.tsx",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "norm_label": "daterangecalendarmodal.tsx",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_components_floatingtoast_styles",
+      "id": "src_presentation_components_daterangecalendarmodal_styles",
       "label": "styles",
       "_origin": "ast",
       "community": 2,
       "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "styles",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L189"
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L770"
     },
     {
       "id": "src_presentation_components_receiptprintermodal",
@@ -9777,7 +9722,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/TransactionDetailModal.tsx",
-      "source_location": "L614"
+      "source_location": "L627"
     },
     {
       "id": "src_app_inventory",
@@ -9899,6 +9844,61 @@
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L394"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal",
+      "label": "ConfirmationModal.tsx",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "confirmationmodal.tsx",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L319"
+    },
+    {
+      "id": "src_presentation_components_confirmationmodal_themes",
+      "label": "THEMES",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "themes",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L61"
+    },
+    {
+      "id": "src_presentation_components_productstockmanagemodal",
+      "label": "ProductStockManageModal.tsx",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "productstockmanagemodal.tsx",
+      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_productstockmanagemodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
+      "source_location": "L662"
     },
     {
       "id": "src_presentation_components_productthumbnail",
@@ -23829,7 +23829,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -27839,7 +27839,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -27851,7 +27851,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -27863,7 +27863,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -27875,7 +27875,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -27887,7 +27887,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -28001,6 +28001,18 @@
     {
       "source": "src_presentation_components_transactiondetailmodal",
       "target": "src_presentation_components_confirmationmodal_confirmationmodaldetail",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/presentation/components/TransactionDetailModal.tsx",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_transactiondetailmodal",
+      "target": "src_presentation_components_confirmationmodal_confirmationtype",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -30856,19 +30868,19 @@
     },
     {
       "source": "src_presentation_components_productstockmanagemodal",
-      "target": "src_domain_entities_product",
+      "target": "ref_expo_router",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L13",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
       "source": "src_presentation_components_productstockmanagemodal",
-      "target": "src_presentation_components_productthumbnail",
+      "target": "src_domain_entities_product",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -30880,7 +30892,7 @@
     },
     {
       "source": "src_presentation_components_productstockmanagemodal",
-      "target": "src_presentation_components_confirmationmodal",
+      "target": "src_presentation_components_productthumbnail",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -30888,6 +30900,18 @@
       "context": "import",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
       "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_productstockmanagemodal",
+      "target": "src_presentation_components_confirmationmodal",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -40834,7 +40858,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -40845,7 +40869,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
@@ -40856,7 +40880,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L561",
+      "source_location": "L662",
       "weight": 1.0
     },
     {
@@ -41021,7 +41045,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/TransactionDetailModal.tsx",
-      "source_location": "L614",
+      "source_location": "L627",
       "weight": 1.0
     },
     {
@@ -46780,5 +46804,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a4782f060824315cf11406e4343fcd578986719f"
+  "built_at_commit": "0e63567bb16188a1e614e554d0d77544f6af83ff"
 }
