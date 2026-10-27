@@ -54,10 +54,10 @@
     "semantic_hash": "35cb915a0bebbebbe69cf7815e174462"
   },
   "eslint.config.js": {
-    "mtime": 1791869757.8863194,
-    "seen": 1791873707.9412045,
-    "ast_hash": "b713dd66aa3ad59ed5098d7b9f8dc202",
-    "semantic_hash": "b713dd66aa3ad59ed5098d7b9f8dc202"
+    "mtime": 1793107312.4639308,
+    "seen": 1793109705.1573386,
+    "ast_hash": "ccb8686d72daa53feee202e5c9e517fc",
+    "semantic_hash": ""
   },
   "package.json": {
     "mtime": 1792750636.385474,
@@ -90,21 +90,21 @@
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1793101853.3798842,
-    "seen": 1793102378.604162,
-    "ast_hash": "6b56aade47a4daf7ef837547eedbdc49",
+    "mtime": 1793109040.0105026,
+    "seen": 1793109705.1576273,
+    "ast_hash": "ba31d59ff77e31f66bf086f68b53ab6e",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1793101891.1616242,
-    "seen": 1793102378.6041718,
-    "ast_hash": "417e13285707f3c2dab301d81546934e",
+    "mtime": 1793109160.1112037,
+    "seen": 1793109705.1576345,
+    "ast_hash": "d951ebe6a010d86b2d627d99e0517b3e",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
-    "mtime": 1793095248.3828864,
-    "seen": 1793095777.147803,
-    "ast_hash": "c85af456a5a1424ffa4ccedd26d1c1ce",
+    "mtime": 1793107071.2798035,
+    "seen": 1793109705.157641,
+    "ast_hash": "f92337e2b03d1d312b27494803d12f7b",
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": "2defa175163e104a6e2232436fa77e30"
   },
   "src/components/app-tabs.tsx": {
-    "mtime": 1793099893.4070559,
-    "seen": 1793100927.9853578,
-    "ast_hash": "302d7deb7508173e59ab12ac5b4aff19",
+    "mtime": 1793109056.8456903,
+    "seen": 1793109705.1578205,
+    "ast_hash": "4e551bdfd9567266c8125c477083b0e8",
     "semantic_hash": ""
   },
   "src/components/app-tabs.web.tsx": {
@@ -270,9 +270,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/BarcodeInputField.tsx": {
-    "mtime": 1792913330.9074793,
-    "seen": 1792913524.8994384,
-    "ast_hash": "e7d69fe65a2aaf49d7bb1ecf053612dc",
+    "mtime": 1793108776.3080573,
+    "seen": 1793109705.158122,
+    "ast_hash": "3fa9c9c3a15b7e46641a8130018364d6",
     "semantic_hash": ""
   },
   "src/presentation/components/ProductThumbnail.tsx": {
@@ -1452,9 +1452,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/tutorial/SpotlightOverlay.tsx": {
-    "mtime": 1793102171.7246928,
-    "seen": 1793102378.6046994,
-    "ast_hash": "a94af1fe25bac8aeb0e081478b47be6b",
+    "mtime": 1793109107.4485009,
+    "seen": 1793109705.158299,
+    "ast_hash": "fdf1f6c5ef03e6de957c3821d2d6c22f",
     "semantic_hash": ""
   },
   "src/presentation/components/tutorial/SukliSimulationSheet.tsx": {
@@ -1464,15 +1464,15 @@
     "semantic_hash": ""
   },
   "src/presentation/components/tutorial/TutorialTooltipCard.tsx": {
-    "mtime": 1793099272.35375,
-    "seen": 1793100927.9857466,
-    "ast_hash": "7dab0b32de5c91814bb5253bf4e21968",
+    "mtime": 1793109137.088066,
+    "seen": 1793109705.158315,
+    "ast_hash": "0b8cb005726480d85c37516886f1b071",
     "semantic_hash": ""
   },
   "src/presentation/providers/TutorialContext.tsx": {
-    "mtime": 1793102012.6072125,
-    "seen": 1793102378.6047554,
-    "ast_hash": "e5d22172fec002a9f45af0551dc44902",
+    "mtime": 1793108736.556324,
+    "seen": 1793109705.158363,
+    "ast_hash": "4d655e317a2d7d991bbe7d1f4721eea0",
     "semantic_hash": ""
   },
   "scripts/generate_mickey_glove.py": {
@@ -1482,8 +1482,8 @@
     "semantic_hash": ""
   },
   "assets/images/mickey_glove_pointer.png": {
-    "mtime": 1793098928.2933025,
-    "seen": 1793100927.985954,
+    "mtime": 1793108045.3152528,
+    "seen": 1793109705.158884,
     "ast_hash": "08768b7076f7ac09b2a8b26b104cb064",
     "semantic_hash": ""
   }

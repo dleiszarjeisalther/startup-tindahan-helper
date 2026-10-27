@@ -80,3 +80,24 @@ All user-visible text (screen titles, list items, badges, banners, modals, alert
   * Instead of "Database write error" -> use "Hindi naisave ang tala. Pakisubukan muli."
   * Instead of "Quarantine stock" -> use "Sira / Expired na Paninda".
 
+## Mandatory Graphify-First Codebase Exploration & Graph Maintenance Invariant
+
+All agents (including parent orchestrators and subagents like DeepInvestigator, DeepCoder, etc.) MUST strictly use `graphify` for codebase navigation, exploration, and graph maintenance:
+
+1. **Graphify-First Lookup (No Blind Scanning)**:
+   - NEVER scan the codebase broadly, grep entire trees, or read arbitrary file chunks.
+   - ALWAYS run `python -m graphify query "<keywords / symbol / function from task>"` first to pinpoint the exact file path, symbol, and line numbers.
+   - Jump directly to the identified location and read only the targeted window.
+
+2. **Token Conservation During Exploration**:
+   - ONE graphify query → ONE surgical window (target_line ± 15) → ONE edit. Stop.
+   - NEVER open or re-read the same file multiple times per task.
+   - NEVER read adjacent blocks of the same file (e.g. L1-30 then L31-60).
+   - If one surgical read is not enough context, stop and ask for clarification rather than reading blindly.
+
+3. **Mandatory Post-Task Graph Synchronization**:
+   - After completing code modifications, ALWAYS run:
+     `python -m graphify update .`
+     to keep the knowledge graph, AST nodes, and community linkages fully synchronized and up-to-date.
+
+
