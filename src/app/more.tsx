@@ -15,7 +15,6 @@ import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import * as Haptics from 'expo-haptics';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
-import { useTutorial } from '@/presentation/providers/TutorialContext';
 import { getTranslations } from '@/presentation/localization/i18n';
 import {
   ConfirmationModal,
@@ -38,7 +37,6 @@ interface ConfirmationState {
 
 export default function MenuProfileScreen() {
   const router = useRouter();
-  const { startTutorial } = useTutorial();
   const {
     settings,
     updateSettings,
@@ -283,42 +281,8 @@ export default function MenuProfileScreen() {
                 • Instant Exchange Credit &amp; Same-Day Owner Void{'\n'}
                 • 12m / 24m+ YoY Seasonal Product Forecast (Feature C)
               </Text>
-              <Pressable
-                style={styles.replayTutorialBtn}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                  startTutorial(true);
-                  router.navigate('/');
-                }}
-              >
-                <Ionicons name="school" size={16} color="#FFFFFF" />
-                <Text style={styles.replayTutorialBtnText}>
-                  Gabay sa Pagtinda para sa Bagong Tindero
-                </Text>
-              </Pressable>
             </View>
           ) : null}
-
-          {/* Gabay sa Pagtinda para sa Bagong Tindero */}
-          <Pressable
-            style={styles.menuRow}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-              startTutorial(true);
-              router.navigate('/');
-            }}
-          >
-            <View style={styles.menuLeft}>
-              <Ionicons name="school-outline" size={22} color="#0D7A52" />
-              <View>
-                <Text style={styles.menuLabel}>Gabay sa Pagtinda para sa Bagong Tindero</Text>
-                <Text style={styles.menuSubLabel}>
-                  Hakbang-hakbang na gabay mula sa paglista ng paninda hanggang sa kaha
-                </Text>
-              </View>
-            </View>
-            <Text style={styles.menuChevron}>›</Text>
-          </Pressable>
 
           {/* 10. Patakaran sa Privacy (Data Privacy Act RA 10173) */}
           <Pressable
@@ -642,22 +606,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#475569',
     lineHeight: 18,
-  },
-  replayTutorialBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#0D7A52',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    marginTop: 6,
-  },
-  replayTutorialBtnText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '700',
   },
   menuSubLabel: {
     fontSize: 11,

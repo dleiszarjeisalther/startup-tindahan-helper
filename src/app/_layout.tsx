@@ -6,8 +6,6 @@ import { useColorScheme, View } from 'react-native';
 import AppTabs from '@/components/app-tabs';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { TindahanStoreProvider } from '@/presentation/providers/TindahanStoreProvider';
-import { TutorialProvider } from '@/presentation/providers/TutorialContext';
-import { SpotlightOverlay } from '@/presentation/components/tutorial/SpotlightOverlay';
 import { LicensingGate } from '@/presentation/components/LicensingGate';
 import { AppUpdatePrompt } from '@/presentation/components/AppUpdatePrompt';
 import '@/infrastructure/services/SoundFeedbackService';
@@ -52,16 +50,13 @@ export default function TabLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <TindahanStoreProvider>
-        <TutorialProvider>
-          <View style={{ flex: 1, backgroundColor: '#0D7A52' }}>
-            <LicensingGate>
-              <AppTabs />
-              <AppUpdatePrompt />
-            </LicensingGate>
-            <SpotlightOverlay />
-            <AnimatedSplashOverlay />
-          </View>
-        </TutorialProvider>
+        <View style={{ flex: 1, backgroundColor: '#0D7A52' }}>
+          <LicensingGate>
+            <AppTabs />
+            <AppUpdatePrompt />
+          </LicensingGate>
+          <AnimatedSplashOverlay />
+        </View>
       </TindahanStoreProvider>
     </ThemeProvider>
   );

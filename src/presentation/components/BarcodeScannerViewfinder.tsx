@@ -1,6 +1,6 @@
 // src/presentation/components/BarcodeScannerViewfinder.tsx
 // OOP Encapsulated Barcode Scanner Viewfinder with Animated Sweeping Laser
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -48,10 +48,6 @@ export interface BarcodeScannerViewfinderProps {
   topControlInset?: number;
   /** Custom container style */
   style?: StyleProp<ViewStyle>;
-  /** Callback when the reticle layout is measured in window coordinates */
-  onReticleLayout?: (layout: { x: number; y: number; width: number; height: number }) => void;
-  /** Whether the tutorial is active for Step 1 reticle focus */
-  tutorialActive?: boolean;
 }
 
 /**
@@ -76,8 +72,6 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
   containerHeight = 230,
   topControlInset = 0,
   style,
-  onReticleLayout,
-  tutorialActive = false,
 }) => {
   const [torchOn, setTorchOn] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
@@ -89,22 +83,6 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
   const cameraPermissionRequestedRef = useRef(false);
   const scanLockRef = useRef(false);
   const lastScannedBarcodeRef = useRef<{ code: string; time: number } | null>(null);
-  const reticleRef = useRef<any>(null);
-
-  const measureReticle = useCallback(() => {
-    reticleRef.current?.measureInWindow((x: number, y: number, width: number, height: number) => {
-      if (width > 0 && height > 0) {
-        onReticleLayout?.({ x, y, width, height });
-      }
-    });
-  }, [onReticleLayout]);
-
-  useEffect(() => {
-    if (tutorialActive || isActive) {
-      const timer = setTimeout(measureReticle, 150);
-      return () => clearTimeout(timer);
-    }
-  }, [tutorialActive, isActive, measureReticle]);
 
   // Smooth continuous vertical scanning laser animation
   const [laserAnim] = useState(() => new Animated.Value(0));
@@ -360,8 +338,6 @@ export const BarcodeScannerViewfinder: React.FC<BarcodeScannerViewfinderProps> =
       ) : (
         /* Center Barcode Reticle with Smooth Animated Sweeping Laser Line */
         <Pressable
-          ref={reticleRef}
-          onLayout={measureReticle}
           style={[styles.reticleWrapper, { width: reticleWidth, height: reticleHeight }]}
           onPress={handleToggleCamera}
           hitSlop={8}

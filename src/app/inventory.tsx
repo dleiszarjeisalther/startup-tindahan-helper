@@ -17,7 +17,6 @@ import * as Haptics from 'expo-haptics';
 import { useRouter, useLocalSearchParams, useIsFocused } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
-import { useTutorial } from '@/presentation/providers/TutorialContext';
 import { BarcodeInputField } from '@/presentation/components/BarcodeInputField';
 import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScannerViewfinder';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
@@ -93,16 +92,8 @@ export default function InventoryManagementScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchScanning, setIsSearchScanning] = useState(false);
   const activeSearchScanning = isSearchScanning && isFocused;
-  const [selectedModalProduct, setSelectedModalProduct] = useState<ProductDTO | null>(null);
-  const {
-    isActive: isTutorialActive,
-    currentStep: tutorialStep,
-    registerTarget: registerTutorialTarget,
-    nextStep: nextTutorialStep,
-  } = useTutorial();
-
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
-  const isFormVisible = showAddForm || (isTutorialActive && tutorialStep >= 2);
+  const [selectedModalProduct, setSelectedModalProduct] = useState<ProductDTO | null>(null);
   const [newExpiryDate, setNewExpiryDate] = useState<string>('');
   const [editExpiryDate, setEditExpiryDate] = useState<string>('');
   const [pinChallengeAction, setPinChallengeAction] = useState<(() => void) | null>(null);
@@ -567,106 +558,6 @@ export default function InventoryManagementScreen() {
     setToastMsg(msg);
     setToastType(type);
   };
-
-  const barcodeScanBtnRef = useRef<any>(null);
-  const productNameContainerRef = useRef<any>(null);
-  const categoryUnitSectionRef = useRef<any>(null);
-  const pricingSectionRef = useRef<any>(null);
-  const mainScrollRef = useRef<any>(null);
-
-  const measureStep2Target = useCallback(() => {
-    if (barcodeScanBtnRef.current) {
-      barcodeScanBtnRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
-        if (width > 0 && height > 0) {
-          registerTutorialTarget(2, { x, y, width, height, borderRadius: 10 });
-        }
-      });
-    }
-  }, [registerTutorialTarget]);
-
-  const measureStep3Target = useCallback(() => {
-    if (productNameContainerRef.current) {
-      productNameContainerRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
-        if (width > 0 && height > 0) {
-          registerTutorialTarget(3, { x, y, width, height, borderRadius: 12 });
-        }
-      });
-    }
-  }, [registerTutorialTarget]);
-
-  const measureStep4Target = useCallback(() => {
-    if (categoryUnitSectionRef.current) {
-      categoryUnitSectionRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
-        if (width > 0 && height > 0) {
-          registerTutorialTarget(4, { x, y, width, height, borderRadius: 14 });
-        }
-      });
-    }
-  }, [registerTutorialTarget]);
-
-  const measureStep5Target = useCallback(() => {
-    if (pricingSectionRef.current) {
-      pricingSectionRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
-        if (width > 0 && height > 0) {
-          registerTutorialTarget(5, { x, y, width, height, borderRadius: 16 });
-        }
-      });
-    }
-  }, [registerTutorialTarget]);
-
-  // Auto-scroll to focused elements during educational tour
-  useEffect(() => {
-    if (!isTutorialActive) return;
-
-    if (tutorialStep === 2) {
-      mainScrollRef.current?.scrollTo({ y: 0, animated: true });
-      const timer1 = setTimeout(measureStep2Target, 100);
-      const timer2 = setTimeout(measureStep2Target, 300);
-      const timer3 = setTimeout(measureStep2Target, 500);
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-        clearTimeout(timer3);
-      };
-    } else if (tutorialStep === 3) {
-      mainScrollRef.current?.scrollTo({ y: 60, animated: true });
-      const timer1 = setTimeout(measureStep3Target, 100);
-      const timer2 = setTimeout(measureStep3Target, 300);
-      const timer3 = setTimeout(measureStep3Target, 500);
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-        clearTimeout(timer3);
-      };
-    } else if (tutorialStep === 4) {
-      mainScrollRef.current?.scrollTo({ y: 150, animated: true });
-      const timer1 = setTimeout(measureStep4Target, 100);
-      const timer2 = setTimeout(measureStep4Target, 300);
-      const timer3 = setTimeout(measureStep4Target, 500);
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-        clearTimeout(timer3);
-      };
-    } else if (tutorialStep === 5) {
-      mainScrollRef.current?.scrollTo({ y: 350, animated: true });
-      const timer1 = setTimeout(measureStep5Target, 100);
-      const timer2 = setTimeout(measureStep5Target, 300);
-      const timer3 = setTimeout(measureStep5Target, 500);
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-        clearTimeout(timer3);
-      };
-    }
-  }, [
-    isTutorialActive,
-    tutorialStep,
-    measureStep2Target,
-    measureStep3Target,
-    measureStep4Target,
-    measureStep5Target,
-  ]);
   const [, setErrorMsg] = useState<string | null>(null);
   const [isLookingUpOnline, setIsLookingUpOnline] = useState(false);
   const [onlineNotice, setOnlineNotice] = useState<string | null>(null);
@@ -1317,7 +1208,7 @@ export default function InventoryManagementScreen() {
             }}
             hitSlop={10}
           >
-            <Text style={styles.plusCircleIcon}>{isFormVisible ? '✕' : '+'}</Text>
+            <Text style={styles.plusCircleIcon}>{showAddForm ? '✕' : '+'}</Text>
           </Pressable>
         </View>
       </View>
@@ -1463,29 +1354,12 @@ export default function InventoryManagementScreen() {
       ) : null}
 
       <ScrollView
-        ref={mainScrollRef}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        onScrollEndDrag={() => {
-          if (isTutorialActive) {
-            if (tutorialStep === 2) measureStep2Target();
-            else if (tutorialStep === 3) measureStep3Target();
-            else if (tutorialStep === 4) measureStep4Target();
-            else if (tutorialStep === 5) measureStep5Target();
-          }
-        }}
-        onMomentumScrollEnd={() => {
-          if (isTutorialActive) {
-            if (tutorialStep === 2) measureStep2Target();
-            else if (tutorialStep === 3) measureStep3Target();
-            else if (tutorialStep === 4) measureStep4Target();
-            else if (tutorialStep === 5) measureStep5Target();
-          }
-        }}
       >
         {/* Add New Product Card (With Image Capture & SQLite persistence) */}
-        {isFormVisible ? (
+        {showAddForm ? (
           <View style={styles.addCard}>
             <View style={styles.addCardHeader}>
               <Text style={styles.addCardTitle}>
@@ -1599,17 +1473,6 @@ export default function InventoryManagementScreen() {
             </View>
 
             <BarcodeInputField
-              scanButtonRef={barcodeScanBtnRef}
-              onScanButtonLayout={() => {
-                if (isTutorialActive && tutorialStep === 2) {
-                  measureStep2Target();
-                }
-              }}
-              onScanButtonPress={() => {
-                if (isTutorialActive && tutorialStep === 2) {
-                  nextTutorialStep();
-                }
-              }}
               label="Barcode ng Paninda (I-scan o I-type) *"
               placeholder="I-type o i-scan gamit ang camera"
               value={newBarcode}
@@ -1665,166 +1528,136 @@ export default function InventoryManagementScreen() {
               </View>
             )}
 
-            <View
-              ref={productNameContainerRef}
-              collapsable={false}
-              onLayout={() => {
-                if (isTutorialActive && tutorialStep === 3) {
-                  measureStep3Target();
-                }
+            <Text style={styles.fieldLabel}>Product Name *</Text>
+            <TextInput
+              style={styles.textInput}
+              value={newName}
+              onChangeText={(t) => {
+                setErrorMsg(null);
+                setNewName(t);
               }}
-            >
-              <Text style={styles.fieldLabel}>Product Name *</Text>
-              <TextInput
-                style={styles.textInput}
-                value={newName}
-                onChangeText={(t) => {
-                  setErrorMsg(null);
-                  setNewName(t);
-                }}
-                placeholder="e.g. Piattos BBQ or Intermediate Pad"
-                placeholderTextColor="#9CA3AF"
-                autoCapitalize="words"
-              />
-            </View>
+              placeholder="e.g. Piattos BBQ or Intermediate Pad"
+              placeholderTextColor="#9CA3AF"
+              autoCapitalize="words"
+            />
 
-            <View
-              ref={categoryUnitSectionRef}
-              collapsable={false}
-              onLayout={() => {
-                if (isTutorialActive && tutorialStep === 4) {
-                  measureStep4Target();
-                }
-              }}
+            <Text style={styles.fieldLabel}>Category *</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.catRow}
             >
-              <Text style={styles.fieldLabel}>Category *</Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.catRow}
-              >
-                {categories.map((cat) => {
-                  const active = newCategory === cat;
-                  return (
-                    <Pressable
-                      key={cat}
-                      style={[styles.catChip, active ? styles.catChipActive : null]}
-                      onPress={() => setNewCategory(cat)}
+              {categories.map((cat) => {
+                const active = newCategory === cat;
+                return (
+                  <Pressable
+                    key={cat}
+                    style={[styles.catChip, active ? styles.catChipActive : null]}
+                    onPress={() => setNewCategory(cat)}
+                  >
+                    <Text
+                      style={[
+                        styles.catChipText,
+                        active ? styles.catChipTextActive : null,
+                      ]}
                     >
-                      <Text
-                        style={[
-                          styles.catChipText,
-                          active ? styles.catChipTextActive : null,
-                        ]}
-                      >
-                        {cat}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-                <Pressable
-                  style={styles.catChipManage}
-                  onPress={() => setShowCategoryModal(true)}
-                >
-                  <Text style={styles.catChipManageText}>{t.addCategory}</Text>
-                </Pressable>
-              </ScrollView>
+                      {cat}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+              <Pressable
+                style={styles.catChipManage}
+                onPress={() => setShowCategoryModal(true)}
+              >
+                <Text style={styles.catChipManageText}>{t.addCategory}</Text>
+              </Pressable>
+            </ScrollView>
 
-              {/* 1. URI NG PANINDA & PAGBENTA (3 Unified Modes) */}
-              <Text style={styles.fieldLabel}>Uri ng Paninda at Pagbenta *</Text>
-              <View style={styles.unitSelectorRow}>
-                <Pressable
-                  style={[styles.unitToggleBtn, packagingType === 'PACK' && styles.unitToggleBtnActive]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                    setPackagingType('PACK');
-                    if (!packMultiplier || packMultiplier === '0') setPackMultiplier(packPiecesCount || '10');
-                    const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
-                    if (pieceCostParsed > 0 && (!bundleCostPhp || parseFloat(bundleCostPhp) === 0)) {
-                      setBundleCostPhp((pieceCostParsed * pcs).toFixed(2));
-                    }
-                    const curStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
-                    if (curStock > 0 && (!bundlePacksCount || parseInt(bundlePacksCount, 10) === 0)) {
-                      setBundlePacksCount(String(Math.max(1, Math.floor(curStock / pcs))));
-                    }
-                  }}
-                >
-                  <Ionicons
-                    name="layers-outline"
-                    size={15}
-                    color={packagingType === 'PACK' ? '#0D7A52' : '#64748B'}
-                    style={{ marginRight: 4 }}
-                  />
-                  <Text style={[styles.unitToggleText, packagingType === 'PACK' && styles.unitToggleTextActive]}>
-                    📦 Naka-Pack
-                  </Text>
-                </Pressable>
+            {/* 1. URI NG PANINDA & PAGBENTA (3 Unified Modes) */}
+            <Text style={styles.fieldLabel}>Uri ng Paninda at Pagbenta *</Text>
+            <View style={styles.unitSelectorRow}>
+              <Pressable
+                style={[styles.unitToggleBtn, packagingType === 'PACK' && styles.unitToggleBtnActive]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setPackagingType('PACK');
+                  if (!packMultiplier || packMultiplier === '0') setPackMultiplier(packPiecesCount || '10');
+                  const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
+                  if (pieceCostParsed > 0 && (!bundleCostPhp || parseFloat(bundleCostPhp) === 0)) {
+                    setBundleCostPhp((pieceCostParsed * pcs).toFixed(2));
+                  }
+                  const curStock = parseInt(newStock.replace(/[^0-9]/g, '') || '0', 10);
+                  if (curStock > 0 && (!bundlePacksCount || parseInt(bundlePacksCount, 10) === 0)) {
+                    setBundlePacksCount(String(Math.max(1, Math.floor(curStock / pcs))));
+                  }
+                }}
+              >
+                <Ionicons
+                  name="layers-outline"
+                  size={15}
+                  color={packagingType === 'PACK' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={[styles.unitToggleText, packagingType === 'PACK' && styles.unitToggleTextActive]}>
+                  📦 Naka-Pack
+                </Text>
+              </Pressable>
 
-                <Pressable
-                  style={[styles.unitToggleBtn, packagingType === 'PIECE' && styles.unitToggleBtnActive]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                    setPackagingType('PIECE');
-                    // Auto-fill Tingi inputs from Pack inputs
-                    const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
-                    const bCost = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
-                    if (bCost > 0) {
-                      setNewCostPhp((bCost / pcs).toFixed(2));
-                    }
-                    const bPacks = parseInt(bundlePacksCount.replace(/[^0-9]/g, '') || '0', 10);
-                    if (bPacks > 0) {
-                      setNewStock(String(bPacks * pcs));
-                    } else if (packPiecesCount) {
-                      setNewStock(String(pcs));
-                    }
-                  }}
-                >
-                  <Ionicons
-                    name="cube-outline"
-                    size={15}
-                    color={packagingType === 'PIECE' ? '#0D7A52' : '#64748B'}
-                    style={{ marginRight: 4 }}
-                  />
-                  <Text style={[styles.unitToggleText, packagingType === 'PIECE' && styles.unitToggleTextActive]}>
-                    🏷️ Tingi Lang
-                  </Text>
-                </Pressable>
+              <Pressable
+                style={[styles.unitToggleBtn, packagingType === 'PIECE' && styles.unitToggleBtnActive]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setPackagingType('PIECE');
+                  // Auto-fill Tingi inputs from Pack inputs
+                  const pcs = packPiecesCountNum > 0 ? packPiecesCountNum : 10;
+                  const bCost = parseFloat(bundleCostPhp.replace(/[^0-9.]/g, '') || '0');
+                  if (bCost > 0) {
+                    setNewCostPhp((bCost / pcs).toFixed(2));
+                  }
+                  const bPacks = parseInt(bundlePacksCount.replace(/[^0-9]/g, '') || '0', 10);
+                  if (bPacks > 0) {
+                    setNewStock(String(bPacks * pcs));
+                  } else if (packPiecesCount) {
+                    setNewStock(String(pcs));
+                  }
+                }}
+              >
+                <Ionicons
+                  name="cube-outline"
+                  size={15}
+                  color={packagingType === 'PIECE' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={[styles.unitToggleText, packagingType === 'PIECE' && styles.unitToggleTextActive]}>
+                  🏷️ Tingi Lang
+                </Text>
+              </Pressable>
 
-                <Pressable
-                  style={[styles.unitToggleBtn, packagingType === 'KG' && styles.unitToggleBtnActive]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                    setPackagingType('KG');
-                  }}
-                >
-                  <Ionicons
-                    name="scale"
-                    size={15}
-                    color={packagingType === 'KG' ? '#0D7A52' : '#64748B'}
-                    style={{ marginRight: 4 }}
-                  />
-                  <Text style={[styles.unitToggleText, packagingType === 'KG' && styles.unitToggleTextActive]}>
-                    ⚖️ Kilo (kg)
-                  </Text>
-                </Pressable>
-              </View>
+              <Pressable
+                style={[styles.unitToggleBtn, packagingType === 'KG' && styles.unitToggleBtnActive]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setPackagingType('KG');
+                }}
+              >
+                <Ionicons
+                  name="scale"
+                  size={15}
+                  color={packagingType === 'KG' ? '#0D7A52' : '#64748B'}
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={[styles.unitToggleText, packagingType === 'KG' && styles.unitToggleTextActive]}>
+                  ⚖️ Kilo (kg)
+                </Text>
+              </Pressable>
             </View>
 
             {/* 2. DYNAMIC INPUTS ACCORDING TO PACKAGING TYPE */}
             {packagingType === 'PACK' ? (
               /* PACK MODE: Auto-fill from Wholesale Pack Cost & Count */
               <View style={{ gap: 10 }}>
-                <View
-                  ref={pricingSectionRef}
-                  collapsable={false}
-                  onLayout={() => {
-                    if (isTutorialActive && tutorialStep === 5) {
-                      measureStep5Target();
-                    }
-                  }}
-                  style={{ gap: 10 }}
-                >
-                  <View style={styles.costSectionCard}>
+                <View style={styles.costSectionCard}>
                   <Text style={{ fontSize: 13, fontWeight: '700', color: '#166534', marginBottom: 2 }}>
                     🧾 Puhunan sa Resibo (Wholesale Pack)
                   </Text>
@@ -2070,7 +1903,6 @@ export default function InventoryManagementScreen() {
                     </View>
                   ) : null}
                 </View>
-              </View>
 
                 {/* Whole Pack Selling Tier Card */}
                 <View style={[styles.costSectionCard, { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' }]}>
@@ -2172,16 +2004,7 @@ export default function InventoryManagementScreen() {
               </View>
             ) : packagingType === 'PIECE' ? (
               /* PIECE MODE: Tingi Lamang */
-              <View
-                ref={pricingSectionRef}
-                collapsable={false}
-                onLayout={() => {
-                  if (isTutorialActive && tutorialStep === 5) {
-                    measureStep5Target();
-                  }
-                }}
-                style={{ gap: 10 }}
-              >
+              <View style={{ gap: 10 }}>
                 <View style={styles.costSectionCard}>
                   <View style={styles.twoColRow}>
                     <View style={styles.halfCol}>
@@ -2398,16 +2221,7 @@ export default function InventoryManagementScreen() {
               </View>
             ) : (
               /* KG MODE: Bigas / Asukal */
-              <View
-                ref={pricingSectionRef}
-                collapsable={false}
-                onLayout={() => {
-                  if (isTutorialActive && tutorialStep === 5) {
-                    measureStep5Target();
-                  }
-                }}
-                style={{ gap: 10 }}
-              >
+              <View style={{ gap: 10 }}>
                 <View style={styles.costSectionCard}>
                   <View style={styles.twoColRow}>
                     <View style={styles.halfCol}>
@@ -2671,7 +2485,7 @@ export default function InventoryManagementScreen() {
                   + Register &quot;{searchQuery.trim()}&quot; as New Product
                 </Text>
               </Pressable>
-            ) : !isFormVisible ? (
+            ) : !showAddForm ? (
               <Pressable
                 style={styles.emptyAddBtn}
                 onPress={() => setShowAddForm(true)}
@@ -5410,53 +5224,5 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#15803D',
     fontWeight: '600',
-  },
-  tutorialDemoBtn: {
-    backgroundColor: '#065F46',
-    borderWidth: 2,
-    borderColor: '#34D399',
-    borderRadius: 16,
-    padding: 14,
-    marginBottom: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    shadowColor: '#059669',
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
-  },
-  tutorialDemoIconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tutorialDemoTitle: {
-    color: '#FFFFFF',
-    fontSize: 14.5,
-    fontWeight: '800',
-    marginBottom: 2,
-  },
-  tutorialDemoSub: {
-    color: '#A7F3D0',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  tutorialDemoActionBadge: {
-    backgroundColor: '#10B981',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#6EE7B7',
-  },
-  tutorialDemoActionText: {
-    color: '#FFFFFF',
-    fontSize: 12.5,
-    fontWeight: '800',
   },
 });

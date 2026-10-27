@@ -4,7 +4,6 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
-import { useTutorial } from '@/presentation/providers/TutorialContext';
 import { getTranslations } from '@/presentation/localization/i18n';
 
 // Safe custom tab bar receiving standard React Navigation BottomTabBarProps
@@ -12,42 +11,6 @@ function CustomTindahanTabBar(props: any) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { cartSummary, settings, version, products } = useTindahanStore();
-  const {
-    isActive: isTutorialActive,
-    currentStep: tutorialStep,
-    registerTarget: registerTutorialTarget,
-    nextStep: nextTutorialStep,
-  } = useTutorial();
-
-  const scanTabRef = React.useRef<any>(null);
-
-  const measureScanTab = React.useCallback(() => {
-    if (scanTabRef.current) {
-      scanTabRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
-        if (width > 0 && height > 0) {
-          registerTutorialTarget(6, {
-            x,
-            y,
-            width,
-            height,
-            borderRadius: 14,
-          });
-        }
-      });
-    }
-  }, [registerTutorialTarget]);
-
-  React.useEffect(() => {
-    if (isTutorialActive && tutorialStep === 6) {
-      const timer1 = setTimeout(measureScanTab, 100);
-      const timer2 = setTimeout(measureScanTab, 300);
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-      };
-    }
-  }, [isTutorialActive, tutorialStep, measureScanTab]);
-
   const outOfStockCount = products.filter((p) => p.stockStatus === 'OUT_OF_STOCK').length;
   const lowStockCount = products.filter((p) => p.stockStatus === 'LOW_STOCK').length;
   const expiringSoonCount = products.filter((p) => {
@@ -168,22 +131,8 @@ function CustomTindahanTabBar(props: any) {
       <View style={styles.floatingPillBar}>
         {/* 1. Scan (Screen 1: POS / Barcode Scanner) */}
         <Pressable
-          ref={scanTabRef}
-          collapsable={false}
-          onLayout={() => {
-            if (isTutorialActive && tutorialStep === 6) {
-              measureScanTab();
-            }
-          }}
           style={[styles.tabItem, isScan ? styles.tabItemActive : null]}
-          onPress={() => {
-            if (isTutorialActive && tutorialStep === 6) {
-              nextTutorialStep();
-              handleTabPress('index');
-              return;
-            }
-            handleTabPress('index');
-          }}
+          onPress={() => handleTabPress('index')}
           hitSlop={8}
         >
           <Ionicons

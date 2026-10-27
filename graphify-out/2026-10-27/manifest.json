@@ -90,15 +90,15 @@
     "semantic_hash": ""
   },
   "src/app/index.tsx": {
-    "mtime": 1793109040.0105026,
-    "seen": 1793109705.1576273,
-    "ast_hash": "ba31d59ff77e31f66bf086f68b53ab6e",
+    "mtime": 1793112259.9035723,
+    "seen": 1793112827.0742042,
+    "ast_hash": "2e218be7759f93fc965c92822744544a",
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1793109160.1112037,
-    "seen": 1793109705.1576345,
-    "ast_hash": "d951ebe6a010d86b2d627d99e0517b3e",
+    "mtime": 1793112188.7428973,
+    "seen": 1793112827.074211,
+    "ast_hash": "f92f55326e5e67f71cdb7e3473714688",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": "2defa175163e104a6e2232436fa77e30"
   },
   "src/components/app-tabs.tsx": {
-    "mtime": 1793109056.8456903,
-    "seen": 1793109705.1578205,
-    "ast_hash": "4e551bdfd9567266c8125c477083b0e8",
+    "mtime": 1793112314.583706,
+    "seen": 1793112827.0743198,
+    "ast_hash": "895c35a15f9291c5511ae717be701009",
     "semantic_hash": ""
   },
   "src/components/app-tabs.web.tsx": {
@@ -270,9 +270,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/BarcodeInputField.tsx": {
-    "mtime": 1793108776.3080573,
-    "seen": 1793109705.158122,
-    "ast_hash": "3fa9c9c3a15b7e46641a8130018364d6",
+    "mtime": 1793111669.2434478,
+    "seen": 1793112827.0745952,
+    "ast_hash": "7fe0b9ca613e42333cbe4843a0194e64",
     "semantic_hash": ""
   },
   "src/presentation/components/ProductThumbnail.tsx": {
@@ -300,9 +300,9 @@
     "semantic_hash": "6794be22dd9dd00003515895d3b4ff06"
   },
   "AGENTS.md": {
-    "mtime": 1793084814.4553292,
-    "seen": 1793086357.6994066,
-    "ast_hash": "16abf5c2a4a1a804d6fc5777382bb209",
+    "mtime": 1793109966.0213747,
+    "seen": 1793110086.6859915,
+    "ast_hash": "1680418caea80e1c7efbf8fe021f0b32",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
@@ -1440,9 +1440,9 @@
     "semantic_hash": ""
   },
   "scripts/test-tutorial-state.cjs": {
-    "mtime": 1793101925.6284752,
-    "seen": 1793102378.604036,
-    "ast_hash": "a92dd57498e676d7a1287bc0c05e35b9",
+    "mtime": 1793112449.936344,
+    "seen": 1793112827.0741463,
+    "ast_hash": "c2c30a87e5c21ba2a06e695afa9156c1",
     "semantic_hash": ""
   },
   "src/presentation/components/tutorial/MickeyGlovePointer.tsx": {
@@ -1452,9 +1452,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/tutorial/SpotlightOverlay.tsx": {
-    "mtime": 1793109107.4485009,
-    "seen": 1793109705.158299,
-    "ast_hash": "fdf1f6c5ef03e6de957c3821d2d6c22f",
+    "mtime": 1793111624.034451,
+    "seen": 1793112827.0747688,
+    "ast_hash": "18f2a0d60d5cb0ae4eb98eeafe72457c",
     "semantic_hash": ""
   },
   "src/presentation/components/tutorial/SukliSimulationSheet.tsx": {
@@ -1470,9 +1470,9 @@
     "semantic_hash": ""
   },
   "src/presentation/providers/TutorialContext.tsx": {
-    "mtime": 1793108736.556324,
-    "seen": 1793109705.158363,
-    "ast_hash": "4d655e317a2d7d991bbe7d1f4721eea0",
+    "mtime": 1793111557.9059193,
+    "seen": 1793112827.0748394,
+    "ast_hash": "8cc820bf33dc605dba1c1d8e019cce73",
     "semantic_hash": ""
   },
   "scripts/generate_mickey_glove.py": {
@@ -1485,6 +1485,18 @@
     "mtime": 1793108045.3152528,
     "seen": 1793109705.158884,
     "ast_hash": "08768b7076f7ac09b2a8b26b104cb064",
+    "semantic_hash": ""
+  },
+  "src/application/TutorialCoordinator.ts": {
+    "mtime": 1793112424.7783823,
+    "seen": 1793112827.0742965,
+    "ast_hash": "7dd9fbcdd49b59f0ab19bfc85303f459",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/tutorial/TutorialGlowTarget.tsx": {
+    "mtime": 1793112725.933319,
+    "seen": 1793112827.0747845,
+    "ast_hash": "59d5e4bcd3ccc10e846b0f5bcb93dcc8",
     "semantic_hash": ""
   }
 }
