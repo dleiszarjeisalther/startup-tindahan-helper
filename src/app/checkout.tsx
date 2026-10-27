@@ -37,6 +37,7 @@ import {
 import { ReceiptPrinterModal } from '@/presentation/components/ReceiptPrinterModal';
 import { useLicensing } from '@/presentation/hooks/useLicensing';
 import { useLicensingGate } from '@/presentation/components/LicensingGate';
+import { CancelExchangeCreditModal } from '@/presentation/components/CancelExchangeCreditModal';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -181,7 +182,8 @@ export default function CheckoutNewSaleScreen() {
     undoRemoveCartItem,
     setDiscountPhp,
     clearCart,
-    cancelExchangeCredit,
+    convertExchangeCreditToCashRefund,
+    undoExchangeCreditReturn,
     parkCurrentCart,
     restoreHeldCart,
     deleteHeldCart,
@@ -221,6 +223,7 @@ export default function CheckoutNewSaleScreen() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationState | null>(null);
+  const [showCancelExchangeModal, setShowCancelExchangeModal] = useState<boolean>(false);
 
   const handleDismissToast = useCallback(() => {
     setToastMsg(null);
@@ -778,8 +781,7 @@ export default function CheckoutNewSaleScreen() {
                 <Pressable
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                    cancelExchangeCredit();
-                    showToast('Naalis na ang Palit-Paninda kredito.', 'info');
+                    setShowCancelExchangeModal(true);
                   }}
                   style={styles.cancelExchangePill}
                   hitSlop={8}
@@ -1542,6 +1544,31 @@ export default function CheckoutNewSaleScreen() {
             : null
         }
         onClose={() => setShowPrinterModal(false)}
+      />
+
+      <CancelExchangeCreditModal
+        visible={showCancelExchangeModal}
+        creditPhp={cartSummary.exchangeCreditPhp}
+        sourceReceiptId={cartSummary.exchangeSourceReceiptId}
+        onClose={() => setShowCancelExchangeModal(false)}
+        onConvertToCashRefund={async () => {
+          try {
+            await convertExchangeCreditToCashRefund();
+            showToast('💵 Naibalik na ang pera mula sa kaha.', 'success');
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Hindi ma-refund.';
+            showToast(`⚠️ ${msg}`, 'error');
+          }
+        }}
+        onUndoReturn={async () => {
+          try {
+            await undoExchangeCreditReturn();
+            showToast('🔄 Nabawi na ang pagsauli. Naibalik ang paninda sa resibo.', 'info');
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Hindi mabawi ang pagsauli.';
+            showToast(`⚠️ ${msg}`, 'error');
+          }
+        }}
       />
 
       <UnitSelectionModal

@@ -42,6 +42,10 @@ const setDiscountPhp = (d: number) => tindahanStoreService.setDiscountPhp(d);
 const clearCart = () => tindahanStoreService.clearCart();
 const cancelExchangeCredit = (options?: { undoReceiptReturn?: boolean }) =>
   tindahanStoreService.cancelExchangeCredit(options);
+const convertExchangeCreditToCashRefund = () =>
+  tindahanStoreService.convertExchangeCreditToCashRefund();
+const undoExchangeCreditReturn = () =>
+  tindahanStoreService.undoExchangeCreditReturn();
 const parkCurrentCart = (customerName?: string) =>
   tindahanStoreService.parkCurrentCart(customerName);
 const restoreParkedCart = () => tindahanStoreService.restoreParkedCart();
@@ -176,6 +180,8 @@ export function useTindahanStore() {
     setDiscountPhp,
     clearCart,
     cancelExchangeCredit,
+    convertExchangeCreditToCashRefund,
+    undoExchangeCreditReturn,
     parkCurrentCart,
     restoreParkedCart,
     restoreHeldCart,

@@ -28,6 +28,7 @@ import { TrialBanner } from '@/presentation/components/TrialBanner';
 import { useLicensing } from '@/presentation/hooks/useLicensing';
 import { useLicensingGate } from '@/presentation/components/LicensingGate';
 import { StoreAlertsModal } from '@/presentation/components/StoreAlertsModal';
+import { CancelExchangeCreditModal } from '@/presentation/components/CancelExchangeCreditModal';
 
 export default function PosScanProductScreen() {
   const router = useRouter();
@@ -38,7 +39,8 @@ export default function PosScanProductScreen() {
     addToCart,
     setCartItemQuantity,
     cartSummary,
-    cancelExchangeCredit,
+    convertExchangeCreditToCashRefund,
+    undoExchangeCreditReturn,
     settings,
     version,
     isStoreSecurityEnabled,
@@ -70,6 +72,7 @@ export default function PosScanProductScreen() {
   const [lastScannedProductId, setLastScannedProductId] = useState<string | null>(null);
   const [weightModalProduct, setWeightModalProduct] = useState<WeightQuantityProduct | null>(null);
   const [unitModalProduct, setUnitModalProduct] = useState<ProductDTO | null>(null);
+  const [showCancelExchangeModal, setShowCancelExchangeModal] = useState<boolean>(false);
   const [showPinModal, setShowPinModal] = useState(false);
   const [showAlertsModal, setShowAlertsModal] = useState(false);
   const [hasAutoOpenedAlerts, setHasAutoOpenedAlerts] = useState(false);
@@ -416,8 +419,7 @@ export default function PosScanProductScreen() {
             style={styles.exchangeBannerCancelBtn}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-              cancelExchangeCredit();
-              triggerScanToast('Naalis na ang Palit-Paninda kredito.');
+              setShowCancelExchangeModal(true);
             }}
             hitSlop={8}
           >
@@ -806,6 +808,32 @@ export default function PosScanProductScreen() {
           setShowAlertsModal(false);
           markAlertRead(alert.id);
           router.navigate(alert.targetRoute as any);
+        }}
+      />
+
+      {/* Cancel Exchange Credit Action Modal */}
+      <CancelExchangeCreditModal
+        visible={showCancelExchangeModal}
+        creditPhp={cartSummary.exchangeCreditPhp}
+        sourceReceiptId={cartSummary.exchangeSourceReceiptId}
+        onClose={() => setShowCancelExchangeModal(false)}
+        onConvertToCashRefund={async () => {
+          try {
+            await convertExchangeCreditToCashRefund();
+            triggerScanToast('💵 Naibalik na ang pera mula sa kaha.');
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Hindi ma-refund.';
+            triggerScanToast(`⚠️ ${msg}`);
+          }
+        }}
+        onUndoReturn={async () => {
+          try {
+            await undoExchangeCreditReturn();
+            triggerScanToast('🔄 Nabawi na ang pagsauli. Naibalik ang paninda sa resibo.');
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Hindi mabawi ang pagsauli.';
+            triggerScanToast(`⚠️ ${msg}`);
+          }
         }}
       />
     </ScreenSafeAreaView>

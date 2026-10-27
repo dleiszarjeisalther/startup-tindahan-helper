@@ -58,6 +58,15 @@ export type ReturnDisposition = 'SELLABLE' | 'DAMAGED_QUARANTINE';
 export type ReturnResolution = 'CASH_REFUND' | 'EXCHANGE_CREDIT' | 'UTANG_DEDUCTION';
 export type PaymentTenderType = 'CASH' | 'GCASH' | 'UTANG' | 'SPLIT';
 
+export interface ActiveExchangeCreditInfo {
+  txId: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  amountPhp: number;
+  disposition: ReturnDisposition;
+}
+
 export interface AddToCartResult {
   success: boolean;
   fellBackToPiece?: boolean;
@@ -255,6 +264,7 @@ export class TindahanStoreService {
   private discountPhp = 0;
   private exchangeCreditPhp = 0;
   private exchangeSourceReceiptId: string | null = null;
+  private activeExchangeCredits: ActiveExchangeCreditInfo[] = [];
 
   private transactions: SaleTransactionRecord[] = [];
   private utangCustomers: UtangCustomerRecord[] = [];
@@ -1062,6 +1072,7 @@ export class TindahanStoreService {
     this.discountPhp = 0;
     this.exchangeCreditPhp = 0;
     this.exchangeSourceReceiptId = null;
+    this.activeExchangeCredits = [];
     this.transactions = [];
     this.utangCustomers = [];
     this.monthlyHistoryMap.clear();
@@ -1683,31 +1694,115 @@ export class TindahanStoreService {
     this.discountPhp = 0;
     this.exchangeCreditPhp = 0;
     this.exchangeSourceReceiptId = null;
+    this.activeExchangeCredits = [];
     this.lastRemovedItem = null;
     this.cartRevision++;
     this.notifyCartOnly();
   }
 
-  public cancelExchangeCredit(options?: { undoReceiptReturn?: boolean }): void {
+  public async convertExchangeCreditToCashRefund(): Promise<{ amountRefundedPhp: number }> {
     if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');
-    const currentCredit = this.exchangeCreditPhp;
-    const sourceReceiptId = this.exchangeSourceReceiptId;
+    if (this.exchangeCreditPhp <= 0) {
+      throw new Error('Walang aktibong Palit-Paninda kredito na pwedeng i-refund.');
+    }
 
-    if (options?.undoReceiptReturn && sourceReceiptId) {
-      const tx = this.transactions.find((t) => t.id === sourceReceiptId);
-      if (tx && tx.status !== 'VOIDED') {
-        tx.refundedPhp = Math.max(0, tx.refundedPhp - currentCredit);
-        const allItemsReturned = tx.items.every((i) => i.returnedQty >= i.quantity);
-        const someItemsReturned = tx.items.some((i) => i.returnedQty > 0);
-        tx.status = allItemsReturned ? 'REFUNDED' : someItemsReturned ? 'PARTIAL_RETURN' : 'COMPLETED';
+    const amountToRefund = this.exchangeCreditPhp;
+    const creditsToProcess = [...this.activeExchangeCredits];
+
+    // Update original transactions note
+    for (const item of creditsToProcess) {
+      const tx = this.transactions.find((t) => t.id === item.txId);
+      if (tx) {
+        tx.voidOrReturnNote = `Nai-refund bilang Cash (₱${item.amountPhp.toFixed(2)}) mula sa dating Palit-Paninda (${item.productName})`;
         this.persistTransactionToSqlite(tx);
       }
     }
 
     this.exchangeCreditPhp = 0;
     this.exchangeSourceReceiptId = null;
+    this.activeExchangeCredits = [];
     this.cartRevision++;
-    this.notifyCartOnly();
+    this.notify();
+
+    return { amountRefundedPhp: amountToRefund };
+  }
+
+  public async undoExchangeCreditReturn(): Promise<void> {
+    if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');
+    if (this.exchangeCreditPhp <= 0 && this.activeExchangeCredits.length === 0) {
+      throw new Error('Walang aktibong Palit-Paninda na pwedeng bawiin.');
+    }
+
+    const creditsToRevert = [...this.activeExchangeCredits];
+    const allProducts = await this.productRepo.getAll();
+
+    for (const creditItem of creditsToRevert) {
+      // 1. Revert transaction line and status
+      const tx = this.transactions.find((t) => t.id === creditItem.txId);
+      if (tx && tx.status !== 'VOIDED') {
+        const line = tx.items.find((i) => i.productId === creditItem.productId);
+        if (line) {
+          line.returnedQty = Math.max(0, line.returnedQty - creditItem.quantity);
+        }
+        tx.refundedPhp = Math.max(0, tx.refundedPhp - creditItem.amountPhp);
+        tx.itemCount += creditItem.quantity;
+        const allReturned = tx.items.every((i) => i.returnedQty >= i.quantity);
+        const someReturned = tx.items.some((i) => i.returnedQty > 0);
+        tx.status = allReturned ? 'REFUNDED' : someReturned ? 'PARTIAL_RETURN' : 'COMPLETED';
+        tx.voidOrReturnNote = `Kinansela ang Pagsauli: Naibalik sa suki ang ${creditItem.quantity}x ${creditItem.productName}`;
+        this.persistTransactionToSqlite(tx);
+      }
+
+      // 2. Revert inventory stock
+      const prod = allProducts.find((p) => p.id === creditItem.productId);
+      if (prod) {
+        if (creditItem.disposition === 'SELLABLE') {
+          await this.productRepo.save(prod.adjustStock(-creditItem.quantity));
+          this.recordStockMovement({
+            productId: prod.id,
+            productName: prod.name,
+            movementType: 'RETURN',
+            quantityDelta: -creditItem.quantity,
+            previousStock: prod.baseStockCount,
+            resultingStock: Math.max(0, prod.baseStockCount - creditItem.quantity),
+            unitCostPhp: prod.unitCostPhp,
+            reason: `Binaligtad ang Pagsauli (Undo Return ng ${creditItem.productName})`,
+            referenceId: creditItem.txId,
+          });
+        } else {
+          await this.productRepo.save(prod.addQuarantineStock(-creditItem.quantity, false));
+        }
+      }
+    }
+
+    // Fallback if activeExchangeCredits was empty but receipt was stored
+    if (creditsToRevert.length === 0 && this.exchangeSourceReceiptId) {
+      const tx = this.transactions.find((t) => t.id === this.exchangeSourceReceiptId);
+      if (tx && tx.status !== 'VOIDED') {
+        tx.refundedPhp = Math.max(0, tx.refundedPhp - this.exchangeCreditPhp);
+        const someReturned = tx.items.some((i) => i.returnedQty > 0);
+        tx.status = someReturned ? 'PARTIAL_RETURN' : 'COMPLETED';
+        this.persistTransactionToSqlite(tx);
+      }
+    }
+
+    this.exchangeCreditPhp = 0;
+    this.exchangeSourceReceiptId = null;
+    this.activeExchangeCredits = [];
+    this.cartRevision++;
+    this.notify();
+  }
+
+  public cancelExchangeCredit(options?: { undoReceiptReturn?: boolean }): void {
+    if (options?.undoReceiptReturn) {
+      void this.undoExchangeCreditReturn();
+    } else {
+      this.exchangeCreditPhp = 0;
+      this.exchangeSourceReceiptId = null;
+      this.activeExchangeCredits = [];
+      this.cartRevision++;
+      this.notifyCartOnly();
+    }
   }
 
   public parkCurrentCart(customerName?: string): HeldCartRecord | null {
@@ -1758,6 +1853,7 @@ export class TindahanStoreService {
     this.discountPhp = 0;
     this.exchangeCreditPhp = 0;
     this.exchangeSourceReceiptId = null;
+    this.activeExchangeCredits = [];
     this.lastRemovedItem = null;
     this.cartRevision++;
     this.notify();
@@ -2769,6 +2865,14 @@ export class TindahanStoreService {
     if (params.resolution === 'EXCHANGE_CREDIT') {
       this.exchangeCreditPhp += refundAmountPhp;
       this.exchangeSourceReceiptId = tx.id;
+      this.activeExchangeCredits.push({
+        txId: tx.id,
+        productId: params.productId,
+        productName: line.name,
+        quantity: qty,
+        amountPhp: refundAmountPhp,
+        disposition: params.disposition,
+      });
     } else if (params.resolution === 'UTANG_DEDUCTION' && tx.customerName) {
       const cust = this.utangCustomers.find(
         (c) => c.name.toLowerCase() === tx.customerName!.toLowerCase()

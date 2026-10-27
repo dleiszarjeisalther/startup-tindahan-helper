@@ -161,4 +161,57 @@ assert.strictEqual(cartExchangeCredit, 0, 'Exchange credit must be reset to 0');
 assert.strictEqual(cartSourceReceipt, null, 'Exchange source receipt must be null');
 console.log('✓ Test 5: Cancelling exchange credit clears cart credit safely');
 
+// Test 6: Convert Exchange Credit to Cash Refund (Customer gets cash when replacement item unavailable)
+const items6 = [{ productId: 'p6', name: 'Noodles', quantity: 3, unitPricePaidPhp: 12.0 }];
+const tx6 = createSaleTransaction(items6, 'CASH');
+const stock6 = { shelfStock: 10, quarantineStock: 0 };
+let cashInDrawer6 = 100.0;
+
+// Process 1 item as exchange credit
+const res6 = processReturn(tx6, {
+  productId: 'p6',
+  returnQty: 1,
+  disposition: 'SELLABLE',
+  resolution: 'EXCHANGE_CREDIT',
+}, stock6, null);
+
+assert.strictEqual(res6.creditPhp, 12.0, 'Return credit must be ₱12.00');
+assert.strictEqual(stock6.shelfStock, 11, 'Shelf stock increased by +1');
+assert.strictEqual(tx6.refundedPhp, 12.0, 'Refunded amount is ₱12.00');
+
+// Convert to Cash Refund
+cashInDrawer6 -= res6.creditPhp;
+tx6.voidOrReturnNote = 'Converted from Exchange Credit to Cash Refund';
+assert.strictEqual(cashInDrawer6, 88.0, 'Cash in drawer reduced by ₱12.00 cash refund');
+assert.strictEqual(stock6.shelfStock, 11, 'Stock remains on shelf since merchandise was returned');
+console.log('✓ Test 6: Convert exchange credit to cash refund verified with drawer precision');
+
+// Test 7: Undo Return reverses inventory stock, line returnedQty, and restores receipt
+const items7 = [{ productId: 'p7', name: 'Coffee', quantity: 2, unitPricePaidPhp: 20.0 }];
+const tx7 = createSaleTransaction(items7, 'CASH');
+const stock7 = { shelfStock: 5, quarantineStock: 0 };
+
+// Mistakenly returned 1 pc
+const res7 = processReturn(tx7, {
+  productId: 'p7',
+  returnQty: 1,
+  disposition: 'SELLABLE',
+  resolution: 'EXCHANGE_CREDIT',
+}, stock7, null);
+assert.strictEqual(stock7.shelfStock, 6, 'Stock temporarily became 6');
+assert.strictEqual(tx7.items[0].returnedQty, 1, 'Line returnedQty is 1');
+
+// Undo Return
+stock7.shelfStock -= 1;
+tx7.items[0].returnedQty -= 1;
+tx7.refundedPhp -= res7.creditPhp;
+tx7.itemCount += 1;
+tx7.status = 'COMPLETED';
+
+assert.strictEqual(stock7.shelfStock, 5, 'Shelf stock reverted cleanly (6 -> 5)');
+assert.strictEqual(tx7.items[0].returnedQty, 0, 'Line returnedQty reverted to 0');
+assert.strictEqual(tx7.refundedPhp, 0, 'Transaction refundedPhp reverted to 0');
+assert.strictEqual(tx7.status, 'COMPLETED', 'Transaction status restored to COMPLETED');
+console.log('✓ Test 7: Undo return safely rolls back inventory stock, line returnedQty, and status');
+
 console.log('--- ALL MULTI-QUANTITY RETURN & REFUND TESTS PASSED ---');

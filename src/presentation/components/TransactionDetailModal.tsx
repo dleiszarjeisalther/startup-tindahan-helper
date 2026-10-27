@@ -13,6 +13,7 @@ import { SaleTransactionRecord } from '../../application/TindahanStoreService';
 import { useTindahanStore } from '../hooks/useTindahanStore';
 import { ProductThumbnail } from './ProductThumbnail';
 import { ConfirmationModal, ConfirmationModalDetail, ConfirmationType } from './ConfirmationModal';
+import { CancelExchangeCreditModal } from './CancelExchangeCreditModal';
 
 export type ReturnDisposition = 'SELLABLE' | 'DAMAGED_QUARANTINE';
 export type ReturnResolution = 'CASH_REFUND' | 'UTANG_DEDUCTION' | 'EXCHANGE_CREDIT';
@@ -47,7 +48,13 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   showToast,
   showProfit = true,
 }) => {
-  const { products, cartSummary, cancelExchangeCredit } = useTindahanStore();
+  const {
+    products,
+    cartSummary,
+    convertExchangeCreditToCashRefund,
+    undoExchangeCreditReturn,
+  } = useTindahanStore();
+  const [showCancelExchangeModal, setShowCancelExchangeModal] = useState<boolean>(false);
   const [selectedProductIdOverride, setSelectedProductIdOverride] = useState<string | null>(null);
   const [returnQty, setReturnQty] = useState<number>(1);
   const [disposition, setDisposition] = useState<ReturnDisposition>('SELLABLE');
@@ -297,8 +304,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
                     style={styles.exchangeNoticeCancelBtn}
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      cancelExchangeCredit();
-                      showToast('Naalis na ang Palit-Paninda kredito.', 'success');
+                      setShowCancelExchangeModal(true);
                     }}
                     hitSlop={8}
                   >
@@ -658,6 +664,32 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
           onCancel={() => setConfirmState(null)}
         />
       )}
+
+      {/* Cancel Exchange Credit Action Modal */}
+      <CancelExchangeCreditModal
+        visible={showCancelExchangeModal}
+        creditPhp={cartSummary.exchangeCreditPhp}
+        sourceReceiptId={cartSummary.exchangeSourceReceiptId}
+        onClose={() => setShowCancelExchangeModal(false)}
+        onConvertToCashRefund={async () => {
+          try {
+            await convertExchangeCreditToCashRefund();
+            showToast('💵 Naibalik na ang pera mula sa kaha.', 'success');
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Hindi ma-refund.';
+            showToast(`⚠️ ${msg}`, 'error');
+          }
+        }}
+        onUndoReturn={async () => {
+          try {
+            await undoExchangeCreditReturn();
+            showToast('🔄 Nabawi na ang pagsauli. Naibalik ang paninda sa resibo.', 'success');
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Hindi mabawi ang pagsauli.';
+            showToast(`⚠️ ${msg}`, 'error');
+          }
+        }}
+      />
     </>
   );
 };
