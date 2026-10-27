@@ -67,3 +67,16 @@ This application operates offline-first on a single device. All user interaction
 ### 4. Direct UI-to-Snapshot Binding
 - Cart badges, floating tab counters, checkout line items, subtotals, and CTA enable/disable states must derive directly from the snapshot.
 - Clearing or completing a sale must immediately publish an empty cart state, instantly hiding badges and resetting forms across all active views.
+
+## Plain Language & Store-Owner Friendly Microcopy Invariant (Zero Tech Jargon in UI)
+
+All user-visible text (screen titles, list items, badges, banners, modals, alert dialogs, confirmation prompts, error toasts, and helper notes) must use natural, vendor-friendly Taglish / Filipino language.
+
+- **HARD INVARIANT**: NEVER display developer jargon, database internals, or framework architecture keywords in user-facing UI text.
+  * Prohibited in UI: `SQLite`, `SQLite Sync`, `In-memory snapshot`, `commit`, `db.withTransactionSync()`, `API`, `Hook`, `Hydration`, `State mutation`, `StoreSnapshot`, `Query`, `Transaction rollback`.
+- **User-Centric Language**:
+  * Instead of "Live SQLite Sync" -> use "Agad Naitatala" or "Awtomatikong Naitala".
+  * Instead of "Committed via db.withTransactionSync()" -> use "Ligtas at Sigurado ang Kwenta".
+  * Instead of "Database write error" -> use "Hindi naisave ang tala. Pakisubukan muli."
+  * Instead of "Quarantine stock" -> use "Sira / Expired na Paninda".
+

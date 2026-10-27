@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1792918296.9519951,
-    "seen": 1792918904.8421128,
-    "ast_hash": "d8914944a55f8373ada7ba9c491ff74a",
+    "mtime": 1793085353.935947,
+    "seen": 1793086357.6989796,
+    "ast_hash": "1b580ee4ea4a8bfd98712ec1d0f07a2f",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {
-    "mtime": 1792917678.631065,
-    "seen": 1792918904.842165,
-    "ast_hash": "fb9499ac201af2d64ba205a78c0d00d3",
+    "mtime": 1793086211.3852842,
+    "seen": 1793086357.6990082,
+    "ast_hash": "36e16d165304a96c5487e30a4b83171e",
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
@@ -300,9 +300,9 @@
     "semantic_hash": "6794be22dd9dd00003515895d3b4ff06"
   },
   "AGENTS.md": {
-    "mtime": 1791909317.8266847,
-    "seen": 1791911566.3169394,
-    "ast_hash": "248f8eaa8178598347b09c1939e589e5",
+    "mtime": 1793084814.4553292,
+    "seen": 1793086357.6994066,
+    "ast_hash": "16abf5c2a4a1a804d6fc5777382bb209",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
@@ -1401,6 +1401,36 @@
     "mtime": 1792937891.6750581,
     "seen": 1792940751.989432,
     "ast_hash": "1d99f7185f592a332aa07cf1586c39d8",
+    "semantic_hash": ""
+  },
+  "scripts/generate_inventory_mockups.py": {
+    "mtime": 1793084003.6271787,
+    "seen": 1793086357.6988432,
+    "ast_hash": "31878559c45852385e05216816f0ccf6",
+    "semantic_hash": ""
+  },
+  "scripts/generate_ui_mockups.py": {
+    "mtime": 1793082966.4834793,
+    "seen": 1793086357.6988678,
+    "ast_hash": "de3dec4257af208d8d53ad670aea898b",
+    "semantic_hash": ""
+  },
+  "scripts/test-multi-quantity-refund.cjs": {
+    "mtime": 1793085911.441517,
+    "seen": 1793086357.6989179,
+    "ast_hash": "5bbe0426a61071bb49a6c78571ffcc59",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/ProductStockManageModal.tsx": {
+    "mtime": 1793085326.8789387,
+    "seen": 1793086357.6993215,
+    "ast_hash": "d352d9fb9925918deb18cdb689796276",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/TransactionDetailModal.tsx": {
+    "mtime": 1793086199.073497,
+    "seen": 1793086357.6993403,
+    "ast_hash": "004a00f715b3f7eeee40111f1f3a856e",
     "semantic_hash": ""
   }
 }

@@ -18,9 +18,9 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
 import {
-  ReturnDisposition,
   CashAdjustmentType,
   DateRangeFilter,
+  SaleTransactionRecord,
 } from '@/application/TindahanStoreService';
 import { Money } from '@/domain/value-objects/Money';
 import { getTranslations } from '@/presentation/localization/i18n';
@@ -34,6 +34,7 @@ import {
 import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
 import { ReceiptPrinterModal } from '@/presentation/components/ReceiptPrinterModal';
 import { DateRangeCalendarModal } from '@/presentation/components/DateRangeCalendarModal';
+import { TransactionDetailModal } from '@/presentation/components/TransactionDetailModal';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -109,9 +110,8 @@ export default function SalesHistoryScreen() {
   // Sales & Collections Full Overview Modal state
   const [salesOverviewModalVisible, setSalesOverviewModalVisible] = useState(false);
 
-  const [selectedTxId, setSelectedTxId] = useState<string | null>(null);
-  const [disposition, setDisposition] = useState<ReturnDisposition>('SELLABLE');
-  const [returnReason, setReturnReason] = useState<string>('Defective / Wrong Item');
+  const [selectedModalTransaction, setSelectedModalTransaction] =
+    useState<SaleTransactionRecord | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<ToastType>('success');
 
@@ -733,7 +733,6 @@ export default function SalesHistoryScreen() {
           ) : null}
 
           {paginatedTransactions.map((tx, idx) => {
-            const isExpanded = selectedTxId === tx.id;
             const isPayment = tx.transactionType === 'UTANG_PAYMENT';
             const netPhp = Math.max(0, tx.totalPhp - tx.refundedPhp);
 
@@ -748,9 +747,35 @@ export default function SalesHistoryScreen() {
                 >
                   <Pressable
                     style={styles.txRow}
-                    onPress={() =>
-                      setSelectedTxId((prev) => (prev === tx.id ? null : tx.id))
-                    }
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      if (tx.status !== 'VOIDED') {
+                        setConfirmDialog({
+                          type: 'warning',
+                          title: 'Kumpirmahin ang Pag-Void ng Bayad',
+                          itemName: `Bayad Utang: ${tx.customerName || 'Customer'}`,
+                          message: `Sigurado ka bang nais mong i-void ang bayad utang na ito? Ibabalik ang halagang ${Money.fromPhp(tx.totalPhp).format()} sa natitirang utang ni ${tx.customerName || 'Customer'}.`,
+                          details: [
+                            { label: 'Halagang Ibabalik sa Utang', value: Money.fromPhp(tx.totalPhp).format(), highlight: true },
+                            { label: 'Customer', value: tx.customerName || 'Customer' },
+                            { label: 'Paraan ng Pagbayad', value: tx.tenderType },
+                          ],
+                          confirmText: 'Oo, I-Void ang Bayad',
+                          cancelText: 'Bumalik',
+                          onConfirm: async () => {
+                            setConfirmDialog(null);
+                            Haptics.notificationAsync(
+                              Haptics.NotificationFeedbackType.Warning
+                            ).catch(() => {});
+                            await voidEntireTransaction(tx.id, 'Pambawi ng Bayad Utang');
+                            showActionToast(
+                              `✓ Na-void ang bayad utang ni ${tx.customerName || 'Customer'} at naibalik ang balanse`,
+                              'warning'
+                            );
+                          },
+                        });
+                      }
+                    }}
                   >
                     <View style={styles.txTimeCol}>
                       <Text style={styles.txTime}>{tx.timeLabel}</Text>
@@ -784,67 +809,15 @@ export default function SalesHistoryScreen() {
                       +{Money.fromPhp(tx.totalPhp).format()}
                     </Text>
 
-                    <Text style={styles.txItemsCount} numberOfLines={1}>
-                      {tx.customerName || 'Customer'}
-                    </Text>
-                  </Pressable>
-
-                  {isExpanded ? (
-                    <View style={styles.wizardBox}>
-                      <View style={styles.wizardHeader}>
-                        <Text style={styles.wizardTitle}>
-                          Koleksyon #{tx.id} • Bayad via {tx.tenderType}
-                        </Text>
-                      </View>
-
-                      <Text style={styles.paymentDetailText}>
-                        Customer: <Text style={{ fontWeight: '800' }}>{tx.customerName || 'Customer'}</Text>
+                    <View style={styles.txRightCol}>
+                      <Text style={styles.txItemsCount} numberOfLines={1}>
+                        {tx.customerName || 'Customer'}
                       </Text>
-                      <Text style={styles.paymentDetailText}>
-                        Halaga: <Text style={{ fontWeight: '800', color: '#15803D' }}>{Money.fromPhp(tx.totalPhp).format()}</Text>
-                      </Text>
-
-                      {tx.voidOrReturnNote ? (
-                        <Text style={styles.auditNoteText}>{tx.voidOrReturnNote}</Text>
-                      ) : null}
-
                       {tx.status !== 'VOIDED' ? (
-                        <Pressable
-                          style={styles.voidSaleBtn}
-                          onPress={() => {
-                            setConfirmDialog({
-                              type: 'warning',
-                              title: 'Kumpirmahin ang Pag-Void ng Bayad',
-                              itemName: `Bayad Utang: ${tx.customerName || 'Customer'}`,
-                              message: `Sigurado ka bang nais mong i-void ang bayad utang na ito? Ibabalik ang halagang ${Money.fromPhp(tx.totalPhp).format()} sa natitirang utang ni ${tx.customerName || 'Customer'}.`,
-                              details: [
-                                { label: 'Halagang Ibabalik sa Utang', value: Money.fromPhp(tx.totalPhp).format(), highlight: true },
-                                { label: 'Customer', value: tx.customerName || 'Customer' },
-                                { label: 'Paraan ng Pagbayad', value: tx.tenderType },
-                              ],
-                              confirmText: 'Oo, I-Void ang Bayad',
-                              cancelText: 'Bumalik',
-                              onConfirm: async () => {
-                                setConfirmDialog(null);
-                                Haptics.notificationAsync(
-                                  Haptics.NotificationFeedbackType.Warning
-                                ).catch(() => {});
-                                await voidEntireTransaction(tx.id, 'Pambawi ng Bayad Utang');
-                                showActionToast(
-                                  `✓ Na-void ang bayad utang ni ${tx.customerName || 'Customer'} at naibalik ang balanse`,
-                                  'warning'
-                                );
-                              },
-                            });
-                          }}
-                        >
-                          <Text style={styles.voidSaleBtnText}>
-                            🚫 Void Payment (Ibalik ang Balanse sa Utang)
-                          </Text>
-                        </Pressable>
+                        <Ionicons name="trash-outline" size={14} color="#94A3B8" style={{ marginTop: 2 }} />
                       ) : null}
                     </View>
-                  ) : null}
+                  </Pressable>
                 </View>
               );
             }
@@ -859,9 +832,10 @@ export default function SalesHistoryScreen() {
               >
                 <Pressable
                   style={styles.txRow}
-                  onPress={() =>
-                    setSelectedTxId((prev) => (prev === tx.id ? null : tx.id))
-                  }
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setSelectedModalTransaction(tx);
+                  }}
                 >
                   <View style={styles.txTimeCol}>
                     <Text style={styles.txTime}>{tx.timeLabel}</Text>
@@ -932,325 +906,42 @@ export default function SalesHistoryScreen() {
                         {tx.itemCount} {tx.itemCount === 1 ? 'Item' : 'Items'}
                       </Text>
                     )}
+                    <Ionicons name="chevron-forward" size={16} color="#94A3B8" style={{ marginTop: 2 }} />
                   </View>
                 </Pressable>
 
-                {/* Owner Guided Return / Exchange / Void Wizard */}
-                {isExpanded ? (
-                  <View style={styles.wizardBox}>
-                    <View style={styles.wizardHeader}>
-                      <Text style={styles.wizardTitle}>
-                        Receipt {tx.id} • Paid via {tx.tenderType}
-                        {tx.customerName ? ` (${tx.customerName})` : ''}
-                      </Text>
-                    </View>
-
-                    {/* Financial Tubo & Puhunan Breakdown for this specific sale */}
-                    {tx.status !== 'VOIDED' ? (
-                      <View style={styles.saleFinancialCard}>
-                        <View style={styles.saleFinancialCol}>
-                          <Text style={styles.saleFinancialLabel}>{t.bentaToday || 'Benta'}</Text>
-                          <Text style={styles.saleFinancialValue}>₱{netPhp.toFixed(2)}</Text>
-                        </View>
-                        <View style={styles.saleFinancialCol}>
-                          <Text style={styles.saleFinancialLabel}>{t.puhunanOnSale || 'Puhunan'}</Text>
-                          <Text style={styles.saleFinancialValue}>
-                            {showProfit ? `₱${(tx.costPhp ?? 0).toFixed(2)}` : '••••••'}
-                          </Text>
-                        </View>
-                        <View style={styles.saleFinancialCol}>
-                          <Text style={[styles.saleFinancialLabel, { color: '#0D7A52' }]}>
-                            {t.tuboOnSale || 'Tubo'}
-                          </Text>
-                          <Text style={[styles.saleFinancialValue, { color: '#0D7A52', fontWeight: '800' }]}>
-                            {showProfit
-                              ? `+₱${(tx.tuboPhp ?? 0).toFixed(2)} (${tx.profitMarginPercent ?? 0}%)`
-                              : '••••••'}
-                          </Text>
-                        </View>
-                      </View>
-                    ) : null}
-
-                    {tx.voidOrReturnNote ? (
-                      <Text style={styles.auditNoteText}>{tx.voidOrReturnNote}</Text>
-                    ) : null}
-
-                    {tx.status !== 'VOIDED' ? (
-                      <>
-                        <Text style={styles.stepLabel}>
-                          1. Returned Item Condition (Prevents Phantom Stock):
-                        </Text>
-                        <View style={styles.dispositionRow}>
-                          <Pressable
-                            style={[
-                              styles.dispChip,
-                              disposition === 'SELLABLE' ? styles.dispChipGreen : null,
-                            ]}
-                            onPress={() => setDisposition('SELLABLE')}
-                          >
-                            <Text
-                              style={[
-                                styles.dispChipText,
-                                disposition === 'SELLABLE'
-                                  ? styles.dispChipTextGreen
-                                  : null,
-                              ]}
-                            >
-                              ✓ Sellable (Restock +1)
-                            </Text>
-                          </Pressable>
-
-                          <Pressable
-                            style={[
-                              styles.dispChip,
-                              disposition === 'DAMAGED_QUARANTINE'
-                                ? styles.dispChipAmber
-                                : null,
-                            ]}
-                            onPress={() => setDisposition('DAMAGED_QUARANTINE')}
-                          >
-                            <Text
-                              style={[
-                                styles.dispChipText,
-                                disposition === 'DAMAGED_QUARANTINE'
-                                  ? styles.dispChipTextAmber
-                                  : null,
-                              ]}
-                            >
-                              ⚠ Damaged/Expired (Quarantine)
-                            </Text>
-                          </Pressable>
-                        </View>
-
-                        <View style={styles.reasonRow}>
-                          {['Defective / Spoiled', 'Wrong Item', 'Changed Mind'].map(
-                            (r) => (
-                              <Pressable
-                                key={r}
-                                style={[
-                                  styles.reasonPill,
-                                  returnReason === r ? styles.reasonPillActive : null,
-                                ]}
-                                onPress={() => setReturnReason(r)}
-                              >
-                                <Text
-                                  style={[
-                                    styles.reasonText,
-                                    returnReason === r ? styles.reasonTextActive : null,
-                                  ]}
-                                >
-                                  {r}
-                                </Text>
-                              </Pressable>
-                            )
-                          )}
-                        </View>
-
-                        <Text style={styles.stepLabel}>
-                          2. Select Item to Refund or Exchange (Capped at Receipt Price):
-                        </Text>
-                        {tx.items.map((item) => {
-                          const remaining = item.quantity - item.returnedQty;
-                          const isUtangSale = tx.tenderType === 'UTANG';
-
-                          return (
-                            <View key={item.productId} style={styles.lineItemRow}>
-                              <View style={styles.lineItemLeft}>
-                                <Text style={styles.lineItemName}>
-                                  {item.name} ({remaining}/{item.quantity} left)
-                                </Text>
-                                <Text style={styles.lineItemSub}>
-                                  Paid ₱{item.unitPricePaidPhp.toFixed(2)}/pc
-                                  {showProfit && (item.unitCostPhp !== undefined && item.unitCostPhp > 0)
-                                    ? ` • Puhunan ₱${item.unitCostPhp.toFixed(2)} (Tubo +₱${Math.max(0, item.unitPricePaidPhp - item.unitCostPhp).toFixed(2)})`
-                                    : ''}
-                                </Text>
-                              </View>
-
-                              {remaining > 0 ? (
-                                <View style={styles.lineActionBtns}>
-                                  <Pressable
-                                    style={[
-                                      styles.refundBtn,
-                                      isUtangSale ? styles.utangDeductBtn : null,
-                                    ]}
-                                    onPress={() => {
-                                      const amountFormatted = `₱${item.unitPricePaidPhp.toFixed(2)}`;
-                                      setConfirmDialog({
-                                        type: isUtangSale ? 'warning' : 'danger',
-                                        title: isUtangSale
-                                          ? 'Kumpirmahin ang Bawas Utang'
-                                          : 'Kumpirmahin ang Refund',
-                                        itemName: `1× ${item.name}`,
-                                        message: isUtangSale
-                                          ? `Ibabawas ang ${amountFormatted} sa natitirang utang ni ${tx.customerName || 'Customer'}.`
-                                          : `Sigurado ka bang ibabalik ang bayad (${amountFormatted}) ng customer para sa 1× "${item.name}"?`,
-                                        details: [
-                                          { label: 'Halagang Babawiin', value: amountFormatted, highlight: true },
-                                          {
-                                            label: 'Kalagayan ng Paninda',
-                                            value: disposition === 'SELLABLE'
-                                              ? 'Maibebenta Pa (Restock sa Inventory)'
-                                              : 'Sira / Expired (Quarantine)',
-                                          },
-                                          {
-                                            label: 'Paraan ng Pagbalik',
-                                            value: isUtangSale ? 'Bawas Utang (Walang Cash)' : 'Cash Refund sa Kahon',
-                                          },
-                                        ],
-                                        confirmText: isUtangSale ? 'I-bawas sa Utang' : 'I-refund ang Pera',
-                                        cancelText: 'Kanselahin',
-                                        onConfirm: async () => {
-                                          setConfirmDialog(null);
-                                          Haptics.notificationAsync(
-                                            Haptics.NotificationFeedbackType.Success
-                                          ).catch(() => {});
-                                          const res = await processReturnOrExchange({
-                                            txId: tx.id,
-                                            productId: item.productId,
-                                            returnQty: 1,
-                                            reason: returnReason,
-                                            disposition,
-                                            resolution: isUtangSale
-                                              ? 'UTANG_DEDUCTION'
-                                              : 'CASH_REFUND',
-                                          });
-                                          showActionToast(
-                                            isUtangSale
-                                              ? `✓ Nabawas ang ₱${res.creditPhp.toFixed(2)} sa utang ni ${
-                                                  tx.customerName || 'Customer'
-                                                } para sa 1× ${item.name}`
-                                              : `✓ Refunded ₱${res.creditPhp.toFixed(2)} for 1× ${
-                                                  item.name
-                                                } (${
-                                                  disposition === 'SELLABLE'
-                                                    ? 'Restocked to Inventory'
-                                                    : 'Quarantined as Damaged'
-                                                })`
-                                          );
-                                        },
-                                      });
-                                    }}
-                                  >
-                                    <Text
-                                      style={[
-                                        styles.refundBtnText,
-                                        isUtangSale ? styles.utangDeductBtnText : null,
-                                      ]}
-                                    >
-                                      {isUtangSale ? 'Bawas Utang 1×' : 'Refund 1×'}
-                                    </Text>
-                                  </Pressable>
-
-                                  <Pressable
-                                    style={styles.exchangeBtn}
-                                    onPress={() => {
-                                      const creditFormatted = `₱${item.unitPricePaidPhp.toFixed(2)}`;
-                                      setConfirmDialog({
-                                        type: 'info',
-                                        title: 'Kumpirmahin ang Palit Paninda',
-                                        itemName: `1× ${item.name}`,
-                                        message: `Ilalapat ang kredito na ${creditFormatted} ng panindang ito sa bagong bentahan sa checkout.`,
-                                        details: [
-                                          { label: 'Exchange Credit', value: creditFormatted, highlight: true },
-                                          {
-                                            label: 'Kalagayan ng Paninda',
-                                            value: disposition === 'SELLABLE'
-                                              ? 'Maibebenta Pa (Restock)'
-                                              : 'Sira / Expired',
-                                          },
-                                        ],
-                                        confirmText: 'Pumunta sa Checkout',
-                                        cancelText: 'Kanselahin',
-                                        onConfirm: async () => {
-                                          setConfirmDialog(null);
-                                          Haptics.notificationAsync(
-                                            Haptics.NotificationFeedbackType.Success
-                                          ).catch(() => {});
-                                          const res = await processReturnOrExchange({
-                                            txId: tx.id,
-                                            productId: item.productId,
-                                            returnQty: 1,
-                                            reason: returnReason,
-                                            disposition,
-                                            resolution: 'EXCHANGE_CREDIT',
-                                          });
-                                          showActionToast(
-                                            `✓ Applied ₱${res.creditPhp.toFixed(
-                                              2
-                                            )} Exchange Credit to New Sale`
-                                          );
-                                          router.navigate('/checkout');
-                                        },
-                                      });
-                                    }}
-                                  >
-                                    <Text style={styles.exchangeBtnText}>
-                                      🔄 Exchange
-                                    </Text>
-                                  </Pressable>
-                                </View>
-                              ) : (
-                                <Text style={styles.returnedBadge}>Returned</Text>
-                              )}
-                            </View>
-                          );
-                        })}
-
-                        {/* Thermal Receipt Reprint Button */}
-                        <Pressable
-                          style={styles.reprintReceiptBtn}
-                          onPress={() => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                            setReprintTx(tx);
-                          }}
-                        >
-                          <Text style={styles.reprintReceiptBtnText}>
-                            🖨️ Thermal Receipt Slip (58mm / 80mm)
-                          </Text>
-                        </Pressable>
-
-                        {/* Owner Same-Day Void Button */}
-                        <Pressable
-                          style={styles.voidSaleBtn}
-                          onPress={() => {
-                            setConfirmDialog({
-                              type: 'delete',
-                              title: 'Kumpirmahin ang Pag-Void ng Resibo',
-                              itemName: `Resibo #${tx.id}`,
-                              message: `Sigurado ka bang nais mong i-void ang Resibo #${tx.id}? Mababawi ang benta at maibabalik ang mga paninda sa imbentaryo.`,
-                              details: [
-                                { label: 'Kabuuang Halaga', value: Money.fromPhp(tx.totalPhp).format(), highlight: true },
-                                { label: 'Customer', value: tx.customerName || 'Walk-in' },
-                                { label: 'Paraan ng Pagbayad', value: tx.tenderType },
-                              ],
-                              confirmText: 'Oo, I-Void ang Resibo',
-                              cancelText: 'Huwag',
-                              onConfirm: async () => {
-                                setConfirmDialog(null);
-                                Haptics.notificationAsync(
-                                  Haptics.NotificationFeedbackType.Warning
-                                ).catch(() => {});
-                                await voidEntireTransaction(tx.id, 'Owner Entry Correction');
-                                showActionToast(
-                                  `✓ Na-void ang Resibo #${tx.id} at naibalik ang paninda sa imbentaryo`,
-                                  'warning'
-                                );
-                              },
-                            });
-                          }}
-                        >
-                          <Text style={styles.voidSaleBtnText}>
-                            🚫 Void Entire Receipt (Owner Entry Error)
-                          </Text>
-                        </Pressable>
-                      </>
-                    ) : null}
-                  </View>
-                ) : null}
               </View>
             );
           })}
+
+          {/* Dedicated Full-Control Transaction Detail Modal */}
+          <TransactionDetailModal
+            visible={selectedModalTransaction !== null}
+            transaction={
+              selectedModalTransaction
+                ? transactions.find((t) => t.id === selectedModalTransaction.id) || selectedModalTransaction
+                : null
+            }
+            onClose={() => setSelectedModalTransaction(null)}
+            onProcessReturnOrExchange={async (params) => {
+              return await processReturnOrExchange(params);
+            }}
+            onVoidEntireTransaction={async (txId, reason) => {
+              await voidEntireTransaction(txId, reason);
+            }}
+            onReprintReceipt={(tx) => {
+              setReprintTx(tx);
+            }}
+            onNavigateToCartForExchange={(creditPhp) => {
+              router.navigate('/');
+              showActionToast(
+                `✓ Kredito na ₱${creditPhp.toFixed(2)} ay handa na sa Cart. Mag-scan o pumili ng ipapalit.`,
+                'success'
+              );
+            }}
+            showToast={(msg, type) => showActionToast(msg, type || 'success')}
+            showProfit={showProfit}
+          />
 
           {totalPages > 1 ? (
             <View style={styles.paginationRow}>

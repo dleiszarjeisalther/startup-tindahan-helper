@@ -31,6 +31,7 @@ import {
   ReasonSelectorConfig,
 } from '@/presentation/components/ConfirmationModal';
 import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
+import { ProductStockManageModal } from '@/presentation/components/ProductStockManageModal';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -92,8 +93,7 @@ export default function InventoryManagementScreen() {
   const [isSearchScanning, setIsSearchScanning] = useState(false);
   const activeSearchScanning = isSearchScanning && isFocused;
   const [showAddForm, setShowAddForm] = useState(products.length === 0);
-  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
-  const [customRestockQty, setCustomRestockQty] = useState<string>('10');
+  const [selectedModalProduct, setSelectedModalProduct] = useState<ProductDTO | null>(null);
   const [newExpiryDate, setNewExpiryDate] = useState<string>('');
   const [editExpiryDate, setEditExpiryDate] = useState<string>('');
   const [pinChallengeAction, setPinChallengeAction] = useState<(() => void) | null>(null);
@@ -761,7 +761,7 @@ export default function InventoryManagementScreen() {
       if (existing) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
         setSearchQuery(clean);
-        setExpandedProductId(existing.id);
+        setSelectedModalProduct(existing);
         setShowAddForm(false);
         setFeedbackMsg(
           `ℹ️ Product "${existing.name}" (${existing.barcode}) already exists in inventory! Switched to product restock & details.`
@@ -785,7 +785,7 @@ export default function InventoryManagementScreen() {
       setNewBarcode,
       setFeedbackMsg,
       setSearchQuery,
-      setExpandedProductId,
+      setSelectedModalProduct,
       setShowAddForm,
     ]
   );
@@ -824,7 +824,7 @@ export default function InventoryManagementScreen() {
         console.log(`[Inventory Screen] ✓ Matched existing product: "${matched.name}" (ID: ${matched.id})`);
         // Exists: act as barcode search
         setSearchQuery(clean);
-        setExpandedProductId(matched.id);
+        setSelectedModalProduct(matched);
         setShowAddForm(false);
         showToast(`✓ Found existing product: "${matched.name}" (Stock: ${matched.stockCount})`, 'success');
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
@@ -949,7 +949,7 @@ export default function InventoryManagementScreen() {
           onConfirm: () => {
             setConfirmDialog(null);
             setSearchQuery(cleanBarcode);
-            setExpandedProductId(existingByBarcode.id);
+            setSelectedModalProduct(existingByBarcode);
             setShowAddForm(false);
           },
         });
@@ -970,7 +970,7 @@ export default function InventoryManagementScreen() {
           onConfirm: () => {
             setConfirmDialog(null);
             setSearchQuery(existingByName.name);
-            setExpandedProductId(existingByName.id);
+            setSelectedModalProduct(existingByName);
             setShowAddForm(false);
           },
         });
@@ -1062,7 +1062,7 @@ export default function InventoryManagementScreen() {
           onConfirm: () => {
             setConfirmDialog(null);
             setSearchQuery(result.existingProduct.barcode);
-            setExpandedProductId(result.existingProduct.id);
+            setSelectedModalProduct(result.existingProduct);
             setShowAddForm(false);
           },
         });
@@ -2498,14 +2498,14 @@ export default function InventoryManagementScreen() {
 
         {/* Dynamic Inventory Product List with Images */}
         {paginatedProducts.map((item) => {
-          const isExpanded = expandedProductId === item.id;
           return (
             <View key={item.id} style={styles.inventoryItemContainer}>
               <Pressable
                 style={styles.inventoryRow}
-                onPress={() =>
-                  setExpandedProductId((prev) => (prev === item.id ? null : item.id))
-                }
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setSelectedModalProduct(item);
+                }}
               >
                 <View style={styles.thumbBox}>
                   <ProductThumbnail visual={item.visual} imageUri={item.imageUri} size="md" />
@@ -2541,300 +2541,70 @@ export default function InventoryManagementScreen() {
                   ) : null}
                 </View>
 
-                <View
-                  style={[
-                    styles.statusBadge,
-                    item.stockStatus === 'IN_STOCK'
-                      ? styles.badgeGreen
-                      : item.stockStatus === 'LOW_STOCK'
-                      ? styles.badgeAmber
-                      : styles.badgeRed,
-                  ]}
-                >
-                  <Text
+                <View style={styles.inventoryEndCol}>
+                  <View
                     style={[
-                      styles.statusBadgeText,
+                      styles.statusBadge,
                       item.stockStatus === 'IN_STOCK'
-                        ? styles.textGreen
+                        ? styles.badgeGreen
                         : item.stockStatus === 'LOW_STOCK'
-                        ? styles.textAmber
-                        : styles.textRed,
+                        ? styles.badgeAmber
+                        : styles.badgeRed,
                     ]}
                   >
-                    {item.stockStatus === 'IN_STOCK'
-                      ? '✓ In Stock'
-                      : item.stockStatus === 'LOW_STOCK'
-                      ? '⚠ Low Stock'
-                      : '⊗ Out of Stock'}
-                  </Text>
+                    <Text
+                      style={[
+                        styles.statusBadgeText,
+                        item.stockStatus === 'IN_STOCK'
+                          ? styles.textGreen
+                          : item.stockStatus === 'LOW_STOCK'
+                          ? styles.textAmber
+                          : styles.textRed,
+                      ]}
+                    >
+                      {item.stockStatus === 'IN_STOCK'
+                        ? '✓ In Stock'
+                        : item.stockStatus === 'LOW_STOCK'
+                        ? '⚠ Low Stock'
+                        : '⊗ Out of Stock'}
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={16} color="#94A3B8" style={{ marginTop: 4 }} />
                 </View>
               </Pressable>
-
-              {/* Owner Stock Adjustment & Image Management Drawer */}
-              {isExpanded ? (
-                <View style={styles.ownerAdjustDrawer}>
-                  <View style={styles.drawerTopRow}>
-                    <Text style={styles.adjustTitle} numberOfLines={1}>
-                      Manage • Barcode: {item.barcode}
-                    </Text>
-                    <View style={styles.topDrawerActions}>
-                      <Pressable
-                        style={styles.editProductBtn}
-                        onPress={() => {
-                          if (operatingMode === 'CASHIER' || (isStoreSecurityEnabled && isStoreLocked)) {
-                            setPinChallengeAction(() => () => handleOpenEditModal(item));
-                          } else {
-                            handleOpenEditModal(item);
-                          }
-                        }}
-                      >
-                        <Ionicons name="pencil" size={13} color="#0D7A52" style={{ marginRight: 3 }} />
-                        <Text style={styles.editProductBtnText}>Edit</Text>
-                      </Pressable>
-                      <Pressable
-                        style={styles.photoChangeBtn}
-                        onPress={() => handleChangeExistingPhoto(item.id)}
-                      >
-                        <Text style={styles.photoChangeText}>📷 Photo</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-
-                  {/* Multi-unit Selling Tiers Summary */}
-                  {item.sellingTiers && item.sellingTiers.length > 1 ? (
-                    <View style={styles.itemTiersSummaryBadge}>
-                      <Text style={styles.itemTierBadgeHeader}>Multi-unit Selling Tiers:</Text>
-                      {item.sellingTiers.map((tier) => (
-                        <Text key={tier.unitName} style={styles.itemTierBadgeText}>
-                          • {tier.unitName.toUpperCase()}: ₱{tier.unitPricePhp.toFixed(2)} ({tier.baseUnitMultiplier} pcs)
-                          {tier.barcode ? ` [Barcode: ${tier.barcode}]` : ''}
-                        </Text>
-                      ))}
-                    </View>
-                  ) : null}
-
-                  {/* Custom Restock / Adjustment Input Row */}
-                  {(() => {
-                    const inputQty = Math.max(1, parseInt(customRestockQty || '1', 10) || 1);
-                    return (
-                      <>
-                        <View style={styles.customRestockRow}>
-                          <TextInput
-                            style={styles.customRestockInput}
-                            value={customRestockQty}
-                            onChangeText={setCustomRestockQty}
-                            placeholder="Qty"
-                            keyboardType="number-pad"
-                          />
-                          <Pressable
-                            style={styles.adjBtnGreen}
-                            onPress={() => {
-                              setConfirmDialog({
-                                type: 'restock',
-                                title: 'Kumpirmahin ang Restock',
-                                itemName: item.name,
-                                message: 'Sigurado ka bang nais mong magdagdag ng stock sa panindang ito?',
-                                details: [
-                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                                  { label: 'Dami ng Idaragdag', value: `+${inputQty} pcs` },
-                                  { label: 'Magiging Kabuuan', value: `${item.stockCount + inputQty} pcs`, highlight: true },
-                                ],
-                                reasonSelector: {
-                                  label: 'Dahilan ng Restock (Reason):',
-                                  options: ['Bagong Delivery', 'Replenishment', 'Return to Shelf', 'Physical Count Correction'],
-                                  defaultReason: 'Bagong Delivery',
-                                  placeholder: 'Hal. galing sa supplier / resibo #...',
-                                },
-                                confirmText: 'Itala ang Stock',
-                                cancelText: 'Kanselahin',
-                                onConfirm: async (reason) => {
-                                  setConfirmDialog(null);
-                                  await adjustInventoryStock({
-                                    productId: item.id,
-                                    mode: 'RESTOCK',
-                                    quantity: inputQty,
-                                    reason,
-                                  });
-                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                                  showToast(`✓ Naidagdag +${inputQty} ${item.name} sa stock (Total: ${item.stockCount + inputQty} pcs)`, 'success');
-                                },
-                              });
-                            }}
-                          >
-                            <Text style={styles.adjBtnGreenText}>
-                              +{inputQty} Restock
-                            </Text>
-                          </Pressable>
-
-                          <Pressable
-                            style={styles.adjBtnBlue}
-                            onPress={() => {
-                              setConfirmDialog({
-                                type: 'unpack',
-                                title: 'Kumpirmahin ang Pag-unpack',
-                                itemName: item.name,
-                                message: `Nais mo bang buksan ang ${inputQty} bulk pack para maging +${inputQty * 10} tingi piraso?`,
-                                details: [
-                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                                  { label: 'Mababawas na Pack', value: `-${inputQty} pack` },
-                                  { label: 'Dagdag sa Tingi', value: `+${inputQty * 10} piraso`, highlight: true },
-                                ],
-                                reasonSelector: {
-                                  label: 'Dahilan ng Pag-unpack:',
-                                  options: ['Binuksang Pack para sa Tingi', 'Replenish Tingi Shelf', 'Pabor sa Suki'],
-                                  defaultReason: 'Binuksang Pack para sa Tingi',
-                                },
-                                confirmText: 'I-unpack ang Tingi',
-                                cancelText: 'Kanselahin',
-                                onConfirm: async (reason) => {
-                                  setConfirmDialog(null);
-                                  await adjustInventoryStock({
-                                    productId: item.id,
-                                    mode: 'UNPACK_TINGI',
-                                    quantity: inputQty,
-                                    reason,
-                                  });
-                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                                  showToast(
-                                    `✓ Na-unpack ang ${inputQty} bulk pack sa +${inputQty * 10} tingi piraso ng ${item.name}`,
-                                    'success'
-                                  );
-                                },
-                              });
-                            }}
-                          >
-                            <Text style={styles.adjBtnBlueText}>📦 +{inputQty * 10} Tingi</Text>
-                          </Pressable>
-                        </View>
-
-                        <View style={styles.adjustBtnsRow}>
-                          <Pressable
-                            style={styles.adjBtnAmber}
-                            onPress={() => {
-                              const remaining = Math.max(0, item.stockCount - inputQty);
-                              setConfirmDialog({
-                                type: 'home_use',
-                                title: 'Gamit sa Bahay (Home Use)',
-                                itemName: item.name,
-                                message: `Ibabawas ba ang ${inputQty} pc ng paninda para sa pansariling gamit sa bahay?`,
-                                details: [
-                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                                  { label: 'Ibabawas', value: `-${inputQty} pc` },
-                                  { label: 'Matitirang Stock', value: `${remaining} pcs`, highlight: true },
-                                ],
-                                reasonSelector: {
-                                  label: 'Dahilan ng Bawas (Home Use):',
-                                  options: ['Pansariling Gamit', 'Kusina / Pananghalian', 'Pamilya / Suki Sample'],
-                                  defaultReason: 'Pansariling Gamit',
-                                  placeholder: 'Hal. ulam ng pamilya, meryenda...',
-                                },
-                                confirmText: 'I-bawas sa Stock',
-                                cancelText: 'Kanselahin',
-                                onConfirm: async (reason) => {
-                                  setConfirmDialog(null);
-                                  await adjustInventoryStock({
-                                    productId: item.id,
-                                    mode: 'HOME_USE',
-                                    quantity: inputQty,
-                                    reason,
-                                  });
-                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-                                  showToast(
-                                    `✓ Naitala ang -${inputQty} ${item.name} bilang Gamit sa Bahay (Tira: ${remaining} pcs)`,
-                                    'warning'
-                                  );
-                                },
-                              });
-                            }}
-                          >
-                            <Text style={styles.adjBtnAmberText}>−{inputQty} Gamit sa Bahay</Text>
-                          </Pressable>
-
-                          <Pressable
-                            style={styles.adjBtnRed}
-                            onPress={() => {
-                              const remaining = Math.max(0, item.stockCount - inputQty);
-                              setConfirmDialog({
-                                type: 'damaged',
-                                title: 'Sira o Expired na Paninda',
-                                itemName: item.name,
-                                message: `Sigurado ka bang sira o expired ang ${inputQty} pc? Ibabawas ito sa mabebentang stock.`,
-                                details: [
-                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                                  { label: 'Ibabawas', value: `-${inputQty} pc` },
-                                  { label: 'Matitirang Stock', value: `${remaining} pcs`, highlight: true },
-                                ],
-                                reasonSelector: {
-                                  label: 'Dahilan ng Pagkasira/Expired:',
-                                  options: ['Basag / Depektibo', 'Lampas na sa Expiry', 'Daga / Insekto / Nabasa'],
-                                  defaultReason: 'Lampas na sa Expiry',
-                                  placeholder: 'Hal. may tagas ang supot, expired noong...',
-                                },
-                                confirmText: 'Itala bilang Sira',
-                                cancelText: 'Kanselahin',
-                                onConfirm: async (reason) => {
-                                  setConfirmDialog(null);
-                                  await adjustInventoryStock({
-                                    productId: item.id,
-                                    mode: 'DAMAGED_EXPIRED',
-                                    quantity: inputQty,
-                                    reason,
-                                  });
-                                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-                                  showToast(
-                                    `✓ Inilipat ang ${inputQty} ${item.name} sa Sira/Expired (Tira: ${remaining} pcs)`,
-                                    'warning'
-                                  );
-                                },
-                              });
-                            }}
-                          >
-                            <Text style={styles.adjBtnRedText}>⚠ −{inputQty} Sira/Expired</Text>
-                          </Pressable>
-                          <Pressable
-                            style={styles.deleteBtn}
-                            onPress={() => {
-                              setConfirmDialog({
-                                type: 'delete',
-                                title: 'Alisin ang Paninda?',
-                                itemName: item.name,
-                                message: `Sigurado ka bang nais mong tanggalin ang "${item.name}" sa iyong paninda? Hindi na ito maibabalik.`,
-                                details: [
-                                  { label: 'Kasalukuyang Stock', value: `${item.stockCount} pcs` },
-                                  { label: 'Barcode', value: item.barcode || 'Wala' },
-                                ],
-                                confirmText: 'Oo, Alisin',
-                                cancelText: 'Huwag',
-                                onConfirm: async () => {
-                                  setConfirmDialog(null);
-                                  try {
-                                    await deleteProductFromDatabase(item.id);
-                                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                                    setExpandedProductId(null);
-                                    showToast(`🗑️ Naalis ang "${item.name}" sa imbentaryo`, 'warning');
-                                    setErrorMsg(null);
-                                  } catch (error) {
-                                    setErrorMsg(
-                                      error instanceof Error
-                                        ? error.message
-                                        : 'Hindi maalis ang paninda. Subukang muli.'
-                                    );
-                                  }
-                                },
-                              });
-                            }}
-                          >
-                            <Text style={styles.deleteBtnText}>🗑 Delete</Text>
-                          </Pressable>
-                        </View>
-                      </>
-                    );
-                  })()}
-                </View>
-              ) : null}
             </View>
           );
         })}
+
+        {/* Dedicated Product Stock Management Modal */}
+        <ProductStockManageModal
+          visible={selectedModalProduct !== null}
+          product={
+            selectedModalProduct
+              ? products.find((p) => p.id === selectedModalProduct.id) || selectedModalProduct
+              : null
+          }
+          onClose={() => setSelectedModalProduct(null)}
+          onAdjustStock={async (params) => {
+            await adjustInventoryStock(params);
+          }}
+          onDeleteProduct={async (id) => {
+            await deleteProductFromDatabase(id);
+          }}
+          onEditProduct={(prod) => {
+            handleOpenEditModal(prod);
+          }}
+          onChangePhoto={(id) => {
+            handleChangeExistingPhoto(id);
+          }}
+          showToast={(msg, type) => showToast(msg, type || 'info')}
+          operatingMode={operatingMode}
+          isStoreSecurityEnabled={isStoreSecurityEnabled}
+          isStoreLocked={isStoreLocked}
+          onRequirePinChallenge={(action) => {
+            setPinChallengeAction(() => action);
+          }}
+        />
 
         {/* Pagination Controls */}
         {totalPages > 1 ? (
@@ -4563,6 +4333,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#D97706',
     fontWeight: '700',
+  },
+  inventoryEndCol: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    gap: 2,
   },
   statusBadge: {
     paddingHorizontal: 10,
