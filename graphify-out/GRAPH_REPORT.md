@@ -1,16 +1,16 @@
 # Graph Report - startupTindahanHelper  (2026-10-27)
 
 ## Corpus Check
-- 141 files · ~485,803 words
+- 141 files · ~486,029 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1497 nodes · 2525 edges · 128 communities (58 shown, 54 thin omitted)
+- 1497 nodes · 2527 edges · 128 communities (58 shown, 54 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 89 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a4782f06`
+- Built from commit: `0e63567b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -121,7 +121,7 @@
 - react-native-web
 - ApkUpdaterModule
 - SeasonalForecastScreen
-- ConfirmationModal.tsx
+- more.tsx
 - SqliteDatabase
 - Android APK updates
 - patch-expo-notifications.cjs
@@ -137,8 +137,8 @@
 6. `getTranslations()` - 23 edges
 7. `ProductDTO` - 21 edges
 8. `Money` - 21 edges
-9. `Barcode` - 19 edges
-10. `expo-router` - 18 edges
+9. `expo-router` - 19 edges
+10. `Barcode` - 19 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `setup()` --calls--> `AppUpdateService`  [EXTRACTED]
@@ -163,7 +163,7 @@ Nodes (41): NotificationsScreen(), StoreSettingsScreen(), addCashAdjustment(), a
 
 ### Community 2 - "sales.tsx"
 Cohesion: 0.13
-Nodes (15): GASTOS_CATEGORIES, PANUKLI_CATEGORIES, PERIODS, styles, SaleTransactionRecord, FloatingToastProps, styles, ToastType (+7 more)
+Nodes (17): GASTOS_CATEGORIES, PANUKLI_CATEGORIES, PERIODS, styles, DateRangeFilter, SaleTransactionRecord, DateRangeCalendarModal(), DateRangeCalendarModalProps (+9 more)
 
 ### Community 3 - "app-tabs.web.tsx"
 Cohesion: 0.12
@@ -199,7 +199,7 @@ Nodes (4): TindahanStoreService, MonthlySalesRecord, Money, WeightQuantitySheet(
 
 ### Community 11 - "utang.tsx"
 Cohesion: 0.16
-Nodes (14): styles, StockMovementHistoryScreen(), SalesHistoryScreen(), FilterType, styles, SukiUtangLedgerScreen(), FloatingToast(), ScreenSafeAreaView() (+6 more)
+Nodes (13): styles, FilterType, styles, FloatingToast(), FloatingToastProps, styles, ToastType, ScreenSafeAreaView() (+5 more)
 
 ### Community 12 - "animated-icon.web.tsx"
 Cohesion: 0.29
@@ -222,8 +222,8 @@ Cohesion: 0.18
 Nodes (11): expo, expo-asset, expo-crypto, expo-splash-screen, dependencies, expo, expo-asset, expo-crypto (+3 more)
 
 ### Community 20 - "inventory.tsx"
-Cohesion: 0.13
-Nodes (17): expo-router, ConfirmationState, STOCK_FILTERS, styles, styles, styles, BarcodeInputField(), BarcodeInputFieldProps (+9 more)
+Cohesion: 0.11
+Nodes (23): expo-router, ConfirmationState, STOCK_FILTERS, styles, styles, styles, BarcodeInputField(), BarcodeInputFieldProps (+15 more)
 
 ### Community 25 - "Data Input, Data Output & Mobile POS UX Best Practices (React Native + Expo)"
 Cohesion: 0.11
@@ -355,7 +355,7 @@ Nodes (23): LicensingState, LicensingGate(), LicensingGateContext, LicensingGate
 
 ### Community 106 - "history.tsx"
 Cohesion: 0.21
-Nodes (12): DateFilter, HistoryCategoryFilter, MovementFilter, styles, UnifiedActivityItem, CashDrawerAdjustmentRecord, DateRangeFilter, StockMovementRecord (+4 more)
+Nodes (11): DateFilter, HistoryCategoryFilter, MovementFilter, StockMovementHistoryScreen(), styles, UnifiedActivityItem, SalesHistoryScreen(), SukiUtangLedgerScreen() (+3 more)
 
 ### Community 108 - "LicensingService.ts"
 Cohesion: 0.12
@@ -369,9 +369,9 @@ Nodes (5): FileProvider, Module, ApkFileProvider, ApkUpdaterModule, PackageInfo
 Cohesion: 0.25
 Nodes (8): getLocalizedMonths(), getPhilippineSeasonInfo(), SeasonalForecastScreen(), MenuProfileScreen(), OnboardingModal(), adjustInventoryStock(), getMonthlySalesHistory(), updateSettings()
 
-### Community 118 - "ConfirmationModal.tsx"
-Cohesion: 0.21
-Nodes (14): ConfirmationState, ConfirmationState, styles, ConfirmationState, ConfirmationState, ConfirmationState, ConfirmationModal(), ConfirmationModalDetail (+6 more)
+### Community 118 - "more.tsx"
+Cohesion: 0.39
+Nodes (8): ConfirmationState, ConfirmationState, styles, ConfirmationState, ConfirmationState, ConfirmationState, ConfirmationModalDetail, ConfirmationType
 
 ### Community 120 - "SqliteDatabase"
 Cohesion: 0.15
@@ -399,8 +399,8 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `TindahanStoreService` connect `TindahanStoreService` to `Product.ts`, `TindahanStoreService.ts`, `container.ts`, `PinSecurityEngine`, `StoreAlertPolicy.ts`?**
   _High betweenness centrality (0.053) - this node is a cross-community bridge._
-- **Why does `expo-router` connect `inventory.tsx` to `sales.tsx`, `app-tabs.web.tsx`, `checkout.tsx`, `history.tsx`, `utang.tsx`, `container.ts`, `SoundFeedbackService.ts`, `settings.tsx`, `ConfirmationModal.tsx`, `StoreAlertPolicy.ts`?**
-  _High betweenness centrality (0.040) - this node is a cross-community bridge._
+- **Why does `expo-router` connect `inventory.tsx` to `sales.tsx`, `app-tabs.web.tsx`, `checkout.tsx`, `history.tsx`, `utang.tsx`, `container.ts`, `SoundFeedbackService.ts`, `settings.tsx`, `more.tsx`, `StoreAlertPolicy.ts`?**
+  _High betweenness centrality (0.041) - this node is a cross-community bridge._
 - **Why does `Barcode` connect `Barcode` to `Product.ts`, `sound-feedback.test.cjs`, `ProductOnboardingService.ts`, `InMemoryProductRepository`?**
   _High betweenness centrality (0.029) - this node is a cross-community bridge._
 - **Are the 55 inferred relationships involving `useTindahanStore()` (e.g. with `addCashAdjustment()` and `addCategory()`) actually correct?**

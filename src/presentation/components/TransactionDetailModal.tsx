@@ -10,7 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { SaleTransactionRecord } from '../../application/TindahanStoreService';
-import { ConfirmationModal, ConfirmationModalDetail } from './ConfirmationModal';
+import { ConfirmationModal, ConfirmationModalDetail, ConfirmationType } from './ConfirmationModal';
 
 export type ReturnDisposition = 'SELLABLE' | 'DAMAGED_QUARANTINE';
 export type ReturnResolution = 'CASH_REFUND' | 'UTANG_DEDUCTION' | 'EXCHANGE_CREDIT';
@@ -48,7 +48,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   const [selectedProductIdOverride, setSelectedProductIdOverride] = useState<string | null>(null);
   const [returnQty, setReturnQty] = useState<number>(1);
   const [disposition, setDisposition] = useState<ReturnDisposition>('SELLABLE');
-  const [selectedReason, setSelectedReason] = useState<string>('Changed Mind');
+  const [selectedReason, setSelectedReason] = useState<string>('Nagbago ang Isip');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Derived selected product ID: Pure, zero effect cascading render
@@ -61,6 +61,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   // Confirmation dialog state
   const [confirmState, setConfirmState] = useState<{
     visible: boolean;
+    type: ConfirmationType;
     title: string;
     message: string;
     itemName?: string;
@@ -80,6 +81,15 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   const maxReturnableQty = activeItem ? Math.max(0, activeItem.quantity - activeItem.returnedQty) : 0;
   const refundAmountPhp = activeItem ? Number((activeItem.unitPricePaidPhp * returnQty).toFixed(2)) : 0;
 
+  // Calculate remaining and total pieces across all items
+  const totalUnits = transaction.items.reduce((sum, it) => sum + it.quantity, 0);
+  const returnedUnits = transaction.items.reduce((sum, it) => sum + (it.returnedQty || 0), 0);
+  const remainingUnits = Math.max(0, totalUnits - returnedUnits);
+
+  const receiptNumberDisplay = transaction.id.startsWith('OR-')
+    ? transaction.id
+    : `OR-${transaction.id.slice(-6).toUpperCase()}`;
+
   const handleStepQty = (delta: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     setReturnQty((prev) => {
@@ -92,34 +102,29 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
     if (!activeItem || returnQty <= 0) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
 
-    const resolutionLabel =
-      resolution === 'CASH_REFUND'
-        ? 'Ibalik ang Bayad (Cash Refund)'
-        : resolution === 'UTANG_DEDUCTION'
-        ? 'Bawas Utang'
-        : 'Palit-Paninda (Exchange Credit)';
+    let resolutionLabel = 'Ibalik ang Pera (Cash Refund)';
+    if (resolution === 'UTANG_DEDUCTION') resolutionLabel = 'Bawas Utang';
+    if (resolution === 'EXCHANGE_CREDIT') resolutionLabel = 'Palit-Paninda (Kredito)';
 
-    const details: ConfirmationModalDetail[] = [
-      { label: 'Paninda', value: `${returnQty}× ${activeItem.name}` },
-      { label: 'Halagang Babawiin', value: `₱${refundAmountPhp.toFixed(2)}`, highlight: true },
-      {
-        label: 'Kalagayan',
-        value: disposition === 'SELLABLE' ? 'Maayos (Ibabalik sa Paninda)' : 'Sira / Expired (Talaan ng Bawas)',
-      },
-      { label: 'Paraan', value: resolutionLabel },
-    ];
+    const conditionLabel = disposition === 'SELLABLE' ? 'Maayos (Ibenta Muli)' : 'Sira / Expired (Itabi)';
 
     setConfirmState({
       visible: true,
+      type: 'warning',
       title: 'Kumpirmahin ang Pagbabalik',
-      message: `Sigurado ka bang nais mong itala ang pagbabalik ng ${returnQty}× "${activeItem.name}"?`,
-      itemName: `${returnQty}× ${activeItem.name}`,
-      details,
-      confirmText: 'Itala ang Pagbabalik',
+      message: `Sigurado ka bang nais mong iproseso ang pagsauli para sa ${activeItem.name}?`,
+      itemName: `${activeItem.name} (${returnQty} pc/s)`,
+      details: [
+        { label: 'Dami ng Isasauli', value: `${returnQty} pcs` },
+        { label: 'Kalagayan', value: conditionLabel },
+        { label: 'Aksyon', value: resolutionLabel },
+        { label: 'Halaga', value: `₱${refundAmountPhp.toFixed(2)}` },
+      ],
+      confirmText: 'Itala ang Pagsauli',
       action: async () => {
-        setIsSubmitting(true);
         try {
-          const res = await onProcessReturnOrExchange({
+          setIsSubmitting(true);
+          const result = await onProcessReturnOrExchange({
             txId: transaction.id,
             productId: activeItem.productId,
             returnQty,
@@ -128,25 +133,18 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
             resolution,
           });
 
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-
           if (resolution === 'EXCHANGE_CREDIT') {
-            showToast(`✓ Naitala ang ₱${res.creditPhp.toFixed(2)} bilang palit-paninda`, 'success');
             onClose();
             if (onNavigateToCartForExchange) {
-              onNavigateToCartForExchange(res.creditPhp);
+              onNavigateToCartForExchange(result.creditPhp);
             }
-          } else if (resolution === 'UTANG_DEDUCTION') {
-            showToast(
-              `✓ Nabawas ang ₱${res.creditPhp.toFixed(2)} sa utang ni ${transaction.customerName || 'Suki'}`,
-              'success'
-            );
           } else {
-            showToast(`✓ Naibalik ang ₱${res.creditPhp.toFixed(2)} sa customer`, 'success');
+            showToast('Matagumpay na naitala ang pagsauli ng paninda!', 'success');
+            setReturnQty(1);
           }
-        } catch (err) {
-          const errMsg = err instanceof Error ? err.message : 'Hindi maiproseso ang pagbabalik.';
-          showToast(errMsg, 'error');
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Hindi maiproseso ang pagsauli.';
+          showToast(msg, 'error');
         } finally {
           setIsSubmitting(false);
           setConfirmState(null);
@@ -159,24 +157,25 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
     setConfirmState({
       visible: true,
-      title: 'I-void ang Buong Resibo?',
-      message: `Sigurado ka bang nais mong i-void ang buong resibo ${transaction.id}? Ibabalik ang mga paninda at aalisin ang benta sa talaan.`,
+      type: 'danger',
+      title: 'I-void ang Buong Resibo',
+      message: `Sigurado ka bang nais mong i-void ang buong resibo ${receiptNumberDisplay}? Ibabalik nito ang lahat ng natitirang stock at ituturing na kanselado ang benta.`,
+      itemName: `Resibo #${receiptNumberDisplay}`,
       details: [
-        { label: 'Resibo', value: transaction.id },
-        { label: 'Kabuuang Halaga', value: `₱${transaction.totalPhp.toFixed(2)}`, highlight: true },
         { label: 'Paraan ng Bayad', value: transaction.tenderType },
+        { label: 'Kabuuan', value: `₱${transaction.totalPhp.toFixed(2)}` },
+        { label: 'Aksyon sa Kaha', value: isUtangSale ? 'Bawas sa Utang' : 'Bawas sa Pera sa Kaha' },
       ],
       confirmText: 'Oo, I-void ang Resibo',
       action: async () => {
-        setIsSubmitting(true);
         try {
-          await onVoidEntireTransaction(transaction.id, 'Customer cancellation / cashier void');
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-          showToast(`✓ Na-void ang resibo ${transaction.id}`, 'warning');
+          setIsSubmitting(true);
+          await onVoidEntireTransaction(transaction.id, 'Customer cancellation / Void entire receipt');
+          showToast(`Na-void na ang resibo #${receiptNumberDisplay}.`, 'success');
           onClose();
-        } catch (err) {
-          const errMsg = err instanceof Error ? err.message : 'Hindi ma-void ang resibo.';
-          showToast(errMsg, 'error');
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Hindi ma-void ang resibo.';
+          showToast(msg, 'error');
         } finally {
           setIsSubmitting(false);
           setConfirmState(null);
@@ -189,420 +188,434 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
     <>
       <Modal
         visible={visible}
-        transparent
         animationType="slide"
+        transparent
         onRequestClose={onClose}
       >
-        <View style={styles.modalBackdrop}>
-          <Pressable style={styles.backdropDismiss} onPress={onClose} />
+        <View style={styles.modalOverlay}>
+          <Pressable style={styles.backdropPressable} onPress={onClose} />
+
           <View style={styles.modalSheet}>
+            {/* Top Drag Handle */}
             <View style={styles.handleBar} />
 
-            {/* Header */}
-            <View style={styles.modalHeader}>
-              <View style={styles.headerLeft}>
-                <View style={styles.headerTitleRow}>
-                  <Text style={styles.headerTitle}>Resibo {transaction.id}</Text>
+            {/* Header Row */}
+            <View style={styles.headerRow}>
+              <View style={styles.headerTitleContainer}>
+                <View style={styles.receiptTitleRow}>
+                  <Text style={styles.headerTitle}>Resibo {receiptNumberDisplay}</Text>
                   <View
                     style={[
                       styles.tenderBadge,
-                      transaction.tenderType === 'CASH'
-                        ? styles.tenderBadgeCash
-                        : transaction.tenderType === 'UTANG'
-                        ? styles.tenderBadgeUtang
-                        : styles.tenderBadgeGcash,
+                      isUtangSale ? styles.tenderBadgeUtang : styles.tenderBadgeCash,
                     ]}
                   >
                     <Text
                       style={[
                         styles.tenderBadgeText,
-                        transaction.tenderType === 'CASH'
-                          ? styles.tenderTextCash
-                          : transaction.tenderType === 'UTANG'
-                          ? styles.tenderTextUtang
-                          : styles.tenderTextGcash,
+                        isUtangSale ? styles.tenderBadgeTextUtang : styles.tenderBadgeTextCash,
                       ]}
                     >
                       {transaction.tenderType}
                     </Text>
                   </View>
                 </View>
-                <Text style={styles.headerSub}>
-                  {transaction.dateLabel} • {transaction.timeLabel}
-                  {transaction.customerName ? ` • ${transaction.customerName}` : ''}
+                <Text style={styles.headerSubtitle}>
+                  {transaction.dateLabel || 'Ngayon'} • {transaction.timeLabel || ''}
                 </Text>
               </View>
-              <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={10}>
+
+              <Pressable
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  onClose();
+                }}
+                style={styles.closeCircleButton}
+                hitSlop={8}
+              >
                 <Ionicons name="close" size={20} color="#64748B" />
               </Pressable>
             </View>
 
             <ScrollView
-              style={styles.modalScroll}
-              contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContent}
             >
-              {/* Financial Audit Breakdown Card */}
-              <View style={styles.financialCard}>
-                <View style={styles.finCol}>
-                  <Text style={styles.finLabel}>Benta (Sales)</Text>
-                  <Text style={styles.finVal}>₱{netSalesPhp.toFixed(2)}</Text>
-                  {transaction.refundedPhp > 0 && (
-                    <Text style={styles.refundedSub}>(-₱{transaction.refundedPhp.toFixed(2)})</Text>
+              {/* Summary Card (2-Column Box) */}
+              <View style={styles.summaryCard}>
+                <View style={styles.summaryColLeft}>
+                  <Text style={styles.summaryLabel}>KABUUANG BENTA (SALES)</Text>
+                  <Text style={styles.summaryAmount}>₱{netSalesPhp.toFixed(2)}</Text>
+                  {showProfit && transaction.tuboPhp !== undefined && (
+                    <Text style={styles.summaryProfitSubtext}>
+                      Tubo: +₱{Math.max(0, transaction.tuboPhp).toFixed(2)}
+                    </Text>
                   )}
                 </View>
-                {showProfit && transaction.costPhp !== undefined && (
-                  <View style={styles.finCol}>
-                    <Text style={styles.finLabel}>Puhunan (Cost)</Text>
-                    <Text style={styles.finVal}>₱{transaction.costPhp.toFixed(2)}</Text>
-                  </View>
-                )}
-                {showProfit && transaction.tuboPhp !== undefined && (
-                  <View style={styles.finCol}>
-                    <Text style={styles.finLabel}>Tubo (Profit)</Text>
-                    <Text style={[styles.finVal, styles.tuboVal]}>
-                      +₱{transaction.tuboPhp.toFixed(2)}
+
+                <View style={styles.summaryColRight}>
+                  <Text style={styles.summaryLabelRight}>Bilang ng Paninda</Text>
+                  <View style={styles.unitsPill}>
+                    <Text style={styles.unitsPillText}>
+                      {remainingUnits} / {totalUnits} pcs natitira
                     </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Status Warning Banner if Voided or Refunded */}
+              {isVoided && (
+                <View style={styles.statusBannerVoided}>
+                  <Ionicons name="alert-circle" size={18} color="#DC2626" />
+                  <Text style={styles.statusBannerVoidedText}>
+                    Kanselado (Voided) ang resibong ito.
+                  </Text>
+                </View>
+              )}
+              {isFullyRefunded && (
+                <View style={styles.statusBannerRefunded}>
+                  <Ionicons name="checkmark-circle" size={18} color="#D97706" />
+                  <Text style={styles.statusBannerRefundedText}>
+                    Buong naisauli na ang mga paninda sa resibong ito.
+                  </Text>
+                </View>
+              )}
+
+              {/* Items Section Header */}
+              <View style={styles.sectionHeaderRow}>
+                <Text style={styles.sectionTitle}>BUONG TALAAN NG BINILI SA RESIBO:</Text>
+                {!isVoided && !isFullyRefunded && (
+                  <View style={styles.guideBadge}>
+                    <Text style={styles.guideBadgeText}>Pindutin ang item para magsauli</Text>
                   </View>
                 )}
               </View>
 
-              {/* Status Note Banner */}
-              {transaction.voidOrReturnNote ? (
-                <View style={styles.noteBanner}>
-                  <Ionicons name="information-circle-outline" size={16} color="#0D7A52" />
-                  <Text style={styles.noteBannerText}>{transaction.voidOrReturnNote}</Text>
-                </View>
-              ) : null}
+              {/* Items List Card Container */}
+              <View style={styles.itemsCardContainer}>
+                {transaction.items.map((item, index) => {
+                  const isSelected = selectedProductId === item.productId;
+                  const itemRemaining = Math.max(0, item.quantity - item.returnedQty);
+                  const isItemDone = itemRemaining === 0;
+                  const lineTotal = item.unitPricePaidPhp * item.quantity;
+                  const isLast = index === transaction.items.length - 1;
 
-              {/* Status Warning Banner if Voided or Fully Refunded */}
-              {isVoided ? (
-                <View style={styles.voidedBanner}>
-                  <Ionicons name="alert-circle" size={18} color="#DC2626" />
-                  <Text style={styles.voidedBannerText}>
-                    Ang resibong ito ay na-void na. Hindi na ito maaaring baguhin o i-refund.
-                  </Text>
-                </View>
-              ) : isFullyRefunded ? (
-                <View style={styles.refundedBanner}>
-                  <Ionicons name="checkmark-circle" size={18} color="#15803D" />
-                  <Text style={styles.refundedBannerText}>
-                    Lahat ng paninda sa resibong ito ay naisauli at na-refund na.
-                  </Text>
-                </View>
-              ) : null}
+                  return (
+                    <View
+                      key={item.productId}
+                      style={[
+                        styles.itemRowWrapper,
+                        !isLast && !isSelected && styles.itemRowBorder,
+                      ]}
+                    >
+                      {/* Main Item Row Header */}
+                      <Pressable
+                        style={[
+                          styles.itemRowPressable,
+                          isSelected && styles.itemRowPressableSelected,
+                        ]}
+                        onPress={() => {
+                          if (isVoided || isItemDone) return;
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          if (isSelected) {
+                            setSelectedProductIdOverride(null);
+                          } else {
+                            setSelectedProductIdOverride(item.productId);
+                            setReturnQty(1);
+                          }
+                        }}
+                      >
+                        {/* Thumbnail / Product Icon */}
+                        <View style={styles.itemThumbnailBox}>
+                          <Ionicons name="bag-handle-outline" size={20} color="#3B82F6" />
+                        </View>
 
-              {/* Section 1: Item Selection & Return Stepper */}
-              {!isVoided && !isFullyRefunded && (
-                <View style={styles.sectionBox}>
-                  <Text style={styles.sectionTitle}>1. Pumili ng Isasauling Paninda:</Text>
-
-                  {/* Item Selection Pills */}
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.itemPickerScroll}>
-                    {transaction.items.map((item) => {
-                      const remaining = Math.max(0, item.quantity - item.returnedQty);
-                      const isSelected = item.productId === selectedProductId;
-                      return (
-                        <Pressable
-                          key={item.productId}
-                          style={[
-                            styles.itemPickerChip,
-                            isSelected && styles.itemPickerChipActive,
-                            remaining === 0 && styles.itemPickerChipDisabled,
-                          ]}
-                          onPress={() => {
-                            if (remaining > 0) {
-                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                              setSelectedProductIdOverride(item.productId);
-                              setReturnQty(1);
-                            }
-                          }}
-                        >
-                          <Text
-                            style={[
-                              styles.itemPickerChipTitle,
-                              isSelected && styles.itemPickerChipTitleActive,
-                              remaining === 0 && styles.itemPickerChipTitleDisabled,
-                            ]}
-                            numberOfLines={1}
-                          >
+                        {/* Name and Qty Info */}
+                        <View style={styles.itemInfoCol}>
+                          <Text style={styles.itemNameText} numberOfLines={1}>
                             {item.name}
                           </Text>
-                          <Text
-                            style={[
-                              styles.itemPickerChipSub,
-                              isSelected && styles.itemPickerChipSubActive,
-                            ]}
-                          >
-                            {remaining === 0
-                              ? 'Naibalik na'
-                              : `${remaining}/${item.quantity} ${item.unitOfMeasure === 'kg' ? 'kg' : 'pcs'}`}
+                          <Text style={styles.itemSubText}>
+                            {item.quantity} pcs × ₱{item.unitPricePaidPhp.toFixed(2)}
                           </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </ScrollView>
-
-                  {/* Active Returnable Item Card */}
-                  {activeItem && maxReturnableQty > 0 ? (
-                    <View style={styles.activeItemCard}>
-                      <View style={styles.activeItemHeader}>
-                        <View style={{ flex: 1 }}>
-                          <Text style={styles.activeItemName}>{activeItem.name}</Text>
-                          <Text style={styles.activeItemPrice}>
-                            Presyo noong Binili: ₱{activeItem.unitPricePaidPhp.toFixed(2)}
-                            {activeItem.unitOfMeasure === 'kg' ? '/kg' : '/pc'}
-                          </Text>
+                          {item.returnedQty > 0 && (
+                            <Text style={styles.itemReturnedText}>
+                              (Naisauli: {item.returnedQty} pcs)
+                            </Text>
+                          )}
                         </View>
-                        <View style={styles.activeItemBadge}>
-                          <Text style={styles.activeItemBadgeText}>
-                            {maxReturnableQty} natitira
-                          </Text>
+
+                        {/* Right Side: Total Price and Return Cue */}
+                        <View style={styles.itemPriceCol}>
+                          <Text style={styles.itemTotalText}>₱{lineTotal.toFixed(2)}</Text>
+                          {isItemDone ? (
+                            <Text style={styles.itemDoneBadgeText}>Naibalik na</Text>
+                          ) : isVoided ? null : (
+                            <View style={styles.isauliRow}>
+                              <Text style={styles.isauliText}>
+                                {isSelected ? 'Itago ▴' : 'Isauli ▾'}
+                              </Text>
+                              <View style={styles.chevronCircle}>
+                                <Ionicons
+                                  name={isSelected ? 'chevron-up' : 'chevron-down'}
+                                  size={13}
+                                  color="#64748B"
+                                />
+                              </View>
+                            </View>
+                          )}
                         </View>
-                      </View>
+                      </Pressable>
 
-                      {/* Interactive Stepper */}
-                      <View style={styles.stepperContainer}>
-                        <Text style={styles.stepperLabel}>Dami ng Ibabalik (Return Qty):</Text>
-                        <View style={styles.stepperControls}>
-                          <Pressable
-                            style={[styles.stepBtn, returnQty <= 1 && styles.stepBtnDisabled]}
-                            onPress={() => handleStepQty(-1)}
-                            disabled={returnQty <= 1}
-                          >
-                            <Text style={styles.stepBtnText}>−</Text>
-                          </Pressable>
+                      {/* Expanded Return Configuration Panel */}
+                      {isSelected && !isVoided && !isItemDone && (
+                        <View style={styles.returnExpandBox}>
+                          {/* Stepper Row */}
+                          <View style={styles.stepperContainerRow}>
+                            <View>
+                              <Text style={styles.stepperLabel}>Dami ng Isasauli:</Text>
+                              <Text style={styles.stepperSubtext}>
+                                Hanggang {itemRemaining} pcs
+                              </Text>
+                            </View>
 
-                          <View style={styles.stepDisplay}>
-                            <Text style={styles.stepDisplayText}>{returnQty}</Text>
+                            <View style={styles.stepperControls}>
+                              <Pressable
+                                style={[
+                                  styles.stepperBtn,
+                                  returnQty <= 1 && styles.stepperBtnDisabled,
+                                ]}
+                                onPress={() => handleStepQty(-1)}
+                                disabled={returnQty <= 1}
+                              >
+                                <Ionicons
+                                  name="remove"
+                                  size={18}
+                                  color={returnQty <= 1 ? '#CBD5E1' : '#334155'}
+                                />
+                              </Pressable>
+
+                              <View style={styles.stepperDisplay}>
+                                <Text style={styles.stepperDisplayText}>
+                                  {returnQty} {returnQty === 1 ? 'pc' : 'pcs'}
+                                </Text>
+                              </View>
+
+                              <Pressable
+                                style={[
+                                  styles.stepperBtn,
+                                  returnQty >= itemRemaining && styles.stepperBtnDisabled,
+                                ]}
+                                onPress={() => handleStepQty(1)}
+                                disabled={returnQty >= itemRemaining}
+                              >
+                                <Ionicons
+                                  name="add"
+                                  size={18}
+                                  color={returnQty >= itemRemaining ? '#CBD5E1' : '#334155'}
+                                />
+                              </Pressable>
+                            </View>
                           </View>
 
-                          <Pressable
-                            style={[styles.stepBtn, returnQty >= maxReturnableQty && styles.stepBtnDisabled]}
-                            onPress={() => handleStepQty(1)}
-                            disabled={returnQty >= maxReturnableQty}
-                          >
-                            <Text style={styles.stepBtnText}>+</Text>
-                          </Pressable>
-
-                          {maxReturnableQty > 1 && (
+                          {/* Item Condition Picker */}
+                          <Text style={styles.configSectionTitle}>
+                            KALAGAYAN NG PANINDA:
+                          </Text>
+                          <View style={styles.conditionOptionsRow}>
                             <Pressable
-                              style={styles.allChip}
+                              style={[
+                                styles.conditionOptionCard,
+                                disposition === 'SELLABLE' && styles.conditionOptionCardActiveGreen,
+                              ]}
                               onPress={() => {
                                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                                setReturnQty(maxReturnableQty);
+                                setDisposition('SELLABLE');
                               }}
                             >
-                              <Text style={styles.allChipText}>Lahat ({maxReturnableQty})</Text>
+                              <Ionicons
+                                name="checkmark-circle"
+                                size={16}
+                                color={disposition === 'SELLABLE' ? '#16A34A' : '#94A3B8'}
+                              />
+                              <Text
+                                style={[
+                                  styles.conditionOptionText,
+                                  disposition === 'SELLABLE' && styles.conditionOptionTextActiveGreen,
+                                ]}
+                              >
+                                Maayos (Ibenta Muli)
+                              </Text>
                             </Pressable>
-                          )}
-                        </View>
-                      </View>
 
-                      {/* Item Condition Picker */}
-                      <Text style={styles.subFieldLabel}>Kalagayan ng Isinauling Paninda:</Text>
-                      <View style={styles.conditionRow}>
-                        <Pressable
-                          style={[
-                            styles.conditionBtn,
-                            disposition === 'SELLABLE' && styles.conditionBtnActiveSellable,
-                          ]}
-                          onPress={() => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                            setDisposition('SELLABLE');
-                          }}
-                        >
-                          <Ionicons
-                            name="checkmark-circle-outline"
-                            size={16}
-                            color={disposition === 'SELLABLE' ? '#15803D' : '#64748B'}
-                          />
-                          <Text
-                            style={[
-                              styles.conditionBtnText,
-                              disposition === 'SELLABLE' && styles.conditionTextActiveSellable,
-                            ]}
-                          >
-                            ✓ Maayos (Babalik sa Paninda)
-                          </Text>
-                        </Pressable>
-
-                        <Pressable
-                          style={[
-                            styles.conditionBtn,
-                            disposition === 'DAMAGED_QUARANTINE' && styles.conditionBtnActiveDamaged,
-                          ]}
-                          onPress={() => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                            setDisposition('DAMAGED_QUARANTINE');
-                          }}
-                        >
-                          <Ionicons
-                            name="warning-outline"
-                            size={16}
-                            color={disposition === 'DAMAGED_QUARANTINE' ? '#B91C1C' : '#64748B'}
-                          />
-                          <Text
-                            style={[
-                              styles.conditionBtnText,
-                              disposition === 'DAMAGED_QUARANTINE' && styles.conditionTextActiveDamaged,
-                            ]}
-                          >
-                            ⚠ May Sira / Expired
-                          </Text>
-                        </Pressable>
-                      </View>
-
-                      {/* Reason Tag Chips */}
-                      <Text style={styles.subFieldLabel}>Dahilan ng Pagbabalik:</Text>
-                      <View style={styles.reasonRow}>
-                        {['Changed Mind', 'Defective / May Sira', 'Wrong Item', 'Pabor sa Suki'].map((reason) => {
-                          const isActive = selectedReason === reason;
-                          return (
                             <Pressable
-                              key={reason}
-                              style={[styles.reasonChip, isActive && styles.reasonChipActive]}
+                              style={[
+                                styles.conditionOptionCard,
+                                disposition === 'DAMAGED_QUARANTINE' && styles.conditionOptionCardActiveRed,
+                              ]}
                               onPress={() => {
                                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                                setSelectedReason(reason);
+                                setDisposition('DAMAGED_QUARANTINE');
                               }}
                             >
-                              <Text style={[styles.reasonChipText, isActive && styles.reasonChipTextActive]}>
-                                {reason}
+                              <Ionicons
+                                name="warning"
+                                size={16}
+                                color={disposition === 'DAMAGED_QUARANTINE' ? '#DC2626' : '#94A3B8'}
+                              />
+                              <Text
+                                style={[
+                                  styles.conditionOptionText,
+                                  disposition === 'DAMAGED_QUARANTINE' && styles.conditionOptionTextActiveRed,
+                                ]}
+                              >
+                                Sira / Expired (Itabi)
                               </Text>
                             </Pressable>
-                          );
-                        })}
-                      </View>
+                          </View>
 
-                      {/* Step 2: Resolution Actions */}
-                      <View style={styles.resolutionContainer}>
-                        <View style={styles.resHeaderRow}>
-                          <Text style={styles.resTitle}>Paraan ng Pagbawi:</Text>
-                          <Text style={styles.resAmount}>
-                            Kabuuan: ₱{refundAmountPhp.toFixed(2)}
-                          </Text>
+                          {/* Reason Chips */}
+                          <Text style={styles.configSectionTitle}>DAHILAN NG PAGSAULI:</Text>
+                          <View style={styles.reasonChipsRow}>
+                            {[
+                              'Nagbago ang Isip',
+                              'Sira / Depekto',
+                              'Maling Naibigay',
+                              'Expired na Paninda',
+                            ].map((reason) => {
+                              const isChipActive = selectedReason === reason;
+                              return (
+                                <Pressable
+                                  key={reason}
+                                  style={[
+                                    styles.reasonChip,
+                                    isChipActive && styles.reasonChipActive,
+                                  ]}
+                                  onPress={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                                    setSelectedReason(reason);
+                                  }}
+                                >
+                                  <Text
+                                    style={[
+                                      styles.reasonChipText,
+                                      isChipActive && styles.reasonChipTextActive,
+                                    ]}
+                                  >
+                                    {reason}
+                                  </Text>
+                                </Pressable>
+                              );
+                            })}
+                          </View>
+
+                          {/* Action Dispatch Buttons */}
+                          <View style={styles.actionButtonsContainer}>
+                            {isUtangSale ? (
+                              <View style={styles.actionButtonGroup}>
+                                <Pressable
+                                  style={[styles.btnAction, styles.btnUtangDeduction]}
+                                  onPress={() => handleExecuteReturn('UTANG_DEDUCTION')}
+                                  disabled={isSubmitting}
+                                >
+                                  <Ionicons name="book-outline" size={16} color="#FFFFFF" />
+                                  <Text style={styles.btnActionText}>
+                                    Bawas Utang (₱{refundAmountPhp.toFixed(2)})
+                                  </Text>
+                                </Pressable>
+
+                                <Pressable
+                                  style={[styles.btnAction, styles.btnExchange]}
+                                  onPress={() => handleExecuteReturn('EXCHANGE_CREDIT')}
+                                  disabled={isSubmitting}
+                                >
+                                  <Ionicons name="swap-horizontal" size={16} color="#FFFFFF" />
+                                  <Text style={styles.btnActionText}>
+                                    Palit-Paninda (Credit)
+                                  </Text>
+                                </Pressable>
+                              </View>
+                            ) : (
+                              <View style={styles.actionButtonGroup}>
+                                <Pressable
+                                  style={[styles.btnAction, styles.btnCashRefund]}
+                                  onPress={() => handleExecuteReturn('CASH_REFUND')}
+                                  disabled={isSubmitting}
+                                >
+                                  <Ionicons name="cash-outline" size={16} color="#FFFFFF" />
+                                  <Text style={styles.btnActionText}>
+                                    Ibalik ang Pera (₱{refundAmountPhp.toFixed(2)})
+                                  </Text>
+                                </Pressable>
+
+                                <Pressable
+                                  style={[styles.btnAction, styles.btnExchange]}
+                                  onPress={() => handleExecuteReturn('EXCHANGE_CREDIT')}
+                                  disabled={isSubmitting}
+                                >
+                                  <Ionicons name="swap-horizontal" size={16} color="#FFFFFF" />
+                                  <Text style={styles.btnActionText}>
+                                    Palit-Paninda (Credit)
+                                  </Text>
+                                </Pressable>
+                              </View>
+                            )}
+                          </View>
                         </View>
-
-                        <View style={styles.actionBtnGrid}>
-                          {isUtangSale ? (
-                            <Pressable
-                              style={[styles.btnAction, styles.btnUtangDeduct]}
-                              onPress={() => handleExecuteReturn('UTANG_DEDUCTION')}
-                              disabled={isSubmitting}
-                            >
-                              <Ionicons name="document-text-outline" size={16} color="#4C1D95" />
-                              <Text style={styles.btnUtangDeductText}>
-                                Bawas Utang (₱{refundAmountPhp.toFixed(2)})
-                              </Text>
-                            </Pressable>
-                          ) : (
-                            <Pressable
-                              style={[styles.btnAction, styles.btnRefund]}
-                              onPress={() => handleExecuteReturn('CASH_REFUND')}
-                              disabled={isSubmitting}
-                            >
-                              <Ionicons name="cash-outline" size={16} color="#991B1B" />
-                              <Text style={styles.btnRefundText}>
-                                Ibalik ang Bayad (₱{refundAmountPhp.toFixed(2)})
-                              </Text>
-                            </Pressable>
-                          )}
-
-                          <Pressable
-                            style={[styles.btnAction, styles.btnExchange]}
-                            onPress={() => handleExecuteReturn('EXCHANGE_CREDIT')}
-                            disabled={isSubmitting}
-                          >
-                            <Ionicons name="swap-horizontal" size={16} color="#1E40AF" />
-                            <Text style={styles.btnExchangeText}>
-                              Palit-Paninda (₱{refundAmountPhp.toFixed(2)})
-                            </Text>
-                          </Pressable>
-                        </View>
-                      </View>
-                    </View>
-                  ) : (
-                    <View style={styles.allReturnedCard}>
-                      <Text style={styles.allReturnedText}>
-                        Lahat ng piraso sa item na ito ay naisauli na.
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              )}
-
-              {/* Complete Items Receipt List */}
-              <View style={styles.sectionBox}>
-                <Text style={styles.sectionTitle}>Buong Talaan ng Binili sa Resibo:</Text>
-                {transaction.items.map((item, idx) => {
-                  const remaining = Math.max(0, item.quantity - item.returnedQty);
-                  return (
-                    <View key={`${item.productId}_${idx}`} style={styles.receiptLineRow}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.receiptLineName}>{item.name}</Text>
-                        <Text style={styles.receiptLineSub}>
-                          {item.quantity} {item.unitOfMeasure === 'kg' ? 'kg' : 'pcs'} × ₱
-                          {item.unitPricePaidPhp.toFixed(2)}
-                          {item.returnedQty > 0 ? ` (Naibalik: ${item.returnedQty})` : ''}
-                        </Text>
-                      </View>
-                      <View style={{ alignItems: 'flex-end' }}>
-                        <Text style={styles.receiptLineTotal}>
-                          ₱{(item.quantity * item.unitPricePaidPhp).toFixed(2)}
-                        </Text>
-                        {remaining === 0 ? (
-                          <Text style={styles.badgeLineReturned}>Naibalik Lahat</Text>
-                        ) : null}
-                      </View>
+                      )}
                     </View>
                   );
                 })}
               </View>
+
+              {/* Bottom Action Buttons (Print & Void) */}
+              <View style={styles.bottomButtonsSection}>
+                {/* Reprint Thermal Receipt Button */}
+                {onReprintReceipt && (
+                  <Pressable
+                    style={styles.btnPrintReceipt}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      onReprintReceipt(transaction);
+                    }}
+                  >
+                    <Ionicons name="print-outline" size={20} color="#065F46" />
+                    <Text style={styles.btnPrintReceiptText}>
+                      I-print / Tingnan ang Resibo
+                    </Text>
+                  </Pressable>
+                )}
+
+                {/* Void Whole Receipt Button */}
+                {!isVoided && (
+                  <Pressable
+                    style={styles.btnVoidReceipt}
+                    onPress={handleVoidWholeReceipt}
+                    disabled={isSubmitting}
+                  >
+                    <Ionicons name="trash-outline" size={20} color="#DC2626" />
+                    <Text style={styles.btnVoidReceiptText}>
+                      I-void ang Buong Resibo
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
             </ScrollView>
-
-            {/* Bottom Actions Footer */}
-            <View style={styles.modalFooter}>
-              {onReprintReceipt && (
-                <Pressable
-                  style={styles.btnPrintReceipt}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                    onReprintReceipt(transaction);
-                  }}
-                >
-                  <Ionicons name="print-outline" size={16} color="#0D7A52" />
-                  <Text style={styles.btnPrintReceiptText}>I-print / Tingnan ang Resibo</Text>
-                </Pressable>
-              )}
-
-              {!isVoided && !isFullyRefunded && (
-                <Pressable
-                  style={styles.btnVoidReceipt}
-                  onPress={handleVoidWholeReceipt}
-                  disabled={isSubmitting}
-                >
-                  <Ionicons name="trash-outline" size={16} color="#DC2626" />
-                  <Text style={styles.btnVoidReceiptText}>I-void ang Buong Resibo</Text>
-                </Pressable>
-              )}
-            </View>
           </View>
         </View>
       </Modal>
 
-      {/* Confirmation Dialog Component */}
+      {/* Confirmation Modal */}
       {confirmState && (
         <ConfirmationModal
           visible={confirmState.visible}
-          type="warning"
+          type={confirmState.type}
           title={confirmState.title}
           message={confirmState.message}
           itemName={confirmState.itemName}
           details={confirmState.details}
           confirmText={confirmState.confirmText}
-          cancelText="Kanselahin"
-          isLoading={isSubmitting}
+          cancelText="Huwag Ituloy"
           onConfirm={confirmState.action}
           onCancel={() => setConfirmState(null)}
         />
@@ -612,20 +625,22 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
 };
 
 const styles = StyleSheet.create({
-  modalBackdrop: {
+  modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.65)',
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
     justifyContent: 'flex-end',
   },
-  backdropDismiss: {
+  backdropPressable: {
     flex: 1,
   },
   modalSheet: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8FAFC',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: '90%',
-    shadowColor: '#000000',
+    paddingTop: 10,
+    paddingHorizontal: 16,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
@@ -634,269 +649,296 @@ const styles = StyleSheet.create({
   handleBar: {
     width: 40,
     height: 5,
-    backgroundColor: '#CBD5E1',
     borderRadius: 3,
+    backgroundColor: '#CBD5E1',
     alignSelf: 'center',
-    marginTop: 10,
-    marginBottom: 4,
+    marginBottom: 12,
   },
-  modalHeader: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    alignItems: 'flex-start',
+    marginBottom: 10,
   },
-  headerLeft: {
+  headerTitleContainer: {
     flex: 1,
+    marginRight: 12,
   },
-  headerTitleRow: {
+  receiptTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    flexWrap: 'wrap',
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '800',
     color: '#0F172A',
   },
   tenderBadge: {
-    paddingHorizontal: 7,
-    paddingVertical: 2,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 6,
   },
   tenderBadgeCash: {
     backgroundColor: '#DCFCE7',
   },
   tenderBadgeUtang: {
-    backgroundColor: '#EDE9FE',
-  },
-  tenderBadgeGcash: {
-    backgroundColor: '#DBEAFE',
+    backgroundColor: '#FEF3C7',
   },
   tenderBadgeText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '800',
   },
-  tenderTextCash: {
-    color: '#15803D',
+  tenderBadgeTextCash: {
+    color: '#166534',
   },
-  tenderTextUtang: {
-    color: '#6D28D9',
+  tenderBadgeTextUtang: {
+    color: '#B45309',
   },
-  tenderTextGcash: {
-    color: '#1E40AF',
-  },
-  headerSub: {
-    fontSize: 11,
+  headerSubtitle: {
+    fontSize: 12,
     color: '#64748B',
     marginTop: 3,
+    fontWeight: '500',
   },
-  closeBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  closeCircleButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  modalScroll: {
-    maxHeight: 520,
-  },
   scrollContent: {
-    padding: 16,
-    gap: 14,
+    paddingBottom: 28,
   },
-  financialCard: {
-    backgroundColor: '#F8FAFC',
+  summaryCard: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    padding: 12,
+    padding: 14,
+    marginBottom: 14,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  finCol: {
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  finLabel: {
-    fontSize: 10,
+  summaryColLeft: {
+    flex: 1,
+  },
+  summaryLabel: {
+    fontSize: 11,
     fontWeight: '700',
     color: '#64748B',
+    letterSpacing: 0.5,
   },
-  finVal: {
-    fontSize: 14,
+  summaryAmount: {
+    fontSize: 24,
     fontWeight: '800',
     color: '#0F172A',
     marginTop: 2,
   },
-  tuboVal: {
-    color: '#0D7A52',
-  },
-  refundedSub: {
-    fontSize: 10,
-    color: '#DC2626',
-    fontWeight: '700',
-    marginTop: 1,
-  },
-  noteBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#ECFDF5',
-    borderWidth: 1,
-    borderColor: '#A7F3D0',
-    borderRadius: 8,
-    padding: 8,
-  },
-  noteBannerText: {
+  summaryProfitSubtext: {
     fontSize: 11,
-    color: '#065F46',
-    fontWeight: '600',
-    flex: 1,
+    fontWeight: '700',
+    color: '#15803D',
+    marginTop: 2,
   },
-  voidedBanner: {
+  summaryColRight: {
+    alignItems: 'flex-end',
+  },
+  summaryLabelRight: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748B',
+    marginBottom: 4,
+  },
+  unitsPill: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 14,
+  },
+  unitsPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#334155',
+  },
+  statusBannerVoided: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     backgroundColor: '#FEF2F2',
+    borderColor: '#FECACA',
     borderWidth: 1,
-    borderColor: '#FCA5A5',
-    borderRadius: 10,
     padding: 10,
+    borderRadius: 10,
+    marginBottom: 12,
   },
-  voidedBannerText: {
-    fontSize: 11.5,
-    color: '#B91C1C',
+  statusBannerVoidedText: {
+    color: '#DC2626',
+    fontSize: 12,
     fontWeight: '700',
-    flex: 1,
   },
-  refundedBanner: {
+  statusBannerRefunded: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#F0FDF4',
+    backgroundColor: '#FFFBEB',
+    borderColor: '#FDE68A',
     borderWidth: 1,
-    borderColor: '#86EFAC',
-    borderRadius: 10,
     padding: 10,
-  },
-  refundedBannerText: {
-    fontSize: 11.5,
-    color: '#15803D',
-    fontWeight: '700',
-    flex: 1,
-  },
-  sectionBox: {
-    gap: 8,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#0F172A',
-    textTransform: 'uppercase',
-    letterSpacing: 0.3,
-  },
-  itemPickerScroll: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  itemPickerChip: {
-    backgroundColor: '#F1F5F9',
-    borderWidth: 1.5,
-    borderColor: '#E2E8F0',
     borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    marginRight: 8,
+    marginBottom: 12,
   },
-  itemPickerChipActive: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981',
-  },
-  itemPickerChipDisabled: {
-    opacity: 0.5,
-  },
-  itemPickerChipTitle: {
+  statusBannerRefundedText: {
+    color: '#D97706',
     fontSize: 12,
     fontWeight: '700',
-    color: '#334155',
   },
-  itemPickerChipTitleActive: {
-    color: '#065F46',
-    fontWeight: '800',
-  },
-  itemPickerChipTitleDisabled: {
-    textDecorationLine: 'line-through',
-  },
-  itemPickerChipSub: {
-    fontSize: 10,
-    color: '#64748B',
-    marginTop: 1,
-  },
-  itemPickerChipSubActive: {
-    color: '#047857',
-    fontWeight: '600',
-  },
-  activeItemCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
-    borderColor: '#0D7A52',
-    borderRadius: 12,
-    padding: 12,
-    gap: 10,
-  },
-  activeItemHeader: {
+  sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 8,
+    marginTop: 4,
   },
-  activeItemName: {
-    fontSize: 13.5,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  activeItemPrice: {
+  sectionTitle: {
     fontSize: 11,
-    color: '#64748B',
-    marginTop: 2,
+    fontWeight: '700',
+    color: '#475569',
+    letterSpacing: 0.5,
   },
-  activeItemBadge: {
+  guideBadge: {
     backgroundColor: '#ECFDF5',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
-  },
-  activeItemBadgeText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#0D7A52',
-  },
-  stepperContainer: {
-    backgroundColor: '#F8FAFC',
     borderRadius: 10,
+  },
+  guideBadgeText: {
+    color: '#047857',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  itemsCardContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    padding: 8,
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
+  itemRowWrapper: {
+    backgroundColor: '#FFFFFF',
+  },
+  itemRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  itemRowPressable: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+  },
+  itemRowPressableSelected: {
+    backgroundColor: '#F8FAFC',
+  },
+  itemThumbnailBox: {
+    width: 42,
+    height: 42,
+    borderRadius: 8,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemInfoCol: {
+    flex: 1,
+    marginLeft: 10,
+    marginRight: 8,
+  },
+  itemNameText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  itemSubText: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  itemReturnedText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#DC2626',
+    marginTop: 1,
+  },
+  itemPriceCol: {
+    alignItems: 'flex-end',
+  },
+  itemTotalText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  itemDoneBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#94A3B8',
+    marginTop: 2,
+  },
+  isauliRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 3,
+    gap: 4,
+  },
+  isauliText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  chevronCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  returnExpandBox: {
+    backgroundColor: '#F8FAFC',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 12,
+  },
+  stepperContainerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 12,
   },
   stepperLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
-    color: '#334155',
+    color: '#1E293B',
+  },
+  stepperSubtext: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
   },
   stepperControls: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  stepBtn: {
-    width: 32,
-    height: 32,
+  stepperBtn: {
+    width: 38,
+    height: 38,
     borderRadius: 8,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -904,133 +946,104 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  stepBtnDisabled: {
+  stepperBtnDisabled: {
     opacity: 0.4,
+    backgroundColor: '#F1F5F9',
   },
-  stepBtnText: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#1E293B',
-  },
-  stepDisplay: {
-    width: 38,
-    height: 32,
+  stepperDisplay: {
+    minWidth: 56,
+    height: 38,
     borderRadius: 8,
     backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: '#0D7A52',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 8,
   },
-  stepDisplayText: {
+  stepperDisplayText: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#0D7A52',
+    color: '#0F172A',
   },
-  allChip: {
-    backgroundColor: '#E2E8F0',
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 6,
-  },
-  allChipText: {
+  configSectionTitle: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#334155',
+    color: '#475569',
+    letterSpacing: 0.5,
+    marginBottom: 6,
+    marginTop: 4,
   },
-  subFieldLabel: {
-    fontSize: 10.5,
-    fontWeight: '700',
-    color: '#64748B',
-  },
-  conditionRow: {
+  conditionOptionsRow: {
     flexDirection: 'row',
     gap: 8,
+    marginBottom: 10,
   },
-  conditionBtn: {
+  conditionOptionCard: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
+    gap: 6,
     paddingVertical: 8,
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     borderRadius: 8,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
-    backgroundColor: '#F8FAFC',
+    borderColor: '#E2E8F0',
   },
-  conditionBtnActiveSellable: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981',
+  conditionOptionCardActiveGreen: {
+    borderColor: '#16A34A',
+    backgroundColor: '#F0FDF4',
   },
-  conditionBtnActiveDamaged: {
+  conditionOptionCardActiveRed: {
+    borderColor: '#DC2626',
     backgroundColor: '#FEF2F2',
-    borderColor: '#FCA5A5',
   },
-  conditionBtnText: {
-    fontSize: 10.5,
+  conditionOptionText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  conditionOptionTextActiveGreen: {
+    color: '#166534',
     fontWeight: '700',
-    color: '#475569',
   },
-  conditionTextActiveSellable: {
-    color: '#15803D',
-    fontWeight: '800',
-  },
-  conditionTextActiveDamaged: {
+  conditionOptionTextActiveRed: {
     color: '#991B1B',
-    fontWeight: '800',
+    fontWeight: '700',
   },
-  reasonRow: {
+  reasonChipsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 6,
+    marginBottom: 12,
   },
   reasonChip: {
-    backgroundColor: '#F1F5F9',
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   reasonChipActive: {
-    backgroundColor: '#0D7A52',
+    backgroundColor: '#ECFDF5',
     borderColor: '#0D7A52',
   },
   reasonChipText: {
-    fontSize: 10,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '600',
     color: '#475569',
   },
   reasonChipTextActive: {
-    color: '#FFFFFF',
-  },
-  resolutionContainer: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    padding: 10,
-    gap: 8,
-    marginTop: 4,
-  },
-  resHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  resTitle: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#334155',
-  },
-  resAmount: {
-    fontSize: 12,
-    fontWeight: '800',
     color: '#0D7A52',
+    fontWeight: '700',
   },
-  actionBtnGrid: {
+  actionButtonsContainer: {
+    marginTop: 2,
+  },
+  actionButtonGroup: {
     flexDirection: 'row',
     gap: 8,
   },
@@ -1039,123 +1052,57 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 6,
+    gap: 6,
+    height: 42,
     borderRadius: 8,
   },
-  btnRefund: {
-    backgroundColor: '#FEE2E2',
-    borderWidth: 1,
-    borderColor: '#FCA5A5',
+  btnCashRefund: {
+    backgroundColor: '#0D7A52',
   },
-  btnRefundText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#991B1B',
-  },
-  btnUtangDeduct: {
-    backgroundColor: '#EDE9FE',
-    borderWidth: 1,
-    borderColor: '#DDD6FE',
-  },
-  btnUtangDeductText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#4C1D95',
+  btnUtangDeduction: {
+    backgroundColor: '#D97706',
   },
   btnExchange: {
-    backgroundColor: '#DBEAFE',
-    borderWidth: 1,
-    borderColor: '#93C5FD',
+    backgroundColor: '#2563EB',
   },
-  btnExchangeText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#1E40AF',
-  },
-  allReturnedCard: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: 10,
-    padding: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  allReturnedText: {
-    fontSize: 11,
-    color: '#64748B',
-    fontWeight: '600',
-  },
-  receiptLineRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 7,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
-  },
-  receiptLineName: {
+  btnActionText: {
+    color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '700',
-    color: '#1E293B',
   },
-  receiptLineSub: {
-    fontSize: 10,
-    color: '#64748B',
-    marginTop: 1,
-  },
-  receiptLineTotal: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  badgeLineReturned: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#DC2626',
-    backgroundColor: '#FEF2F2',
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 4,
-    marginTop: 2,
-  },
-  modalFooter: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-    gap: 8,
+  bottomButtonsSection: {
+    gap: 10,
+    marginTop: 4,
   },
   btnPrintReceipt: {
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    backgroundColor: '#ECFDF5',
-    borderWidth: 1.5,
-    borderColor: '#10B981',
-    borderRadius: 10,
-    paddingVertical: 10,
+    gap: 8,
   },
   btnPrintReceiptText: {
-    fontSize: 12,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: '700',
     color: '#065F46',
   },
   btnVoidReceipt: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
+    height: 48,
+    borderRadius: 12,
     backgroundColor: '#FEF2F2',
     borderWidth: 1,
     borderColor: '#FCA5A5',
-    borderRadius: 10,
-    paddingVertical: 9,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
   },
   btnVoidReceiptText: {
-    fontSize: 11.5,
+    fontSize: 14,
     fontWeight: '700',
     color: '#DC2626',
   },

@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { ProductDTO } from '../../domain/entities/Product';
@@ -52,6 +53,7 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
   isStoreLocked = false,
   onRequirePinChallenge,
 }) => {
+  const router = useRouter();
   const [inputQtyStr, setInputQtyStr] = useState<string>('10');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -65,9 +67,8 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
     details: ConfirmationModalDetail[];
     confirmText: string;
     reasonSelector?: {
-      label: string;
       options: string[];
-      defaultReason: string;
+      defaultReason?: string;
       placeholder?: string;
     };
     action: (reason?: string) => Promise<void>;
@@ -80,7 +81,19 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
   const unitCost = product.unitCostPhp || 0;
   const price = product.defaultPricePhp;
   const tuboPerPiece = Math.max(0, price - unitCost);
+  const marginPct = price > 0 ? Math.round((tuboPerPiece / price) * 100) : 0;
+  const isLowStock =
+    product.stockStatus === 'LOW_STOCK' ||
+    currentStock <= (product.effectiveLowStockThreshold || 5);
   const isCashierRestricted = operatingMode === 'CASHIER' || (isStoreSecurityEnabled && isStoreLocked);
+
+  // Multi-unit pack / tingi calculation
+  const packTier = product.sellingTiers?.find(
+    (u) => u.unitName !== 'piece' && u.baseUnitMultiplier > 1
+  );
+  const packMultiplier = packTier?.baseUnitMultiplier || 10;
+  const packName = packTier?.unitName || 'pack';
+  const tingiQty = inputQty * packMultiplier;
 
   const guardWithPin = (action: () => void) => {
     if (isCashierRestricted && onRequirePinChallenge) {
@@ -93,49 +106,40 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
   const handleStepQty = (delta: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     const next = Math.max(1, inputQty + delta);
-    setInputQtyStr(next.toString());
+    setInputQtyStr(String(next));
   };
 
-  const handleSetPresetQty = (val: number) => {
+  const handleSelectQuickChip = (qty: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-    setInputQtyStr(val.toString());
+    setInputQtyStr(String(qty));
   };
 
-  // 1. Restock Action
-  const triggerRestock = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+  const handleRestock = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setConfirmState({
       visible: true,
       type: 'restock',
-      title: 'Kumpirmahin ang Restock',
+      title: 'Itala ang Restock (+)',
+      message: `Idaragdag ang ${inputQty} pcs sa stock ng ${product.name}.`,
       itemName: product.name,
-      message: 'Sigurado ka bang nais mong magdagdag ng stock sa panindang ito?',
       details: [
-        { label: 'Kasalukuyang Stock', value: `${currentStock} pcs` },
-        { label: 'Dami ng Idaragdag', value: `+${inputQty} pcs` },
-        { label: 'Magiging Kabuuan', value: `${currentStock + inputQty} pcs`, highlight: true },
+        { label: 'Dating Stock', value: `${currentStock} pcs` },
+        { label: 'Idaragdag', value: `+${inputQty} pcs` },
+        { label: 'Bagong Stock', value: `${currentStock + inputQty} pcs` },
       ],
-      reasonSelector: {
-        label: 'Dahilan ng Restock:',
-        options: ['Bagong Delivery', 'Replenishment', 'Return to Shelf', 'Physical Count Correction'],
-        defaultReason: 'Bagong Delivery',
-        placeholder: 'Hal. galing sa supplier / delivery...',
-      },
-      confirmText: 'Itala ang Stock',
-      action: async (reason) => {
-        setIsSubmitting(true);
+      confirmText: 'Oo, Idagdag sa Stock',
+      action: async () => {
         try {
+          setIsSubmitting(true);
           await onAdjustStock({
             productId: product.id,
             mode: 'RESTOCK',
             quantity: inputQty,
-            reason,
+            reason: 'Bagong bili / Restock mula sa supplier',
           });
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-          showToast(`✓ Naidagdag +${inputQty} ${product.name} sa stock`, 'success');
-          onClose();
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : 'Hindi maitala ang stock.';
+          showToast(`+${inputQty} pcs naidagdag sa stock ng ${product.name}!`, 'success');
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Hindi naisave ang stock.';
           showToast(msg, 'error');
         } finally {
           setIsSubmitting(false);
@@ -145,40 +149,32 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
     });
   };
 
-  // 2. Unpack Tingi Action
-  const triggerUnpackTingi = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+  const handleUnpackTingi = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setConfirmState({
       visible: true,
       type: 'unpack',
-      title: 'Kumpirmahin ang Pag-unpack',
+      title: 'Buksan Bilang Tingi (📦)',
+      message: `Bubuksan ang ${inputQty} ${packName} (${packMultiplier}x) upang maging +${tingiQty} retail tingi piraso.`,
       itemName: product.name,
-      message: `Nais mo bang buksan ang ${inputQty} bulk pack para maging +${inputQty * 10} tingi piraso?`,
       details: [
-        { label: 'Kasalukuyang Stock', value: `${currentStock} pcs` },
-        { label: 'Mababawas na Pack', value: `-${inputQty} pack` },
-        { label: 'Dagdag sa Tingi', value: `+${inputQty * 10} piraso`, highlight: true },
+        { label: 'Bultong Bubuksan', value: `${inputQty} ${packName}` },
+        { label: 'Idaragdag na Tingi', value: `+${tingiQty} pcs` },
+        { label: 'Bagong Stock', value: `${currentStock + tingiQty} pcs` },
       ],
-      reasonSelector: {
-        label: 'Dahilan ng Pag-unpack:',
-        options: ['Binuksang Pack para sa Tingi', 'Replenish Tingi Shelf', 'Pabor sa Suki'],
-        defaultReason: 'Binuksang Pack para sa Tingi',
-      },
-      confirmText: 'I-unpack ang Tingi',
-      action: async (reason) => {
-        setIsSubmitting(true);
+      confirmText: 'Oo, Gawing Tingi',
+      action: async () => {
         try {
+          setIsSubmitting(true);
           await onAdjustStock({
             productId: product.id,
             mode: 'UNPACK_TINGI',
-            quantity: inputQty,
-            reason,
+            quantity: tingiQty,
+            reason: `Bukas ng ${inputQty} ${packName} tingi`,
           });
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-          showToast(`✓ Na-unpack ang ${inputQty} bulk pack sa tingi piraso`, 'success');
-          onClose();
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : 'Hindi ma-unpack ang paninda.';
+          showToast(`+${tingiQty} pcs tingi naidagdag sa stock!`, 'success');
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Hindi naisave ang tingi.';
           showToast(msg, 'error');
         } finally {
           setIsSubmitting(false);
@@ -188,43 +184,34 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
     });
   };
 
-  // 3. Gamit sa Bahay (Home Use)
-  const triggerHomeUse = () => {
+  const handleHomeUse = () => {
     guardWithPin(() => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-      const remaining = Math.max(0, currentStock - inputQty);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
       setConfirmState({
         visible: true,
         type: 'home_use',
-        title: 'Gamit sa Bahay (Home Use)',
+        title: 'Bawas: Gamit sa Bahay (🏠)',
+        message: `Ibabawas ang ${inputQty} pcs para sa pansariling konsumo ng pamilya. Hindi ito mabibilang sa Benta at hindi mababawasan ang Pera sa Kaha.`,
         itemName: product.name,
-        message: `Ibabawas ba ang ${inputQty} pc ng paninda para sa pansariling gamit sa bahay?`,
         details: [
-          { label: 'Kasalukuyang Stock', value: `${currentStock} pcs` },
-          { label: 'Ibabawas', value: `-${inputQty} pc` },
-          { label: 'Matitirang Stock', value: `${remaining} pcs`, highlight: true },
+          { label: 'Dating Stock', value: `${currentStock} pcs` },
+          { label: 'Ibabawas', value: `−${inputQty} pcs` },
+          { label: 'Matitirang Stock', value: `${Math.max(0, currentStock - inputQty)} pcs` },
+          { label: 'Dahilan', value: 'Konsumo ng pamilya sa bahay' },
         ],
-        reasonSelector: {
-          label: 'Dahilan ng Bawas (Home Use):',
-          options: ['Pansariling Gamit', 'Kusina / Pananghalian', 'Pamilya / Meryenda', 'Suki Sample'],
-          defaultReason: 'Pansariling Gamit',
-          placeholder: 'Hal. ulam ng pamilya, meryenda...',
-        },
-        confirmText: 'I-bawas sa Stock',
-        action: async (reason) => {
-          setIsSubmitting(true);
+        confirmText: 'Oo, Ibawas sa Stock',
+        action: async () => {
           try {
+            setIsSubmitting(true);
             await onAdjustStock({
               productId: product.id,
               mode: 'HOME_USE',
               quantity: inputQty,
-              reason,
+              reason: 'Konsumo ng pamilya sa bahay',
             });
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-            showToast(`✓ Naitala ang -${inputQty} ${product.name} bilang Gamit sa Bahay`, 'warning');
-            onClose();
-          } catch (err) {
-            const msg = err instanceof Error ? err.message : 'Hindi maitala ang bawas.';
+            showToast(`−${inputQty} pcs ibinawas para sa konsumo sa bahay.`, 'success');
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Hindi naisave ang bawas sa stock.';
             showToast(msg, 'error');
           } finally {
             setIsSubmitting(false);
@@ -235,43 +222,43 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
     });
   };
 
-  // 4. Sira / Expired Action
-  const triggerDamaged = () => {
+  const handleDamagedExpired = () => {
     guardWithPin(() => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-      const remaining = Math.max(0, currentStock - inputQty);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
       setConfirmState({
         visible: true,
         type: 'damaged',
-        title: 'Sira o Expired na Paninda',
+        title: 'Bawas: Sira / Expired (⚠️)',
+        message: `Ibabawas ang ${inputQty} pcs sa mabebentang stock at itatala sa listahan ng sira o expired na paninda (para sa B.O. / return sa supplier).`,
         itemName: product.name,
-        message: `Sigurado ka bang sira o expired ang ${inputQty} pc? Ibabawas ito sa mabebentang stock.`,
         details: [
-          { label: 'Kasalukuyang Stock', value: `${currentStock} pcs` },
-          { label: 'Ibabawas', value: `-${inputQty} pc` },
-          { label: 'Matitirang Stock', value: `${remaining} pcs`, highlight: true },
+          { label: 'Dating Stock', value: `${currentStock} pcs` },
+          { label: 'Ibabawas', value: `−${inputQty} pcs` },
+          { label: 'Matitirang Stock', value: `${Math.max(0, currentStock - inputQty)} pcs` },
         ],
         reasonSelector: {
-          label: 'Dahilan ng Pagkasira / Expiry:',
-          options: ['Basag / Depektibo', 'Lampas na sa Expiry', 'Daga / Insekto / Nabasa'],
-          defaultReason: 'Lampas na sa Expiry',
-          placeholder: 'Hal. may tagas ang supot, expired...',
+          options: [
+            'Sira / Basag na Packaging',
+            'Expired / Lampas Petsa',
+            'Inamag / Napanis',
+            'May Butas / Kinain ng Daga/Insekto',
+          ],
+          defaultReason: 'Sira / Basag na Packaging',
+          placeholder: 'Iba pang dahilan...',
         },
-        confirmText: 'Itala bilang Sira',
-        action: async (reason) => {
-          setIsSubmitting(true);
+        confirmText: 'Oo, Itala Bilang Sira',
+        action: async (selectedReason?: string) => {
           try {
+            setIsSubmitting(true);
             await onAdjustStock({
               productId: product.id,
               mode: 'DAMAGED_EXPIRED',
               quantity: inputQty,
-              reason,
+              reason: selectedReason || 'Sira / Expired na Paninda',
             });
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-            showToast(`✓ Inilipat ang ${inputQty} ${product.name} sa Talaan ng Sira`, 'warning');
-            onClose();
-          } catch (err) {
-            const msg = err instanceof Error ? err.message : 'Hindi maitala ang sira.';
+            showToast(`−${inputQty} pcs inilipat sa talaan ng sira / expired.`, 'warning');
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Hindi naisave ang bawas sa stock.';
             showToast(msg, 'error');
           } finally {
             setIsSubmitting(false);
@@ -282,30 +269,28 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
     });
   };
 
-  // 5. Delete Product Action
-  const triggerDelete = () => {
+  const handleDelete = () => {
     guardWithPin(() => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
       setConfirmState({
         visible: true,
         type: 'delete',
-        title: 'Alisin ang Paninda?',
+        title: 'Alisin ang Paninda sa Tindahan',
+        message: `Sigurado ka bang nais mong tanggalin ang "${product.name}" sa iyong imbentaryo? Hindi na ito lilitaw sa listahan o sa cashier scanner.`,
         itemName: product.name,
-        message: `Sigurado ka bang nais mong tanggalin ang "${product.name}" sa iyong paninda? Hindi na ito maibabalik.`,
         details: [
-          { label: 'Kasalukuyang Stock', value: `${currentStock} pcs` },
-          { label: 'Barcode', value: product.barcode || 'Wala' },
+          { label: 'Barcode', value: product.barcode },
+          { label: 'Huling Stock', value: `${currentStock} pcs` },
         ],
-        confirmText: 'Oo, Alisin ang Paninda',
+        confirmText: 'Oo, Tanggalin ang Paninda',
         action: async () => {
-          setIsSubmitting(true);
           try {
+            setIsSubmitting(true);
             await onDeleteProduct(product.id);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-            showToast(`🗑️ Naalis ang "${product.name}" sa imbentaryo`, 'warning');
+            showToast(`Naalis na ang "${product.name}" sa tindahan.`, 'warning');
             onClose();
-          } catch (err) {
-            const msg = err instanceof Error ? err.message : 'Hindi maalis ang paninda.';
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Hindi natanggal ang paninda.';
             showToast(msg, 'error');
           } finally {
             setIsSubmitting(false);
@@ -314,230 +299,347 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
         },
       });
     });
+  };
+
+  const handleNavigateToHistory = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    onClose();
+    router.push('/history');
   };
 
   return (
     <>
       <Modal
         visible={visible}
-        transparent
         animationType="slide"
+        transparent
         onRequestClose={onClose}
       >
-        <View style={styles.modalBackdrop}>
-          <Pressable style={styles.backdropDismiss} onPress={onClose} />
+        <View style={styles.modalOverlay}>
+          <Pressable style={styles.backdropPressable} onPress={onClose} />
+
           <View style={styles.modalSheet}>
+            {/* Top Drag Handle */}
             <View style={styles.handleBar} />
 
-            {/* Header */}
-            <View style={styles.modalHeader}>
-              <View style={styles.headerLeft}>
-                <View style={styles.thumbBox}>
-                  <ProductThumbnail visual={product.visual} imageUri={product.imageUri} size="md" />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.productName} numberOfLines={1}>
+            {/* Product Header Row */}
+            <View style={styles.productHeaderRow}>
+              <View style={styles.productHeaderLeft}>
+                <ProductThumbnail
+                  visual={product.visual}
+                  imageUri={product.imageUri}
+                  size="md"
+                />
+
+                <View style={styles.productHeaderInfo}>
+                  <Text style={styles.productNameText} numberOfLines={1}>
                     {product.name}
                   </Text>
-                  <Text style={styles.productSub} numberOfLines={1}>
-                    Barcode: {product.barcode || 'Wala'} • {product.category || 'Paninda'}
+                  <Text style={styles.productBarcodeSubtext}>
+                    {product.barcode} • {product.category || 'Pangkalahatan'}
                   </Text>
+
+                  {/* Action Pills Row */}
+                  <View style={styles.headerActionPillsRow}>
+                    <Pressable
+                      style={styles.pillEdit}
+                      onPress={() => {
+                        guardWithPin(() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          onClose();
+                          onEditProduct(product);
+                        });
+                      }}
+                    >
+                      <Ionicons name="create-outline" size={13} color="#0D7A52" />
+                      <Text style={styles.pillEditText}>Baguhin ang Detalye</Text>
+                    </Pressable>
+
+                    <Pressable
+                      style={styles.pillPhoto}
+                      onPress={() => {
+                        guardWithPin(() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          onChangePhoto(product.id);
+                        });
+                      }}
+                    >
+                      <Ionicons name="camera-outline" size={13} color="#334155" />
+                      <Text style={styles.pillPhotoText}>Litrato</Text>
+                    </Pressable>
+                  </View>
                 </View>
               </View>
-              <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={10}>
+
+              <Pressable
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  onClose();
+                }}
+                style={styles.closeCircleButton}
+                hitSlop={8}
+              >
                 <Ionicons name="close" size={20} color="#64748B" />
               </Pressable>
             </View>
 
             <ScrollView
-              style={styles.modalScroll}
-              contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContent}
             >
-              {/* Quick Actions Bar (Edit & Photo) */}
-              <View style={styles.topActionBar}>
-                <Text style={styles.manageTag}>Pamamahala ng Paninda</Text>
-                <View style={styles.topBtnGroup}>
-                  <Pressable
-                    style={styles.btnEditPill}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      guardWithPin(() => {
-                        onClose();
-                        onEditProduct(product);
-                      });
-                    }}
-                  >
-                    <Ionicons name="pencil" size={13} color="#0D7A52" />
-                    <Text style={styles.btnEditPillText}>Baguhin (Edit)</Text>
-                  </Pressable>
-
-                  <Pressable
-                    style={styles.btnPhotoPill}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      onClose();
-                      onChangePhoto(product.id);
-                    }}
-                  >
-                    <Ionicons name="camera-outline" size={13} color="#334155" />
-                    <Text style={styles.btnPhotoPillText}>Litrato</Text>
-                  </Pressable>
-                </View>
-              </View>
-
-              {/* Status Overview Card */}
-              <View style={styles.overviewCard}>
-                <View style={styles.ovCol}>
-                  <Text style={styles.ovLabel}>Kasalukuyang Stock</Text>
-                  <Text style={[styles.ovVal, currentStock <= 3 && styles.ovValLow]}>
-                    {product.formattedStock}
-                  </Text>
-                </View>
-                <View style={styles.ovCol}>
-                  <Text style={styles.ovLabel}>Presyo ng Benta</Text>
-                  <Text style={styles.ovVal}>{product.formattedPrice}</Text>
-                </View>
-                <View style={styles.ovCol}>
-                  <Text style={styles.ovLabel}>Tubo bawat Piraso</Text>
-                  <Text style={[styles.ovVal, styles.ovValGreen]}>
-                    ₱{tuboPerPiece.toFixed(2)}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Multi-Unit Selling Tiers Summary */}
-              {product.sellingTiers && product.sellingTiers.length > 1 ? (
-                <View style={styles.tiersBox}>
-                  <View style={styles.tiersHeader}>
-                    <Text style={styles.tiersTitle}>Multi-unit Selling Tiers:</Text>
-                    <Text style={styles.tiersActiveBadge}>Aktibo</Text>
+              {/* Status Overview (3-Column White Card) */}
+              <View style={styles.statusOverviewCard}>
+                {/* Column 1: Kasalukuyang Stock */}
+                <View style={styles.statusCol}>
+                  <Text style={styles.statusColLabel}>Kasalukuyang Stock</Text>
+                  <View style={styles.statusStockValueRow}>
+                    <View
+                      style={[
+                        styles.stockDot,
+                        { backgroundColor: isLowStock ? '#DC2626' : '#16A34A' },
+                      ]}
+                    />
+                    <Text style={styles.statusStockValueText}>{currentStock} pcs</Text>
                   </View>
-                  {product.sellingTiers.map((tier) => (
-                    <Text key={tier.unitName} style={styles.tierLine}>
-                      • {tier.unitName.toUpperCase()}: ₱{tier.unitPricePhp.toFixed(2)} ({tier.baseUnitMultiplier} pcs)
-                    </Text>
-                  ))}
+                  <Text
+                    style={[
+                      styles.statusStockSubtext,
+                      { color: isLowStock ? '#DC2626' : '#15803D' },
+                    ]}
+                  >
+                    {isLowStock ? 'Kulang sa stock' : 'Sapat ang stock'}
+                  </Text>
                 </View>
-              ) : null}
 
-              {/* Interactive Quantity Stepper Box */}
+                <View style={styles.statusDivider} />
+
+                {/* Column 2: Presyo ng Benta */}
+                <View style={styles.statusCol}>
+                  <Text style={styles.statusColLabel}>Presyo ng Benta</Text>
+                  <Text style={styles.statusPriceValueText}>₱{price.toFixed(2)}</Text>
+                  <Text style={styles.statusCostSubtext}>
+                    Puhunan: ₱{unitCost.toFixed(2)}
+                  </Text>
+                </View>
+
+                <View style={styles.statusDivider} />
+
+                {/* Column 3: Tubo bawat Piraso */}
+                <View style={styles.statusCol}>
+                  <Text style={styles.statusColLabel}>Tubo bawat Piraso</Text>
+                  <Text style={styles.statusTuboValueText}>
+                    +₱{tuboPerPiece.toFixed(2)}
+                  </Text>
+                  <View style={styles.marginBadge}>
+                    <Text style={styles.marginBadgeText}>{marginPct}% kita</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Interactive Stepper Card */}
               <View style={styles.stepperCard}>
-                <View style={styles.stepperTop}>
-                  <Text style={styles.stepperTitle}>Dami ng I-aadjust (Qty):</Text>
-                  <View style={styles.qtyChips}>
-                    {[1, 5, 10, 24].map((p) => {
-                      const isActive = inputQty === p;
-                      return (
-                        <Pressable
-                          key={p}
-                          style={[styles.qtyChip, isActive && styles.qtyChipActive]}
-                          onPress={() => handleSetPresetQty(p)}
-                        >
-                          <Text style={[styles.qtyChipText, isActive && styles.qtyChipTextActive]}>
-                            +{p}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
-                </View>
-
-                <View style={styles.stepperControls}>
-                  <Pressable
-                    style={[styles.btnStep, inputQty <= 1 && styles.btnStepDisabled]}
-                    onPress={() => handleStepQty(-1)}
-                    disabled={inputQty <= 1}
-                  >
-                    <Text style={styles.btnStepText}>−</Text>
-                  </Pressable>
-
-                  <TextInput
-                    style={styles.inputQty}
-                    value={inputQtyStr}
-                    onChangeText={(val) => setInputQtyStr(val.replace(/[^0-9]/g, ''))}
-                    keyboardType="number-pad"
-                    maxLength={4}
-                  />
-
-                  <Pressable style={styles.btnStep} onPress={() => handleStepQty(1)}>
-                    <Text style={styles.btnStepText}>+</Text>
-                  </Pressable>
-
-                  <Text style={styles.stepUnitText}>
-                    {product.unitOfMeasure === 'kg' ? 'kilo (kg)' : 'piraso (pcs)'}
+                <View style={styles.stepperHeaderRow}>
+                  <Text style={styles.stepperHeaderTitle}>
+                    DAMI NG I-AADJUST (QTY) :
                   </Text>
+                  <Text style={styles.stepperHeaderSubtext}>Pumili o mag-type</Text>
+                </View>
+
+                {/* Stepper Controls Row */}
+                <View style={styles.stepperControlsRow}>
+                  <Pressable
+                    style={styles.stepperSquareBtn}
+                    onPress={() => handleStepQty(-1)}
+                  >
+                    <Ionicons name="remove" size={22} color="#334155" />
+                  </Pressable>
+
+                  <View style={styles.stepperCenterInputBox}>
+                    <TextInput
+                      style={styles.stepperTextInput}
+                      value={inputQtyStr}
+                      onChangeText={(val) => setInputQtyStr(val.replace(/[^0-9]/g, ''))}
+                      keyboardType="number-pad"
+                      selectTextOnFocus
+                    />
+                    <Text style={styles.stepperUnitLabel}>pcs</Text>
+                  </View>
+
+                  <Pressable
+                    style={styles.stepperSquareBtn}
+                    onPress={() => handleStepQty(1)}
+                  >
+                    <Ionicons name="add" size={22} color="#334155" />
+                  </Pressable>
+                </View>
+
+                {/* Quick Chips Row */}
+                <View style={styles.quickChipsRow}>
+                  {[
+                    { label: '1 pc', qty: 1 },
+                    { label: '5 pcs', qty: 5 },
+                    { label: '10 pcs', qty: 10 },
+                    { label: '12 Dosena', qty: 12 },
+                    { label: '24 Kahon', qty: 24 },
+                  ].map((chip) => {
+                    const isActive = inputQty === chip.qty;
+                    return (
+                      <Pressable
+                        key={chip.label}
+                        style={[
+                          styles.quickChip,
+                          isActive && styles.quickChipActive,
+                        ]}
+                        onPress={() => handleSelectQuickChip(chip.qty)}
+                      >
+                        <Text
+                          style={[
+                            styles.quickChipText,
+                            isActive && styles.quickChipTextActive,
+                          ]}
+                        >
+                          {chip.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
                 </View>
               </View>
 
-              {/* Section Header */}
-              <Text style={styles.actionSectionTitle}>Mga Aksyon sa Stock:</Text>
-
-              {/* Row 1: Green Restock + Blue Tingi */}
-              <View style={styles.btnRow}>
-                <Pressable
-                  style={[styles.btnAction, styles.btnRestock]}
-                  onPress={triggerRestock}
-                  disabled={isSubmitting}
-                >
-                  <Ionicons name="add-circle-outline" size={16} color="#166534" />
-                  <Text style={styles.btnRestockText}>+{inputQty} Restock</Text>
-                </Pressable>
-
-                <Pressable
-                  style={[styles.btnAction, styles.btnTingi]}
-                  onPress={triggerUnpackTingi}
-                  disabled={isSubmitting}
-                >
-                  <Ionicons name="cube-outline" size={16} color="#1E40AF" />
-                  <Text style={styles.btnTingiText}>📦 +{inputQty * 10} Tingi</Text>
-                </Pressable>
-              </View>
-
-              {/* Row 2: Amber Gamit sa Bahay + Red Sira/Expired */}
-              <View style={styles.btnRow}>
-                <Pressable
-                  style={[styles.btnAction, styles.btnHomeUse]}
-                  onPress={triggerHomeUse}
-                  disabled={isSubmitting}
-                >
-                  <Ionicons name="home-outline" size={16} color="#92400E" />
-                  <Text style={styles.btnHomeUseText}>−{inputQty} Gamit sa Bahay</Text>
-                </Pressable>
-
-                <Pressable
-                  style={[styles.btnAction, styles.btnDamaged]}
-                  onPress={triggerDamaged}
-                  disabled={isSubmitting}
-                >
-                  <Ionicons name="warning-outline" size={16} color="#991B1B" />
-                  <Text style={styles.btnDamagedText}>⚠ −{inputQty} Sira/Expired</Text>
-                </Pressable>
-              </View>
-
-              {/* Row 3: Delete Product */}
-              <Pressable
-                style={[styles.btnDelete, isSubmitting && styles.btnDisabled]}
-                onPress={triggerDelete}
-                disabled={isSubmitting}
-              >
-                <Ionicons name="trash-outline" size={15} color="#FFFFFF" />
-                <Text style={styles.btnDeleteText}>Alisin ang Paninda</Text>
-              </Pressable>
-
-              {/* Microcopy Security Note */}
-              <View style={styles.securityFooter}>
-                <Ionicons name="shield-checkmark-outline" size={14} color="#0D7A52" />
-                <Text style={styles.securityFooterText}>
-                  Ligtas at Sigurado: Bawat galaw ng paninda ay may dahilan at agad na naisasalba sa iyong tindahan nang walang kalituhan.
+              {/* Stock Actions Header */}
+              <View style={styles.actionsHeaderRow}>
+                <Text style={styles.actionsHeaderTitle}>
+                  MGA AKSYON SA STOCK (PUMILI NG DAHILAN) :
                 </Text>
+                <Text style={styles.actionsHeaderSubtext}>1-tap save</Text>
+              </View>
+
+              {/* Stock Actions (2x2 Color Grid) */}
+              <View style={styles.actionGridContainer}>
+                {/* Card 1: +Restock (Green) */}
+                <Pressable
+                  style={[styles.actionCard, styles.actionCardRestock]}
+                  onPress={handleRestock}
+                  disabled={isSubmitting}
+                >
+                  <View style={[styles.actionCardIconBadge, styles.iconBadgeGreen]}>
+                    <Ionicons name="add" size={18} color="#16A34A" />
+                  </View>
+                  <Text style={[styles.actionCardTitle, styles.textGreenTitle]}>
+                    +{inputQty} Restock
+                  </Text>
+                  <Text style={[styles.actionCardSubtitle, styles.textGreenSubtitle]}>
+                    Bagong bili / dagdag
+                  </Text>
+                  <View style={[styles.stockPill, styles.stockPillGreen]}>
+                    <Text style={[styles.stockPillText, styles.textGreenPill]}>
+                      Magiging stock: {currentStock + inputQty} pcs
+                    </Text>
+                  </View>
+                </Pressable>
+
+                {/* Card 2: +Tingi (Blue) */}
+                <Pressable
+                  style={[styles.actionCard, styles.actionCardTingi]}
+                  onPress={handleUnpackTingi}
+                  disabled={isSubmitting}
+                >
+                  <View style={[styles.actionCardIconBadge, styles.iconBadgeBlue]}>
+                    <Ionicons name="cube-outline" size={18} color="#2563EB" />
+                  </View>
+                  <Text style={[styles.actionCardTitle, styles.textBlueTitle]}>
+                    +{tingiQty} Tingi
+                  </Text>
+                  <Text style={[styles.actionCardSubtitle, styles.textBlueSubtitle]}>
+                    Bukas ng bulto/pack
+                  </Text>
+                  <View style={[styles.stockPill, styles.stockPillBlue]}>
+                    <Text style={[styles.stockPillText, styles.textBluePill]}>
+                      Magiging stock: {currentStock + tingiQty} pcs
+                    </Text>
+                  </View>
+                </Pressable>
+
+                {/* Card 3: −Bahay (Amber) */}
+                <Pressable
+                  style={[styles.actionCard, styles.actionCardHome]}
+                  onPress={handleHomeUse}
+                  disabled={isSubmitting}
+                >
+                  <View style={[styles.actionCardIconBadge, styles.iconBadgeAmber]}>
+                    <Ionicons name="home-outline" size={18} color="#D97706" />
+                  </View>
+                  <Text style={[styles.actionCardTitle, styles.textAmberTitle]}>
+                    −{inputQty} sa Bahay
+                  </Text>
+                  <Text style={[styles.actionCardSubtitle, styles.textAmberSubtitle]}>
+                    Konsumo ng pamilya
+                  </Text>
+                  <View style={[styles.stockPill, styles.stockPillAmber]}>
+                    <Text style={[styles.stockPillText, styles.textAmberPill]}>
+                      Magiging stock: {Math.max(0, currentStock - inputQty)} pcs
+                    </Text>
+                  </View>
+                </Pressable>
+
+                {/* Card 4: −Sira/Expired (Red) */}
+                <Pressable
+                  style={[styles.actionCard, styles.actionCardDamaged]}
+                  onPress={handleDamagedExpired}
+                  disabled={isSubmitting}
+                >
+                  <View style={[styles.actionCardIconBadge, styles.iconBadgeRed]}>
+                    <Ionicons name="warning-outline" size={18} color="#DC2626" />
+                  </View>
+                  <Text style={[styles.actionCardTitle, styles.textRedTitle]}>
+                    −{inputQty} Sira/Expired
+                  </Text>
+                  <Text style={[styles.actionCardSubtitle, styles.textRedSubtitle]}>
+                    Bawas / di mabenta
+                  </Text>
+                  <View style={[styles.stockPill, styles.stockPillRed]}>
+                    <Text style={[styles.stockPillText, styles.textRedPill]}>
+                      Magiging stock: {Math.max(0, currentStock - inputQty)} pcs
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+
+              {/* Security / Audit Callout Banner */}
+              <View style={styles.safetyCalloutBanner}>
+                <Ionicons name="shield-checkmark-outline" size={20} color="#16A34A" />
+                <Text style={styles.safetyCalloutText}>
+                  Ligtas at Sigurado: Bawat galaw ng paninda ay naka-rekord sa History at pwedeng i-undo agad.
+                </Text>
+              </View>
+
+              {/* Bottom Action Links */}
+              <View style={styles.bottomLinksRow}>
+                <Pressable
+                  style={styles.bottomLinkTouchable}
+                  onPress={handleNavigateToHistory}
+                >
+                  <Ionicons name="time-outline" size={16} color="#475569" />
+                  <Text style={styles.historyLinkText}>
+                    Tingnan ang History ng Paninda
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  style={styles.bottomLinkTouchable}
+                  onPress={handleDelete}
+                  disabled={isSubmitting}
+                >
+                  <Ionicons name="trash-outline" size={16} color="#DC2626" />
+                  <Text style={styles.deleteLinkText}>Alisin ang Paninda</Text>
+                </Pressable>
               </View>
             </ScrollView>
           </View>
         </View>
       </Modal>
 
-      {/* Confirmation Dialog Component */}
+      {/* Action Confirmation Modal */}
       {confirmState && (
         <ConfirmationModal
           visible={confirmState.visible}
@@ -548,9 +650,8 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
           details={confirmState.details}
           reasonSelector={confirmState.reasonSelector}
           confirmText={confirmState.confirmText}
-          cancelText="Kanselahin"
-          isLoading={isSubmitting}
-          onConfirm={confirmState.action}
+          cancelText="Huwag Ituloy"
+          onConfirm={(reason) => confirmState.action(reason)}
           onCancel={() => setConfirmState(null)}
         />
       )}
@@ -559,20 +660,22 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
 };
 
 const styles = StyleSheet.create({
-  modalBackdrop: {
+  modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.65)',
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
     justifyContent: 'flex-end',
   },
-  backdropDismiss: {
+  backdropPressable: {
     flex: 1,
   },
   modalSheet: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8FAFC',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    maxHeight: '90%',
-    shadowColor: '#000000',
+    maxHeight: '92%',
+    paddingTop: 10,
+    paddingHorizontal: 16,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
@@ -581,352 +684,424 @@ const styles = StyleSheet.create({
   handleBar: {
     width: 40,
     height: 5,
-    backgroundColor: '#CBD5E1',
     borderRadius: 3,
+    backgroundColor: '#CBD5E1',
     alignSelf: 'center',
-    marginTop: 10,
-    marginBottom: 4,
+    marginBottom: 12,
   },
-  modalHeader: {
+  productHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    alignItems: 'flex-start',
+    marginBottom: 12,
   },
-  headerLeft: {
+  productHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     flex: 1,
+    marginRight: 8,
+  },
+  productHeaderInfo: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  productNameText: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  productBarcodeSubtext: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
+    fontWeight: '500',
+  },
+  headerActionPillsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
+    marginTop: 6,
   },
-  thumbBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
+  pillEdit: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#0D7A52',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  pillEditText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  pillPhoto: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  pillPhotoText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#334155',
+  },
+  closeCircleButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  productName: {
+  scrollContent: {
+    paddingBottom: 28,
+  },
+  statusOverviewCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  statusCol: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statusColLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  statusStockValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 4,
+  },
+  stockDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  statusStockValueText: {
     fontSize: 15,
     fontWeight: '800',
     color: '#0F172A',
   },
-  productSub: {
+  statusStockSubtext: {
     fontSize: 11,
-    color: '#64748B',
+    fontWeight: '600',
     marginTop: 2,
   },
-  closeBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  statusDivider: {
+    width: 1,
     backgroundColor: '#F1F5F9',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginVertical: 4,
   },
-  modalScroll: {
-    maxHeight: 520,
-  },
-  scrollContent: {
-    padding: 16,
-    gap: 12,
-  },
-  topActionBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  manageTag: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#475569',
-  },
-  topBtnGroup: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  btnEditPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#ECFDF5',
-    borderWidth: 1,
-    borderColor: '#A7F3D0',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  btnEditPillText: {
-    fontSize: 11.5,
-    fontWeight: '800',
-    color: '#0D7A52',
-  },
-  btnPhotoPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#E2E8F0',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  btnPhotoPillText: {
-    fontSize: 11.5,
-    fontWeight: '800',
-    color: '#334155',
-  },
-  overviewCard: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    padding: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  ovCol: {
-    alignItems: 'center',
-  },
-  ovLabel: {
-    fontSize: 9.5,
-    fontWeight: '700',
-    color: '#64748B',
-  },
-  ovVal: {
-    fontSize: 14,
+  statusPriceValueText: {
+    fontSize: 15,
     fontWeight: '800',
     color: '#0F172A',
+    marginTop: 4,
+  },
+  statusCostSubtext: {
+    fontSize: 11,
+    color: '#64748B',
     marginTop: 2,
   },
-  ovValGreen: {
-    color: '#0D7A52',
-  },
-  ovValLow: {
-    color: '#D97706',
-  },
-  tiersBox: {
-    backgroundColor: '#F0FDF4',
-    borderWidth: 1,
-    borderColor: '#DCFCE7',
-    borderRadius: 10,
-    padding: 10,
-    gap: 3,
-  },
-  tiersHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  tiersTitle: {
-    fontSize: 11,
+  statusTuboValueText: {
+    fontSize: 15,
     fontWeight: '800',
-    color: '#0D7A52',
+    color: '#0F172A',
+    marginTop: 4,
   },
-  tiersActiveBadge: {
-    fontSize: 9.5,
-    fontWeight: '800',
-    color: '#15803D',
+  marginBadge: {
     backgroundColor: '#DCFCE7',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
+    marginTop: 3,
   },
-  tierLine: {
-    fontSize: 10.5,
-    color: '#166534',
-    fontWeight: '600',
+  marginBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#15803D',
   },
   stepperCard: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
-    borderColor: '#CBD5E1',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     padding: 12,
-    gap: 10,
+    marginBottom: 14,
   },
-  stepperTop: {
+  stepperHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 10,
   },
-  stepperTitle: {
-    fontSize: 11.5,
-    fontWeight: '800',
-    color: '#1E293B',
-    textTransform: 'uppercase',
-  },
-  qtyChips: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  qtyChip: {
-    backgroundColor: '#F1F5F9',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  qtyChipActive: {
-    backgroundColor: '#DCFCE7',
-    borderColor: '#86EFAC',
-  },
-  qtyChipText: {
-    fontSize: 10,
+  stepperHeaderTitle: {
+    fontSize: 11,
     fontWeight: '700',
     color: '#475569',
+    letterSpacing: 0.5,
   },
-  qtyChipTextActive: {
-    color: '#15803D',
-    fontWeight: '800',
+  stepperHeaderSubtext: {
+    fontSize: 11,
+    color: '#94A3B8',
   },
-  stepperControls: {
+  stepperControlsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  btnStep: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
+  stepperSquareBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
     backgroundColor: '#F1F5F9',
-    borderWidth: 1.5,
-    borderColor: '#CBD5E1',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  btnStepDisabled: {
-    opacity: 0.4,
+  stepperCenterInputBox: {
+    flex: 1,
+    height: 44,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#0D7A52',
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
   },
-  btnStepText: {
+  stepperTextInput: {
     fontSize: 18,
     fontWeight: '800',
     color: '#0F172A',
-  },
-  inputQty: {
-    width: 64,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#0D7A52',
-    fontSize: 15,
-    fontWeight: '800',
     textAlign: 'center',
-    color: '#0D7A52',
-    paddingHorizontal: 4,
+    minWidth: 40,
+    padding: 0,
   },
-  stepUnitText: {
-    fontSize: 11,
-    fontWeight: '700',
+  stepperUnitLabel: {
+    fontSize: 13,
+    fontWeight: '600',
     color: '#64748B',
     marginLeft: 4,
   },
-  actionSectionTitle: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#64748B',
-    textTransform: 'uppercase',
-    letterSpacing: 0.3,
-  },
-  btnRow: {
+  quickChipsRow: {
     flexDirection: 'row',
-    gap: 8,
-  },
-  btnAction: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     gap: 6,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 10,
+    marginTop: 10,
+    flexWrap: 'wrap',
   },
-  btnRestock: {
-    backgroundColor: '#DCFCE7',
-    borderWidth: 1.5,
-    borderColor: '#86EFAC',
-  },
-  btnRestockText: {
-    fontSize: 12.5,
-    fontWeight: '800',
-    color: '#166534',
-  },
-  btnTingi: {
-    backgroundColor: '#DBEAFE',
-    borderWidth: 1.5,
-    borderColor: '#93C5FD',
-  },
-  btnTingiText: {
-    fontSize: 12.5,
-    fontWeight: '800',
-    color: '#1E40AF',
-  },
-  btnHomeUse: {
-    backgroundColor: '#FEF3C7',
-    borderWidth: 1.5,
-    borderColor: '#FCD34D',
-  },
-  btnHomeUseText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#92400E',
-  },
-  btnDamaged: {
-    backgroundColor: '#FEE2E2',
-    borderWidth: 1.5,
-    borderColor: '#FCA5A5',
-  },
-  btnDamagedText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#991B1B',
-  },
-  btnDelete: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    backgroundColor: '#1F2937',
-    borderRadius: 10,
-    paddingVertical: 11,
-    marginTop: 2,
-  },
-  btnDeleteText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#F9FAFB',
-  },
-  btnDisabled: {
-    opacity: 0.5,
-  },
-  securityFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+  quickChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
     backgroundColor: '#F8FAFC',
-    borderRadius: 8,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    padding: 8,
-    marginTop: 4,
   },
-  securityFooterText: {
+  quickChipActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#0D7A52',
+    borderWidth: 1.5,
+  },
+  quickChipText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#475569',
+  },
+  quickChipTextActive: {
+    color: '#0D7A52',
+    fontWeight: '800',
+  },
+  actionsHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  actionsHeaderTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#475569',
+    letterSpacing: 0.5,
+  },
+  actionsHeaderSubtext: {
+    fontSize: 11,
+    color: '#94A3B8',
+  },
+  actionGridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 14,
+  },
+  actionCard: {
+    width: '48.5%',
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  actionCardRestock: {
+    backgroundColor: '#F0FDF4',
+    borderColor: '#BBF7D0',
+  },
+  actionCardTingi: {
+    backgroundColor: '#EFF6FF',
+    borderColor: '#BFDBFE',
+  },
+  actionCardHome: {
+    backgroundColor: '#FFFBEB',
+    borderColor: '#FDE68A',
+  },
+  actionCardDamaged: {
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FECACA',
+  },
+  actionCardIconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconBadgeGreen: {
+    backgroundColor: '#DCFCE7',
+  },
+  iconBadgeBlue: {
+    backgroundColor: '#DBEAFE',
+  },
+  iconBadgeAmber: {
+    backgroundColor: '#FEF3C7',
+  },
+  iconBadgeRed: {
+    backgroundColor: '#FEE2E2',
+  },
+  actionCardTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    marginTop: 8,
+  },
+  textGreenTitle: {
+    color: '#14532D',
+  },
+  textBlueTitle: {
+    color: '#1E3A8A',
+  },
+  textAmberTitle: {
+    color: '#78350F',
+  },
+  textRedTitle: {
+    color: '#7F1D1D',
+  },
+  actionCardSubtitle: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  textGreenSubtitle: {
+    color: '#166534',
+  },
+  textBlueSubtitle: {
+    color: '#1E40AF',
+  },
+  textAmberSubtitle: {
+    color: '#92400E',
+  },
+  textRedSubtitle: {
+    color: '#991B1B',
+  },
+  stockPill: {
+    marginTop: 8,
+    borderRadius: 6,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    alignSelf: 'flex-start',
+  },
+  stockPillGreen: {
+    backgroundColor: '#DCFCE7',
+  },
+  stockPillBlue: {
+    backgroundColor: '#DBEAFE',
+  },
+  stockPillAmber: {
+    backgroundColor: '#FEF3C7',
+  },
+  stockPillRed: {
+    backgroundColor: '#FEE2E2',
+  },
+  stockPillText: {
     fontSize: 10,
-    color: '#64748B',
-    lineHeight: 14,
+    fontWeight: '700',
+  },
+  textGreenPill: {
+    color: '#14532D',
+  },
+  textBluePill: {
+    color: '#1E3A8A',
+  },
+  textAmberPill: {
+    color: '#78350F',
+  },
+  textRedPill: {
+    color: '#7F1D1D',
+  },
+  safetyCalloutBanner: {
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    borderRadius: 10,
+    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 14,
+  },
+  safetyCalloutText: {
+    fontSize: 11,
+    color: '#166534',
     flex: 1,
+    lineHeight: 16,
+    fontWeight: '500',
+  },
+  bottomLinksRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingBottom: 16,
+  },
+  bottomLinkTouchable: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  historyLinkText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#475569',
+  },
+  deleteLinkText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#DC2626',
   },
 });
