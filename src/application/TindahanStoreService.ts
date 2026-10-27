@@ -1688,6 +1688,28 @@ export class TindahanStoreService {
     this.notifyCartOnly();
   }
 
+  public cancelExchangeCredit(options?: { undoReceiptReturn?: boolean }): void {
+    if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');
+    const currentCredit = this.exchangeCreditPhp;
+    const sourceReceiptId = this.exchangeSourceReceiptId;
+
+    if (options?.undoReceiptReturn && sourceReceiptId) {
+      const tx = this.transactions.find((t) => t.id === sourceReceiptId);
+      if (tx && tx.status !== 'VOIDED') {
+        tx.refundedPhp = Math.max(0, tx.refundedPhp - currentCredit);
+        const allItemsReturned = tx.items.every((i) => i.returnedQty >= i.quantity);
+        const someItemsReturned = tx.items.some((i) => i.returnedQty > 0);
+        tx.status = allItemsReturned ? 'REFUNDED' : someItemsReturned ? 'PARTIAL_RETURN' : 'COMPLETED';
+        this.persistTransactionToSqlite(tx);
+      }
+    }
+
+    this.exchangeCreditPhp = 0;
+    this.exchangeSourceReceiptId = null;
+    this.cartRevision++;
+    this.notifyCartOnly();
+  }
+
   public parkCurrentCart(customerName?: string): HeldCartRecord | null {
     if (this.cartMap.size === 0) return null;
     if (this.isCompletingSale) throw new Error('Sale is currently being completed. Please wait.');

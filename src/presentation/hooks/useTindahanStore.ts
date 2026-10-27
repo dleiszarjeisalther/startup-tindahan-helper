@@ -40,6 +40,8 @@ const deleteCategory = (categoryName: string, fallbackCategory?: string) =>
 const undoRemoveCartItem = () => tindahanStoreService.undoRemoveCartItem();
 const setDiscountPhp = (d: number) => tindahanStoreService.setDiscountPhp(d);
 const clearCart = () => tindahanStoreService.clearCart();
+const cancelExchangeCredit = (options?: { undoReceiptReturn?: boolean }) =>
+  tindahanStoreService.cancelExchangeCredit(options);
 const parkCurrentCart = (customerName?: string) =>
   tindahanStoreService.parkCurrentCart(customerName);
 const restoreParkedCart = () => tindahanStoreService.restoreParkedCart();
@@ -173,6 +175,7 @@ export function useTindahanStore() {
     undoRemoveCartItem,
     setDiscountPhp,
     clearCart,
+    cancelExchangeCredit,
     parkCurrentCart,
     restoreParkedCart,
     restoreHeldCart,

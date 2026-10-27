@@ -181,6 +181,7 @@ export default function CheckoutNewSaleScreen() {
     undoRemoveCartItem,
     setDiscountPhp,
     clearCart,
+    cancelExchangeCredit,
     parkCurrentCart,
     restoreHeldCart,
     deleteHeldCart,
@@ -770,9 +771,23 @@ export default function CheckoutNewSaleScreen() {
 
           {cartSummary.exchangeCreditPhp > 0 ? (
             <View style={styles.summaryRow}>
-              <Text style={styles.exchangeLabel}>
-                Exchange Credit ({cartSummary.exchangeSourceReceiptId})
-              </Text>
+              <View style={styles.exchangeLeftGroup}>
+                <Text style={styles.exchangeLabel}>
+                  Palit-Paninda ({cartSummary.exchangeSourceReceiptId})
+                </Text>
+                <Pressable
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    cancelExchangeCredit();
+                    showToast('Naalis na ang Palit-Paninda kredito.', 'info');
+                  }}
+                  style={styles.cancelExchangePill}
+                  hitSlop={8}
+                >
+                  <Ionicons name="close" size={12} color="#DC2626" />
+                  <Text style={styles.cancelExchangePillText}>Kanselahin</Text>
+                </Pressable>
+              </View>
               <Text style={styles.exchangeValue}>
                 −{cartSummary.formattedExchangeCredit}
               </Text>
@@ -1992,6 +2007,28 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     paddingVertical: 0,
     fontVariant: ['tabular-nums'],
+  },
+  exchangeLeftGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  cancelExchangePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  cancelExchangePillText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#DC2626',
   },
   exchangeLabel: {
     fontSize: 13,

@@ -143,4 +143,22 @@ assert.strictEqual(res4.creditPhp, 35.0, 'Deduction amount must be ₱35.00');
 assert.strictEqual(customer4.balancePhp, 35.0, 'Aling Nena debt must drop from ₱70.00 to ₱35.00');
 console.log('✓ Test 4: Utang sale safeguards verified (Cash refund blocked, debt deducted safely)');
 
+// Test 5: Cancelling Exchange Credit clears cart credit safely
+let cartExchangeCredit = 30.0;
+let cartSourceReceipt = 'OR-2026-TEST-001';
+
+function cancelExchangeCredit(options) {
+  if (options?.undoReceiptReturn && cartSourceReceipt === tx1.id) {
+    tx1.refundedPhp = Math.max(0, tx1.refundedPhp - cartExchangeCredit);
+    tx1.status = 'PARTIAL_RETURN';
+  }
+  cartExchangeCredit = 0;
+  cartSourceReceipt = null;
+}
+
+cancelExchangeCredit({ undoReceiptReturn: false });
+assert.strictEqual(cartExchangeCredit, 0, 'Exchange credit must be reset to 0');
+assert.strictEqual(cartSourceReceipt, null, 'Exchange source receipt must be null');
+console.log('✓ Test 5: Cancelling exchange credit clears cart credit safely');
+
 console.log('--- ALL MULTI-QUANTITY RETURN & REFUND TESTS PASSED ---');

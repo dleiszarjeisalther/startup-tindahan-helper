@@ -47,7 +47,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   showToast,
   showProfit = true,
 }) => {
-  const { products } = useTindahanStore();
+  const { products, cartSummary, cancelExchangeCredit } = useTindahanStore();
   const [selectedProductIdOverride, setSelectedProductIdOverride] = useState<string | null>(null);
   const [returnQty, setReturnQty] = useState<number>(1);
   const [disposition, setDisposition] = useState<ReturnDisposition>('SELLABLE');
@@ -281,6 +281,30 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
                   <Text style={styles.statusBannerRefundedText}>
                     Buong naisauli na ang mga paninda sa resibong ito.
                   </Text>
+                </View>
+              )}
+
+              {/* Active Palit-Paninda (Exchange Credit) Notice Banner for this receipt */}
+              {cartSummary.exchangeCreditPhp > 0 && cartSummary.exchangeSourceReceiptId === transaction.id && (
+                <View style={styles.exchangeNoticeBanner}>
+                  <View style={styles.exchangeNoticeLeft}>
+                    <Ionicons name="swap-horizontal" size={16} color="#2563EB" />
+                    <Text style={styles.exchangeNoticeText}>
+                      May Palit-Paninda (₱{cartSummary.exchangeCreditPhp.toFixed(2)}) sa Cart
+                    </Text>
+                  </View>
+                  <Pressable
+                    style={styles.exchangeNoticeCancelBtn}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      cancelExchangeCredit();
+                      showToast('Naalis na ang Palit-Paninda kredito.', 'success');
+                    }}
+                    hitSlop={8}
+                  >
+                    <Ionicons name="close" size={13} color="#DC2626" />
+                    <Text style={styles.exchangeNoticeCancelText}>Kanselahin</Text>
+                  </Pressable>
                 </View>
               )}
 
@@ -600,18 +624,18 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
                   </Pressable>
                 )}
 
-                {/* Void Whole Receipt Button */}
+                {/* Void Whole Receipt Link (100% consistent with Alisin ang Paninda) */}
                 {!isVoided && (
-                  <Pressable
-                    style={styles.btnVoidReceipt}
-                    onPress={handleVoidWholeReceipt}
-                    disabled={isSubmitting}
-                  >
-                    <Ionicons name="trash-outline" size={20} color="#DC2626" />
-                    <Text style={styles.btnVoidReceiptText}>
-                      I-void ang Buong Resibo
-                    </Text>
-                  </Pressable>
+                  <View style={styles.bottomLinksRow}>
+                    <Pressable
+                      style={styles.bottomLinkTouchable}
+                      onPress={handleVoidWholeReceipt}
+                      disabled={isSubmitting}
+                    >
+                      <Ionicons name="trash-outline" size={16} color="#DC2626" />
+                      <Text style={styles.deleteLinkText}>I-void ang Buong Resibo</Text>
+                    </Pressable>
+                  </View>
                 )}
               </View>
             </ScrollView>
@@ -1110,20 +1134,64 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#065F46',
   },
-  btnVoidReceipt: {
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: '#FEF2F2',
-    borderWidth: 1,
-    borderColor: '#FCA5A5',
+  exchangeNoticeBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 12,
   },
-  btnVoidReceiptText: {
-    fontSize: 14,
+  exchangeNoticeLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flex: 1,
+    marginRight: 8,
+  },
+  exchangeNoticeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#1E40AF',
+    flex: 1,
+  },
+  exchangeNoticeCancelBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  exchangeNoticeCancelText: {
+    fontSize: 11,
     fontWeight: '700',
+    color: '#DC2626',
+  },
+  bottomLinksRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingBottom: 16,
+  },
+  bottomLinkTouchable: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  deleteLinkText: {
+    fontSize: 12,
+    fontWeight: '600',
     color: '#DC2626',
   },
 });

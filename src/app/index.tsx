@@ -38,6 +38,7 @@ export default function PosScanProductScreen() {
     addToCart,
     setCartItemQuantity,
     cartSummary,
+    cancelExchangeCredit,
     settings,
     version,
     isStoreSecurityEnabled,
@@ -394,6 +395,37 @@ export default function PosScanProductScreen() {
           <TrialBanner onPressUpgrade={openUpgradeModal} />
         </View>
       ) : null}
+
+      {/* Active Palit-Paninda (Exchange Credit) Banner */}
+      {cartSummary.exchangeCreditPhp > 0 && (
+        <View style={styles.exchangeBannerContainer}>
+          <View style={styles.exchangeBannerLeft}>
+            <View style={styles.exchangeBannerIconCircle}>
+              <Ionicons name="swap-horizontal" size={15} color="#2563EB" />
+            </View>
+            <View style={styles.exchangeBannerTextGroup}>
+              <Text style={styles.exchangeBannerTitle}>
+                Palit-Paninda: {cartSummary.formattedExchangeCredit}
+              </Text>
+              <Text style={styles.exchangeBannerSubtitle}>
+                Resibo #{cartSummary.exchangeSourceReceiptId || ''}
+              </Text>
+            </View>
+          </View>
+          <Pressable
+            style={styles.exchangeBannerCancelBtn}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              cancelExchangeCredit();
+              triggerScanToast('Naalis na ang Palit-Paninda kredito.');
+            }}
+            hitSlop={8}
+          >
+            <Ionicons name="close" size={13} color="#DC2626" />
+            <Text style={styles.exchangeBannerCancelText}>Kanselahin</Text>
+          </Pressable>
+        </View>
+      )}
 
       {/* TOP HALF: Camera Barcode Viewfinder with Animated Sweeping Laser (OOP Shared Component) */}
       <BarcodeScannerViewfinder
@@ -781,6 +813,60 @@ export default function PosScanProductScreen() {
 }
 
 const styles = StyleSheet.create({
+  exchangeBannerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#EFF6FF',
+    borderBottomWidth: 1,
+    borderColor: '#BFDBFE',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+  },
+  exchangeBannerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
+    marginRight: 8,
+  },
+  exchangeBannerIconCircle: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#DBEAFE',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  exchangeBannerTextGroup: {
+    flex: 1,
+  },
+  exchangeBannerTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1E40AF',
+  },
+  exchangeBannerSubtitle: {
+    fontSize: 10,
+    color: '#3B82F6',
+    fontWeight: '500',
+  },
+  exchangeBannerCancelBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  exchangeBannerCancelText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#DC2626',
+  },
   topAppHeader: {
     backgroundColor: '#0D7A52',
     paddingHorizontal: 16,
