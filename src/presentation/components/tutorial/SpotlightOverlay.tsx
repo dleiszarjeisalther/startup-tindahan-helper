@@ -6,13 +6,12 @@ import {
   Animated,
   BackHandler,
   useWindowDimensions,
+  Keyboard,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTutorial, ElementLayout } from '@/presentation/providers/TutorialContext';
-import { tindahanStoreService } from '@/infrastructure/container';
 import { MickeyGlovePointer } from './MickeyGlovePointer';
 import { TutorialTooltipCard } from './TutorialTooltipCard';
-import { SukliSimulationSheet } from './SukliSimulationSheet';
 
 /**
  * SpotlightOverlay:
@@ -69,44 +68,27 @@ export function SpotlightOverlay() {
     };
   }, [isActive, pulseAnim]);
 
-  const handleNext = useCallback(async () => {
+  const handleNext = useCallback(() => {
+    Keyboard.dismiss();
     if (currentStep === 1) {
       nextStep();
       router.navigate('/inventory');
-    } else if (currentStep === 2) {
-      // Ensure demo product exists in SQLite before advancing past step 2
-      try {
-        const currentProducts = tindahanStoreService.getSnapshot().products;
-        if (currentProducts.length === 0) {
-          await tindahanStoreService.addProductToDatabase({
-            name: 'Pancit Canton (Chilimansi)',
-            category: 'Noodles / Instant',
-            barcodeInputMode: 'GENERATE_TINGI',
-            rawBarcodeValue: '',
-            initialStock: 25,
-            lowStockThreshold: 5,
-            unitCostPhp: 11.5,
-            unitPricePhp: 15,
-            unitOfMeasure: 'pc',
-          });
-        }
-      } catch (e) {
-        console.error('Demo auto-seed error:', e);
-      }
+    } else if (currentStep >= 2 && currentStep <= 5) {
       nextStep();
-    } else if (currentStep === 3) {
+    } else if (currentStep === 6) {
       nextStep();
       router.navigate('/');
-    } else {
-      nextStep();
     }
   }, [currentStep, nextStep, router]);
 
   const handleBack = useCallback(() => {
+    Keyboard.dismiss();
     if (currentStep === 2) {
       previousStep();
       router.navigate('/');
-    } else if (currentStep === 4) {
+    } else if (currentStep >= 3 && currentStep <= 5) {
+      previousStep();
+    } else if (currentStep === 6) {
       previousStep();
       router.navigate('/inventory');
     } else {
@@ -136,17 +118,6 @@ export function SpotlightOverlay() {
 
   if (!isActive) return null;
 
-  // Step 6 is the interactive in-place POS simulation sheet
-  if (currentStep === 6) {
-    return (
-      <SukliSimulationSheet
-        onBack={previousStep}
-        onComplete={nextStep}
-        onSkip={skipTutorial}
-      />
-    );
-  }
-
   const rawLayout = targets[currentStep];
   const pad = 6;
 
@@ -159,37 +130,45 @@ export function SpotlightOverlay() {
       height: 48,
       borderRadius: 14,
     },
-    // Step 2: [Sample Product Helper] in Inventory screen
+    // Step 2: [ 📷 Scan ] barcode button in Add Product form
     2: {
+      x: screenW - 130,
+      y: 180,
+      width: 100,
+      height: 44,
+      borderRadius: 10,
+    },
+    // Step 3: Product Name * text input in Add Product form
+    3: {
       x: 16,
-      y: 160,
+      y: 250,
       width: screenW - 32,
-      height: 56,
+      height: 48,
+      borderRadius: 12,
+    },
+    // Step 4: Category * & Uri ng Paninda pills in Add Product form
+    4: {
+      x: 16,
+      y: 330,
+      width: screenW - 32,
+      height: 110,
       borderRadius: 14,
     },
-    // Step 3: [Scan Tab] in Bottom Tab Bar
-    3: {
+    // Step 5: Presyo & Puhunan fields in Add Product form
+    5: {
+      x: 16,
+      y: 470,
+      width: screenW - 32,
+      height: 140,
+      borderRadius: 16,
+    },
+    // Step 6: [ Scan ] Tab in Bottom Tab Bar
+    6: {
       x: 16,
       y: Math.max(100, screenH - 74),
       width: 72,
       height: 48,
       borderRadius: 14,
-    },
-    // Step 4: First product item in POS Grid
-    4: {
-      x: 16,
-      y: Math.max(120, screenH * 0.44),
-      width: Math.max(120, (screenW - 48) / 2),
-      height: 150,
-      borderRadius: 16,
-    },
-    // Step 5: Floating Green Cart FAB in Bottom Tab Bar
-    5: {
-      x: Math.max(16, (screenW - 56) / 2),
-      y: Math.max(100, screenH - 85),
-      width: 56,
-      height: 56,
-      borderRadius: 28,
     },
   };
 

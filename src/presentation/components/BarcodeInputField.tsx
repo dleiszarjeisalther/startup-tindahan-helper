@@ -15,6 +15,9 @@ interface BarcodeInputFieldProps {
   helperText?: string;
   scannerHintText?: string;
   containerStyle?: StyleProp<ViewStyle>;
+  scanButtonRef?: React.Ref<any>;
+  onScanButtonLayout?: () => void;
+  onScanButtonPress?: () => void;
 }
 
 export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
@@ -28,6 +31,9 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
   helperText,
   scannerHintText = 'Align barcode inside animated laser reticle',
   containerStyle,
+  scanButtonRef,
+  onScanButtonLayout,
+  onScanButtonPress,
 }) => {
   const [scannerOpen, setScannerOpen] = useState(false);
   const isFocused = useIsFocused();
@@ -65,9 +71,18 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
           onBlur={() => value.trim() && onDuplicateCheck?.(value.trim())}
         />
         <Pressable
+          ref={scanButtonRef}
+          collapsable={false}
+          onLayout={onScanButtonLayout}
           style={[styles.scanButton, scannerOpen ? styles.scanButtonActive : null]}
           hitSlop={8}
-          onPress={() => setScannerOpen((prev) => !prev)}
+          onPress={() => {
+            if (onScanButtonPress) {
+              onScanButtonPress();
+            } else {
+              setScannerOpen((prev) => !prev);
+            }
+          }}
         >
           <Text style={styles.scanButtonText}>
             {scannerOpen ? '✕ Close' : '📷 Scan'}

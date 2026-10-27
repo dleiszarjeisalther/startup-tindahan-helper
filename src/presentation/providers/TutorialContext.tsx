@@ -12,7 +12,6 @@ import { Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { appKeyValueStorage } from '@/infrastructure/storage/KeyValueStorage';
 import { useLicensing } from '@/presentation/hooks/useLicensing';
-import { tindahanStoreService } from '@/infrastructure/container';
 
 export interface ElementLayout {
   x: number;
@@ -89,8 +88,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
       if (prev < 6) {
         return prev + 1;
       }
-      // Completed last step (Step 6): Clear tutorial simulation items and persist completion
-      tindahanStoreService.clearCart();
+      // Completed last step (Step 6): Persist completion
       appKeyValueStorage.setInteractiveTutorialCompleted(true);
       setIsActive(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
@@ -104,7 +102,6 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const skipTutorial = useCallback(() => {
-    tindahanStoreService.clearCart();
     appKeyValueStorage.setInteractiveTutorialCompleted(true);
     setIsActive(false);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});

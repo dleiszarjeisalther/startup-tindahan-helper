@@ -42,7 +42,6 @@ export default function PosScanProductScreen() {
     nextStep: nextTutorialStep,
   } = useTutorial();
 
-  const firstProductCardRef = useRef<any>(null);
   const emptyCatalogBtnRef = useRef<any>(null);
   const topAddProductBtnRef = useRef<any>(null);
   const productScrollRef = useRef<any>(null);
@@ -125,34 +124,12 @@ export default function PosScanProductScreen() {
     }
   }, [registerTutorialTarget]);
 
-  const measureStep4Target = useCallback(() => {
-    if (firstProductCardRef.current) {
-      firstProductCardRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
-        if (width > 0 && height > 0) {
-          registerTutorialTarget(4, { x, y, width, height, borderRadius: 16 });
-        }
-      });
-    }
-  }, [registerTutorialTarget]);
-
   useEffect(() => {
     if (isTutorialActive && tutorialStep === 1) {
       const timer = setTimeout(measureStep1Target, 120);
       return () => clearTimeout(timer);
     }
   }, [isTutorialActive, tutorialStep, measureStep1Target]);
-
-  useEffect(() => {
-    if (isTutorialActive && tutorialStep === 4) {
-      productScrollRef.current?.scrollTo({ y: 0, animated: true });
-      const timer1 = setTimeout(measureStep4Target, 120);
-      const timer2 = setTimeout(measureStep4Target, 300);
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-      };
-    }
-  }, [isTutorialActive, tutorialStep, measureStep4Target]);
 
   const triggerScanToast = (msg: string) => {
     setScanToast(msg);
@@ -212,9 +189,6 @@ export default function PosScanProductScreen() {
       }
       if (options?.playSound !== false) {
         soundFeedbackService.playBarcodeBeep();
-      }
-      if (isTutorialActive && tutorialStep <= 2) {
-        nextTutorialStep();
       }
       console.log(`[POS Screen] ✓ Added to cart: productId=${productId}, unit=${result?.unitAdded ?? unit}`);
       return true;
@@ -533,6 +507,7 @@ export default function PosScanProductScreen() {
             </Pressable>
             <Pressable
               ref={topAddProductBtnRef}
+              collapsable={false}
               onLayout={() => measureStep1Target()}
               style={styles.addDbQuickBtn}
               onPress={() => {
@@ -643,6 +618,7 @@ export default function PosScanProductScreen() {
               </Text>
               <Pressable
                 ref={emptyCatalogBtnRef}
+                collapsable={false}
                 onLayout={() => measureStep1Target()}
                 style={styles.emptyCatalogBtn}
                 onPress={() => {
@@ -673,8 +649,6 @@ export default function PosScanProductScreen() {
                 return (
                   <Pressable
                     key={item.id}
-                    ref={index === 0 ? firstProductCardRef : undefined}
-                    onLayout={index === 0 ? () => measureStep4Target() : undefined}
                     style={[
                       styles.productCard,
                       item.stockCount <= 0 ? styles.productCardDisabled : null,
@@ -709,9 +683,6 @@ export default function PosScanProductScreen() {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                         setUnitModalProduct(item);
                         return;
-                      }
-                      if (isTutorialActive && tutorialStep === 4) {
-                        nextTutorialStep();
                       }
                       tryAddToCart(
                         item.id,

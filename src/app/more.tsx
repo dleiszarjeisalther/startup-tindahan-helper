@@ -293,13 +293,13 @@ export default function MenuProfileScreen() {
               >
                 <Ionicons name="school" size={16} color="#FFFFFF" />
                 <Text style={styles.replayTutorialBtnText}>
-                  Muling Panoorin ang Gabay (Tutorial)
+                  Gabay sa Pagtinda para sa Bagong Tindero
                 </Text>
               </Pressable>
             </View>
           ) : null}
 
-          {/* Muling Panoorin ang Gabay (Tutorial) */}
+          {/* Gabay sa Pagtinda para sa Bagong Tindero */}
           <Pressable
             style={styles.menuRow}
             onPress={() => {
@@ -311,9 +311,9 @@ export default function MenuProfileScreen() {
             <View style={styles.menuLeft}>
               <Ionicons name="school-outline" size={22} color="#0D7A52" />
               <View>
-                <Text style={styles.menuLabel}>Muling Panoorin ang Gabay (Tutorial)</Text>
+                <Text style={styles.menuLabel}>Gabay sa Pagtinda para sa Bagong Tindero</Text>
                 <Text style={styles.menuSubLabel}>
-                  Interactive na gabay sa scanner, paninda, at sukli
+                  Hakbang-hakbang na gabay mula sa paglista ng paninda hanggang sa kaha
                 </Text>
               </View>
             </View>

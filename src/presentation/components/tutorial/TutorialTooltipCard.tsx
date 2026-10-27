@@ -27,34 +27,34 @@ interface StepContent {
 
 const STEP_DATA: Record<number, StepContent> = {
   1: {
-    title: '📦 Unang Hakbang: Maglista ng Paninda',
-    body: 'Dito magsisimula ang iyong tindahan! Pindutin ang "+ Add Product" para maglista ng iyong unang paninda sa Imbentaryo.',
-    nextButtonLabel: 'Pumunta sa Imbentaryo ›',
+    title: '📦 Maglista ng Unang Paninda',
+    body: "Dito nagsisimula ang lahat! Pindutin ang '+ Add Product' para magbukas ang talaan kung saan ililista ang iyong paninda.",
+    nextButtonLabel: 'Susunod ›',
   },
   2: {
-    title: '📝 Talaan ng mga Paninda',
-    body: 'Dito inilalagay ang pangalan, puhunan, at presyo ng iyong mga produkto. Pindutin ang sample button para masubukan agad nang walang typing!',
+    title: '📸 I-scan ang Barcode ng Paninda',
+    body: "Pindutin ang 'Scan' para magbukas ang camera. Itapat lamang sa barcode ng paninda (delata, noodles, kape) para kusa itong mabasa nang hindi nagta-type ng 13 numero!",
     nextButtonLabel: 'Susunod ›',
   },
   3: {
-    title: '🔄 Bumalik sa Kaha',
-    body: 'Nailista na ang paninda! Pindutin ang "Scan" sa ibaba para bumalik sa kaha at simulan ang pagtitinda.',
-    nextButtonLabel: 'Bumalik sa Kaha ›',
+    title: '📝 Pangalan ng Paninda',
+    body: 'Dito i-type ang pangalan ng produkto (hal. Piattos BBQ o Bear Brand 33g) para madali itong makilala sa iyong listahan ng paninda.',
+    nextButtonLabel: 'Susunod ›',
   },
   4: {
-    title: '⚡ Isang Pindot, Dagdag sa Benta',
-    body: 'Pindutin lamang ang litrato o pangalan ng paninda para agad itong maidagdag sa listahan ng binibili ng suki.',
+    title: '🏷 Kategorya at Tingi Options',
+    body: 'Piliin kung anong kategorya (Snacks, Inumin) at kung paano ito ibebenta—Naka-Pack, Tingi piraso, o Kilo para laging tugma ang bilang ng paninda.',
     nextButtonLabel: 'Susunod ›',
   },
   5: {
-    title: '🛒 Berdeng Kariton ng Benta',
-    body: 'Dito makikita kung ilang piraso na ang nakalista. Pindutin ang berdeng kariton kapag handa nang magbayad ang suki para makita ang kabuuang kwenta.',
-    nextButtonLabel: 'Subukan ang Sukli ›',
+    title: '💰 Presyo at Puhunan',
+    body: 'Ilagay ang presyo ng benta at ang puhunan upang awtomatikong kwentahin ng app ang iyong tubo at kita sa bawat benta!',
+    nextButtonLabel: 'Susunod ›',
   },
   6: {
-    title: '💰 Awtomatikong Kwenta ng Sukli',
-    body: 'I-type lamang ang inabot na pera ng mamimili para agad lumabas ang tamang panukli. Sigurado at ligtas ang talaan kahit walang internet!',
-    nextButtonLabel: 'Naintindihan Ko! Simulan Magtinda 🎉',
+    title: '🎉 Handa Nang Magbenta!',
+    body: "Pindutin ang 'Scan' tab sa ibaba para bumalik sa kaha. Handa ka na ngayong mag-scan at magtinda sa iyong mga suki!",
+    nextButtonLabel: 'Naintindihan Ko! Simulan Magtinda 🚀',
   },
 };
 
@@ -71,7 +71,7 @@ export function TutorialTooltipCard({
 
   const content = STEP_DATA[currentStep] || STEP_DATA[1];
   const cardWidth = Math.min(screenW - 32, 340);
-  const estimatedCardHeight = 180;
+  const estimatedCardHeight = 195;
 
   let isAbove = false;
   let top = (screenH - estimatedCardHeight) / 2;
@@ -87,7 +87,11 @@ export function TutorialTooltipCard({
     const spaceBelow = screenH - insets.bottom - (targetLayout.y + targetLayout.height);
     const spaceAbove = targetLayout.y - insets.top;
 
-    if (spaceBelow < estimatedCardHeight + 30 && spaceAbove > estimatedCardHeight) {
+    const shouldFlipAbove =
+      (spaceBelow < estimatedCardHeight + 24 && spaceAbove > estimatedCardHeight) ||
+      (spaceBelow < estimatedCardHeight && spaceAbove >= spaceBelow);
+
+    if (shouldFlipAbove) {
       isAbove = true;
       top = Math.max(insets.top + 10, targetLayout.y - estimatedCardHeight - 16);
     } else {
