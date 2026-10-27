@@ -44,6 +44,7 @@ export default function PosScanProductScreen() {
 
   const firstProductCardRef = useRef<any>(null);
   const emptyCatalogBtnRef = useRef<any>(null);
+  const topAddProductBtnRef = useRef<any>(null);
   const productScrollRef = useRef<any>(null);
   const {
     products,
@@ -108,29 +109,50 @@ export default function PosScanProductScreen() {
     console.log(`[POS Screen] Screen focus changed: isFocused = ${isFocused}`);
   }, [isFocused]);
 
-  const measureStep2Target = useCallback(() => {
+  const measureStep1Target = useCallback(() => {
+    if (emptyCatalogBtnRef.current) {
+      emptyCatalogBtnRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
+        if (width > 0 && height > 0) {
+          registerTutorialTarget(1, { x, y, width, height, borderRadius: 14 });
+        }
+      });
+    } else if (topAddProductBtnRef.current) {
+      topAddProductBtnRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
+        if (width > 0 && height > 0) {
+          registerTutorialTarget(1, { x, y, width, height, borderRadius: 14 });
+        }
+      });
+    }
+  }, [registerTutorialTarget]);
+
+  const measureStep4Target = useCallback(() => {
     if (firstProductCardRef.current) {
       firstProductCardRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
         if (width > 0 && height > 0) {
-          registerTutorialTarget(2, { x, y, width, height, borderRadius: 16 });
-        }
-      });
-    } else if (emptyCatalogBtnRef.current) {
-      emptyCatalogBtnRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
-        if (width > 0 && height > 0) {
-          registerTutorialTarget(2, { x, y, width, height, borderRadius: 16 });
+          registerTutorialTarget(4, { x, y, width, height, borderRadius: 16 });
         }
       });
     }
   }, [registerTutorialTarget]);
 
   useEffect(() => {
-    if (isTutorialActive && tutorialStep === 2) {
-      productScrollRef.current?.scrollTo({ y: 0, animated: true });
-      const timer = setTimeout(measureStep2Target, 120);
+    if (isTutorialActive && tutorialStep === 1) {
+      const timer = setTimeout(measureStep1Target, 120);
       return () => clearTimeout(timer);
     }
-  }, [isTutorialActive, tutorialStep, measureStep2Target]);
+  }, [isTutorialActive, tutorialStep, measureStep1Target]);
+
+  useEffect(() => {
+    if (isTutorialActive && tutorialStep === 4) {
+      productScrollRef.current?.scrollTo({ y: 0, animated: true });
+      const timer1 = setTimeout(measureStep4Target, 120);
+      const timer2 = setTimeout(measureStep4Target, 300);
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
+  }, [isTutorialActive, tutorialStep, measureStep4Target]);
 
   const triggerScanToast = (msg: string) => {
     setScanToast(msg);
@@ -470,10 +492,6 @@ export default function PosScanProductScreen() {
         isActive={liveCameraActive && isFocused}
         onToggleActive={setLiveCameraActive}
         onBarcodeScanned={handleBarcodeDetected}
-        onReticleLayout={(layout) => {
-          registerTutorialTarget(1, { ...layout, borderRadius: 16 });
-        }}
-        tutorialActive={isTutorialActive && tutorialStep === 1}
         toastMessage={scanToast}
         containerHeight={230 + scannerTopInset}
         topControlInset={scannerTopInset}
@@ -514,8 +532,15 @@ export default function PosScanProductScreen() {
               </Text>
             </Pressable>
             <Pressable
+              ref={topAddProductBtnRef}
+              onLayout={() => measureStep1Target()}
               style={styles.addDbQuickBtn}
-              onPress={() => router.navigate('/inventory')}
+              onPress={() => {
+                if (isTutorialActive && tutorialStep === 1) {
+                  nextTutorialStep();
+                }
+                router.navigate('/inventory');
+              }}
             >
               <Text style={styles.addDbQuickText}>{t.addProductToDb}</Text>
             </Pressable>
@@ -618,9 +643,14 @@ export default function PosScanProductScreen() {
               </Text>
               <Pressable
                 ref={emptyCatalogBtnRef}
-                onLayout={() => measureStep2Target()}
+                onLayout={() => measureStep1Target()}
                 style={styles.emptyCatalogBtn}
-                onPress={() => router.navigate('/inventory')}
+                onPress={() => {
+                  if (isTutorialActive && tutorialStep === 1) {
+                    nextTutorialStep();
+                  }
+                  router.navigate('/inventory');
+                }}
               >
                 <Text style={styles.emptyCatalogBtnText}>
                   {t.addProductToDb}
@@ -644,7 +674,7 @@ export default function PosScanProductScreen() {
                   <Pressable
                     key={item.id}
                     ref={index === 0 ? firstProductCardRef : undefined}
-                    onLayout={index === 0 ? () => measureStep2Target() : undefined}
+                    onLayout={index === 0 ? () => measureStep4Target() : undefined}
                     style={[
                       styles.productCard,
                       item.stockCount <= 0 ? styles.productCardDisabled : null,
@@ -653,7 +683,7 @@ export default function PosScanProductScreen() {
                     onPress={() => {
                       if (item.stockCount <= 0) {
                         Haptics.notificationAsync(
-                          Haptics.NotificationFeedbackType.Warning
+                           Haptics.NotificationFeedbackType.Warning
                         ).catch(() => {});
                         setAlertModal({
                           type: 'warning',
@@ -679,6 +709,9 @@ export default function PosScanProductScreen() {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
                         setUnitModalProduct(item);
                         return;
+                      }
+                      if (isTutorialActive && tutorialStep === 4) {
+                        nextTutorialStep();
                       }
                       tryAddToCart(
                         item.id,

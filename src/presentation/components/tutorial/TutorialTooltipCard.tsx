@@ -27,21 +27,31 @@ interface StepContent {
 
 const STEP_DATA: Record<number, StepContent> = {
   1: {
-    title: '📸 Awtomatikong Barcode Scanner',
-    body: 'Itapat lamang ang camera sa barcode ng paninda (delata, kape, noodles) para awtomatikong maitala sa benta nang hindi na kailangang mag-type.',
-    nextButtonLabel: 'Susunod ›',
+    title: '📦 Unang Hakbang: Maglista ng Paninda',
+    body: 'Dito magsisimula ang iyong tindahan! Pindutin ang "+ Add Product" para maglista ng iyong unang paninda sa Imbentaryo.',
+    nextButtonLabel: 'Pumunta sa Imbentaryo ›',
   },
   2: {
-    title: '⚡ Isang Pindot, Dagdag sa Benta',
-    body: 'Wala bang barcode? Pindutin lamang ang litrato o pangalan ng paninda para agad itong maidagdag sa listahan ng binibili.',
+    title: '📝 Talaan ng mga Paninda',
+    body: 'Dito inilalagay ang pangalan, puhunan, at presyo ng iyong mga produkto. Pindutin ang sample button para masubukan agad nang walang typing!',
     nextButtonLabel: 'Susunod ›',
   },
   3: {
+    title: '🔄 Bumalik sa Kaha',
+    body: 'Nailista na ang paninda! Pindutin ang "Scan" sa ibaba para bumalik sa kaha at simulan ang pagtitinda.',
+    nextButtonLabel: 'Bumalik sa Kaha ›',
+  },
+  4: {
+    title: '⚡ Isang Pindot, Dagdag sa Benta',
+    body: 'Pindutin lamang ang litrato o pangalan ng paninda para agad itong maidagdag sa listahan ng binibili ng suki.',
+    nextButtonLabel: 'Susunod ›',
+  },
+  5: {
     title: '🛒 Berdeng Kariton ng Benta',
     body: 'Dito makikita kung ilang piraso na ang nakalista. Pindutin ang berdeng kariton kapag handa nang magbayad ang suki para makita ang kabuuang kwenta.',
     nextButtonLabel: 'Subukan ang Sukli ›',
   },
-  4: {
+  6: {
     title: '💰 Awtomatikong Kwenta ng Sukli',
     body: 'I-type lamang ang inabot na pera ng mamimili para agad lumabas ang tamang panukli. Sigurado at ligtas ang talaan kahit walang internet!',
     nextButtonLabel: 'Naintindihan Ko! Simulan Magtinda 🎉',
@@ -117,7 +127,7 @@ export function TutorialTooltipCard({
         {/* Top Header Row: Step Badge + Laktawan (Skip) */}
         <View style={styles.headerRow}>
           <View style={styles.badgePill}>
-            <Text style={styles.badgePillText}>Hakbang {currentStep} ng 4</Text>
+            <Text style={styles.badgePillText}>Hakbang {currentStep} ng 6</Text>
           </View>
 
           <Pressable

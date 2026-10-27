@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   StyleSheet,
   Pressable,
   Animated,
+  BackHandler,
   useWindowDimensions,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTutorial, ElementLayout } from '@/presentation/providers/TutorialContext';
+import { tindahanStoreService } from '@/infrastructure/container';
 import { MickeyGlovePointer } from './MickeyGlovePointer';
 import { TutorialTooltipCard } from './TutorialTooltipCard';
 import { SukliSimulationSheet } from './SukliSimulationSheet';
@@ -19,6 +22,7 @@ import { SukliSimulationSheet } from './SukliSimulationSheet';
  * Outside touches on the 4 scrim slices trigger gentle wiggle feedback.
  */
 export function SpotlightOverlay() {
+  const router = useRouter();
   const {
     isActive,
     currentStep,
@@ -65,10 +69,75 @@ export function SpotlightOverlay() {
     };
   }, [isActive, pulseAnim]);
 
+  const handleNext = useCallback(async () => {
+    if (currentStep === 1) {
+      nextStep();
+      router.navigate('/inventory');
+    } else if (currentStep === 2) {
+      // Ensure demo product exists in SQLite before advancing past step 2
+      try {
+        const currentProducts = tindahanStoreService.getSnapshot().products;
+        if (currentProducts.length === 0) {
+          await tindahanStoreService.addProductToDatabase({
+            name: 'Pancit Canton (Chilimansi)',
+            category: 'Noodles / Instant',
+            barcodeInputMode: 'GENERATE_TINGI',
+            rawBarcodeValue: '',
+            initialStock: 25,
+            lowStockThreshold: 5,
+            unitCostPhp: 11.5,
+            unitPricePhp: 15,
+            unitOfMeasure: 'pc',
+          });
+        }
+      } catch (e) {
+        console.error('Demo auto-seed error:', e);
+      }
+      nextStep();
+    } else if (currentStep === 3) {
+      nextStep();
+      router.navigate('/');
+    } else {
+      nextStep();
+    }
+  }, [currentStep, nextStep, router]);
+
+  const handleBack = useCallback(() => {
+    if (currentStep === 2) {
+      previousStep();
+      router.navigate('/');
+    } else if (currentStep === 4) {
+      previousStep();
+      router.navigate('/inventory');
+    } else {
+      previousStep();
+    }
+  }, [currentStep, previousStep, router]);
+
+  // Intercept Android hardware back button so step index stays synchronized with route
+  useEffect(() => {
+    if (!isActive) return;
+
+    const backAction = () => {
+      if (currentStep > 1) {
+        handleBack();
+        return true;
+      }
+      return false;
+    };
+
+    const backSubscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backSubscription.remove();
+  }, [isActive, currentStep, handleBack]);
+
   if (!isActive) return null;
 
-  // Step 4 is the interactive in-place POS simulation sheet
-  if (currentStep === 4) {
+  // Step 6 is the interactive in-place POS simulation sheet
+  if (currentStep === 6) {
     return (
       <SukliSimulationSheet
         onBack={previousStep}
@@ -82,23 +151,42 @@ export function SpotlightOverlay() {
   const pad = 6;
 
   const fallbackLayouts: Record<number, ElementLayout> = {
+    // Step 1: [+ Add Product] in POS screen
     1: {
-      x: Math.max(16, (screenW - 270) / 2),
-      y: 75,
-      width: Math.min(screenW - 32, 270),
-      height: 130,
-      borderRadius: 16,
+      x: Math.max(16, (screenW - 240) / 2),
+      y: Math.max(120, screenH * 0.52),
+      width: Math.min(screenW - 32, 240),
+      height: 48,
+      borderRadius: 14,
     },
+    // Step 2: [Sample Product Helper] in Inventory screen
     2: {
       x: 16,
-      y: 310,
+      y: 160,
+      width: screenW - 32,
+      height: 56,
+      borderRadius: 14,
+    },
+    // Step 3: [Scan Tab] in Bottom Tab Bar
+    3: {
+      x: 16,
+      y: Math.max(100, screenH - 74),
+      width: 72,
+      height: 48,
+      borderRadius: 14,
+    },
+    // Step 4: First product item in POS Grid
+    4: {
+      x: 16,
+      y: Math.max(120, screenH * 0.44),
       width: Math.max(120, (screenW - 48) / 2),
-      height: 140,
+      height: 150,
       borderRadius: 16,
     },
-    3: {
+    // Step 5: Floating Green Cart FAB in Bottom Tab Bar
+    5: {
       x: Math.max(16, (screenW - 56) / 2),
-      y: Math.max(100, screenH - 115),
+      y: Math.max(100, screenH - 85),
       width: 56,
       height: 56,
       borderRadius: 28,
@@ -216,8 +304,8 @@ export function SpotlightOverlay() {
           width: targetW,
           height: targetH,
         }}
-        onNext={nextStep}
-        onBack={previousStep}
+        onNext={handleNext}
+        onBack={handleBack}
         onSkip={skipTutorial}
         wiggleAnim={wiggleAnim}
       />

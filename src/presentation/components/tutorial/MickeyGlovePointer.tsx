@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View,
   StyleSheet,
   Animated,
+  View,
   StyleProp,
   ViewStyle,
 } from 'react-native';
+import { Image } from 'expo-image';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTutorial } from '@/presentation/providers/TutorialContext';
+
+const GLOVE_ASSET = require('../../../../assets/images/mickey_glove_pointer.png');
 
 interface MickeyGlovePointerProps {
   /** Target X coordinate where the index fingertip should touch */
@@ -18,13 +22,23 @@ interface MickeyGlovePointerProps {
   style?: StyleProp<ViewStyle>;
 }
 
+const GLOVE_WIDTH = 64;
+const GLOVE_HEIGHT = 80;
+// Calibrated from high-resolution asset (684x854 with tip at 68, 12):
+const FINGERTIP_OFFSET_X = Math.round(GLOVE_WIDTH * (68 / 684)); // ≈ 6
+const FINGERTIP_OFFSET_Y = 2;
+const RIPPLE_SIZE = 36;
+const RIPPLE_RADIUS = RIPPLE_SIZE / 2;
+
 /**
  * MickeyGlovePointer:
- * Pure React Native cartoon white hand glove (with 3 dorsal darts and gauntlet cuff) with pointer finger.
+ * High-resolution iconic Mickey Mouse cartoon white glove (with 3 dorsal darts, puffed gauntlet cuff,
+ * and angled pointing index finger) rendered with expo-image and vector fallback.
+ * 
  * Features a 1.4s animated loop:
  *   1. Hover & Tilt (0-400ms)
  *   2. Click Down (400-650ms) + Light Haptics
- *   3. Expanding Ripple Wave (650-1100ms)
+ *   3. Expanding Ripple Wave (650-1100ms) centered precisely at fingertip
  *   4. Spring Recoil (1100-1400ms)
  * Complies with React 19 safe render rules: useState(() => new Animated.Value(...))[0]
  */
@@ -35,6 +49,7 @@ export function MickeyGlovePointer({
   style,
 }: MickeyGlovePointerProps) {
   const { wiggleAnim } = useTutorial();
+  const [imageError, setImageError] = useState(false);
 
   // React 19 & Expo SDK 58 Safe Render Rule: initialize Animated.Values via useState initializer
   const floatAnim = useState(() => new Animated.Value(0))[0];
@@ -61,15 +76,15 @@ export function MickeyGlovePointer({
       }, 620);
 
       Animated.sequence([
-        // 1. Hover & Tilt (0–400ms)
+        // 1. Hover & Tilt (0–400ms): Hand lifts 10px off surface, tilting slightly
         Animated.parallel([
           Animated.timing(floatAnim, {
-            toValue: -8,
+            toValue: -10,
             duration: 400,
             useNativeDriver: true,
           }),
           Animated.timing(tiltAnim, {
-            toValue: -8,
+            toValue: -6,
             duration: 400,
             useNativeDriver: true,
           }),
@@ -80,10 +95,10 @@ export function MickeyGlovePointer({
           }),
         ]),
 
-        // 2. Click Down (400–650ms)
+        // 2. Click Down (400–650ms): Lands squarely at touch surface (floatAnim=0)
         Animated.parallel([
           Animated.timing(floatAnim, {
-            toValue: 4,
+            toValue: 0,
             duration: 250,
             useNativeDriver: true,
           }),
@@ -93,7 +108,7 @@ export function MickeyGlovePointer({
             useNativeDriver: true,
           }),
           Animated.timing(scaleAnim, {
-            toValue: 0.88,
+            toValue: 0.94,
             duration: 250,
             useNativeDriver: true,
           }),
@@ -101,7 +116,7 @@ export function MickeyGlovePointer({
 
         // 3. Ripple Wave & 4. Spring Recoil (650–1400ms)
         Animated.parallel([
-          // Ripple expands and fades
+          // Ripple expands and fades from under the fingertip
           Animated.sequence([
             Animated.timing(rippleOpacity, {
               toValue: 0.85,
@@ -121,7 +136,7 @@ export function MickeyGlovePointer({
               }),
             ]),
           ]),
-          // Recoil spring
+          // Recoil spring: hand gently lifts to slight resting position
           Animated.sequence([
             Animated.delay(120),
             Animated.parallel([
@@ -132,7 +147,7 @@ export function MickeyGlovePointer({
                 useNativeDriver: true,
               }),
               Animated.spring(floatAnim, {
-                toValue: 0,
+                toValue: -2,
                 friction: 6,
                 tension: 45,
                 useNativeDriver: true,
@@ -175,28 +190,30 @@ export function MickeyGlovePointer({
       style={[
         styles.rootContainer,
         {
-          left: targetX - 22,
-          top: targetY - 10,
+          left: targetX,
+          top: targetY,
           transform: [{ translateX: wiggleAnim }],
         },
         style,
       ]}
     >
-      {/* Ripple ring anchored at pointer fingertip */}
+      {/* Ripple ring centered precisely at the pointer fingertip (0, 0) */}
       <Animated.View
         style={[
           styles.rippleCircle,
           {
+            left: -RIPPLE_RADIUS,
+            top: -RIPPLE_RADIUS,
             transform: [{ scale: rippleScale }],
             opacity: rippleOpacity,
           },
         ]}
       />
 
-      {/* Animated Glove Body */}
+      {/* Animated Mickey Mouse Glove Body with Fingertip Pivot Container */}
       <Animated.View
         style={[
-          styles.gloveWrapper,
+          styles.handPivotWrapper,
           {
             transform: [
               { translateY: floatAnim },
@@ -206,38 +223,20 @@ export function MickeyGlovePointer({
           },
         ]}
       >
-        {/* Extended Pointer Index Finger */}
-        <View style={styles.indexFinger}>
-          <View style={styles.fingerJointDetail} />
-        </View>
-
-        {/* Hand Palm with Shadow */}
-        <View style={styles.palmContainer}>
-          {/* Curled thumb */}
-          <View style={styles.thumbCurled} />
-
-          {/* Palm Base */}
-          <View style={styles.palmBase}>
-            {/* 3 Iconic Black Dorsal Darts: \ | / */}
-            <View style={styles.dorsalDartRow}>
-              <View style={[styles.dorsalDart, styles.dartLeft]} />
-              <View style={[styles.dorsalDart, styles.dartCenter]} />
-              <View style={[styles.dorsalDart, styles.dartRight]} />
-            </View>
+        {!imageError ? (
+          <Image
+            source={GLOVE_ASSET}
+            style={styles.gloveImage}
+            contentFit="contain"
+            cachePolicy="memory-disk"
+            transition={100}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <View style={styles.vectorFallbackWrapper}>
+            <Ionicons name="hand-left" size={48} color="#FFFFFF" style={styles.vectorFallbackIcon} />
           </View>
-
-          {/* Curled remaining fingers (middle, ring, pinky) */}
-          <View style={styles.curledFingersGroup}>
-            <View style={[styles.curledFinger, styles.middleFinger]} />
-            <View style={[styles.curledFinger, styles.ringFinger]} />
-            <View style={[styles.curledFinger, styles.pinkyFinger]} />
-          </View>
-        </View>
-
-        {/* Rounded Gauntlet Cuff at the wrist */}
-        <View style={styles.wristCuff}>
-          <View style={styles.cuffRibbing} />
-        </View>
+        )}
       </Animated.View>
     </Animated.View>
   );
@@ -246,153 +245,59 @@ export function MickeyGlovePointer({
 const styles = StyleSheet.create({
   rootContainer: {
     position: 'absolute',
-    width: 68,
-    height: 76,
+    width: 0,
+    height: 0,
+    overflow: 'visible',
     zIndex: 99999,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
   },
   rippleCircle: {
     position: 'absolute',
-    top: 0,
-    left: 8,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: RIPPLE_SIZE,
+    height: RIPPLE_SIZE,
+    borderRadius: RIPPLE_RADIUS,
     borderWidth: 2.5,
     borderColor: '#10B981',
     backgroundColor: 'rgba(16, 185, 129, 0.22)',
     zIndex: 1,
   },
-  gloveWrapper: {
-    width: 58,
-    height: 68,
-    alignItems: 'center',
+  handPivotWrapper: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+    overflow: 'visible',
     zIndex: 2,
+  },
+  gloveImage: {
+    position: 'absolute',
+    left: -FINGERTIP_OFFSET_X,
+    top: -FINGERTIP_OFFSET_Y,
+    width: GLOVE_WIDTH,
+    height: GLOVE_HEIGHT,
     shadowColor: '#000000',
-    shadowOpacity: 0.38,
+    shadowOpacity: 0.35,
     shadowRadius: 8,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 12,
+    shadowOffset: { width: 0, height: 6 },
   },
-  indexFinger: {
+  vectorFallbackWrapper: {
     position: 'absolute',
-    top: 4,
-    left: 17,
-    width: 14,
-    height: 24,
-    borderRadius: 7,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2.2,
-    borderColor: '#1E293B',
-    zIndex: 3,
-  },
-  fingerJointDetail: {
-    position: 'absolute',
-    top: 8,
-    left: 2,
-    right: 2,
-    height: 1.5,
-    backgroundColor: 'rgba(30, 41, 59, 0.25)',
-    borderRadius: 1,
-  },
-  palmContainer: {
-    position: 'absolute',
-    top: 20,
-    left: 6,
-    width: 44,
-    height: 34,
-    zIndex: 4,
-  },
-  palmBase: {
-    width: 38,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2.2,
-    borderColor: '#1E293B',
+    left: -12,
+    top: -6,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  dorsalDartRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    marginTop: 2,
-  },
-  dorsalDart: {
-    width: 2.2,
-    backgroundColor: '#1E293B',
-    borderRadius: 1.2,
-  },
-  dartLeft: {
-    height: 8,
-    transform: [{ rotate: '-18deg' }],
-  },
-  dartCenter: {
-    height: 10,
-  },
-  dartRight: {
-    height: 8,
-    transform: [{ rotate: '18deg' }],
-  },
-  thumbCurled: {
-    position: 'absolute',
-    top: 8,
-    left: -5,
-    width: 13,
-    height: 14,
-    borderRadius: 6.5,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#0F172A',
+    borderRadius: 24,
     borderWidth: 2,
-    borderColor: '#1E293B',
-    zIndex: 2,
+    borderColor: '#10B981',
+    shadowColor: '#000000',
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 4 },
   },
-  curledFingersGroup: {
-    position: 'absolute',
-    right: 0,
-    top: 1,
-    gap: -3,
-    zIndex: 5,
-  },
-  curledFinger: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#1E293B',
-  },
-  middleFinger: {
-    width: 12,
-    height: 11,
-    borderRadius: 5.5,
-  },
-  ringFinger: {
-    width: 11,
-    height: 10,
-    borderRadius: 5,
-  },
-  pinkyFinger: {
-    width: 10,
-    height: 9,
-    borderRadius: 4.5,
-  },
-  wristCuff: {
-    position: 'absolute',
-    bottom: 2,
-    width: 32,
-    height: 11,
-    borderRadius: 5.5,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2.2,
-    borderColor: '#1E293B',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 5,
-  },
-  cuffRibbing: {
-    width: 18,
-    height: 2,
-    backgroundColor: 'rgba(30, 41, 59, 0.2)',
-    borderRadius: 1,
+  vectorFallbackIcon: {
+    transform: [{ rotate: '45deg' }],
   },
 });

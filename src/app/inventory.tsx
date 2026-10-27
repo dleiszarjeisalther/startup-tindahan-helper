@@ -17,6 +17,7 @@ import * as Haptics from 'expo-haptics';
 import { useRouter, useLocalSearchParams, useIsFocused } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTindahanStore } from '@/presentation/hooks/useTindahanStore';
+import { useTutorial } from '@/presentation/providers/TutorialContext';
 import { BarcodeInputField } from '@/presentation/components/BarcodeInputField';
 import { BarcodeScannerViewfinder } from '@/presentation/components/BarcodeScannerViewfinder';
 import { ProductThumbnail } from '@/presentation/components/ProductThumbnail';
@@ -557,6 +558,62 @@ export default function InventoryManagementScreen() {
     setFeedbackMsg(msg);
     setToastMsg(msg);
     setToastType(type);
+  };
+
+  const {
+    isActive: isTutorialActive,
+    currentStep: tutorialStep,
+    registerTarget: registerTutorialTarget,
+    nextStep: nextTutorialStep,
+  } = useTutorial();
+
+  const tutorialDemoBtnRef = useRef<any>(null);
+  const mainScrollRef = useRef<any>(null);
+
+  const measureStep2Target = useCallback(() => {
+    if (tutorialDemoBtnRef.current) {
+      tutorialDemoBtnRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
+        if (width > 0 && height > 0) {
+          registerTutorialTarget(2, { x, y, width, height, borderRadius: 16 });
+        }
+      });
+    }
+  }, [registerTutorialTarget]);
+
+  useEffect(() => {
+    if (isTutorialActive && tutorialStep === 2) {
+      mainScrollRef.current?.scrollTo({ y: 0, animated: false });
+      const timer1 = setTimeout(measureStep2Target, 150);
+      const timer2 = setTimeout(measureStep2Target, 320);
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
+  }, [isTutorialActive, tutorialStep, measureStep2Target]);
+
+  const handleAddTutorialDemoProduct = async () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      await addProductToDatabase({
+        name: 'Pancit Canton (Chilimansi)',
+        category: 'Noodles / Instant',
+        barcodeInputMode: 'GENERATE_TINGI',
+        rawBarcodeValue: '',
+        initialStock: 25,
+        lowStockThreshold: 5,
+        unitCostPhp: 11.5,
+        unitPricePhp: 15,
+        unitOfMeasure: 'pc',
+      });
+      showToast('✓ Nailista ang Pancit Canton (₱15.00)', 'success');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      if (isTutorialActive && tutorialStep === 2) {
+        nextTutorialStep();
+      }
+    } catch (err) {
+      console.error('Failed to add tutorial demo product:', err);
+    }
   };
   const [, setErrorMsg] = useState<string | null>(null);
   const [isLookingUpOnline, setIsLookingUpOnline] = useState(false);
@@ -1354,10 +1411,38 @@ export default function InventoryManagementScreen() {
       ) : null}
 
       <ScrollView
+        ref={mainScrollRef}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        {/* Step 2 Tutorial Demo Product Quick-Action Banner */}
+        {isTutorialActive && tutorialStep === 2 ? (
+          <Pressable
+            ref={tutorialDemoBtnRef}
+            onLayout={() => measureStep2Target()}
+            style={styles.tutorialDemoBtn}
+            onPress={handleAddTutorialDemoProduct}
+            accessibilityRole="button"
+            accessibilityLabel="Maglagay ng Sample: Pancit Canton - ₱15"
+          >
+            <View style={styles.tutorialDemoIconBox}>
+              <Text style={{ fontSize: 24 }}>🍜</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.tutorialDemoTitle}>
+                Subukan ang Sample: Pancit Canton
+              </Text>
+              <Text style={styles.tutorialDemoSub}>
+                Isang pindot lang para awtomatikong mai-save (₱15.00)
+              </Text>
+            </View>
+            <View style={styles.tutorialDemoActionBadge}>
+              <Text style={styles.tutorialDemoActionText}>Ilista ✨</Text>
+            </View>
+          </Pressable>
+        ) : null}
+
         {/* Add New Product Card (With Image Capture & SQLite persistence) */}
         {showAddForm ? (
           <View style={styles.addCard}>
@@ -5224,5 +5309,53 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#15803D',
     fontWeight: '600',
+  },
+  tutorialDemoBtn: {
+    backgroundColor: '#065F46',
+    borderWidth: 2,
+    borderColor: '#34D399',
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    shadowColor: '#059669',
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+  },
+  tutorialDemoIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tutorialDemoTitle: {
+    color: '#FFFFFF',
+    fontSize: 14.5,
+    fontWeight: '800',
+    marginBottom: 2,
+  },
+  tutorialDemoSub: {
+    color: '#A7F3D0',
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  tutorialDemoActionBadge: {
+    backgroundColor: '#10B981',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#6EE7B7',
+  },
+  tutorialDemoActionText: {
+    color: '#FFFFFF',
+    fontSize: 12.5,
+    fontWeight: '800',
   },
 });

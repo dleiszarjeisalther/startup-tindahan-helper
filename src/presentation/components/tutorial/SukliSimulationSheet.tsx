@@ -28,6 +28,7 @@ export function SukliSimulationSheet({
   const insets = useSafeAreaInsets();
   const { triggerWiggle, wiggleAnim } = useTutorial();
   const [tenderedAmount, setTenderedAmount] = useState<number>(20);
+  const [hasSelectedTender, setHasSelectedTender] = useState<boolean>(false);
   const [p20ButtonLayout, setP20ButtonLayout] = useState<{ x: number; y: number } | null>(null);
   const [completeBtnLayout, setCompleteBtnLayout] = useState<{ x: number; y: number } | null>(null);
   const p20BtnRef = useRef<any>(null);
@@ -63,6 +64,7 @@ export function SukliSimulationSheet({
   const handleSelectAmount = (amt: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     setTenderedAmount(amt);
+    setHasSelectedTender(true);
   };
 
   return (
@@ -80,7 +82,7 @@ export function SukliSimulationSheet({
         {/* Top Header */}
         <View style={styles.topHeader}>
           <View style={styles.badgePill}>
-            <Text style={styles.badgeText}>Hakbang 4 ng 4</Text>
+            <Text style={styles.badgeText}>Hakbang 6 ng 6</Text>
           </View>
           <Pressable
             onPress={onSkip}
@@ -210,8 +212,8 @@ export function SukliSimulationSheet({
         </View>
       </Animated.View>
 
-      {/* Mickey Glove Pointer: pointing to ₱20 button, or completion button once an amount is selected */}
-      {tenderedAmount === 20 && p20ButtonLayout ? (
+      {/* Mickey Glove Pointer: pointing to ₱20 button initially, then completion button once tender amount is selected */}
+      {!hasSelectedTender && p20ButtonLayout ? (
         <MickeyGlovePointer
           targetX={p20ButtonLayout.x}
           targetY={p20ButtonLayout.y}

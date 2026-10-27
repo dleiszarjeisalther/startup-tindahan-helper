@@ -20,12 +20,29 @@ function CustomTindahanTabBar(props: any) {
   } = useTutorial();
 
   const cartFabRef = React.useRef<any>(null);
+  const scanTabRef = React.useRef<any>(null);
+
+  const measureScanTab = React.useCallback(() => {
+    if (scanTabRef.current) {
+      scanTabRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
+        if (width > 0 && height > 0) {
+          registerTutorialTarget(3, {
+            x,
+            y,
+            width,
+            height,
+            borderRadius: 14,
+          });
+        }
+      });
+    }
+  }, [registerTutorialTarget]);
 
   const measureCartFab = React.useCallback(() => {
     if (cartFabRef.current) {
       cartFabRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
         if (width > 0 && height > 0) {
-          registerTutorialTarget(3, {
+          registerTutorialTarget(5, {
             x,
             y,
             width,
@@ -39,6 +56,13 @@ function CustomTindahanTabBar(props: any) {
 
   React.useEffect(() => {
     if (isTutorialActive && tutorialStep === 3) {
+      const timer = setTimeout(measureScanTab, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isTutorialActive, tutorialStep, measureScanTab]);
+
+  React.useEffect(() => {
+    if (isTutorialActive && tutorialStep === 5) {
       const timer = setTimeout(measureCartFab, 100);
       return () => clearTimeout(timer);
     }
@@ -164,8 +188,21 @@ function CustomTindahanTabBar(props: any) {
       <View style={styles.floatingPillBar}>
         {/* 1. Scan (Screen 1: POS / Barcode Scanner) */}
         <Pressable
+          ref={scanTabRef}
+          onLayout={() => {
+            if (isTutorialActive && tutorialStep === 3) {
+              measureScanTab();
+            }
+          }}
           style={[styles.tabItem, isScan ? styles.tabItemActive : null]}
-          onPress={() => handleTabPress('index')}
+          onPress={() => {
+            if (isTutorialActive && tutorialStep === 3) {
+              nextTutorialStep();
+              handleTabPress('index');
+              return;
+            }
+            handleTabPress('index');
+          }}
           hitSlop={8}
         >
           <Ionicons
@@ -201,12 +238,16 @@ function CustomTindahanTabBar(props: any) {
           <Animated.View style={{ transform: [{ scale: heartbeatAnim }], overflow: 'visible' }}>
             <Pressable
               ref={cartFabRef}
-              onLayout={() => measureCartFab()}
+              onLayout={() => {
+                if (isTutorialActive && tutorialStep === 5) {
+                  measureCartFab();
+                }
+              }}
               style={[styles.centerFab, isCheckout ? styles.centerFabActive : null]}
               onPress={() => {
-                if (isTutorialActive && tutorialStep === 3) {
+                if (isTutorialActive && tutorialStep === 5) {
                   nextTutorialStep();
-                  return; // Keep user on POS screen; Step 4 is an in-place simulation sheet
+                  return; // Keep user on POS screen; Step 6 is an in-place simulation sheet
                 }
                 handleTabPress('checkout');
               }}
