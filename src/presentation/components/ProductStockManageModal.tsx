@@ -31,7 +31,7 @@ export interface ProductStockManageModalProps {
   }) => Promise<void>;
   onDeleteProduct: (productId: string) => Promise<void>;
   onEditProduct: (product: ProductDTO) => void;
-  onChangePhoto: (productId: string) => void;
+  onChangePhoto: (productId: string, source?: 'CAMERA' | 'GALLERY') => void;
   showToast: (msg: string, type?: 'success' | 'warning' | 'error') => void;
   operatingMode?: 'OWNER' | 'CASHIER';
   isStoreSecurityEnabled?: boolean;
@@ -56,6 +56,7 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
   const router = useRouter();
   const [inputQtyStr, setInputQtyStr] = useState<string>('10');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showPhotoChoiceModal, setShowPhotoChoiceModal] = useState<boolean>(false);
 
   // Confirmation dialog state
   const [confirmState, setConfirmState] = useState<{
@@ -360,7 +361,7 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
                       onPress={() => {
                         guardWithPin(() => {
                           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                          onChangePhoto(product.id);
+                          setShowPhotoChoiceModal(true);
                         });
                       }}
                     >
@@ -655,6 +656,87 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
           onCancel={() => setConfirmState(null)}
         />
       )}
+
+      {/* Photo Source Choice Modal */}
+      <Modal
+        visible={showPhotoChoiceModal}
+        transparent={true}
+        animationType="fade"
+        statusBarTranslucent={true}
+        onRequestClose={() => setShowPhotoChoiceModal(false)}
+      >
+        <View style={styles.choiceModalOverlay}>
+          <Pressable
+            style={styles.choiceModalBackdrop}
+            onPress={() => setShowPhotoChoiceModal(false)}
+          />
+          <View style={styles.choiceModalCard}>
+            <View style={styles.choiceModalHeader}>
+              <View style={styles.choiceIconBadge}>
+                <Ionicons name="camera" size={20} color="#0D7A52" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.choiceModalTitle}>Palitan ang Litrato</Text>
+                <Text style={styles.choiceModalSubtitle} numberOfLines={1}>
+                  {product.name}
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => setShowPhotoChoiceModal(false)}
+                hitSlop={8}
+                style={styles.choiceCloseBtn}
+              >
+                <Ionicons name="close" size={18} color="#64748B" />
+              </Pressable>
+            </View>
+
+            <View style={styles.choiceOptionsList}>
+              <Pressable
+                style={styles.choiceOptionBtn}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+                  setShowPhotoChoiceModal(false);
+                  onChangePhoto(product.id, 'CAMERA');
+                }}
+              >
+                <View style={[styles.choiceOptionIconCircle, { backgroundColor: '#ECFDF5' }]}>
+                  <Ionicons name="camera" size={22} color="#059669" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.choiceOptionTitle}>Kumuha ng Litrato gamit ang Camera</Text>
+                  <Text style={styles.choiceOptionDesc}>Mag-snap ng bagong larawan gamit ang camera</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+              </Pressable>
+
+              <Pressable
+                style={styles.choiceOptionBtn}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+                  setShowPhotoChoiceModal(false);
+                  onChangePhoto(product.id, 'GALLERY');
+                }}
+              >
+                <View style={[styles.choiceOptionIconCircle, { backgroundColor: '#EFF6FF' }]}>
+                  <Ionicons name="images" size={22} color="#2563EB" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.choiceOptionTitle}>Pumili mula sa Gallery</Text>
+                  <Text style={styles.choiceOptionDesc}>Pumili ng litrato mula sa albums ng telepono</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+              </Pressable>
+            </View>
+
+            <Pressable
+              style={styles.choiceCancelBtn}
+              onPress={() => setShowPhotoChoiceModal(false)}
+            >
+              <Text style={styles.choiceCancelText}>Kanselahin</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };
@@ -1103,5 +1185,107 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#DC2626',
+  },
+  choiceModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  choiceModalBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  choiceModalCard: {
+    width: '100%',
+    maxWidth: 400,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 24,
+  },
+  choiceModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    gap: 12,
+  },
+  choiceIconBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E8F5E9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  choiceModalTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  choiceModalSubtitle: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
+    fontWeight: '500',
+  },
+  choiceCloseBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  choiceOptionsList: {
+    gap: 12,
+    marginBottom: 16,
+  },
+  choiceOptionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    gap: 12,
+  },
+  choiceOptionIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  choiceOptionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  choiceOptionDesc: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  choiceCancelBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: '#F1F5F9',
+  },
+  choiceCancelText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#475569',
   },
 });

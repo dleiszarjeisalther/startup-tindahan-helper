@@ -2,7 +2,7 @@
   "expo": {
     "name": "Tindahan Helper",
     "slug": "tindahan-helper",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tindahanpos",
@@ -37,7 +37,7 @@
       ],
       "package": "com.jesar.tindahanhelper",
       "backgroundColor": "#0D7A52",
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "output": "static",

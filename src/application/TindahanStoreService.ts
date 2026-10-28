@@ -1245,6 +1245,7 @@ export class TindahanStoreService {
       unitOfMeasure?: 'pc' | 'kg';
       expiryDate?: string | null;
       sellingTiers?: SellingUnitTier[];
+      imageUri?: string | null;
     }
   ): Promise<void> {
     const all = await this.productRepo.getAll();

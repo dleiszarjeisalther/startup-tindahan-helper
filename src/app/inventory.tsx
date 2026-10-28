@@ -220,6 +220,7 @@ export default function InventoryManagementScreen() {
 
   // Edit Product Modal State
   const [editingProduct, setEditingProduct] = useState<ProductDTO | null>(null);
+  const [editImageUri, setEditImageUri] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editPricePhp, setEditPricePhp] = useState('');
   const [editStock, setEditStock] = useState('');
@@ -335,6 +336,7 @@ export default function InventoryManagementScreen() {
 
   const handleOpenEditModal = (item: ProductDTO) => {
     setEditingProduct(item);
+    setEditImageUri(item.imageUri || null);
     setEditName(item.name);
     setEditPricePhp(item.defaultPricePhp > 0 ? item.defaultPricePhp.toString() : '');
     setEditStock(item.stockCount.toString());
@@ -377,6 +379,46 @@ export default function InventoryManagementScreen() {
       setEditPackMultiplier('10');
       setEditPackPricePhp('');
       setEditPackBarcode('');
+    }
+  };
+
+  const handleEditTakePhoto = async () => {
+    try {
+      const perm = await ImagePicker.requestCameraPermissionsAsync();
+      if (!perm.granted) {
+        showToast('Kailangan ng pahintulot sa Camera upang makakuha ng litrato.', 'warning');
+        return;
+      }
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
+      if (!result.canceled && result.assets[0]?.uri) {
+        setEditImageUri(result.assets[0].uri);
+      }
+    } catch {
+      showToast('Hindi mabuksan ang camera.', 'error');
+    }
+  };
+
+  const handleEditPickImage = async () => {
+    try {
+      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!perm.granted) {
+        showToast('Kailangan ng pahintulot sa Gallery upang makapili ng litrato.', 'warning');
+        return;
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
+      if (!result.canceled && result.assets[0]?.uri) {
+        setEditImageUri(result.assets[0].uri);
+      }
+    } catch {
+      showToast('Hindi mabuksan ang photo gallery.', 'error');
     }
   };
 
@@ -514,6 +556,7 @@ export default function InventoryManagementScreen() {
             unitOfMeasure: editUnitOfMeasure,
             expiryDate: editExpiryDate.trim() || null,
             sellingTiers: tiers,
+            imageUri: editImageUri,
           });
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
           showToast(`✓ Na-save ang pagbabago sa "${editName.trim()}"`, 'success');
@@ -846,7 +889,7 @@ export default function InventoryManagementScreen() {
     try {
       const perm = await ImagePicker.requestCameraPermissionsAsync();
       if (!perm.granted) {
-        setErrorMsg('Camera permission needed to take product photos.');
+        showToast('Kailangan ng pahintulot sa Camera upang makakuha ng litrato.', 'warning');
         return;
       }
       const result = await ImagePicker.launchCameraAsync({
@@ -856,10 +899,9 @@ export default function InventoryManagementScreen() {
       });
       if (!result.canceled && result.assets[0]?.uri) {
         setNewImageUri(result.assets[0].uri);
-        setErrorMsg(null);
       }
     } catch {
-      setErrorMsg('Could not open camera.');
+      showToast('Hindi mabuksan ang camera.', 'error');
     }
   };
 
@@ -867,7 +909,7 @@ export default function InventoryManagementScreen() {
     try {
       const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!perm.granted) {
-        setErrorMsg('Gallery permission needed to choose product photos.');
+        showToast('Kailangan ng pahintulot sa Gallery upang makapili ng litrato.', 'warning');
         return;
       }
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -877,27 +919,48 @@ export default function InventoryManagementScreen() {
       });
       if (!result.canceled && result.assets[0]?.uri) {
         setNewImageUri(result.assets[0].uri);
-        setErrorMsg(null);
       }
     } catch {
-      setErrorMsg('Could not open gallery.');
+      showToast('Hindi mabuksan ang photo gallery.', 'error');
     }
   };
 
-  const handleChangeExistingPhoto = async (productId: string) => {
+  const handleChangeExistingPhoto = async (
+    productId: string,
+    source: 'CAMERA' | 'GALLERY' = 'GALLERY'
+  ) => {
     try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.7,
-      });
+      let result;
+      if (source === 'CAMERA') {
+        const perm = await ImagePicker.requestCameraPermissionsAsync();
+        if (!perm.granted) {
+          showToast('Kailangan ng pahintulot sa Camera upang makakuha ng litrato.', 'warning');
+          return;
+        }
+        result = await ImagePicker.launchCameraAsync({
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 0.7,
+        });
+      } else {
+        const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!perm.granted) {
+          showToast('Kailangan ng pahintulot sa Gallery upang makapili ng litrato.', 'warning');
+          return;
+        }
+        result = await ImagePicker.launchImageLibraryAsync({
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 0.7,
+        });
+      }
       if (!result.canceled && result.assets[0]?.uri) {
         await updateProductImage(productId, result.assets[0].uri);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         showToast('✓ Na-update ang litrato ng paninda', 'success');
       }
     } catch {
-      setErrorMsg('Could not update photo.');
+      showToast('Hindi na-update ang litrato.', 'error');
     }
   };
 
@@ -2594,8 +2657,8 @@ export default function InventoryManagementScreen() {
           onEditProduct={(prod) => {
             handleOpenEditModal(prod);
           }}
-          onChangePhoto={(id) => {
-            handleChangeExistingPhoto(id);
+          onChangePhoto={(id, source) => {
+            handleChangeExistingPhoto(id, source);
           }}
           showToast={(msg, type) => showToast(msg, type || 'info')}
           operatingMode={operatingMode}
@@ -2717,6 +2780,69 @@ export default function InventoryManagementScreen() {
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={styles.modalScrollContent}
             >
+              {/* Product Photo Preview & Change Section */}
+              <View style={styles.editPhotoSectionCard}>
+                <View style={styles.editPhotoPreviewContainer}>
+                  {editImageUri ? (
+                    <View style={styles.editPhotoThumbWrapper}>
+                      <Image
+                        source={{ uri: editImageUri }}
+                        style={styles.editPhotoThumb}
+                        contentFit="cover"
+                        transition={150}
+                        cachePolicy="memory-disk"
+                      />
+                      <Pressable
+                        style={styles.editPhotoRemoveBadge}
+                        hitSlop={8}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          setEditImageUri(null);
+                        }}
+                      >
+                        <Ionicons name="close" size={14} color="#FFFFFF" />
+                      </Pressable>
+                    </View>
+                  ) : editingProduct ? (
+                    <ProductThumbnail
+                      visual={{ ...editingProduct.visual, imageUri: undefined }}
+                      imageUri={undefined}
+                      size="lg"
+                    />
+                  ) : null}
+                </View>
+
+                <View style={styles.editPhotoActionsCol}>
+                  <Text style={styles.editPhotoSectionTitle}>Litrato ng Paninda</Text>
+                  <Text style={styles.editPhotoSectionSub}>
+                    Kumuha sa camera o pumili sa gallery
+                  </Text>
+                  <View style={styles.editPhotoButtonsRow}>
+                    <Pressable
+                      style={styles.editCameraBtn}
+                      onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        handleEditTakePhoto();
+                      }}
+                    >
+                      <Ionicons name="camera" size={15} color="#FFFFFF" />
+                      <Text style={styles.editCameraBtnText}>Camera</Text>
+                    </Pressable>
+
+                    <Pressable
+                      style={styles.editGalleryBtn}
+                      onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        handleEditPickImage();
+                      }}
+                    >
+                      <Ionicons name="images" size={15} color="#334155" />
+                      <Text style={styles.editGalleryBtnText}>Gallery</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+
               <Text style={styles.modalInputLabel}>Pangalan ng Paninda *</Text>
               <TextInput
                 style={styles.modalInputField}
@@ -4608,6 +4734,99 @@ const styles = StyleSheet.create({
   },
   modalScrollContent: {
     paddingBottom: 20,
+  },
+  editPhotoSectionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 12,
+  },
+  editPhotoPreviewContainer: {
+    width: 68,
+    height: 68,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  editPhotoThumbWrapper: {
+    position: 'relative',
+    width: 68,
+    height: 68,
+  },
+  editPhotoThumb: {
+    width: 68,
+    height: 68,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#10B981',
+    backgroundColor: '#E2E8F0',
+  },
+  editPhotoRemoveBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: '#EF4444',
+    borderRadius: 11,
+    width: 22,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    elevation: 3,
+  },
+  editPhotoActionsCol: {
+    flex: 1,
+    gap: 3,
+  },
+  editPhotoSectionTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  editPhotoSectionSub: {
+    fontSize: 11,
+    color: '#64748B',
+  },
+  editPhotoButtonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
+  editCameraBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0D7A52',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    gap: 4,
+  },
+  editCameraBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  editGalleryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    gap: 4,
+  },
+  editGalleryBtnText: {
+    color: '#334155',
+    fontSize: 12,
+    fontWeight: '700',
   },
   modalInputLabel: {
     fontSize: 12,

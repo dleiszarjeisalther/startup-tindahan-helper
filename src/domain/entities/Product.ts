@@ -209,6 +209,7 @@ export class Product {
     unitOfMeasure?: UnitOfMeasure;
     expiryDate?: string | null;
     sellingTiers?: SellingUnitTier[];
+    imageUri?: string | null;
   }): Product {
     const nextName = updates.name !== undefined && updates.name.trim() ? updates.name.trim() : this._name;
     const nextCategory = updates.category !== undefined && updates.category.trim() ? updates.category.trim() : this._category;
@@ -218,6 +219,8 @@ export class Product {
     const nextOosDays = nextStock === 0 ? Math.max(1, this._outOfStockDays) : (this._baseStockCount === 0 && nextStock > 0 ? 0 : this._outOfStockDays);
     const nextUnitOfMeasure = updates.unitOfMeasure ?? this._unitOfMeasure;
     const nextExpiry = updates.expiryDate !== undefined ? updates.expiryDate : this._expiryDate;
+    const nextImageUri = updates.imageUri !== undefined ? (updates.imageUri || undefined) : this._imageUri;
+    const nextVisual = this._visual ? { ...this._visual, imageUri: nextImageUri } : undefined;
     let nextTiers = updates.sellingTiers ? [...updates.sellingTiers] : this._sellingTiers;
     if (updates.pricePhp !== undefined && updates.pricePhp >= 0 && !updates.sellingTiers) {
       const pieceIdx = this._sellingTiers.findIndex((t) => t.unitName === 'piece');
@@ -240,14 +243,15 @@ export class Product {
       nextTiers,
       this._quarantineStockCount,
       nextOosDays,
-      this._visual,
-      this._imageUri,
+      nextVisual,
+      nextImageUri,
       nextUnitOfMeasure,
       nextExpiry
     );
   }
 
   public withImage(imageUri: string | undefined): Product {
+    const nextVisual = this._visual ? { ...this._visual, imageUri } : undefined;
     return new Product(
       this.id,
       this._name,
@@ -259,7 +263,7 @@ export class Product {
       this._sellingTiers,
       this._quarantineStockCount,
       this._outOfStockDays,
-      this._visual,
+      nextVisual,
       imageUri,
       this._unitOfMeasure,
       this._expiryDate

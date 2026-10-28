@@ -5,8 +5,11 @@ import {
   Pressable,
   StyleSheet,
   Platform,
+  Modal,
+  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type ToastType = 'success' | 'warning' | 'info' | 'error';
 
@@ -25,6 +28,7 @@ export const FloatingToast: React.FC<FloatingToastProps> = ({
   onDismiss,
   topOffset = 10,
 }) => {
+  const insets = useSafeAreaInsets();
   const [opacityAnim] = useState(() => new Animated.Value(0));
   const [translateYAnim] = useState(() => new Animated.Value(-16));
   const onDismissRef = useRef(onDismiss);
@@ -127,72 +131,96 @@ export const FloatingToast: React.FC<FloatingToastProps> = ({
   };
 
   const currentTheme = getStyleForType();
+  const effectiveTop =
+    insets.top > 0
+      ? insets.top + topOffset
+      : Platform.OS === 'android'
+      ? Math.max(topOffset, 36)
+      : Math.max(topOffset, 16);
 
   return (
-    <Animated.View
-      style={[
-        styles.toastWrapper,
-        {
-          top: topOffset,
-          opacity: opacityAnim,
-          transform: [{ translateY: translateYAnim }],
-        },
-      ]}
+    <Modal
+      visible={Boolean(message)}
+      transparent={true}
+      animationType="none"
+      statusBarTranslucent={true}
       pointerEvents="box-none"
+      onRequestClose={() => {
+        prevMessageRef.current = null;
+        onDismissRef.current();
+      }}
     >
-      <Pressable
-        style={[
-          styles.toastContainer,
-          {
-            backgroundColor: currentTheme.bg,
-            borderColor: currentTheme.border,
-          },
-        ]}
-        onPress={() => {
-          Animated.parallel([
-            Animated.timing(opacityAnim, {
-              toValue: 0,
-              duration: 150,
-              useNativeDriver: true,
-            }),
-            Animated.timing(translateYAnim, {
-              toValue: -12,
-              duration: 150,
-              useNativeDriver: true,
-            }),
-          ]).start(() => {
-            prevMessageRef.current = null;
-            onDismissRef.current();
-          });
-        }}
-      >
-        <Ionicons
-          name={currentTheme.icon}
-          size={18}
-          color={currentTheme.iconColor}
-          style={styles.icon}
-        />
-        <Text style={[styles.toastText, { color: currentTheme.textColor }]}>
-          {message}
-        </Text>
-        <Ionicons
-          name="close"
-          size={16}
-          color={currentTheme.textColor}
-          style={styles.closeIcon}
-        />
-      </Pressable>
-    </Animated.View>
+      <View style={styles.modalRoot} pointerEvents="box-none">
+        <Animated.View
+          style={[
+            styles.toastWrapper,
+            {
+              top: effectiveTop,
+              opacity: opacityAnim,
+              transform: [{ translateY: translateYAnim }],
+            },
+          ]}
+          pointerEvents="box-none"
+        >
+          <Pressable
+            style={[
+              styles.toastContainer,
+              {
+                backgroundColor: currentTheme.bg,
+                borderColor: currentTheme.border,
+              },
+            ]}
+            onPress={() => {
+              Animated.parallel([
+                Animated.timing(opacityAnim, {
+                  toValue: 0,
+                  duration: 150,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(translateYAnim, {
+                  toValue: -12,
+                  duration: 150,
+                  useNativeDriver: true,
+                }),
+              ]).start(() => {
+                prevMessageRef.current = null;
+                onDismissRef.current();
+              });
+            }}
+          >
+            <Ionicons
+              name={currentTheme.icon}
+              size={18}
+              color={currentTheme.iconColor}
+              style={styles.icon}
+            />
+            <Text style={[styles.toastText, { color: currentTheme.textColor }]}>
+              {message}
+            </Text>
+            <Ionicons
+              name="close"
+              size={16}
+              color={currentTheme.textColor}
+              style={styles.closeIcon}
+            />
+          </Pressable>
+        </Animated.View>
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  modalRoot: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
   toastWrapper: {
     position: 'absolute',
     left: 16,
     right: 16,
-    zIndex: 99999,
-    elevation: Platform.OS === 'android' ? 24 : 10,
+    zIndex: 999999,
+    elevation: Platform.OS === 'android' ? 99 : 10,
     alignItems: 'center',
   },
   toastContainer: {
