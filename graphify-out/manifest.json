@@ -42,9 +42,9 @@
     "semantic_hash": "6b9302c1f72c315e90233c7539c48c9f"
   },
   "app.json": {
-    "mtime": 1792930973.5205946,
-    "seen": 1792931478.6835213,
-    "ast_hash": "589acb935d64dabc3e47baaf7eed81a6",
+    "mtime": 1793147429.1969395,
+    "seen": 1793147515.642542,
+    "ast_hash": "435174e71c86772082eb986badf60a05",
     "semantic_hash": ""
   },
   "assets/expo.icon/icon.json": {
@@ -60,9 +60,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1792750636.385474,
-    "seen": 1792752065.3408802,
-    "ast_hash": "76669cd9aa359f57619dba650316eb6e",
+    "mtime": 1793147429.1989384,
+    "seen": 1793147515.6426747,
+    "ast_hash": "79fc56cef5b43c32c294621cbbf7a957",
     "semantic_hash": ""
   },
   "scripts/reset-project.js": {

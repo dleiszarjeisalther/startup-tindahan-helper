@@ -1308,9 +1308,9 @@
     "semantic_hash": ""
   },
   "modules/apk-updater/android/src/main/java/expo/modules/apkupdater/ApkUpdaterModule.kt": {
-    "mtime": 1792739251.0808723,
-    "seen": 1792752065.3408654,
-    "ast_hash": "4941c240e48cdeaeecd0dd5c86ddb75c",
+    "mtime": 1793145520.4931068,
+    "seen": 1793145986.4940755,
+    "ast_hash": "951ab7477f852e9c27651ecf740fff9c",
     "semantic_hash": ""
   },
   "modules/apk-updater/expo-module.config.json": {
@@ -1326,9 +1326,9 @@
     "semantic_hash": ""
   },
   "scripts/test-app-updates.cjs": {
-    "mtime": 1793144544.353798,
-    "seen": 1793144980.6432676,
-    "ast_hash": "7ab928f33ec00e1d899b20ebd53607cc",
+    "mtime": 1793145681.816034,
+    "seen": 1793145986.494169,
+    "ast_hash": "d3bb86b35d7202f1c08e7759e5a9a17c",
     "semantic_hash": ""
   },
   "src/application/AppUpdateService.ts": {
@@ -1338,21 +1338,21 @@
     "semantic_hash": ""
   },
   "src/domain/entities/AppRelease.ts": {
-    "mtime": 1793144375.5057495,
-    "seen": 1793144980.6435394,
-    "ast_hash": "4309aa54d5ee6c5698f53d28c76968a2",
+    "mtime": 1793145881.7827146,
+    "seen": 1793145986.4944253,
+    "ast_hash": "e45803aa3ad200db6351ec7108c39faa",
     "semantic_hash": ""
   },
   "src/infrastructure/services/AndroidAppUpdatePort.ts": {
-    "mtime": 1793144398.4733062,
-    "seen": 1793144980.6436546,
-    "ast_hash": "78f2df0149dca0c808e872a5e84ff128",
+    "mtime": 1793145565.2489045,
+    "seen": 1793145986.4945366,
+    "ast_hash": "774eaa5fc43a7acbfbcd868f8bdc550c",
     "semantic_hash": ""
   },
   "src/presentation/components/AppUpdatePrompt.tsx": {
-    "mtime": 1793144484.2478132,
-    "seen": 1793144980.6437356,
-    "ast_hash": "6ff77277b06465448ecda9770fefefc4",
+    "mtime": 1793145580.1466117,
+    "seen": 1793145986.494615,
+    "ast_hash": "3bbe674637fa09ae8be2e2e4dca8eccc",
     "semantic_hash": ""
   },
   "supabase/migrations/20261023000000_app_releases.sql": {

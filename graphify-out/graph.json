@@ -43,26 +43,13 @@
       "source_location": "L3"
     },
     {
-      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice",
-      "label": "DatabaseBackupService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": "databasebackupservice",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L51"
-    },
-    {
       "id": "src_app_history_datefilter",
       "label": "DateFilter",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "datefilter",
       "source_file": "src/app/history.tsx",
@@ -75,7 +62,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "historycategoryfilter",
       "source_file": "src/app/history.tsx",
@@ -88,24 +75,76 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "movementfilter",
       "source_file": "src/app/history.tsx",
       "source_location": "L30"
     },
     {
-      "id": "src_app_utang_filtertype",
-      "label": "FilterType",
+      "id": "src_app_history_unifiedactivityitem",
+      "label": "UnifiedActivityItem",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
-      "norm_label": "filtertype",
-      "source_file": "src/app/utang.tsx",
-      "source_location": "L42"
+      "norm_label": "unifiedactivityitem",
+      "source_file": "src/app/history.tsx",
+      "source_location": "L41"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_cashdraweradjustmentrecord",
+      "label": "CashDrawerAdjustmentRecord",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "cashdraweradjustmentrecord",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L99"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_daterangefilter",
+      "label": "DateRangeFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "daterangefilter",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L93"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_stockmovementrecord",
+      "label": "StockMovementRecord",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "stockmovementrecord",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L202"
+    },
+    {
+      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodalprops",
+      "label": "DateRangeCalendarModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "daterangecalendarmodalprops",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L16"
     },
     {
       "id": "src_presentation_localization_i18n_supportedlanguage",
@@ -114,7 +153,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "supportedlanguage",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -127,7 +166,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "translations",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -147,6 +186,19 @@
       "source_location": "L11"
     },
     {
+      "id": "src_application_tindahanstoreservice_storesnapshot",
+      "label": "StoreSnapshot",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
+      "file_type": "code",
+      "norm_label": "storesnapshot",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L216"
+    },
+    {
       "id": "src_domain_services_storealertpolicy_productalertsource",
       "label": "ProductAlertSource",
       "_callable": true,
@@ -158,6 +210,19 @@
       "norm_label": "productalertsource",
       "source_file": "src/domain/services/StoreAlertPolicy.ts",
       "source_location": "L19"
+    },
+    {
+      "id": "src_domain_services_storealertpolicy_storealert",
+      "label": "StoreAlert",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
+      "file_type": "code",
+      "norm_label": "storealert",
+      "source_file": "src/domain/services/StoreAlertPolicy.ts",
+      "source_location": "L6"
     },
     {
       "id": "src_domain_services_storealertpolicy_storealertkind",
@@ -225,56 +290,17 @@
       "source_location": "L26"
     },
     {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
-      "label": "SqliteDatabase",
+      "id": "src_presentation_components_storealertsmodal_storealertsmodalprops",
+      "label": "StoreAlertsModalProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
       "file_type": "code",
-      "norm_label": "sqlitedatabase",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_backupdatapayload",
-      "label": "BackupDataPayload",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": "backupdatapayload",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_backupexportresult",
-      "label": "BackupExportResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": "backupexportresult",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L37"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_backuprestoreresult",
-      "label": "BackupRestoreResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": "backuprestoreresult",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L45"
+      "norm_label": "storealertsmodalprops",
+      "source_file": "src/presentation/components/StoreAlertsModal.tsx",
+      "source_location": "L14"
     },
     {
       "id": "src_infrastructure_services_licensingservice_licensingservice",
@@ -288,6 +314,19 @@
       "norm_label": "licensingservice",
       "source_file": "src/infrastructure/services/LicensingService.ts",
       "source_location": "L282"
+    },
+    {
+      "id": "src_infrastructure_services_licensingservice_licensingstate",
+      "label": "LicensingState",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "licensingstate",
+      "source_file": "src/infrastructure/services/LicensingService.ts",
+      "source_location": "L6"
     },
     {
       "id": "src_infrastructure_services_licensingservice_listener",
@@ -368,17 +407,30 @@
       "source_location": "L4"
     },
     {
-      "id": "src_presentation_components_gcashqrmodal_gcashqrmodalprops",
-      "label": "GcashQrModalProps",
+      "id": "src_presentation_components_floatingtoast_floatingtoastprops",
+      "label": "FloatingToastProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 11,
       "community_name": "settings.tsx",
       "file_type": "code",
-      "norm_label": "gcashqrmodalprops",
-      "source_file": "src/presentation/components/GcashQrModal.tsx",
-      "source_location": "L22"
+      "norm_label": "floatingtoastprops",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_presentation_components_floatingtoast_toasttype",
+      "label": "ToastType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "settings.tsx",
+      "file_type": "code",
+      "norm_label": "toasttype",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L11"
     },
     {
       "id": "src_presentation_components_pinchallengemodal_pinchallengemodalprops",
@@ -407,17 +459,17 @@
       "source_location": "L17"
     },
     {
-      "id": "src_app_checkout_cartitemstepperprops",
-      "label": "CartItemStepperProps",
+      "id": "src_domain_value_objects_money_money",
+      "label": "Money",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
-      "norm_label": "cartitemstepperprops",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L53"
+      "norm_label": "money",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L14"
     },
     {
       "id": "src_presentation_components_weightquantitymodal_weightquantitymodalprops",
@@ -426,7 +478,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
       "norm_label": "weightquantitymodalprops",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -439,7 +491,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
       "norm_label": "weightquantityproduct",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -452,37 +504,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
       "norm_label": "weightquantitysheetprops",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
       "source_location": "L54"
-    },
-    {
-      "id": "src_domain_value_objects_money_money",
-      "label": "Money",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 115,
-      "community_name": "Money",
-      "file_type": "code",
-      "norm_label": "money",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler",
-      "label": "ExpoLocalNotificationScheduler",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 116,
-      "community_name": "ExpoLocalNotificationScheduler",
-      "file_type": "code",
-      "norm_label": "expolocalnotificationscheduler",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L11"
     },
     {
       "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler",
@@ -511,13 +537,26 @@
       "source_location": "L1"
     },
     {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler",
+      "label": "ExpoLocalNotificationScheduler",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": "expolocalnotificationscheduler",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L11"
+    },
+    {
       "id": "src_app_checkout_confirmationstate",
       "label": "ConfirmationState",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/checkout.tsx",
@@ -530,7 +569,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/inventory.tsx",
@@ -543,7 +582,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/more.tsx",
@@ -556,7 +595,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/sales.tsx",
@@ -569,7 +608,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/settings.tsx",
@@ -582,11 +621,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationstate",
       "source_file": "src/app/utang.tsx",
       "source_location": "L31"
+    },
+    {
+      "id": "src_app_utang_filtertype",
+      "label": "FilterType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 118,
+      "community_name": "utang.tsx",
+      "file_type": "code",
+      "norm_label": "filtertype",
+      "source_file": "src/app/utang.tsx",
+      "source_location": "L42"
     },
     {
       "id": "src_presentation_components_confirmationmodal_confirmationmodaldetail",
@@ -595,7 +647,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodaldetail",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -608,7 +660,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodalprops",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -621,7 +673,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationtype",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -634,7 +686,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "reasonselectorconfig",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -647,7 +699,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "typetheme",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -660,7 +712,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodeinputfieldprops",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
@@ -673,50 +725,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodescannerviewfinderprops",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L20"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_storesnapshot",
-      "label": "StoreSnapshot",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 125,
-      "community_name": "StoreAlert",
-      "file_type": "code",
-      "norm_label": "storesnapshot",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L216"
-    },
-    {
-      "id": "src_domain_services_storealertpolicy_storealert",
-      "label": "StoreAlert",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 125,
-      "community_name": "StoreAlert",
-      "file_type": "code",
-      "norm_label": "storealert",
-      "source_file": "src/domain/services/StoreAlertPolicy.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_presentation_components_storealertsmodal_storealertsmodalprops",
-      "label": "StoreAlertsModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 125,
-      "community_name": "StoreAlert",
-      "file_type": "code",
-      "norm_label": "storealertsmodalprops",
-      "source_file": "src/presentation/components/StoreAlertsModal.tsx",
-      "source_location": "L14"
     },
     {
       "id": "src_presentation_components_tutorial_mickeyglovepointer_mickeyglovepointerprops",
@@ -823,13 +836,26 @@
       "source_location": "L53"
     },
     {
+      "id": "src_app_checkout_cartitemstepperprops",
+      "label": "CartItemStepperProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cartitemstepperprops",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L53"
+    },
+    {
       "id": "src_application_tindahanstoreservice_saletransactionrecord",
       "label": "SaleTransactionRecord",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "saletransactionrecord",
       "source_file": "src/application/TindahanStoreService.ts",
@@ -842,11 +868,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "cancelexchangecreditmodalprops",
       "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
       "source_location": "L12"
+    },
+    {
+      "id": "src_presentation_components_gcashqrmodal_gcashqrmodalprops",
+      "label": "GcashQrModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "gcashqrmodalprops",
+      "source_file": "src/presentation/components/GcashQrModal.tsx",
+      "source_location": "L22"
     },
     {
       "id": "src_presentation_components_transactiondetailmodal_returndisposition",
@@ -855,7 +894,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "returndisposition",
       "source_file": "src/presentation/components/TransactionDetailModal.tsx",
@@ -868,7 +907,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "returnresolution",
       "source_file": "src/presentation/components/TransactionDetailModal.tsx",
@@ -881,63 +920,63 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "transactiondetailmodalprops",
       "source_file": "src/presentation/components/TransactionDetailModal.tsx",
       "source_location": "L21"
     },
     {
-      "id": "src_application_tindahanstoreservice_daterangefilter",
-      "label": "DateRangeFilter",
+      "id": "src_infrastructure_services_databasebackupservice_backupdatapayload",
+      "label": "BackupDataPayload",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
+      "community_name": "DatabaseBackupService.ts",
       "file_type": "code",
-      "norm_label": "daterangefilter",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L93"
+      "norm_label": "backupdatapayload",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L8"
     },
     {
-      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodalprops",
-      "label": "DateRangeCalendarModalProps",
+      "id": "src_infrastructure_services_databasebackupservice_backupexportresult",
+      "label": "BackupExportResult",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
+      "community_name": "DatabaseBackupService.ts",
       "file_type": "code",
-      "norm_label": "daterangecalendarmodalprops",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L16"
+      "norm_label": "backupexportresult",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L37"
     },
     {
-      "id": "src_presentation_components_floatingtoast_floatingtoastprops",
-      "label": "FloatingToastProps",
+      "id": "src_infrastructure_services_databasebackupservice_backuprestoreresult",
+      "label": "BackupRestoreResult",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
+      "community_name": "DatabaseBackupService.ts",
       "file_type": "code",
-      "norm_label": "floatingtoastprops",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L13"
+      "norm_label": "backuprestoreresult",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L45"
     },
     {
-      "id": "src_presentation_components_floatingtoast_toasttype",
-      "label": "ToastType",
+      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice",
+      "label": "DatabaseBackupService",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
+      "community_name": "DatabaseBackupService.ts",
       "file_type": "code",
-      "norm_label": "toasttype",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L11"
+      "norm_label": "databasebackupservice",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L51"
     },
     {
       "id": "src_domain_services_pinsecurityengine_pinsecurityengine",
@@ -1135,19 +1174,6 @@
       "source_location": "L34"
     },
     {
-      "id": "src_application_tindahanstoreservice_storesettingsstate",
-      "label": "StoreSettingsState",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "IKeyValueStorage",
-      "file_type": "code",
-      "norm_label": "storesettingsstate",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L174"
-    },
-    {
       "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage",
       "label": "IKeyValueStorage",
       "_callable": true,
@@ -1158,6 +1184,19 @@
       "file_type": "code",
       "norm_label": "ikeyvaluestorage",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase",
+      "label": "SqliteDatabase",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 51,
+      "community_name": "SqliteDatabase",
+      "file_type": "code",
+      "norm_label": "sqlitedatabase",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
       "source_location": "L5"
     },
     {
@@ -1265,19 +1304,6 @@
       "source_location": "L18"
     },
     {
-      "id": "src_infrastructure_services_licensingservice_licensingstate",
-      "label": "LicensingState",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 60,
-      "community_name": "useLicensing.ts",
-      "file_type": "code",
-      "norm_label": "licensingstate",
-      "source_file": "src/infrastructure/services/LicensingService.ts",
-      "source_location": "L6"
-    },
-    {
       "id": "src_presentation_components_licensinggate_licensinggatecontexttype",
       "label": "LicensingGateContextType",
       "_callable": true,
@@ -1341,6 +1367,32 @@
       "norm_label": "trialexpiredmodalprops",
       "source_file": "src/presentation/components/TrialExpiredModal.tsx",
       "source_location": "L20"
+    },
+    {
+      "id": "src_application_productonboardingservice_addproductcommand",
+      "label": "AddProductCommand",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "addproductcommand",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_application_productonboardingservice_addproductresult",
+      "label": "AddProductResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "addproductresult",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L25"
     },
     {
       "id": "src_application_productonboardingservice_productonboardingservice",
@@ -1603,6 +1655,19 @@
       "source_location": "L21"
     },
     {
+      "id": "src_domain_entities_product_unitofmeasure",
+      "label": "UnitOfMeasure",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": "unitofmeasure",
+      "source_file": "src/domain/entities/Product.ts",
+      "source_location": "L13"
+    },
+    {
       "id": "src_domain_repositories_iproductrepository_iproductrepository",
       "label": "IProductRepository",
       "_callable": true,
@@ -1629,30 +1694,30 @@
       "source_location": "L5"
     },
     {
-      "id": "src_app_history_unifiedactivityitem",
-      "label": "UnifiedActivityItem",
+      "id": "src_domain_value_objects_barcode_barcodesource",
+      "label": "BarcodeSource",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
+      "community": 78,
+      "community_name": "Barcode",
       "file_type": "code",
-      "norm_label": "unifiedactivityitem",
-      "source_file": "src/app/history.tsx",
-      "source_location": "L41"
+      "norm_label": "barcodesource",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L3"
     },
     {
-      "id": "src_application_productonboardingservice_addproductresult",
-      "label": "AddProductResult",
+      "id": "src_infrastructure_repositories_inmemoryproductrepository_productrow",
+      "label": "ProductRow",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
+      "community": 78,
+      "community_name": "Barcode",
       "file_type": "code",
-      "norm_label": "addproductresult",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L25"
+      "norm_label": "productrow",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L7"
     },
     {
       "id": "src_application_tindahanstoreservice_activeexchangecreditinfo",
@@ -1718,19 +1783,6 @@
       "norm_label": "cashadjustmenttype",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L91"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_cashdraweradjustmentrecord",
-      "label": "CashDrawerAdjustmentRecord",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "cashdraweradjustmentrecord",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L99"
     },
     {
       "id": "src_application_tindahanstoreservice_daysalesbucket",
@@ -1824,19 +1876,6 @@
       "source_location": "L79"
     },
     {
-      "id": "src_application_tindahanstoreservice_stockmovementrecord",
-      "label": "StockMovementRecord",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "stockmovementrecord",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L202"
-    },
-    {
       "id": "src_application_tindahanstoreservice_stockmovementtype",
       "label": "StockMovementType",
       "_callable": true,
@@ -1902,17 +1941,17 @@
       "source_location": "L17"
     },
     {
-      "id": "src_application_productonboardingservice_addproductcommand",
-      "label": "AddProductCommand",
+      "id": "src_application_tindahanstoreservice_storesettingsstate",
+      "label": "StoreSettingsState",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 83,
-      "community_name": "Product.ts",
+      "community": 80,
+      "community_name": "KeyValueStorage.ts",
       "file_type": "code",
-      "norm_label": "addproductcommand",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L10"
+      "norm_label": "storesettingsstate",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L174"
     },
     {
       "id": "src_domain_entities_product_productdto",
@@ -1921,7 +1960,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "productdto",
       "source_file": "src/domain/entities/Product.ts",
@@ -1934,7 +1973,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "productvisual",
       "source_file": "src/domain/entities/Product.ts",
@@ -1947,7 +1986,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "sellingunittier",
       "source_file": "src/domain/entities/Product.ts",
@@ -1960,50 +1999,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "stockstatus",
       "source_file": "src/domain/entities/Product.ts",
       "source_location": "L15"
-    },
-    {
-      "id": "src_domain_entities_product_unitofmeasure",
-      "label": "UnitOfMeasure",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "unitofmeasure",
-      "source_file": "src/domain/entities/Product.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_domain_value_objects_barcode_barcodesource",
-      "label": "BarcodeSource",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "barcodesource",
-      "source_file": "src/domain/value-objects/Barcode.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository_productrow",
-      "label": "ProductRow",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "productrow",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L7"
     },
     {
       "id": "src_presentation_components_productstockmanagemodal_productstockmanagemodalprops",
@@ -2012,7 +2012,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "productstockmanagemodalprops",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
@@ -2025,7 +2025,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "productthumbnailprops",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
@@ -2038,7 +2038,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "unitselectiondialogcontentprops",
       "source_file": "src/presentation/components/UnitSelectionModal.tsx",
@@ -2051,7 +2051,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "unitselectionmodalprops",
       "source_file": "src/presentation/components/UnitSelectionModal.tsx",
@@ -2370,6 +2370,54 @@
       "source_location": "L152"
     },
     {
+      "id": "src_app_explore_getlocalizedmonths",
+      "label": "getLocalizedMonths()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "getlocalizedmonths()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L23"
+    },
+    {
+      "id": "src_app_explore_getphilippineseasoninfo",
+      "label": "getPhilippineSeasonInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "getphilippineseasoninfo()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L56"
+    },
+    {
+      "id": "src_app_explore_seasonalforecastscreen",
+      "label": "SeasonalForecastScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "seasonalforecastscreen()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L97"
+    },
+    {
+      "id": "src_app_index_posscanproductscreen",
+      "label": "PosScanProductScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "posscanproductscreen()",
+      "source_file": "src/app/index.tsx",
+      "source_location": "L33"
+    },
+    {
       "id": "src_app_inventory_inventorymanagementscreen",
       "label": "InventoryManagementScreen()",
       "_callable": true,
@@ -2382,6 +2430,42 @@
       "source_location": "L50"
     },
     {
+      "id": "src_app_more_menuprofilescreen",
+      "label": "MenuProfileScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "menuprofilescreen()",
+      "source_file": "src/app/more.tsx",
+      "source_location": "L38"
+    },
+    {
+      "id": "src_app_notifications_notificationsscreen",
+      "label": "NotificationsScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "notificationsscreen()",
+      "source_file": "src/app/notifications.tsx",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_app_products_productlistscreen",
+      "label": "ProductListScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "productlistscreen()",
+      "source_file": "src/app/products.tsx",
+      "source_location": "L29"
+    },
+    {
       "id": "src_app_settings_storesettingsscreen",
       "label": "StoreSettingsScreen()",
       "_callable": true,
@@ -2392,6 +2476,54 @@
       "norm_label": "storesettingsscreen()",
       "source_file": "src/app/settings.tsx",
       "source_location": "L49"
+    },
+    {
+      "id": "src_components_app_tabs_apptabs",
+      "label": "AppTabs()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "apptabs()",
+      "source_file": "src/components/app-tabs.tsx",
+      "source_location": "L243"
+    },
+    {
+      "id": "src_components_app_tabs_customtindahantabbar",
+      "label": "CustomTindahanTabBar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "customtindahantabbar()",
+      "source_file": "src/components/app-tabs.tsx",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_presentation_components_appupdateprompt_appupdatemenuitem",
+      "label": "AppUpdateMenuItem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "appupdatemenuitem()",
+      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
+      "source_location": "L248"
+    },
+    {
+      "id": "src_presentation_components_appupdateprompt_appupdateprompt",
+      "label": "AppUpdatePrompt()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "appupdateprompt()",
+      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
+      "source_location": "L10"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_addcashadjustment",
@@ -2442,6 +2574,30 @@
       "source_location": "L90"
     },
     {
+      "id": "src_presentation_hooks_usetindahanstore_addproducttodatabase",
+      "label": "addProductToDatabase()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "addproducttodatabase()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_addtocart",
+      "label": "addToCart()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "addtocart()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L25"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore_addutangcustomer",
       "label": "addUtangCustomer()",
       "_callable": true,
@@ -2452,6 +2608,18 @@
       "norm_label": "addutangcustomer()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L66"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_adjustinventorystock",
+      "label": "adjustInventoryStock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "adjustinventorystock()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L63"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_cancelexchangecredit",
@@ -2500,6 +2668,18 @@
       "norm_label": "completesale()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L56"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_convertexchangecredittocashrefund",
+      "label": "convertExchangeCreditToCashRefund()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "convertexchangecredittocashrefund()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L45"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_deletecashadjustment",
@@ -2598,6 +2778,18 @@
       "source_location": "L125"
     },
     {
+      "id": "src_presentation_hooks_usetindahanstore_getmonthlysaleshistory",
+      "label": "getMonthlySalesHistory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "getmonthlysaleshistory()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L88"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore_getsalessummary",
       "label": "getSalesSummary()",
       "_callable": true,
@@ -2634,6 +2826,18 @@
       "source_location": "L130"
     },
     {
+      "id": "src_presentation_hooks_usetindahanstore_lockstore",
+      "label": "lockStore()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "lockstore()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L128"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore_lookuponlinecatalog",
       "label": "lookupOnlineCatalog()",
       "_callable": true,
@@ -2644,6 +2848,30 @@
       "norm_label": "lookuponlinecatalog()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L15"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_markalertread",
+      "label": "markAlertRead()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "markalertread()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L96"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_markallalertsread",
+      "label": "markAllAlertsRead()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "markallalertsread()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L97"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_notifycatalogchanged",
@@ -2778,6 +3006,18 @@
       "source_location": "L98"
     },
     {
+      "id": "src_presentation_hooks_usetindahanstore_setcartitemquantity",
+      "label": "setCartItemQuantity()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "setcartitemquantity()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L30"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore_setcashindrawer",
       "label": "setCashInDrawer()",
       "_callable": true,
@@ -2850,6 +3090,30 @@
       "source_location": "L117"
     },
     {
+      "id": "src_presentation_hooks_usetindahanstore_togglebrownoutbatterysaver",
+      "label": "toggleBrownoutBatterySaver()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "togglebrownoutbatterysaver()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L124"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_undoexchangecreditreturn",
+      "label": "undoExchangeCreditReturn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "undoexchangecreditreturn()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L47"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore_undoremovecartitem",
       "label": "undoRemoveCartItem()",
       "_callable": true,
@@ -2860,6 +3124,18 @@
       "norm_label": "undoremovecartitem()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L40"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_unlockstore",
+      "label": "unlockStore()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "unlockstore()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L127"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_updatecategory",
@@ -2874,6 +3150,18 @@
       "source_location": "L36"
     },
     {
+      "id": "src_presentation_hooks_usetindahanstore_updateproductdetails",
+      "label": "updateProductDetails()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "updateproductdetails()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L21"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore_updateproductimage",
       "label": "updateProductImage()",
       "_callable": true,
@@ -2884,6 +3172,18 @@
       "norm_label": "updateproductimage()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L19"
+    },
+    {
+      "id": "src_presentation_hooks_usetindahanstore_updatesettings",
+      "label": "updateSettings()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "updatesettings()",
+      "source_file": "src/presentation/hooks/useTindahanStore.ts",
+      "source_location": "L92"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_updateutangcustomer",
@@ -2932,6 +3232,30 @@
       "norm_label": "voidentiretransaction()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L58"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstoreprovider",
+      "label": "TindahanStoreProvider()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "tindahanstoreprovider()",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider_usetindahanstoreservice",
+      "label": "useTindahanStoreService()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "usetindahanstoreservice()",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L15"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_addcashadjustment",
@@ -3294,6 +3618,18 @@
       "source_location": "L3197"
     },
     {
+      "id": "src_application_tindahanstoreservice_tindahanstoreservice_getexpiringproducts",
+      "label": ".getExpiringProducts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".getexpiringproducts()",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L3644"
+    },
+    {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getmonthlysaleshistory",
       "label": ".getMonthlySalesHistory()",
       "_callable": true,
@@ -3304,6 +3640,18 @@
       "norm_label": ".getmonthlysaleshistory()",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L3424"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_tindahanstoreservice_getproductssnapshot",
+      "label": ".getProductsSnapshot()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "TindahanStoreService",
+      "file_type": "code",
+      "norm_label": ".getproductssnapshot()",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L1346"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_getsalessummary",
@@ -4086,42 +4434,6 @@
       "source_location": "L21"
     },
     {
-      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_exportbackup",
-      "label": ".exportBackup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".exportbackup()",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L65"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_getinstance",
-      "label": ".getInstance()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".getinstance()",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L54"
-    },
-    {
-      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_pickandrestorebackup",
-      "label": ".pickAndRestoreBackup()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "TindahanStoreService",
-      "file_type": "code",
-      "norm_label": ".pickandrestorebackup()",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L167"
-    },
-    {
       "id": "src_presentation_components_weightquantitymodal_weightquantitysheet",
       "label": "WeightQuantitySheet()",
       "_callable": true,
@@ -4151,11 +4463,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "stockmovementhistoryscreen()",
       "source_file": "src/app/history.tsx",
       "source_location": "L65"
+    },
+    {
+      "id": "src_app_sales_saleshistoryscreen",
+      "label": "SalesHistoryScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "saleshistoryscreen()",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L67"
     },
     {
       "id": "src_app_utang_sukiutangledgerscreen",
@@ -4163,35 +4487,47 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "sukiutangledgerscreen()",
       "source_file": "src/app/utang.tsx",
       "source_location": "L44"
     },
     {
-      "id": "src_presentation_components_floatingtoast_floatingtoast",
-      "label": "FloatingToast()",
+      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodal",
+      "label": "DateRangeCalendarModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
-      "norm_label": "floatingtoast()",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L21"
+      "norm_label": "daterangecalendarmodal()",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L34"
     },
     {
-      "id": "src_presentation_components_screensafeareaview_screensafeareaview",
-      "label": "ScreenSafeAreaView()",
+      "id": "src_presentation_components_daterangecalendarmodal_issameday",
+      "label": "isSameDay()",
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
-      "norm_label": "screensafeareaview()",
-      "source_file": "src/presentation/components/ScreenSafeAreaView.tsx",
-      "source_location": "L15"
+      "norm_label": "issameday()",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_presentation_components_receiptprintermodal_receiptprintermodal",
+      "label": "ReceiptPrinterModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "receiptprintermodal()",
+      "source_file": "src/presentation/components/ReceiptPrinterModal.tsx",
+      "source_location": "L30"
     },
     {
       "id": "src_presentation_localization_i18n_gettranslations",
@@ -4199,7 +4535,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "gettranslations()",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -4230,64 +4566,16 @@
       "source_location": "L56"
     },
     {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_clearalltablesforreset",
-      "label": ".clearAllTablesForReset()",
+      "id": "src_presentation_components_storealertsmodal_storealertsmodal",
+      "label": "StoreAlertsModal()",
       "_callable": true,
       "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
       "file_type": "code",
-      "norm_label": ".clearalltablesforreset()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L245"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_initializetables",
-      "label": ".initializeTables()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": ".initializetables()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L36"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_ispersistentsqliteactive",
-      "label": ".isPersistentSqliteActive()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": ".ispersistentsqliteactive()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L32"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_rawdb",
-      "label": ".rawDb()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": ".rawdb()",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
-      "source_location": "L28"
+      "norm_label": "storealertsmodal()",
+      "source_file": "src/presentation/components/StoreAlertsModal.tsx",
+      "source_location": "L25"
     },
     {
       "id": "src_infrastructure_services_licensingservice_formattimeremaining",
@@ -4638,16 +4926,16 @@
       "source_location": "L12"
     },
     {
-      "id": "src_presentation_components_gcashqrmodal_gcashqrmodal",
-      "label": "GcashQrModal()",
+      "id": "src_presentation_components_floatingtoast_floatingtoast",
+      "label": "FloatingToast()",
       "_callable": true,
       "_origin": "ast",
       "community": 11,
       "community_name": "settings.tsx",
       "file_type": "code",
-      "norm_label": "gcashqrmodal()",
-      "source_file": "src/presentation/components/GcashQrModal.tsx",
-      "source_location": "L34"
+      "norm_label": "floatingtoast()",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L21"
     },
     {
       "id": "src_presentation_components_pinchallengemodal_pinchallengemodal",
@@ -4674,71 +4962,11 @@
       "source_location": "L22"
     },
     {
-      "id": "src_app_checkout_cartitemstepper",
-      "label": "CartItemStepper()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "cartitemstepper()",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L63"
-    },
-    {
-      "id": "src_app_checkout_checkoutnewsalescreen",
-      "label": "CheckoutNewSaleScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "checkoutnewsalescreen()",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L172"
-    },
-    {
-      "id": "src_presentation_components_licensinggate_uselicensinggate",
-      "label": "useLicensingGate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "uselicensinggate()",
-      "source_file": "src/presentation/components/LicensingGate.tsx",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_presentation_components_weightquantitymodal_weightquantitymodal",
-      "label": "WeightQuantityModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "weightquantitymodal()",
-      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
-      "source_location": "L417"
-    },
-    {
-      "id": "src_presentation_hooks_useidempotentsubmit_useidempotentsubmit",
-      "label": "useIdempotentSubmit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "useidempotentsubmit()",
-      "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
-      "source_location": "L8"
-    },
-    {
       "id": "src_domain_value_objects_money_money_add",
       "label": ".add()",
       "_callable": true,
       "_origin": "ast",
-      "community": 115,
+      "community": 111,
       "community_name": "Money",
       "file_type": "code",
       "norm_label": ".add()",
@@ -4750,7 +4978,7 @@
       "label": ".centavos()",
       "_callable": true,
       "_origin": "ast",
-      "community": 115,
+      "community": 111,
       "community_name": "Money",
       "file_type": "code",
       "norm_label": ".centavos()",
@@ -4762,7 +4990,7 @@
       "label": ".constructor()",
       "_callable": true,
       "_origin": "ast",
-      "community": 115,
+      "community": 111,
       "community_name": "Money",
       "file_type": "code",
       "norm_label": ".constructor()",
@@ -4774,7 +5002,7 @@
       "label": ".format()",
       "_callable": true,
       "_origin": "ast",
-      "community": 115,
+      "community": 111,
       "community_name": "Money",
       "file_type": "code",
       "norm_label": ".format()",
@@ -4786,7 +5014,7 @@
       "label": ".formatPhp()",
       "_callable": true,
       "_origin": "ast",
-      "community": 115,
+      "community": 111,
       "community_name": "Money",
       "file_type": "code",
       "norm_label": ".formatphp()",
@@ -4798,7 +5026,7 @@
       "label": ".multiply()",
       "_callable": true,
       "_origin": "ast",
-      "community": 115,
+      "community": 111,
       "community_name": "Money",
       "file_type": "code",
       "norm_label": ".multiply()",
@@ -4810,7 +5038,7 @@
       "label": ".php()",
       "_callable": true,
       "_origin": "ast",
-      "community": 115,
+      "community": 111,
       "community_name": "Money",
       "file_type": "code",
       "norm_label": ".php()",
@@ -4822,84 +5050,12 @@
       "label": ".subtract()",
       "_callable": true,
       "_origin": "ast",
-      "community": 115,
+      "community": 111,
       "community_name": "Money",
       "file_type": "code",
       "norm_label": ".subtract()",
       "source_file": "src/domain/value-objects/Money.ts",
       "source_location": "L53"
-    },
-    {
-      "id": "src_app_layout_tablayout",
-      "label": "TabLayout()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 116,
-      "community_name": "ExpoLocalNotificationScheduler",
-      "file_type": "code",
-      "norm_label": "tablayout()",
-      "source_file": "src/app/_layout.tsx",
-      "source_location": "L19"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_clearschedule",
-      "label": ".clearSchedule()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 116,
-      "community_name": "ExpoLocalNotificationScheduler",
-      "file_type": "code",
-      "norm_label": ".clearschedule()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L53"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_ensurechannel",
-      "label": ".ensureChannel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 116,
-      "community_name": "ExpoLocalNotificationScheduler",
-      "file_type": "code",
-      "norm_label": ".ensurechannel()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L30"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_loadmodule",
-      "label": ".loadModule()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 116,
-      "community_name": "ExpoLocalNotificationScheduler",
-      "file_type": "code",
-      "norm_label": ".loadmodule()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_replaceschedule",
-      "label": ".replaceSchedule()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 116,
-      "community_name": "ExpoLocalNotificationScheduler",
-      "file_type": "code",
-      "norm_label": ".replaceschedule()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L65"
-    },
-    {
-      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_requestpermission",
-      "label": ".requestPermission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 116,
-      "community_name": "ExpoLocalNotificationScheduler",
-      "file_type": "code",
-      "norm_label": ".requestpermission()",
-      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
-      "source_location": "L43"
     },
     {
       "id": "src_application_ilocalnotificationscheduler_ilocalnotificationscheduler_clearschedule",
@@ -4938,6 +5094,78 @@
       "source_location": "L10"
     },
     {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_clearschedule",
+      "label": ".clearSchedule()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".clearschedule()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_ensurechannel",
+      "label": ".ensureChannel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".ensurechannel()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_loadmodule",
+      "label": ".loadModule()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".loadmodule()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_replaceschedule",
+      "label": ".replaceSchedule()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".replaceschedule()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L65"
+    },
+    {
+      "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_requestpermission",
+      "label": ".requestPermission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 117,
+      "community_name": "ILocalNotificationScheduler",
+      "file_type": "code",
+      "norm_label": ".requestpermission()",
+      "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "src_presentation_components_screensafeareaview_screensafeareaview",
+      "label": "ScreenSafeAreaView()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 118,
+      "community_name": "utang.tsx",
+      "file_type": "code",
+      "norm_label": "screensafeareaview()",
+      "source_file": "src/presentation/components/ScreenSafeAreaView.tsx",
+      "source_location": "L15"
+    },
+    {
       "id": "src_components_animated_icon_web_animatedicon",
       "label": "AnimatedIcon()",
       "_callable": true,
@@ -4967,7 +5195,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "notfound()",
       "source_file": "src/app/+not-found.tsx",
@@ -4979,7 +5207,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodeinputfield()",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
@@ -4991,59 +5219,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodescannerviewfinder()",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L59"
     },
     {
-      "id": "src_presentation_components_confirmationmodal_confirmationmodal",
-      "label": "ConfirmationModal()",
+      "id": "src_presentation_components_weightquantitymodal_weightquantitymodal",
+      "label": "WeightQuantityModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
-      "norm_label": "confirmationmodal()",
-      "source_file": "src/presentation/components/ConfirmationModal.tsx",
-      "source_location": "L118"
+      "norm_label": "weightquantitymodal()",
+      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
+      "source_location": "L417"
     },
     {
-      "id": "src_presentation_components_productstockmanagemodal_productstockmanagemodal",
-      "label": "ProductStockManageModal()",
+      "id": "src_presentation_hooks_useidempotentsubmit_useidempotentsubmit",
+      "label": "useIdempotentSubmit()",
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
-      "norm_label": "productstockmanagemodal()",
-      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L42"
-    },
-    {
-      "id": "src_presentation_components_productthumbnail_productthumbnail",
-      "label": "ProductThumbnail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "productthumbnail()",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_presentation_components_unitselectionmodal_unitselectionmodal",
-      "label": "UnitSelectionModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "unitselectionmodal()",
-      "source_file": "src/presentation/components/UnitSelectionModal.tsx",
-      "source_location": "L30"
+      "norm_label": "useidempotentsubmit()",
+      "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
+      "source_location": "L8"
     },
     {
       "id": "scripts_generate_inventory_mockups_generate",
@@ -5058,18 +5262,6 @@
       "source_location": "L447"
     },
     {
-      "id": "src_presentation_components_storealertsmodal_storealertsmodal",
-      "label": "StoreAlertsModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 125,
-      "community_name": "StoreAlert",
-      "file_type": "code",
-      "norm_label": "storealertsmodal()",
-      "source_file": "src/presentation/components/StoreAlertsModal.tsx",
-      "source_location": "L25"
-    },
-    {
       "id": "scripts_generate_ui_mockups_generate",
       "label": "generate()",
       "_callable": true,
@@ -5080,102 +5272,6 @@
       "norm_label": "generate()",
       "source_file": "scripts/generate_ui_mockups.py",
       "source_location": "L465"
-    },
-    {
-      "id": "src_app_explore_getlocalizedmonths",
-      "label": "getLocalizedMonths()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 130,
-      "community_name": "SeasonalForecastScreen",
-      "file_type": "code",
-      "norm_label": "getlocalizedmonths()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L23"
-    },
-    {
-      "id": "src_app_explore_getphilippineseasoninfo",
-      "label": "getPhilippineSeasonInfo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 130,
-      "community_name": "SeasonalForecastScreen",
-      "file_type": "code",
-      "norm_label": "getphilippineseasoninfo()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L56"
-    },
-    {
-      "id": "src_app_explore_seasonalforecastscreen",
-      "label": "SeasonalForecastScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 130,
-      "community_name": "SeasonalForecastScreen",
-      "file_type": "code",
-      "norm_label": "seasonalforecastscreen()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L97"
-    },
-    {
-      "id": "src_app_more_menuprofilescreen",
-      "label": "MenuProfileScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 130,
-      "community_name": "SeasonalForecastScreen",
-      "file_type": "code",
-      "norm_label": "menuprofilescreen()",
-      "source_file": "src/app/more.tsx",
-      "source_location": "L38"
-    },
-    {
-      "id": "src_presentation_components_onboardingmodal_onboardingmodal",
-      "label": "OnboardingModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 130,
-      "community_name": "SeasonalForecastScreen",
-      "file_type": "code",
-      "norm_label": "onboardingmodal()",
-      "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L27"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_adjustinventorystock",
-      "label": "adjustInventoryStock()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 130,
-      "community_name": "SeasonalForecastScreen",
-      "file_type": "code",
-      "norm_label": "adjustinventorystock()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L63"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_getmonthlysaleshistory",
-      "label": "getMonthlySalesHistory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 130,
-      "community_name": "SeasonalForecastScreen",
-      "file_type": "code",
-      "norm_label": "getmonthlysaleshistory()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L88"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_updatesettings",
-      "label": "updateSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 130,
-      "community_name": "SeasonalForecastScreen",
-      "file_type": "code",
-      "norm_label": "updatesettings()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L92"
     },
     {
       "id": "src_presentation_components_tutorial_mickeyglovepointer_mickeyglovepointer",
@@ -5862,16 +5958,40 @@
       "source_location": "L341"
     },
     {
+      "id": "src_app_checkout_cartitemstepper",
+      "label": "CartItemStepper()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cartitemstepper()",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L63"
+    },
+    {
       "id": "src_presentation_components_cancelexchangecreditmodal_cancelexchangecreditmodal",
       "label": "CancelExchangeCreditModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "cancelexchangecreditmodal()",
       "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
       "source_location": "L21"
+    },
+    {
+      "id": "src_presentation_components_gcashqrmodal_gcashqrmodal",
+      "label": "GcashQrModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "gcashqrmodal()",
+      "source_file": "src/presentation/components/GcashQrModal.tsx",
+      "source_location": "L34"
     },
     {
       "id": "src_presentation_components_transactiondetailmodal_transactiondetailmodal",
@@ -5879,59 +5999,47 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "transactiondetailmodal()",
       "source_file": "src/presentation/components/TransactionDetailModal.tsx",
       "source_location": "L40"
     },
     {
-      "id": "src_app_sales_saleshistoryscreen",
-      "label": "SalesHistoryScreen()",
+      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_exportbackup",
+      "label": ".exportBackup()",
       "_callable": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
+      "community_name": "DatabaseBackupService.ts",
       "file_type": "code",
-      "norm_label": "saleshistoryscreen()",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L67"
+      "norm_label": ".exportbackup()",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L65"
     },
     {
-      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodal",
-      "label": "DateRangeCalendarModal()",
+      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_getinstance",
+      "label": ".getInstance()",
       "_callable": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
+      "community_name": "DatabaseBackupService.ts",
       "file_type": "code",
-      "norm_label": "daterangecalendarmodal()",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L34"
+      "norm_label": ".getinstance()",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L54"
     },
     {
-      "id": "src_presentation_components_daterangecalendarmodal_issameday",
-      "label": "isSameDay()",
+      "id": "src_infrastructure_services_databasebackupservice_databasebackupservice_pickandrestorebackup",
+      "label": ".pickAndRestoreBackup()",
       "_callable": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
+      "community_name": "DatabaseBackupService.ts",
       "file_type": "code",
-      "norm_label": "issameday()",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L26"
-    },
-    {
-      "id": "src_presentation_components_receiptprintermodal_receiptprintermodal",
-      "label": "ReceiptPrinterModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "receiptprintermodal()",
-      "source_file": "src/presentation/components/ReceiptPrinterModal.tsx",
-      "source_location": "L30"
+      "norm_label": ".pickandrestorebackup()",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
+      "source_location": "L167"
     },
     {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_setownermasterpin",
@@ -6726,18 +6834,6 @@
       "source_location": "L16"
     },
     {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_loadsettings",
-      "label": ".loadSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "IKeyValueStorage",
-      "file_type": "code",
-      "norm_label": ".loadsettings()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L14"
-    },
-    {
       "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savecategories",
       "label": ".saveCategories()",
       "_callable": true,
@@ -6748,18 +6844,6 @@
       "norm_label": ".savecategories()",
       "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L17"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savesettings",
-      "label": ".saveSettings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "IKeyValueStorage",
-      "file_type": "code",
-      "norm_label": ".savesettings()",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L15"
     },
     {
       "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_setbiometricsenabled",
@@ -6930,172 +7014,64 @@
       "source_location": "L32"
     },
     {
-      "id": "src_app_index_posscanproductscreen",
-      "label": "PosScanProductScreen()",
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_clearalltablesforreset",
+      "label": ".clearAllTablesForReset()",
       "_callable": true,
       "_origin": "ast",
       "community": 51,
-      "community_name": "PosScanProductScreen",
+      "community_name": "SqliteDatabase",
       "file_type": "code",
-      "norm_label": "posscanproductscreen()",
-      "source_file": "src/app/index.tsx",
-      "source_location": "L33"
+      "norm_label": ".clearalltablesforreset()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L245"
     },
     {
-      "id": "src_app_notifications_notificationsscreen",
-      "label": "NotificationsScreen()",
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_constructor",
+      "label": ".constructor()",
       "_callable": true,
       "_origin": "ast",
       "community": 51,
-      "community_name": "PosScanProductScreen",
+      "community_name": "SqliteDatabase",
       "file_type": "code",
-      "norm_label": "notificationsscreen()",
-      "source_file": "src/app/notifications.tsx",
-      "source_location": "L19"
+      "norm_label": ".constructor()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L9"
     },
     {
-      "id": "src_app_products_productlistscreen",
-      "label": "ProductListScreen()",
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_initializetables",
+      "label": ".initializeTables()",
       "_callable": true,
       "_origin": "ast",
       "community": 51,
-      "community_name": "PosScanProductScreen",
+      "community_name": "SqliteDatabase",
       "file_type": "code",
-      "norm_label": "productlistscreen()",
-      "source_file": "src/app/products.tsx",
-      "source_location": "L29"
+      "norm_label": ".initializetables()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L36"
     },
     {
-      "id": "src_presentation_hooks_usetindahanstore_addproducttodatabase",
-      "label": "addProductToDatabase()",
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_ispersistentsqliteactive",
+      "label": ".isPersistentSqliteActive()",
       "_callable": true,
       "_origin": "ast",
       "community": 51,
-      "community_name": "PosScanProductScreen",
+      "community_name": "SqliteDatabase",
       "file_type": "code",
-      "norm_label": "addproducttodatabase()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L13"
+      "norm_label": ".ispersistentsqliteactive()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L32"
     },
     {
-      "id": "src_presentation_hooks_usetindahanstore_addtocart",
-      "label": "addToCart()",
+      "id": "src_infrastructure_database_sqlitedatabase_sqlitedatabase_rawdb",
+      "label": ".rawDb()",
       "_callable": true,
       "_origin": "ast",
       "community": 51,
-      "community_name": "PosScanProductScreen",
+      "community_name": "SqliteDatabase",
       "file_type": "code",
-      "norm_label": "addtocart()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L25"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_convertexchangecredittocashrefund",
-      "label": "convertExchangeCreditToCashRefund()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "PosScanProductScreen",
-      "file_type": "code",
-      "norm_label": "convertexchangecredittocashrefund()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L45"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_lockstore",
-      "label": "lockStore()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "PosScanProductScreen",
-      "file_type": "code",
-      "norm_label": "lockstore()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L128"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_markalertread",
-      "label": "markAlertRead()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "PosScanProductScreen",
-      "file_type": "code",
-      "norm_label": "markalertread()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L96"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_markallalertsread",
-      "label": "markAllAlertsRead()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "PosScanProductScreen",
-      "file_type": "code",
-      "norm_label": "markallalertsread()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L97"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_setcartitemquantity",
-      "label": "setCartItemQuantity()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "PosScanProductScreen",
-      "file_type": "code",
-      "norm_label": "setcartitemquantity()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L30"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_togglebrownoutbatterysaver",
-      "label": "toggleBrownoutBatterySaver()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "PosScanProductScreen",
-      "file_type": "code",
-      "norm_label": "togglebrownoutbatterysaver()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L124"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_undoexchangecreditreturn",
-      "label": "undoExchangeCreditReturn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "PosScanProductScreen",
-      "file_type": "code",
-      "norm_label": "undoexchangecreditreturn()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L47"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_unlockstore",
-      "label": "unlockStore()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "PosScanProductScreen",
-      "file_type": "code",
-      "norm_label": "unlockstore()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L127"
-    },
-    {
-      "id": "src_presentation_hooks_usetindahanstore_updateproductdetails",
-      "label": "updateProductDetails()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "PosScanProductScreen",
-      "file_type": "code",
-      "norm_label": "updateproductdetails()",
-      "source_file": "src/presentation/hooks/useTindahanStore.ts",
-      "source_location": "L21"
+      "norm_label": ".rawdb()",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "source_location": "L28"
     },
     {
       "id": "src_domain_strategies_seasonalforecastengine_baseseasonalstrategy_computeuncensorednetdemand",
@@ -7182,6 +7158,18 @@
       "source_location": "L337"
     },
     {
+      "id": "src_app_checkout_checkoutnewsalescreen",
+      "label": "CheckoutNewSaleScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "useLicensing.ts",
+      "file_type": "code",
+      "norm_label": "checkoutnewsalescreen()",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L172"
+    },
+    {
       "id": "src_presentation_components_licensinggate_licensinggate",
       "label": "LicensingGate()",
       "_callable": true,
@@ -7192,6 +7180,30 @@
       "norm_label": "licensinggate()",
       "source_file": "src/presentation/components/LicensingGate.tsx",
       "source_location": "L22"
+    },
+    {
+      "id": "src_presentation_components_licensinggate_uselicensinggate",
+      "label": "useLicensingGate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "useLicensing.ts",
+      "file_type": "code",
+      "norm_label": "uselicensinggate()",
+      "source_file": "src/presentation/components/LicensingGate.tsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_presentation_components_onboardingmodal_onboardingmodal",
+      "label": "OnboardingModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "useLicensing.ts",
+      "file_type": "code",
+      "norm_label": "onboardingmodal()",
+      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "source_location": "L27"
     },
     {
       "id": "src_presentation_components_trialbanner_trialbanner",
@@ -7576,6 +7588,54 @@
       "norm_label": ".sharereceipttext()",
       "source_file": "src/infrastructure/services/BluetoothThermalPrinterService.ts",
       "source_location": "L32"
+    },
+    {
+      "id": "src_app_layout_tablayout",
+      "label": "TabLayout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "tablayout()",
+      "source_file": "src/app/_layout.tsx",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_components_animated_icon_animatedicon",
+      "label": "AnimatedIcon()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "animatedicon()",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L88"
+    },
+    {
+      "id": "src_components_animated_icon_animatedsplashoverlay",
+      "label": "AnimatedSplashOverlay()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "animatedsplashoverlay()",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_animated_icon_animatedsplashoverlay_prepareanddisplaysplash",
+      "label": "prepareAndDisplaySplash()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "prepareanddisplaysplash()",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L14"
     },
     {
       "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_constructor",
@@ -8142,136 +8202,64 @@
       "source_location": "L74"
     },
     {
-      "id": "src_components_animated_icon_animatedicon",
-      "label": "AnimatedIcon()",
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_loadsettings",
+      "label": ".loadSettings()",
       "_callable": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "_layout.tsx",
+      "community_name": "KeyValueStorage.ts",
       "file_type": "code",
-      "norm_label": "animatedicon()",
-      "source_file": "src/components/animated-icon.tsx",
-      "source_location": "L88"
-    },
-    {
-      "id": "src_components_animated_icon_animatedsplashoverlay",
-      "label": "AnimatedSplashOverlay()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "animatedsplashoverlay()",
-      "source_file": "src/components/animated-icon.tsx",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_components_animated_icon_animatedsplashoverlay_prepareanddisplaysplash",
-      "label": "prepareAndDisplaySplash()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "prepareanddisplaysplash()",
-      "source_file": "src/components/animated-icon.tsx",
+      "norm_label": ".loadsettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L14"
     },
     {
-      "id": "src_components_app_tabs_apptabs",
-      "label": "AppTabs()",
+      "id": "src_infrastructure_storage_keyvaluestorage_ikeyvaluestorage_savesettings",
+      "label": ".saveSettings()",
       "_callable": true,
       "_origin": "ast",
       "community": 80,
-      "community_name": "_layout.tsx",
+      "community_name": "KeyValueStorage.ts",
       "file_type": "code",
-      "norm_label": "apptabs()",
-      "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L243"
-    },
-    {
-      "id": "src_components_app_tabs_customtindahantabbar",
-      "label": "CustomTindahanTabBar()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "customtindahantabbar()",
-      "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_presentation_components_appupdateprompt_appupdatemenuitem",
-      "label": "AppUpdateMenuItem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "appupdatemenuitem()",
-      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
-      "source_location": "L248"
-    },
-    {
-      "id": "src_presentation_components_appupdateprompt_appupdateprompt",
-      "label": "AppUpdatePrompt()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "appupdateprompt()",
-      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstoreprovider",
-      "label": "TindahanStoreProvider()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "tindahanstoreprovider()",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider_usetindahanstoreservice",
-      "label": "useTindahanStoreService()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "usetindahanstoreservice()",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "norm_label": ".savesettings()",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L15"
     },
     {
-      "id": "src_application_tindahanstoreservice_tindahanstoreservice_getexpiringproducts",
-      "label": ".getExpiringProducts()",
+      "id": "src_presentation_components_confirmationmodal_confirmationmodal",
+      "label": "ConfirmationModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
-      "norm_label": ".getexpiringproducts()",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L3644"
+      "norm_label": "confirmationmodal()",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L118"
     },
     {
-      "id": "src_application_tindahanstoreservice_tindahanstoreservice_getproductssnapshot",
-      "label": ".getProductsSnapshot()",
+      "id": "src_presentation_components_productstockmanagemodal_productstockmanagemodal",
+      "label": "ProductStockManageModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
-      "norm_label": ".getproductssnapshot()",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L1346"
+      "norm_label": "productstockmanagemodal()",
+      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
+      "source_location": "L42"
+    },
+    {
+      "id": "src_presentation_components_productthumbnail_productthumbnail",
+      "label": "ProductThumbnail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "productthumbnail()",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L13"
     },
     {
       "id": "src_presentation_components_unitselectionmodal_unitselectiondialogcontent",
@@ -8279,11 +8267,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "unitselectiondialogcontent()",
       "source_file": "src/presentation/components/UnitSelectionModal.tsx",
       "source_location": "L72"
+    },
+    {
+      "id": "src_presentation_components_unitselectionmodal_unitselectionmodal",
+      "label": "UnitSelectionModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "unitselectionmodal()",
+      "source_file": "src/presentation/components/UnitSelectionModal.tsx",
+      "source_location": "L30"
     },
     {
       "id": "scripts_reset_project_movedirectories",
@@ -8442,6 +8442,83 @@
       "source_location": "L4"
     },
     {
+      "id": "src_app_layout",
+      "label": "_layout.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "_layout.tsx",
+      "source_file": "src/app/_layout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_app_tabs",
+      "label": "app-tabs.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "app-tabs.tsx",
+      "source_file": "src/components/app-tabs.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_app_tabs_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/components/app-tabs.tsx",
+      "source_location": "L268"
+    },
+    {
+      "id": "src_infrastructure_container_appupdateservice",
+      "label": "appUpdateService",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "appupdateservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_infrastructure_container_tindahanstoreservice",
+      "label": "tindahanStoreService",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "tindahanstoreservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_presentation_components_appupdateprompt",
+      "label": "AppUpdatePrompt.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "appupdateprompt.tsx",
+      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_appupdateprompt_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
+      "source_location": "L288"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore",
       "label": "useTindahanStore.ts",
       "_origin": "ast",
@@ -8451,6 +8528,28 @@
       "norm_label": "usetindahanstore.ts",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider",
+      "label": "TindahanStoreProvider.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "tindahanstoreprovider.tsx",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstorecontext",
+      "label": "TindahanStoreContext",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "tindahanstorecontext",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L5"
     },
     {
       "id": "scripts_render_shotstack_ad",
@@ -8523,7 +8622,7 @@
       "label": "explore.tsx",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "explore.tsx",
       "source_file": "src/app/explore.tsx",
@@ -8534,7 +8633,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/explore.tsx",
@@ -8545,7 +8644,7 @@
       "label": "history.tsx",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "history.tsx",
       "source_file": "src/app/history.tsx",
@@ -8556,51 +8655,95 @@
       "label": "styles",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/history.tsx",
       "source_location": "L902"
     },
     {
-      "id": "src_app_utang",
-      "label": "utang.tsx",
+      "id": "src_app_sales",
+      "label": "sales.tsx",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
-      "norm_label": "utang.tsx",
-      "source_file": "src/app/utang.tsx",
+      "norm_label": "sales.tsx",
+      "source_file": "src/app/sales.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_app_utang_styles",
+      "id": "src_app_sales_gastos_categories",
+      "label": "GASTOS_CATEGORIES",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "gastos_categories",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L59"
+    },
+    {
+      "id": "src_app_sales_panukli_categories",
+      "label": "PANUKLI_CATEGORIES",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "panukli_categories",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L52"
+    },
+    {
+      "id": "src_app_sales_periods",
+      "label": "PERIODS",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "periods",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L50"
+    },
+    {
+      "id": "src_app_sales_styles",
       "label": "styles",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "styles",
-      "source_file": "src/app/utang.tsx",
-      "source_location": "L1277"
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L1847"
     },
     {
-      "id": "src_presentation_components_screensafeareaview",
-      "label": "ScreenSafeAreaView.tsx",
+      "id": "src_presentation_components_daterangecalendarmodal",
+      "label": "DateRangeCalendarModal.tsx",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
-      "norm_label": "screensafeareaview.tsx",
-      "source_file": "src/presentation/components/ScreenSafeAreaView.tsx",
+      "norm_label": "daterangecalendarmodal.tsx",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
       "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_daterangecalendarmodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 106,
+      "community_name": "sales.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L770"
     },
     {
       "id": "src_presentation_localization_i18n",
       "label": "i18n.ts",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "i18n.ts",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -8611,7 +8754,7 @@
       "label": "dictionaries",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "dictionaries",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -8622,7 +8765,7 @@
       "label": "en",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "en",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -8633,7 +8776,7 @@
       "label": "taglish",
       "_origin": "ast",
       "community": 106,
-      "community_name": "history.tsx",
+      "community_name": "sales.tsx",
       "file_type": "code",
       "norm_label": "taglish",
       "source_file": "src/presentation/localization/i18n.ts",
@@ -8684,37 +8827,26 @@
       "source_location": "L1"
     },
     {
-      "id": "app_expo_plugins",
-      "label": "plugins",
+      "id": "src_presentation_components_storealertsmodal",
+      "label": "StoreAlertsModal.tsx",
       "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
       "file_type": "code",
-      "norm_label": "plugins",
-      "source_file": "app.json",
-      "source_location": "L45"
-    },
-    {
-      "id": "src_infrastructure_database_sqlitedatabase",
-      "label": "SqliteDatabase.ts",
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": "sqlitedatabase.ts",
-      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
+      "norm_label": "storealertsmodal.tsx",
+      "source_file": "src/presentation/components/StoreAlertsModal.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_infrastructure_services_databasebackupservice",
-      "label": "DatabaseBackupService.ts",
+      "id": "src_presentation_components_storealertsmodal_styles",
+      "label": "styles",
       "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
       "file_type": "code",
-      "norm_label": "databasebackupservice.ts",
-      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
-      "source_location": "L1"
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/StoreAlertsModal.tsx",
+      "source_location": "L223"
     },
     {
       "id": "src_infrastructure_services_licensingservice",
@@ -8737,50 +8869,6 @@
       "norm_label": "max_trial_sales",
       "source_file": "src/infrastructure/services/LicensingService.ts",
       "source_location": "L67"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage",
-      "label": "KeyValueStorage.ts",
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": "keyvaluestorage.ts",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_storage_keyvaluestorage_appkeyvaluestorage",
-      "label": "appKeyValueStorage",
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "code",
-      "norm_label": "appkeyvaluestorage",
-      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
-      "source_location": "L388"
-    },
-    {
-      "id": "ref_expo_audio",
-      "label": "expo-audio",
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "concept",
-      "norm_label": "expo-audio",
-      "source_file": "app.json",
-      "source_location": "L45"
-    },
-    {
-      "id": "ref_expo_sqlite",
-      "label": "expo-sqlite",
-      "_origin": "ast",
-      "community": 108,
-      "community_name": "LicensingService.ts",
-      "file_type": "concept",
-      "norm_label": "expo-sqlite",
-      "source_file": "app.json",
-      "source_location": "L45"
     },
     {
       "id": "supabase_migrations_20261021000003_secure_licensing_dedup",
@@ -8827,26 +8915,26 @@
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_components_gcashqrmodal",
-      "label": "GcashQrModal.tsx",
+      "id": "src_presentation_components_floatingtoast",
+      "label": "FloatingToast.tsx",
       "_origin": "ast",
       "community": 11,
       "community_name": "settings.tsx",
       "file_type": "code",
-      "norm_label": "gcashqrmodal.tsx",
-      "source_file": "src/presentation/components/GcashQrModal.tsx",
+      "norm_label": "floatingtoast.tsx",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_components_gcashqrmodal_styles",
+      "id": "src_presentation_components_floatingtoast_styles",
       "label": "styles",
       "_origin": "ast",
       "community": 11,
       "community_name": "settings.tsx",
       "file_type": "code",
       "norm_label": "styles",
-      "source_file": "src/presentation/components/GcashQrModal.tsx",
-      "source_location": "L385"
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L189"
     },
     {
       "id": "src_presentation_components_pinchallengemodal",
@@ -8893,17 +8981,6 @@
       "source_location": "L248"
     },
     {
-      "id": "ref_expo_sharing",
-      "label": "expo-sharing",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "settings.tsx",
-      "file_type": "concept",
-      "norm_label": "expo-sharing",
-      "source_file": "app.json",
-      "source_location": "L45"
-    },
-    {
       "id": "supabase_migrations_20261021000004_flexible_trial_duration",
       "label": "20261021000004_flexible_trial_duration.sql",
       "_origin": "ast",
@@ -8915,55 +8992,11 @@
       "source_location": null
     },
     {
-      "id": "src_app_checkout",
-      "label": "checkout.tsx",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "checkout.tsx",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_checkout_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L1598"
-    },
-    {
-      "id": "src_app_products",
-      "label": "products.tsx",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "products.tsx",
-      "source_file": "src/app/products.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_products_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/products.tsx",
-      "source_location": "L692"
-    },
-    {
       "id": "src_domain_value_objects_money",
       "label": "Money.ts",
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
       "norm_label": "money.ts",
       "source_file": "src/domain/value-objects/Money.ts",
@@ -8974,7 +9007,7 @@
       "label": "phpCurrencyFormatter",
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
       "norm_label": "phpcurrencyformatter",
       "source_file": "src/domain/value-objects/Money.ts",
@@ -8985,7 +9018,7 @@
       "label": "WeightQuantityModal.tsx",
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
       "norm_label": "weightquantitymodal.tsx",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -8996,7 +9029,7 @@
       "label": "PRESET_PESO_AMOUNTS",
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
       "norm_label": "preset_peso_amounts",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -9007,7 +9040,7 @@
       "label": "PRESET_WEIGHTS",
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
       "norm_label": "preset_weights",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
@@ -9018,22 +9051,11 @@
       "label": "styles",
       "_origin": "ast",
       "community": 111,
-      "community_name": "checkout.tsx",
+      "community_name": "Money",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
       "source_location": "L444"
-    },
-    {
-      "id": "src_presentation_hooks_useidempotentsubmit",
-      "label": "useIdempotentSubmit.ts",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "useidempotentsubmit.ts",
-      "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
-      "source_location": "L1"
     },
     {
       "id": "package_dependencies_expo_system_ui",
@@ -9102,17 +9124,6 @@
       "source_location": "L41"
     },
     {
-      "id": "ref_expo_notifications",
-      "label": "expo-notifications",
-      "_origin": "ast",
-      "community": 116,
-      "community_name": "ExpoLocalNotificationScheduler",
-      "file_type": "concept",
-      "norm_label": "expo-notifications",
-      "source_file": "app.json",
-      "source_location": "L45"
-    },
-    {
       "id": "src_application_ilocalnotificationscheduler",
       "label": "ILocalNotificationScheduler.ts",
       "_origin": "ast",
@@ -9139,7 +9150,7 @@
       "label": "more.tsx",
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "more.tsx",
       "source_file": "src/app/more.tsx",
@@ -9150,18 +9161,40 @@
       "label": "styles",
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/more.tsx",
       "source_location": "L457"
     },
     {
+      "id": "src_app_utang",
+      "label": "utang.tsx",
+      "_origin": "ast",
+      "community": 118,
+      "community_name": "utang.tsx",
+      "file_type": "code",
+      "norm_label": "utang.tsx",
+      "source_file": "src/app/utang.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_utang_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 118,
+      "community_name": "utang.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/utang.tsx",
+      "source_location": "L1277"
+    },
+    {
       "id": "src_presentation_components_confirmationmodal",
       "label": "ConfirmationModal.tsx",
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "confirmationmodal.tsx",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -9172,7 +9205,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
@@ -9183,11 +9216,22 @@
       "label": "THEMES",
       "_origin": "ast",
       "community": 118,
-      "community_name": "ConfirmationModal.tsx",
+      "community_name": "utang.tsx",
       "file_type": "code",
       "norm_label": "themes",
       "source_file": "src/presentation/components/ConfirmationModal.tsx",
       "source_location": "L61"
+    },
+    {
+      "id": "src_presentation_components_screensafeareaview",
+      "label": "ScreenSafeAreaView.tsx",
+      "_origin": "ast",
+      "community": 118,
+      "community_name": "utang.tsx",
+      "file_type": "code",
+      "norm_label": "screensafeareaview.tsx",
+      "source_file": "src/presentation/components/ScreenSafeAreaView.tsx",
+      "source_location": "L1"
     },
     {
       "id": "entry",
@@ -9256,33 +9300,11 @@
       "source_location": "L75"
     },
     {
-      "id": "src_app_index",
-      "label": "index.tsx",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "index.tsx",
-      "source_file": "src/app/index.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_index_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/index.tsx",
-      "source_location": "L843"
-    },
-    {
       "id": "src_app_inventory",
       "label": "inventory.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "inventory.tsx",
       "source_file": "src/app/inventory.tsx",
@@ -9293,7 +9315,7 @@
       "label": "STOCK_FILTERS",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "stock_filters",
       "source_file": "src/app/inventory.tsx",
@@ -9304,7 +9326,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
@@ -9315,7 +9337,7 @@
       "label": "+not-found.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "+not-found.tsx",
       "source_file": "src/app/+not-found.tsx",
@@ -9326,18 +9348,40 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/+not-found.tsx",
       "source_location": "L25"
     },
     {
+      "id": "src_app_products",
+      "label": "products.tsx",
+      "_origin": "ast",
+      "community": 120,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "products.tsx",
+      "source_file": "src/app/products.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_products_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 120,
+      "community_name": "inventory.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/products.tsx",
+      "source_location": "L692"
+    },
+    {
       "id": "src_presentation_components_barcodeinputfield",
       "label": "BarcodeInputField.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodeinputfield.tsx",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
@@ -9348,7 +9392,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
@@ -9359,7 +9403,7 @@
       "label": "BarcodeScannerViewfinder.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodescannerviewfinder.tsx",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
@@ -9370,66 +9414,33 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L394"
     },
     {
-      "id": "src_presentation_components_productstockmanagemodal",
-      "label": "ProductStockManageModal.tsx",
+      "id": "src_presentation_hooks_useidempotentsubmit",
+      "label": "useIdempotentSubmit.ts",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
-      "norm_label": "productstockmanagemodal.tsx",
-      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
+      "norm_label": "useidempotentsubmit.ts",
+      "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_productstockmanagemodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
-      "source_location": "L662"
-    },
-    {
-      "id": "src_presentation_components_productthumbnail",
-      "label": "ProductThumbnail.tsx",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "productthumbnail.tsx",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_productthumbnail_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "index.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/ProductThumbnail.tsx",
-      "source_location": "L65"
     },
     {
       "id": "ref_expo_router",
       "label": "expo-router",
       "_origin": "ast",
       "community": 120,
-      "community_name": "index.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "concept",
       "norm_label": "expo-router",
       "source_file": "app.json",
-      "source_location": "L45"
+      "source_location": "L46"
     },
     {
       "id": "docs_apk_updates",
@@ -9579,28 +9590,6 @@
       "norm_label": "generate_inventory_mockups.py",
       "source_file": "scripts/generate_inventory_mockups.py",
       "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_storealertsmodal",
-      "label": "StoreAlertsModal.tsx",
-      "_origin": "ast",
-      "community": 125,
-      "community_name": "StoreAlert",
-      "file_type": "code",
-      "norm_label": "storealertsmodal.tsx",
-      "source_file": "src/presentation/components/StoreAlertsModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_storealertsmodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 125,
-      "community_name": "StoreAlert",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/StoreAlertsModal.tsx",
-      "source_location": "L223"
     },
     {
       "id": "index",
@@ -10582,11 +10571,33 @@
       "source_location": "L40"
     },
     {
+      "id": "src_app_checkout",
+      "label": "checkout.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "checkout.tsx",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_checkout_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L1598"
+    },
+    {
       "id": "src_presentation_components_cancelexchangecreditmodal",
       "label": "CancelExchangeCreditModal.tsx",
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "cancelexchangecreditmodal.tsx",
       "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
@@ -10597,18 +10608,40 @@
       "label": "styles",
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
       "source_location": "L138"
     },
     {
+      "id": "src_presentation_components_gcashqrmodal",
+      "label": "GcashQrModal.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "gcashqrmodal.tsx",
+      "source_file": "src/presentation/components/GcashQrModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_gcashqrmodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/GcashQrModal.tsx",
+      "source_location": "L385"
+    },
+    {
       "id": "src_presentation_components_transactiondetailmodal",
       "label": "TransactionDetailModal.tsx",
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "transactiondetailmodal.tsx",
       "source_file": "src/presentation/components/TransactionDetailModal.tsx",
@@ -10619,110 +10652,55 @@
       "label": "styles",
       "_origin": "ast",
       "community": 2,
-      "community_name": "TransactionDetailModal.tsx",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/TransactionDetailModal.tsx",
       "source_location": "L697"
     },
     {
-      "id": "src_app_sales",
-      "label": "sales.tsx",
+      "id": "ref_expo_sharing",
+      "label": "expo-sharing",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "checkout.tsx",
+      "file_type": "concept",
+      "norm_label": "expo-sharing",
+      "source_file": "app.json",
+      "source_location": "L46"
+    },
+    {
+      "id": "src_infrastructure_database_sqlitedatabase",
+      "label": "SqliteDatabase.ts",
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
+      "community_name": "DatabaseBackupService.ts",
       "file_type": "code",
-      "norm_label": "sales.tsx",
-      "source_file": "src/app/sales.tsx",
+      "norm_label": "sqlitedatabase.ts",
+      "source_file": "src/infrastructure/database/SqliteDatabase.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_app_sales_gastos_categories",
-      "label": "GASTOS_CATEGORIES",
+      "id": "src_infrastructure_services_databasebackupservice",
+      "label": "DatabaseBackupService.ts",
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
+      "community_name": "DatabaseBackupService.ts",
       "file_type": "code",
-      "norm_label": "gastos_categories",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L59"
-    },
-    {
-      "id": "src_app_sales_panukli_categories",
-      "label": "PANUKLI_CATEGORIES",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "panukli_categories",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L52"
-    },
-    {
-      "id": "src_app_sales_periods",
-      "label": "PERIODS",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "periods",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L50"
-    },
-    {
-      "id": "src_app_sales_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L1847"
-    },
-    {
-      "id": "src_presentation_components_daterangecalendarmodal",
-      "label": "DateRangeCalendarModal.tsx",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "daterangecalendarmodal.tsx",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "norm_label": "databasebackupservice.ts",
+      "source_file": "src/infrastructure/services/DatabaseBackupService.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_components_daterangecalendarmodal_styles",
-      "label": "styles",
+      "id": "ref_expo_sqlite",
+      "label": "expo-sqlite",
       "_origin": "ast",
       "community": 20,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L770"
-    },
-    {
-      "id": "src_presentation_components_floatingtoast",
-      "label": "FloatingToast.tsx",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "floatingtoast.tsx",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_floatingtoast_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L189"
+      "community_name": "DatabaseBackupService.ts",
+      "file_type": "concept",
+      "norm_label": "expo-sqlite",
+      "source_file": "app.json",
+      "source_location": "L46"
     },
     {
       "id": "package_dependencies_expo_image",
@@ -11978,6 +11956,17 @@
       "source_location": "L19"
     },
     {
+      "id": "app_android_versioncode",
+      "label": "versionCode",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "expo",
+      "file_type": "code",
+      "norm_label": "versioncode",
+      "source_file": "app.json",
+      "source_location": "L40"
+    },
+    {
       "id": "app_eas_projectid",
       "label": "projectId",
       "_origin": "ast",
@@ -11986,7 +11975,7 @@
       "file_type": "code",
       "norm_label": "projectid",
       "source_file": "app.json",
-      "source_location": "L76"
+      "source_location": "L77"
     },
     {
       "id": "app_experiments_reactcompiler",
@@ -11997,7 +11986,7 @@
       "file_type": "code",
       "norm_label": "reactcompiler",
       "source_file": "app.json",
-      "source_location": "L71"
+      "source_location": "L72"
     },
     {
       "id": "app_experiments_typedroutes",
@@ -12008,7 +11997,7 @@
       "file_type": "code",
       "norm_label": "typedroutes",
       "source_file": "app.json",
-      "source_location": "L70"
+      "source_location": "L71"
     },
     {
       "id": "app_expo",
@@ -12041,7 +12030,7 @@
       "file_type": "code",
       "norm_label": "backgroundcolor",
       "source_file": "app.json",
-      "source_location": "L80"
+      "source_location": "L81"
     },
     {
       "id": "app_expo_experiments",
@@ -12052,7 +12041,7 @@
       "file_type": "code",
       "norm_label": "experiments",
       "source_file": "app.json",
-      "source_location": "L69"
+      "source_location": "L70"
     },
     {
       "id": "app_expo_extra",
@@ -12063,7 +12052,7 @@
       "file_type": "code",
       "norm_label": "extra",
       "source_file": "app.json",
-      "source_location": "L73"
+      "source_location": "L74"
     },
     {
       "id": "app_expo_icon",
@@ -12118,7 +12107,7 @@
       "file_type": "code",
       "norm_label": "owner",
       "source_file": "app.json",
-      "source_location": "L79"
+      "source_location": "L80"
     },
     {
       "id": "app_expo_scheme",
@@ -12184,7 +12173,7 @@
       "file_type": "code",
       "norm_label": "web",
       "source_file": "app.json",
-      "source_location": "L41"
+      "source_location": "L42"
     },
     {
       "id": "app_extra_eas",
@@ -12195,7 +12184,7 @@
       "file_type": "code",
       "norm_label": "eas",
       "source_file": "app.json",
-      "source_location": "L75"
+      "source_location": "L76"
     },
     {
       "id": "app_extra_router",
@@ -12206,7 +12195,7 @@
       "file_type": "code",
       "norm_label": "router",
       "source_file": "app.json",
-      "source_location": "L74"
+      "source_location": "L75"
     },
     {
       "id": "app_ios_icon",
@@ -12261,7 +12250,7 @@
       "file_type": "code",
       "norm_label": "favicon",
       "source_file": "app.json",
-      "source_location": "L43"
+      "source_location": "L44"
     },
     {
       "id": "app_web_output",
@@ -12272,7 +12261,7 @@
       "file_type": "code",
       "norm_label": "output",
       "source_file": "app.json",
-      "source_location": "L42"
+      "source_location": "L43"
     },
     {
       "id": "ref_android_permission_camera",
@@ -13461,6 +13450,17 @@
       "norm_label": "\u23f1\ufe0f timeline overview (under 3 minutes)",
       "source_file": "marketing/sales-pitches/merchant-onboarding-script.md",
       "source_location": "L7"
+    },
+    {
+      "id": "src_application_productonboardingservice",
+      "label": "ProductOnboardingService.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "productonboardingservice.ts",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L1"
     },
     {
       "id": "src_infrastructure_container",
@@ -16546,6 +16546,39 @@
       "source_location": "L14"
     },
     {
+      "id": "app_expo_plugins",
+      "label": "plugins",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "plugins",
+      "source_file": "app.json",
+      "source_location": "L46"
+    },
+    {
+      "id": "src_components_animated_icon",
+      "label": "animated-icon.tsx",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "animated-icon.tsx",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_animated_icon_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L100"
+    },
+    {
       "id": "src_infrastructure_services_barcodebeepdatauri",
       "label": "barcodeBeepDataUri.ts",
       "_origin": "ast",
@@ -16588,6 +16621,39 @@
       "norm_label": "rfc-2397",
       "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
       "source_location": "L10"
+    },
+    {
+      "id": "ref_expo_asset",
+      "label": "expo-asset",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "concept",
+      "norm_label": "expo-asset",
+      "source_file": "app.json",
+      "source_location": "L46"
+    },
+    {
+      "id": "ref_expo_audio",
+      "label": "expo-audio",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "concept",
+      "norm_label": "expo-audio",
+      "source_file": "app.json",
+      "source_location": "L46"
+    },
+    {
+      "id": "ref_expo_notifications",
+      "label": "expo-notifications",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "concept",
+      "norm_label": "expo-notifications",
+      "source_file": "app.json",
+      "source_location": "L46"
     },
     {
       "id": "requirements_traceability_matrix",
@@ -17531,6 +17597,39 @@
       "source_location": "L1"
     },
     {
+      "id": "src_domain_repositories_iproductrepository",
+      "label": "IProductRepository.ts",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": "iproductrepository.ts",
+      "source_file": "src/domain/repositories/IProductRepository.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_domain_value_objects_barcode",
+      "label": "Barcode.ts",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": "barcode.ts",
+      "source_file": "src/domain/value-objects/Barcode.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_repositories_inmemoryproductrepository",
+      "label": "InMemoryProductRepository.ts",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "Barcode",
+      "file_type": "code",
+      "norm_label": "inmemoryproductrepository.ts",
+      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "package_dependencies_expo_local_authentication",
       "label": "expo-local-authentication",
       "_origin": "ast",
@@ -17586,136 +17685,26 @@
       "source_location": "L1"
     },
     {
-      "id": "src_app_layout",
-      "label": "_layout.tsx",
+      "id": "src_infrastructure_storage_keyvaluestorage",
+      "label": "KeyValueStorage.ts",
       "_origin": "ast",
       "community": 80,
-      "community_name": "_layout.tsx",
+      "community_name": "KeyValueStorage.ts",
       "file_type": "code",
-      "norm_label": "_layout.tsx",
-      "source_file": "src/app/_layout.tsx",
+      "norm_label": "keyvaluestorage.ts",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_components_animated_icon",
-      "label": "animated-icon.tsx",
+      "id": "src_infrastructure_storage_keyvaluestorage_appkeyvaluestorage",
+      "label": "appKeyValueStorage",
       "_origin": "ast",
       "community": 80,
-      "community_name": "_layout.tsx",
+      "community_name": "KeyValueStorage.ts",
       "file_type": "code",
-      "norm_label": "animated-icon.tsx",
-      "source_file": "src/components/animated-icon.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_animated_icon_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/components/animated-icon.tsx",
-      "source_location": "L100"
-    },
-    {
-      "id": "src_components_app_tabs",
-      "label": "app-tabs.tsx",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "app-tabs.tsx",
-      "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_app_tabs_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L268"
-    },
-    {
-      "id": "src_infrastructure_container_appupdateservice",
-      "label": "appUpdateService",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "appupdateservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "src_infrastructure_container_tindahanstoreservice",
-      "label": "tindahanStoreService",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "tindahanstoreservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_presentation_components_appupdateprompt",
-      "label": "AppUpdatePrompt.tsx",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "appupdateprompt.tsx",
-      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_appupdateprompt_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
-      "source_location": "L288"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider",
-      "label": "TindahanStoreProvider.tsx",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "tindahanstoreprovider.tsx",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstorecontext",
-      "label": "TindahanStoreContext",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "tindahanstorecontext",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L5"
-    },
-    {
-      "id": "ref_expo_asset",
-      "label": "expo-asset",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_layout.tsx",
-      "file_type": "concept",
-      "norm_label": "expo-asset",
-      "source_file": "app.json",
-      "source_location": "L45"
+      "norm_label": "appkeyvaluestorage",
+      "source_file": "src/infrastructure/storage/KeyValueStorage.ts",
+      "source_location": "L388"
     },
     {
       "id": "package_dependencies_expo_ui",
@@ -17860,66 +17849,88 @@
       "source_location": "L10"
     },
     {
-      "id": "src_application_productonboardingservice",
-      "label": "ProductOnboardingService.ts",
+      "id": "src_app_index",
+      "label": "index.tsx",
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
-      "norm_label": "productonboardingservice.ts",
-      "source_file": "src/application/ProductOnboardingService.ts",
+      "norm_label": "index.tsx",
+      "source_file": "src/app/index.tsx",
       "source_location": "L1"
+    },
+    {
+      "id": "src_app_index_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/index.tsx",
+      "source_location": "L843"
     },
     {
       "id": "src_domain_entities_product",
       "label": "Product.ts",
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "product.ts",
       "source_file": "src/domain/entities/Product.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_domain_repositories_iproductrepository",
-      "label": "IProductRepository.ts",
+      "id": "src_presentation_components_productstockmanagemodal",
+      "label": "ProductStockManageModal.tsx",
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
-      "norm_label": "iproductrepository.ts",
-      "source_file": "src/domain/repositories/IProductRepository.ts",
+      "norm_label": "productstockmanagemodal.tsx",
+      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_domain_value_objects_barcode",
-      "label": "Barcode.ts",
+      "id": "src_presentation_components_productstockmanagemodal_styles",
+      "label": "styles",
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
-      "norm_label": "barcode.ts",
-      "source_file": "src/domain/value-objects/Barcode.ts",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/ProductStockManageModal.tsx",
+      "source_location": "L662"
+    },
+    {
+      "id": "src_presentation_components_productthumbnail",
+      "label": "ProductThumbnail.tsx",
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "index.tsx",
+      "file_type": "code",
+      "norm_label": "productthumbnail.tsx",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_infrastructure_repositories_inmemoryproductrepository",
-      "label": "InMemoryProductRepository.ts",
+      "id": "src_presentation_components_productthumbnail_styles",
+      "label": "styles",
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
-      "norm_label": "inmemoryproductrepository.ts",
-      "source_file": "src/infrastructure/repositories/InMemoryProductRepository.ts",
-      "source_location": "L1"
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/ProductThumbnail.tsx",
+      "source_location": "L65"
     },
     {
       "id": "src_presentation_components_unitselectionmodal",
       "label": "UnitSelectionModal.tsx",
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "unitselectionmodal.tsx",
       "source_file": "src/presentation/components/UnitSelectionModal.tsx",
@@ -17930,7 +17941,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 83,
-      "community_name": "Product.ts",
+      "community_name": "index.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/UnitSelectionModal.tsx",
@@ -25586,7 +25597,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "app.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -25598,7 +25609,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "app.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -25610,7 +25621,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "app.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -25622,7 +25633,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "app.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -25634,7 +25645,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "app.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -25646,7 +25657,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "app.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -33755,7 +33766,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
@@ -33766,7 +33777,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -33793,17 +33804,6 @@
     },
     {
       "source": "app_expo",
-      "target": "app_expo_experiments",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app.json",
-      "source_location": "L69",
-      "weight": 1.0
-    },
-    {
-      "source": "app_expo",
       "target": "app_expo_icon",
       "relation": "contains",
       "_origin": "ast",
@@ -33815,24 +33815,24 @@
     },
     {
       "source": "app_expo",
+      "target": "app_expo_experiments",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app.json",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "app_expo",
       "target": "app_expo_extra",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L73",
-      "weight": 1.0
-    },
-    {
-      "source": "app_expo",
-      "target": "app_expo_owner",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app.json",
-      "source_location": "L79",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -33848,13 +33848,24 @@
     },
     {
       "source": "app_expo",
-      "target": "app_expo_backgroundcolor",
+      "target": "app_expo_owner",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
       "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "app_expo",
+      "target": "app_expo_backgroundcolor",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app.json",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -33935,6 +33946,17 @@
       "weight": 1.0
     },
     {
+      "source": "app_expo_android",
+      "target": "app_android_versioncode",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app.json",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
       "source": "app_expo_experiments",
       "target": "app_experiments_typedroutes",
       "relation": "contains",
@@ -33942,7 +33964,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L70",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
@@ -33953,7 +33975,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L71",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -33964,7 +33986,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -33975,7 +33997,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L75",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -34030,7 +34052,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L42",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -34041,7 +34063,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -34052,7 +34074,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app.json",
-      "source_location": "L76",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -49441,5 +49463,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "fcb6a42138e936e9c59b7a9dab4e1e6f8597284d"
+  "built_at_commit": "1044319afdb4c5e401b7048e5a61312fc49c1981"
 }
