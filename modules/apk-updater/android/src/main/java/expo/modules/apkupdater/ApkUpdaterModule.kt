@@ -46,17 +46,21 @@ class ApkUpdaterModule : Module() {
         require(version > code(installed()) && version % 1.0 == 0.0) { "Update version is invalid." }
         require(size > 0 && size <= 1073741824 && size % 1.0 == 0.0) { "Invalid APK size." }
         val source = URL(url)
-        require(source.protocol == "https" && source.host == "github.com" && source.userInfo == null && source.port == -1 &&
-          source.path.startsWith("/dleiszarjeisalther/startup-tindahan-helper/releases/download/") && source.path.endsWith(".apk")) { "Invalid APK URL." }
+        val isGithub = source.protocol == "https" && source.host == "github.com" && source.userInfo == null && source.port == -1 &&
+          source.path.startsWith("/dleiszarjeisalther/startup-tindahan-helper/releases/download/") && source.path.endsWith(".apk")
+        val isWebsite = source.protocol == "https" && (source.host == "tindahanhelper.wuaze.com" || source.host.endsWith(".wuaze.com")) &&
+          source.userInfo == null && source.port == -1 && source.path.endsWith(".apk")
+        require(isGithub || isWebsite) { "Invalid APK URL." }
         partial.delete()
         apk().delete()
         check(folder().usableSpace > size.toLong() * 2 + 50 * 1024 * 1024) { "Not enough storage. Free some space and retry." }
         var next = source
         var connection: HttpURLConnection? = null
         try {
+          val allowedHosts = setOf("github.com", "release-assets.githubusercontent.com", "objects.githubusercontent.com", "tindahanhelper.wuaze.com")
           for (redirect in 0..5) {
             require(next.protocol == "https" && next.userInfo == null && next.port == -1 &&
-              next.host in setOf("github.com", "release-assets.githubusercontent.com", "objects.githubusercontent.com")) { "Unsafe download redirect rejected." }
+              (next.host in allowedHosts || next.host.endsWith(".wuaze.com"))) { "Unsafe download redirect rejected." }
             val conn = next.openConnection() as HttpURLConnection
             connection = conn
             conn.instanceFollowRedirects = false

@@ -54,3 +54,30 @@ test('checks are throttled, concurrent downloads locked and dismissal does not c
   const active = service.download(); await service.download(); service.dismiss(); finish(); await active;
   assert.equal(downloads, 1); assert.equal(service.getSnapshot().phase, 'ready'); assert.equal(service.getSnapshot().dismissed, true);
 });
+test('accepts image_url, video_url, and website download link assets', () => {
+  const enhanced = {
+    ...release,
+    apk_url: 'https://tindahanhelper.wuaze.com/apk/tindahan-helper.apk',
+    image_url: 'https://tindahanhelper.wuaze.com/assets/images/hero-tindahan.jpg',
+    video_url: 'https://tindahanhelper.wuaze.com/assets/video/merged_part1_part3.mp4',
+  };
+  const parsed = AppRelease.parse(enhanced);
+  assert.equal(parsed.metadata.image_url, 'https://tindahanhelper.wuaze.com/assets/images/hero-tindahan.jpg');
+  assert.equal(parsed.metadata.video_url, 'https://tindahanhelper.wuaze.com/assets/video/merged_part1_part3.mp4');
+  assert.equal(parsed.metadata.apk_url, 'https://tindahanhelper.wuaze.com/apk/tindahan-helper.apk');
+});
+
+test('validates image_url and video_url security constraints', () => {
+  // Non-HTTPS image URL is rejected
+  assert.throws(() => AppRelease.parse({ ...release, image_url: 'http://insecure.com/img.png' }));
+  // Non-HTTPS video URL is rejected
+  assert.throws(() => AppRelease.parse({ ...release, video_url: 'http://insecure.com/video.mp4' }));
+  // Non-string image URL is rejected
+  assert.throws(() => AppRelease.parse({ ...release, image_url: 12345 }));
+  // Null and empty string image/video URLs are accepted and become null
+  const nullMedia = AppRelease.parse({ ...release, image_url: null, video_url: '   ' });
+  assert.equal(nullMedia.metadata.image_url, null);
+  assert.equal(nullMedia.metadata.video_url, null);
+});
+
+

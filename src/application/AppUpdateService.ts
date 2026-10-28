@@ -37,28 +37,28 @@ export class AppUpdateService {
 
   async check(manual = false): Promise<void> {
     if (this.busy || ['ready', 'permission', 'installer'].includes(this.state.phase)) return;
-    if (!manual && Date.now() - this.lastCheck < 6 * 60 * 60 * 1000) return;
+    if (!manual && Date.now() - this.lastCheck < 60 * 1000) return;
     this.busy = true;
     this.lastCheck = Date.now();
     const previous = this.state;
     try {
       const installed = await this.port.installed();
       if (!installed) {
-        if (manual) this.publish({ message: 'APK updates require an Android development or production build.' });
+        if (manual) this.publish({ message: 'Ang in-app update ay gumagana sa Android phone.' });
         return;
       }
       if (!this.initialized) { await this.port.clean(); this.initialized = true; }
-      this.publish({ phase: 'checking', installed, message: 'Checking for updates…' });
+      this.publish({ phase: 'checking', installed, message: 'Sinusuri kung may bagong bersyon…' });
       const raw = await this.port.latest();
       const release = raw ? AppRelease.parse(raw) : null;
       if (!release || !release.isNewerThan(installed.code)) {
-        this.publish({ phase: 'idle', release: null, message: 'Your app is up to date.' });
+        this.publish({ phase: 'idle', release: null, message: 'Nasa pinakabagong bersyon na ang iyong tindahan.' });
       } else {
         this.publish({ phase: 'available', release: release.metadata, progress: 0, message: '',
           dismissed: !manual && previous.release?.version_code === release.metadata.version_code && previous.dismissed });
       }
     } catch {
-      this.publish({ phase: previous.release ? 'available' : 'idle', message: manual ? 'Cannot check for updates. Your store still works offline. Try again later.' : '' });
+      this.publish({ phase: previous.release ? 'available' : 'idle', message: manual ? 'Hindi masuri ang update ngayon. Ligtas at gumagana pa rin ang tindahan offline.' : '' });
     } finally { this.busy = false; }
   }
 
@@ -66,27 +66,27 @@ export class AppUpdateService {
     if (this.busy || !this.state.release) return;
     this.busy = true;
     const release = this.state.release;
-    this.publish({ phase: 'downloading', progress: 0, message: 'Downloading and verifying APK…' });
+    this.publish({ phase: 'downloading', progress: 0, message: 'Dina-download ang bagong bersyon ng app…' });
     try {
       await this.port.download(release, progress => this.publish({ progress }));
-      this.publish({ phase: 'ready', progress: 1, message: 'APK verified. Install when you have finished your sale.' });
+      this.publish({ phase: 'ready', progress: 1, message: 'Handa nang i-install! Pindutin ang Install kapag tapos na ang benta.' });
     } catch (error) {
-      this.publish({ phase: 'error', message: error instanceof Error ? error.message : 'Download failed. Check connection and storage, then retry.' });
+      this.publish({ phase: 'error', message: error instanceof Error ? error.message : 'Hindi natapos ang download. Pakisuri ang koneksyon at subukan muli.' });
     } finally { this.busy = false; }
   }
 
   async install(): Promise<void> {
     if (this.busy || !this.state.release || !['ready', 'permission', 'installer'].includes(this.state.phase)) return;
-    if (!this.safeToInstall()) { this.publish({ message: 'Finish or park your sale, then return to More to install.' }); return; }
+    if (!this.safeToInstall()) { this.publish({ message: 'Pansamantalang tapusin o i-park muna ang bukas na bayaran bago mag-update.' }); return; }
     this.busy = true;
-    this.publish({ phase: 'installing', message: 'Rechecking APK before opening Android installer…' });
+    this.publish({ phase: 'installing', message: 'Inihahanda ang pag-install…' });
     try {
       const phase = await this.port.install(this.state.release);
       this.publish({ phase, message: phase === 'permission'
-        ? 'Allow installations from this app in Android Settings, return here, and tap Install again.'
-        : 'Android installer opened. Confirm installation there. If you cancelled or Android rejected the APK, you can retry or continue using your store.' });
+        ? 'Pahintulutan ang pag-install sa Settings ng phone, pagkatapos ay i-tap muli ang Install.'
+        : 'Bukas na ang installer. Pindutin ang "Install" o "Update" sa screen.' });
     } catch (error) {
-      this.publish({ phase: 'error', message: error instanceof Error ? error.message : 'Installation could not start. Download again or try later.' });
+      this.publish({ phase: 'error', message: error instanceof Error ? error.message : 'Hindi masimulan ang pag-install. Pakisubukan muli mamaya.' });
     } finally { this.busy = false; }
   }
 }
