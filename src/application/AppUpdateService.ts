@@ -36,7 +36,11 @@ export class AppUpdateService {
   show = () => this.publish({ dismissed: false });
 
   async check(manual = false): Promise<void> {
-    if (this.busy || ['ready', 'permission', 'installer'].includes(this.state.phase)) return;
+    if (this.busy) return;
+    if (['ready', 'permission', 'installer'].includes(this.state.phase)) {
+      if (manual && this.state.release) this.publish({ dismissed: false });
+      return;
+    }
     if (!manual && Date.now() - this.lastCheck < 60 * 1000) return;
     this.busy = true;
     this.lastCheck = Date.now();
