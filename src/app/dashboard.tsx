@@ -37,7 +37,7 @@ export default function DashboardScreen() {
           accessibilityRole="button"
           accessibilityLabel="Bumalik"
         >
-          <Ionicons name="arrow-back" size={22} color="#0F172A" />
+          <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
         </Pressable>
         <View>
           <Text style={styles.title}>Dashboard</Text>
@@ -122,10 +122,10 @@ export default function DashboardScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#F8FAFC' },
-  header: { minHeight: 72, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: '#E2E8F0', backgroundColor: '#FFFFFF' },
-  backButton: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: 14, backgroundColor: '#F1F5F9' },
-  title: { fontSize: 22, fontWeight: '800', color: '#0F172A' },
-  subtitle: { color: '#64748B', marginTop: 2, fontSize: 12 },
+  header: { minHeight: 88, flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingBottom: 10, backgroundColor: '#0D7A52' },
+  backButton: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: 14, backgroundColor: 'rgba(255, 255, 255, 0.16)' },
+  title: { fontSize: 22, fontWeight: '800', color: '#FFFFFF' },
+  subtitle: { color: '#D1FAE5', marginTop: 2, fontSize: 12 },
   content: { padding: 16, paddingBottom: 32, gap: 16 },
   card: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#E2E8F0' },
   cardTitle: { color: '#0F172A', fontSize: 16, fontWeight: '800', marginBottom: 14 },

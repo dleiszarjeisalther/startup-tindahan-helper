@@ -1430,7 +1430,14 @@ export default function InventoryManagementScreen() {
             style={styles.addProductModalBackdrop}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           >
+            <Pressable
+              style={styles.addProductModalBackdropPressable}
+              onPress={() => setShowAddForm(false)}
+              accessibilityRole="button"
+              accessibilityLabel="Isara ang Add Product"
+            />
             <View style={styles.addProductModalSheet}>
+              <View style={styles.addProductModalDragHandle} />
               <ScrollView
                 contentContainerStyle={styles.addProductModalContent}
                 keyboardShouldPersistTaps="handled"
@@ -4185,18 +4192,39 @@ const styles = StyleSheet.create({
   addProductModalBackdrop: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+  },
+  addProductModalBackdropPressable: {
+    flex: 1,
   },
   addProductModalSheet: {
-    maxHeight: '92%',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
     backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 36 : 24,
+    width: '100%',
+    maxHeight: '90%',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 25,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     overflow: 'hidden',
   },
+  addProductModalDragHandle: {
+    width: 44,
+    height: 5,
+    backgroundColor: '#CBD5E1',
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginBottom: 10,
+  },
   addProductModalContent: {
-    padding: 16,
-    paddingBottom: 32,
+    paddingBottom: 12,
   },
   addCardHeader: {
     flexDirection: 'row',

@@ -81,7 +81,7 @@ function CustomTindahanTabBar(props: any) {
   const isSales = currentRouteName === 'sales' || currentRouteName === 'explore';
   const isCheckout = currentRouteName === 'checkout';
   const isInventory = currentRouteName === 'inventory' || currentRouteName === 'history';
-  const isMore = currentRouteName === 'more' || currentRouteName === 'settings' || currentRouteName === 'utang' || currentRouteName === 'notifications';
+  const isMore = currentRouteName === 'more' || currentRouteName === 'dashboard' || currentRouteName === 'settings' || currentRouteName === 'utang' || currentRouteName === 'notifications';
 
   const handleTabPress = (routeTarget: string) => {
     try {
@@ -256,6 +256,7 @@ export default function AppTabs() {
       <Tabs.Screen name="inventory" options={{ title: 'Inventory' }} />
       <Tabs.Screen name="sales" options={{ title: 'Sales' }} />
       <Tabs.Screen name="more" options={{ title: 'More' }} />
+      <Tabs.Screen name="dashboard" options={{ title: 'Dashboard' }} />
       <Tabs.Screen name="settings" options={{ title: 'Store Settings' }} />
       <Tabs.Screen name="explore" options={{ title: 'Seasonal Forecast' }} />
       <Tabs.Screen name="utang" options={{ title: 'Suki Utang Ledger' }} />
