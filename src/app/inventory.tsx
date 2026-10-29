@@ -50,7 +50,7 @@ const STOCK_FILTERS = ['All', 'In Stock', 'Low Stock', 'Out of Stock', 'Expiring
 export default function InventoryManagementScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
-  const params = useLocalSearchParams<{ autoBarcode?: string }>();
+  const params = useLocalSearchParams<{ autoBarcode?: string; openAdd?: string }>();
   const {
     products,
     categories,
@@ -854,6 +854,15 @@ export default function InventoryManagementScreen() {
     }
   }, [params.autoBarcode, handleBarcodeChange]);
 
+  useEffect(() => {
+    if (params.openAdd !== 'true') return;
+    const timer = setTimeout(() => {
+      setShowAddForm(true);
+      router.setParams({ openAdd: undefined });
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [params.openAdd, router]);
+
   const handleSearchBarcodeScanned = useCallback(
     async (code: string) => {
       const clean = code.trim();
@@ -1241,19 +1250,6 @@ export default function InventoryManagementScreen() {
         <View style={styles.headerRightActions}>
           <Pressable
             style={styles.manageCatHeaderBtn}
-            onPress={() => router.navigate('/history')}
-            hitSlop={8}
-            accessibilityRole="button"
-            accessibilityLabel="Stock Movement History"
-          >
-            <Ionicons name="time-outline" size={15} color="#0D7A52" />
-            <Text style={styles.manageCatHeaderText}>
-              History
-            </Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.manageCatHeaderBtn}
             onPress={() => setShowCategoryModal(true)}
             hitSlop={8}
           >
@@ -1264,14 +1260,16 @@ export default function InventoryManagementScreen() {
           </Pressable>
 
           <Pressable
-            style={styles.plusCircleBtn}
+            style={styles.addProductHeaderBtn}
             onPress={() => {
               setErrorMsg(null);
-              setShowAddForm((prev) => !prev);
+              setShowAddForm(true);
             }}
-            hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel="Add Product"
           >
-            <Text style={styles.plusCircleIcon}>{showAddForm ? '✕' : '+'}</Text>
+            <Ionicons name="add" size={19} color="#FFFFFF" />
+            <Text style={styles.addProductHeaderBtnText}>Add Product</Text>
           </Pressable>
         </View>
       </View>
@@ -1422,17 +1420,30 @@ export default function InventoryManagementScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {/* Add New Product Card (With Image Capture & SQLite persistence) */}
-        {showAddForm ? (
-          <View style={styles.addCard}>
+        <Modal
+          visible={showAddForm}
+          animationType="slide"
+          transparent
+          onRequestClose={() => setShowAddForm(false)}
+        >
+          <KeyboardAvoidingView
+            style={styles.addProductModalBackdrop}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          >
+            <View style={styles.addProductModalSheet}>
+              <ScrollView
+                contentContainerStyle={styles.addProductModalContent}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.addCard}>
             <View style={styles.addCardHeader}>
               <Text style={styles.addCardTitle}>
                 {t.addProductTitle}
               </Text>
-              {products.length > 0 ? (
-                <Pressable onPress={() => setShowAddForm(false)} hitSlop={8}>
-                  <Text style={styles.closeFormLink}>{t.closeBtn}</Text>
-                </Pressable>
-              ) : null}
+              <Pressable onPress={() => setShowAddForm(false)} hitSlop={8}>
+                <Text style={styles.closeFormLink}>{t.closeBtn}</Text>
+              </Pressable>
             </View>
 
             {/* Photo Selection Row */}
@@ -2513,8 +2524,11 @@ export default function InventoryManagementScreen() {
                 {isSubmitting ? t.savingToDb : t.saveProductBtn}
               </Text>
             </Pressable>
-          </View>
-        ) : null}
+                </View>
+              </ScrollView>
+            </View>
+          </KeyboardAvoidingView>
+        </Modal>
 
         {/* Empty State when no products exist in SQLite */}
         {filteredProducts.length === 0 ? (
@@ -4035,20 +4049,21 @@ const styles = StyleSheet.create({
     color: '#0D7A52',
     fontWeight: '600',
   },
-  plusCircleBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+  addProductHeaderBtn: {
+    minHeight: 48,
+    paddingHorizontal: 14,
+    borderRadius: 14,
     backgroundColor: '#0D7A52',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 5,
     elevation: 2,
   },
-  plusCircleIcon: {
+  addProductHeaderBtnText: {
     color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '800',
-    lineHeight: 22,
+    fontSize: 13,
+    fontWeight: '700',
   },
   searchWrapper: {
     paddingHorizontal: 16,
@@ -4166,6 +4181,22 @@ const styles = StyleSheet.create({
     borderColor: '#CBD5E1',
     marginBottom: 14,
     gap: 8,
+  },
+  addProductModalBackdrop: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+  },
+  addProductModalSheet: {
+    maxHeight: '92%',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+  },
+  addProductModalContent: {
+    padding: 16,
+    paddingBottom: 32,
   },
   addCardHeader: {
     flexDirection: 'row',
