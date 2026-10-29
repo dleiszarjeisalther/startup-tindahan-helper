@@ -48,4 +48,4 @@ example
 *.db
 marketing/website/
 *.apk
-!tindahan-helper.apk
+/tindahan-helper.apk

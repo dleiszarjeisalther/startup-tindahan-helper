@@ -273,7 +273,7 @@ export class TindahanStoreService {
     storeName: "Juan's Store",
     ownerTitle: 'Owner',
     address: 'Enter Store Address',
-    language: 'English',
+    language: 'Filipino',
     notifications: true,
     phoneNotifications: false,
     notificationTimes: ['07:00'],

@@ -1,4 +1,4 @@
-// src/app/index.tsx — Screen 1: POS / Scan Product (OOP Barcode Scanner Viewfinder + SQLite Backed)
+// src/app/index.tsx — Screen 1: Scan Product (OOP Barcode Scanner Viewfinder + SQLite Backed)
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
@@ -9,7 +9,6 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import * as Haptics from 'expo-haptics';
 import { useRouter, useIsFocused } from 'expo-router';
@@ -33,7 +32,6 @@ import { CancelExchangeCreditModal } from '@/presentation/components/CancelExcha
 export default function PosScanProductScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
-  const insets = useSafeAreaInsets();
   const {
     products,
     addToCart,
@@ -94,7 +92,7 @@ export default function PosScanProductScreen() {
   }, [version, cartSummary.totalCount]);
 
   useEffect(() => {
-    console.log(`[POS Screen] Screen focus changed: isFocused = ${isFocused}`);
+    console.log(`[Scan Screen] Screen focus changed: isFocused = ${isFocused}`);
   }, [isFocused]);
 
 
@@ -350,10 +348,10 @@ export default function PosScanProductScreen() {
   const scannerTopInset = 4;
 
   return (
-    <ScreenSafeAreaView style={styles.safeArea} edges={[]}>
+    <ScreenSafeAreaView style={styles.safeArea} edges={['top']}>
 
       {/* Top App Header Branding — Tindahan Helper */}
-      <View style={[styles.topAppHeader, { paddingTop: insets.top + 6 }]}>
+      <View style={[styles.topAppHeader, { paddingTop: 6 }]}>
         <View style={styles.brandingRow}>
           <Image
             source={require('@/assets/images/icon.png')}
@@ -364,9 +362,6 @@ export default function PosScanProductScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <Text style={styles.brandTitleWhite}>Tindahan</Text>
               <Text style={styles.brandTitleAccent}>Helper</Text>
-              <View style={styles.brandUtilityPill}>
-                <Text style={styles.brandUtilityPillText}>POS</Text>
-              </View>
             </View>
           </View>
         </View>
@@ -435,7 +430,7 @@ export default function PosScanProductScreen() {
         onToggleActive={setLiveCameraActive}
         onBarcodeScanned={handleBarcodeDetected}
         toastMessage={scanToast}
-        containerHeight={230 + scannerTopInset}
+        containerHeight={215 + scannerTopInset}
         topControlInset={scannerTopInset}
         topCenterAction={
           <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
@@ -1176,7 +1171,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    marginTop: -10,
+    marginTop: 0,
     paddingTop: 14,
     paddingHorizontal: 14,
   },

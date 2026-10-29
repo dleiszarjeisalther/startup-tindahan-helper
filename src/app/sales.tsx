@@ -334,7 +334,7 @@ export default function SalesHistoryScreen() {
           ? `🚫 Na-Void: ${summary.formattedTotalVoided} (${summary.totalVoidedTransactions} resibo)`
           : '',
         `==================================`,
-        `Tindahan Helper POS`,
+        `Tindahan Helper`,
       ].filter(Boolean);
 
       await Share.share({
@@ -1572,7 +1572,7 @@ export default function SalesHistoryScreen() {
 
                 <View style={styles.receiptDashedLine} />
                 <Text style={styles.receiptFooter}>
-                  Generated with Tindahan Helper POS
+                  Generated with Tindahan Helper
                 </Text>
               </View>
 
@@ -1818,7 +1818,7 @@ export default function SalesHistoryScreen() {
         <ReceiptPrinterModal
           visible={reprintTx !== null}
           receiptData={{
-            storeName: settings?.storeName || 'Tindahan Helper POS',
+            storeName: settings?.storeName || 'Tindahan Helper',
             receiptNumber: reprintTx.id,
             receiptId: reprintTx.id,
             timestamp: `${reprintTx.dateLabel || ''} ${reprintTx.timeLabel || ''}`.trim() || new Date().toLocaleString(),

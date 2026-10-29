@@ -74,7 +74,7 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
         storeName: storeName.trim(),
         ownerTitle: 'Owner',
         address: location.trim() || settings?.address || 'Pilipinas',
-        language: settings?.language || 'tl',
+        language: settings?.language || 'Filipino',
         notifications: settings?.notifications ?? true,
         schoolOpeningMonth: settings?.schoolOpeningMonth ?? 7,
         wholesaleBudgetPhp: settings?.wholesaleBudgetPhp ?? 3000,
@@ -188,7 +188,7 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
             <View style={styles.infoBanner}>
               <Ionicons name="wifi" size={16} color="#0284C7" />
               <Text style={styles.infoText}>
-                Isang beses lang kailangan ng internet para mai-activate ang trial. Pagkatapos nito, 100% offline nang gagana ang iyong POS at Imbentaryo!
+                Isang beses lang kailangan ng internet para mai-activate ang trial. Pagkatapos nito, 100% offline nang gagana ang iyong Tindahan at Imbentaryo!
               </Text>
             </View>
 

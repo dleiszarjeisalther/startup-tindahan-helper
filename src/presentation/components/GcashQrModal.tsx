@@ -362,7 +362,7 @@ export function GcashQrModal({
                   <View style={styles.tipNotice}>
                     <Ionicons name="information-circle-outline" size={16} color="#065F46" />
                     <Text style={styles.tipNoticeText}>
-                      Humingi ng screenshot o tingnan ang GCash Reference Number upang makumpirma sa POS.
+                      Humingi ng screenshot o tingnan ang GCash Reference Number upang makumpirma sa Kaha.
                     </Text>
                   </View>
                 </View>

@@ -23,6 +23,7 @@ import {
 } from '@/presentation/components/ConfirmationModal';
 import { GcashQrModal } from '@/presentation/components/GcashQrModal';
 import { PrivacyPolicyModal } from '@/presentation/components/PrivacyPolicyModal';
+import { AppUpdateMenuItem } from '@/presentation/components/AppUpdatePrompt';
 
 interface ConfirmationState {
   type?: ConfirmationType;
@@ -120,6 +121,9 @@ export default function MenuProfileScreen() {
           {/* ========================================================================= */}
           {/* DASHBOARD WITH ANALYTICS CHARTS (ABOVE STORE SETTINGS)                    */}
           {/* ========================================================================= */}
+          {/* Update Checker */}
+          <AppUpdateMenuItem />
+
           {/* 1. Store Settings -> Screen 7 */}
           <Pressable
             style={styles.menuRow}
@@ -276,7 +280,7 @@ export default function MenuProfileScreen() {
           {activeSection === 'HELP' ? (
             <View style={styles.inlinePanel}>
               <Text style={styles.inlinePanelTitle}>
-                Owner POS Mitigations Active:
+                Mga Proteksyon sa Kaha:
               </Text>
               <Text style={styles.inlinePanelBody}>
                 • Dual Barcode Registration (Camera Scan + Manual Input + Tingi Code){'\n'}
@@ -395,7 +399,7 @@ export default function MenuProfileScreen() {
               setConfirmDialog({
                 type: 'warning',
                 title: 'Mag-Log Out?',
-                message: 'Nais mo bang bumalik sa POS Scan cashier screen?',
+                message: 'Nais mo bang bumalik sa Scan at Kaha?',
                 confirmText: 'Oo, Mag-Log Out',
                 cancelText: 'Kanselahin',
                 onConfirm: () => {

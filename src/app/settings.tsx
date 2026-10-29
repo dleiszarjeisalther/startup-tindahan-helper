@@ -35,6 +35,7 @@ import * as Clipboard from 'expo-clipboard';
 import { useLicensing } from '@/presentation/hooks/useLicensing';
 import { useLicensingGate } from '@/presentation/components/LicensingGate';
 import { ReceiptPrinterModal } from '@/presentation/components/ReceiptPrinterModal';
+import { AppUpdateMenuItem } from '@/presentation/components/AppUpdatePrompt';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -1312,6 +1313,13 @@ export default function StoreSettingsScreen() {
               ) : null}
             </View>
           </>
+        ) : null}
+
+        {/* Empty Search Result State */}
+        {!normQuery ? (
+          <View style={{ marginTop: 14, marginHorizontal: 16, marginBottom: 8 }}>
+            <AppUpdateMenuItem />
+          </View>
         ) : null}
 
         {/* Empty Search Result State */}

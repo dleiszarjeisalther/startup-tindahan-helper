@@ -371,7 +371,7 @@ export default function StockMovementHistoryScreen() {
       `📅 Panahon: ${dateLabel}`,
       `---------------------------------`,
       `📦 Pumasok na Stock: +${kpis.stockInUnits} units`,
-      `🛒 Naibenta sa POS: -${kpis.soldUnits} units`,
+      `🛒 Naibenta sa Tindahan: -${kpis.soldUnits} units`,
       `⚠️ Kupit at Sira: -${kpis.shrinkageUnits} units (Halaga: ${kpis.formattedShrinkageLoss})`,
       `💸 Gastos sa Kaha: ${kpis.formattedTotalExpense}`,
       `---------------------------------`,

@@ -590,7 +590,7 @@ const en: Translations = {
 
   // Seasonal Forecast additions
   seasonalForecastTitle: 'Seasonal Product Forecast',
-  seasonalForecastSub: '⚡ 100% Automated Forecast from POS Receipts',
+  seasonalForecastSub: '⚡ 100% Automated Forecast from Store Receipts',
   seasonAutoBadge: 'Auto Forecast',
   seasonPromptLabel: '📅 Choose Target Month / Upcoming Season:',
   seasonPresetNext: (m: string) => `⚡ Next (${m})`,
@@ -612,7 +612,7 @@ const en: Translations = {
   totalNeededToRestock: (qty: number) => `Total recommended restock: +${qty} units`,
   budgetPillLabel: (b: number) => `₱${b} Budget`,
   emptyInventoryTitle: 'No Products in Store Inventory',
-  emptyInventorySub: 'Add products to Inventory first. The system will build seasonal forecast automatically as you sell in POS.',
+  emptyInventorySub: 'Add products to Inventory first. The system will build seasonal forecast automatically as you sell in store.',
   addProductsInventoryBtn: '+ Add Products in Inventory',
   recommendedRestockHeader: (count: number) => `Recommended Restock Items (${count})`,
   tapToViewChartHint: '📊 Tap to view 12-month sales chart ›',
@@ -913,7 +913,7 @@ const taglish: Translations = {
 
   // Seasonal Forecast additions
   seasonalForecastTitle: 'Seasonal Product Forecast',
-  seasonalForecastSub: '⚡ 100% Awtomatikong Pagtataya mula sa POS Receipts',
+  seasonalForecastSub: '⚡ 100% Awtomatikong Pagtataya mula sa Resibo ng Benta',
   seasonAutoBadge: 'Kusa / Automated',
   seasonPromptLabel: '📅 Piliin ang Buwan / Panahon na Pinaghahandaan:',
   seasonPresetNext: (m: string) => `⚡ Susunod (${m})`,
@@ -935,7 +935,7 @@ const taglish: Translations = {
   totalNeededToRestock: (qty: number) => `Kabuuang kailangang bilhin: +${qty} piraso`,
   budgetPillLabel: (b: number) => `₱${b} Budget`,
   emptyInventoryTitle: 'Wala Pang Paninda sa Tindahan',
-  emptyInventorySub: 'Magdagdag muna ng mga paninda sa Imbentaryo. Kusa itong bubuo ng forecast habang nagbebenta ka sa POS.',
+  emptyInventorySub: 'Magdagdag muna ng mga paninda sa Imbentaryo. Kusa itong bubuo ng forecast habang nagbebenta ka sa tindahan.',
   addProductsInventoryBtn: '+ Add Products in Inventory',
   recommendedRestockHeader: (count: number) => `Mga Inirerekomendang I-restock (${count})`,
   tapToViewChartHint: '📊 Pindutin para makita ang 12-month sales chart ›',
@@ -989,7 +989,7 @@ const dictionaries: Record<'English' | 'Taglish' | 'Filipino', Translations> = {
 };
 
 export function getTranslations(lang?: string): Translations {
-  if (lang === 'Taglish' || lang === 'Tagalog' || lang === 'Filipino') {
+  if (lang === 'Taglish' || lang === 'Tagalog' || lang === 'Filipino' || lang === 'tl') {
     return dictionaries.Filipino;
   }
   return dictionaries.English;

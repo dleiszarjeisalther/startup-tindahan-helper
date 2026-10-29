@@ -216,7 +216,7 @@ export function TrialExpiredModal({
               : isQuotaExceeded
               ? `Lumalago ang iyong tindahan! Naka-${completedSalesCount} benta ka na habang nasa Libreng Trial (limit: ${maxTrialSales}). I-upgrade sa Pro Lifetime Access para sa walang limitasyong benta!`
               : isTrialExpired
-              ? 'Upang patuloy na magamit ang POS Checkout, Imbentaryo, at Listahan ng Utang nang walang limitasyon, magbayad sa GCash upang makuha ang iyong PIN.'
+              ? 'Upang patuloy na magamit ang Pagtitinda at Kaha, Imbentaryo, at Listahan ng Utang nang walang limitasyon, magbayad sa GCash upang makuha ang iyong PIN.'
               : 'Magkaroon ng permanenteng access sa lahat ng features nang walang anumang buwanang bayarin!'}
           </Text>
 
