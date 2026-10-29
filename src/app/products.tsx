@@ -538,7 +538,7 @@ export default function ProductListScreen() {
           style={styles.addBtn}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-            router.navigate({ pathname: '/inventory', params: { openAdd: 'true' } });
+            setShowAddForm(true);
           }}
         >
           <Ionicons name="add" size={16} color="#FFFFFF" style={{ marginRight: 2 }} />
@@ -1690,7 +1690,7 @@ export default function ProductListScreen() {
               style={styles.emptyAddBtn}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                router.navigate({ pathname: '/inventory', params: { openAdd: 'true' } });
+                setShowAddForm(true);
               }}
             >
               <Text style={styles.emptyAddBtnText}>+ Magdagdag ng Paninda</Text>
