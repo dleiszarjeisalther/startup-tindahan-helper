@@ -50,7 +50,7 @@ const STOCK_FILTERS = ['All', 'In Stock', 'Low Stock', 'Out of Stock', 'Expiring
 export default function InventoryManagementScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
-  const params = useLocalSearchParams<{ autoBarcode?: string }>();
+  const params = useLocalSearchParams<{ autoBarcode?: string; openAdd?: string }>();
   const {
     products,
     categories,
@@ -842,6 +842,13 @@ export default function InventoryManagementScreen() {
   }, []);
 
   useEffect(() => {
+    if (params.openAdd === 'true') {
+      const timer = setTimeout(() => setShowAddForm(true), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [params.openAdd]);
+
+  useEffect(() => {
     if (params.autoBarcode) {
       const code = String(params.autoBarcode).trim();
       if (code) {
@@ -1239,19 +1246,6 @@ export default function InventoryManagementScreen() {
         )}
 
         <View style={styles.headerRightActions}>
-          <Pressable
-            style={styles.manageCatHeaderBtn}
-            onPress={() => router.navigate('/history')}
-            hitSlop={8}
-            accessibilityRole="button"
-            accessibilityLabel="Stock Movement History"
-          >
-            <Ionicons name="time-outline" size={15} color="#0D7A52" />
-            <Text style={styles.manageCatHeaderText}>
-              History
-            </Text>
-          </Pressable>
-
           <Pressable
             style={styles.manageCatHeaderBtn}
             onPress={() => setShowCategoryModal(true)}

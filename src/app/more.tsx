@@ -584,6 +584,18 @@ export default function MenuProfileScreen() {
             <Text style={styles.menuChevron}>›</Text>
           </Pressable>
 
+          {/* Dashboard analytics page */}
+          <Pressable
+            style={styles.menuRow}
+            onPress={() => router.navigate('/dashboard')}
+          >
+            <View style={styles.menuLeft}>
+              <Ionicons name="stats-chart-outline" size={22} color="#0D7A52" />
+              <Text style={styles.menuLabel}>Dashboard</Text>
+            </View>
+            <Text style={styles.menuChevron}>›</Text>
+          </Pressable>
+
           {/* 3. Sales Reports -> Feature C: Seasonal Product Forecast */}
           <Pressable
             style={styles.menuRow}
@@ -620,7 +632,7 @@ export default function MenuProfileScreen() {
           >
             <View style={styles.menuLeft}>
               <Ionicons name="time-outline" size={22} color="#0D7A52" />
-              <Text style={styles.menuLabel}>{t.historyTitle}</Text>
+              <Text style={styles.menuLabel}>History</Text>
             </View>
             <View style={styles.menuRightGroup}>
               <View style={styles.forecastTag}>
