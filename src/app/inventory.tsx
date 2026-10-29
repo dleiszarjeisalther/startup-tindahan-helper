@@ -1448,8 +1448,14 @@ export default function InventoryManagementScreen() {
               <Text style={styles.addCardTitle}>
                 {t.addProductTitle}
               </Text>
-              <Pressable onPress={() => setShowAddForm(false)} hitSlop={8}>
-                <Text style={styles.closeFormLink}>{t.closeBtn}</Text>
+              <Pressable
+                onPress={() => setShowAddForm(false)}
+                hitSlop={10}
+                style={styles.modalCloseCircle}
+                accessibilityRole="button"
+                accessibilityLabel="Isara ang Add Product"
+              >
+                <Ionicons name="close" size={20} color="#64748B" />
               </Pressable>
             </View>
 
@@ -4235,11 +4241,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '800',
     color: '#0D7A52',
-  },
-  closeFormLink: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#64748B',
   },
   fieldLabel: {
     fontSize: 12,
