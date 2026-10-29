@@ -1261,6 +1261,7 @@ export default function InventoryManagementScreen() {
 
           <Pressable
             style={styles.addProductHeaderBtn}
+            hitSlop={5}
             onPress={() => {
               setErrorMsg(null);
               setShowAddForm(true);
@@ -1268,7 +1269,7 @@ export default function InventoryManagementScreen() {
             accessibilityRole="button"
             accessibilityLabel="Add Product"
           >
-            <Ionicons name="add" size={19} color="#FFFFFF" />
+            <Ionicons name="add" size={17} color="#FFFFFF" />
             <Text style={styles.addProductHeaderBtnText}>Add Product</Text>
           </Pressable>
         </View>
@@ -4063,9 +4064,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   addProductHeaderBtn: {
-    minHeight: 48,
-    paddingHorizontal: 14,
-    borderRadius: 14,
+    height: 38,
+    paddingHorizontal: 10,
+    borderRadius: 12,
     backgroundColor: '#0D7A52',
     flexDirection: 'row',
     alignItems: 'center',
@@ -4075,7 +4076,7 @@ const styles = StyleSheet.create({
   },
   addProductHeaderBtnText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
   },
   searchWrapper: {
