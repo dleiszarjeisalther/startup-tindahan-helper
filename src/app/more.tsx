@@ -120,19 +120,6 @@ export default function MenuProfileScreen() {
           {/* ========================================================================= */}
           {/* DASHBOARD WITH ANALYTICS CHARTS (ABOVE STORE SETTINGS)                    */}
           {/* ========================================================================= */}
-          <Pressable
-            style={styles.menuRow}
-            onPress={() => router.navigate('/dashboard')}
-            accessibilityRole="button"
-            accessibilityLabel="Dashboard"
-          >
-            <View style={styles.menuLeft}>
-              <Ionicons name="stats-chart-outline" size={22} color="#0D7A52" />
-              <Text style={styles.menuLabel}>Dashboard</Text>
-            </View>
-            <Text style={styles.menuChevron}>›</Text>
-          </Pressable>
-
           {/* 1. Store Settings -> Screen 7 */}
           <Pressable
             style={styles.menuRow}
