@@ -89,14 +89,18 @@ export class AndroidAppUpdatePort implements AppUpdatePort {
             const parts = versionName.split('.').map((p: string) => parseInt(p, 10));
             const derivedCode = parts.length >= 3 && !isNaN(parts[2]) ? (parts[0] * 10000 + parts[1] * 100 + parts[2]) : 6;
             const shaMatch = typeof releaseData.body === 'string' ? releaseData.body.match(/\b([a-fA-F0-9]{64})\b/) : null;
+            const codeMatch = typeof releaseData.body === 'string' ? releaseData.body.match(/\bversion_code\s*[:=]\s*(\d+)\b/i) : null;
+            const digestMatch = typeof apkAsset.digest === 'string' ? apkAsset.digest.match(/^sha256:([a-fA-F0-9]{64})$/) : null;
+            const checksum = digestMatch?.[1] || shaMatch?.[1];
+            if (!checksum || !Number.isSafeInteger(apkAsset.size) || apkAsset.size <= 0) return null;
             const imgMatch = typeof releaseData.body === 'string' ? releaseData.body.match(/(https:\/\/[^\s"'<>]+\.(?:png|jpg|jpeg|webp))/i) : null;
             const vidMatch = typeof releaseData.body === 'string' ? releaseData.body.match(/(https:\/\/[^\s"'<>]+\.(?:mp4|webm)|https:\/\/(?:www\.)?(?:youtube\.com|youtu\.be)\/[^\s"'<>]+)/i) : null;
             return {
               version_name: versionName,
-              version_code: derivedCode,
+              version_code: codeMatch ? Number(codeMatch[1]) : derivedCode,
               apk_url: apkAsset.browser_download_url,
-              sha256: shaMatch ? shaMatch[1] : '06b191bfed628aace16726eaed6f6de42b634a2706f090f98da0c8e8020eec3c',
-              size_bytes: apkAsset.size || 137710920,
+              sha256: checksum.toLowerCase(),
+              size_bytes: apkAsset.size,
               release_notes: releaseData.body || `🚀 Bagong Bersyon v${versionName} ng Tindahan Helper.`,
               image_url: imgMatch ? imgMatch[1] : 'https://tindahanhelper.wuaze.com/assets/images/hero-tindahan.jpg',
               video_url: vidMatch ? vidMatch[1] : 'https://tindahanhelper.wuaze.com/assets/video/merged_part1_part3.mp4',
