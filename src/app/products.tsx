@@ -701,7 +701,6 @@ export default function ProductListScreen() {
             </View>
 
             <ScrollView
-              style={{ flex: 1 }}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={styles.modalScrollContent}

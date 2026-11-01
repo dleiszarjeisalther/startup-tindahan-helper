@@ -1465,7 +1465,6 @@ export default function InventoryManagementScreen() {
               </View>
 
               <ScrollView
-                style={{ flex: 1 }}
                 contentContainerStyle={styles.addProductModalContent}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
