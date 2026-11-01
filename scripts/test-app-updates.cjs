@@ -80,4 +80,17 @@ test('validates image_url and video_url security constraints', () => {
   assert.equal(nullMedia.metadata.video_url, null);
 });
 
+test('manual check shows friendly version message and purges developer jargon', async () => {
+  const same = setup({ installed: async () => ({ version: '1.0.12', code: 2 }) }).service;
+  await same.check(true);
+  assert.equal(same.getSnapshot().phase, 'idle');
+  assert.equal(same.getSnapshot().message, 'Nasa pinakabagong bersyon ka na (v1.0.12).');
+
+  const uninstalled = setup({ installed: async () => null }).service;
+  await uninstalled.check(true);
+  assert.equal(uninstalled.getSnapshot().phase, 'idle');
+  assert.notEqual(uninstalled.getSnapshot().message, 'Ang in-app update ay gumagana sa Android phone.');
+  assert.match(uninstalled.getSnapshot().message, /Hindi masuri ang bersyon ng app/);
+});
+
 

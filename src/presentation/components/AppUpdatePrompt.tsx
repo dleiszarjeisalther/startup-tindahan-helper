@@ -1,5 +1,6 @@
 import React, { useEffect, useSyncExternalStore } from 'react';
-import { AppState, Linking, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { AppState, Linking, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { isRunningInExpoGo, requireOptionalNativeModule } from 'expo';
 import { Image } from 'expo-image';
 import * as WebBrowser from 'expo-web-browser';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +12,10 @@ export function AppUpdatePrompt() {
   const state = useSyncExternalStore(appUpdateService.subscribe, appUpdateService.getSnapshot, appUpdateService.getSnapshot);
   const { cartSummary } = useTindahanStore();
   const insets = useSafeAreaInsets();
+  const isNativeAvailable =
+    Platform.OS === 'android' &&
+    !isRunningInExpoGo() &&
+    Boolean(requireOptionalNativeModule('ApkUpdater'));
 
   // Safe to prompt if there's no ongoing unsaved sale items in the cart
   const isSafe = cartSummary.items.length === 0;
@@ -66,6 +71,10 @@ export function AppUpdatePrompt() {
   };
 
   const handlePrimaryAction = () => {
+    if (!isNativeAvailable) {
+      handleManualBrowserDownload();
+      return;
+    }
     if (ready) {
       void appUpdateService.install();
     } else {
@@ -195,12 +204,24 @@ export function AppUpdatePrompt() {
                 onPress={handlePrimaryAction}
               >
                 <Ionicons
-                  name={installing ? 'hourglass-outline' : downloading ? 'cloud-download-outline' : ready ? 'checkmark-done-circle' : 'download-outline'}
+                  name={
+                    !isNativeAvailable
+                      ? 'globe-outline'
+                      : installing
+                      ? 'hourglass-outline'
+                      : downloading
+                      ? 'cloud-download-outline'
+                      : ready
+                      ? 'checkmark-done-circle'
+                      : 'download-outline'
+                  }
                   size={20}
                   color="#FFFFFF"
                 />
                 <Text style={styles.primaryButtonText}>
-                  {installing
+                  {!isNativeAvailable
+                    ? 'I-download sa Browser'
+                    : installing
                     ? 'Inihahanda...'
                     : downloading
                     ? `Dina-download (${percent}%)…`
@@ -226,15 +247,15 @@ export function AppUpdatePrompt() {
                 </Pressable>
               ) : null}
 
-              {/* Direct Browser Download Link (Emergency Fallback) */}
-              {(isError || !ready) && state.release?.apk_url ? (
+              {/* Direct Browser Download Link (Fallback) */}
+              {state.release?.apk_url ? (
                 <Pressable
                   accessibilityRole="button"
                   style={styles.fallbackButton}
                   onPress={handleManualBrowserDownload}
                 >
-                  <Ionicons name="globe-outline" size={14} color="#64748B" />
-                  <Text style={styles.fallbackButtonText}>I-download nang manu-mano sa website</Text>
+                  <Ionicons name="globe-outline" size={15} color="#059669" />
+                  <Text style={styles.fallbackButtonText}>I-download sa Browser</Text>
                 </Pressable>
               ) : null}
             </View>
@@ -555,12 +576,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    paddingVertical: 8,
+    paddingVertical: 10,
+    marginTop: 2,
   },
   fallbackButtonText: {
-    fontSize: 12,
-    color: '#64748B',
-    fontWeight: '500',
+    fontSize: 13,
+    color: '#059669',
+    fontWeight: '600',
     textDecorationLine: 'underline',
   },
   disabledButton: {

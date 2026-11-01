@@ -1,5 +1,6 @@
 import { isRunningInExpoGo, requireOptionalNativeModule } from 'expo';
-import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+import { Linking, Platform } from 'react-native';
 import { AppUpdatePort, InstalledApp } from '../../application/AppUpdateService';
 import { ReleaseMetadata } from '../../domain/entities/AppRelease';
 
@@ -16,8 +17,42 @@ export class AndroidAppUpdatePort implements AppUpdatePort {
     if (Platform.OS !== 'android' || isRunningInExpoGo()) return null;
     return requireOptionalNativeModule<NativeUpdater>('ApkUpdater');
   }
-  async installed(): Promise<InstalledApp | null> { return this.native()?.installed() ?? null; }
-  async clean(): Promise<void> { await this.native()?.clean(); }
+
+  async installed(): Promise<InstalledApp | null> {
+    try {
+      const native = this.native();
+      if (native) {
+        const info = await native.installed();
+        if (info && info.code > 0) {
+          return info;
+        }
+      }
+    } catch {
+      // Native updater threw or unavailable; fallback to Constants
+    }
+
+    const code =
+      Constants.expoConfig?.android?.versionCode ??
+      (Constants.nativeBuildVersion ? parseInt(Constants.nativeBuildVersion, 10) : 0);
+    const version =
+      Constants.expoConfig?.version ??
+      Constants.nativeAppVersion ??
+      '1.0.0';
+
+    if (code > 0) {
+      return { version, code };
+    }
+
+    return null;
+  }
+
+  async clean(): Promise<void> {
+    try {
+      await this.native()?.clean();
+    } catch {
+      // Ignore cleanup error if native updater is missing
+    }
+  }
   async latest(): Promise<unknown | null> {
     const url = process.env.EXPO_PUBLIC_UPDATE_SUPABASE_URL || 'https://eitqtggytkosvdgfeqap.supabase.co';
     const key = process.env.EXPO_PUBLIC_UPDATE_SUPABASE_KEY || 'sb_publishable_71hwmfru1nxpm2OMNU3W_w_EPV2HhOz';
@@ -121,14 +156,28 @@ export class AndroidAppUpdatePort implements AppUpdatePort {
   }
   async download(release: Readonly<ReleaseMetadata>, progress: (fraction: number) => void): Promise<void> {
     const native = this.native();
-    if (!native) throw new Error('Install a native Android build to use APK updates.');
+    if (!native) {
+      if (release.apk_url) {
+        progress(1);
+        await Linking.openURL(release.apk_url);
+        return;
+      }
+      throw new Error('Hindi ma-download ang update. Pakibisita ang website para sa pinakabagong bersyon.');
+    }
     const subscription = native.addListener('progress', event => progress(Math.max(0, Math.min(1, event.fraction))));
     try { await native.download(release.apk_url, release.sha256, release.version_code, release.size_bytes); }
     finally { subscription.remove(); }
   }
   async install(release: Readonly<ReleaseMetadata>): Promise<'permission' | 'installer'> {
     const native = this.native();
-    if (!native) throw new Error('APK installer unavailable in this build.');
+    if (!native) {
+      if (release.apk_url) {
+        await Linking.openURL(release.apk_url);
+        return 'installer';
+      }
+      throw new Error('Hindi mabuksan ang installer. Pakisubukang i-download sa browser.');
+    }
     return native.install(release.sha256, release.version_code, release.size_bytes);
   }
 }
+

@@ -48,7 +48,7 @@ export class AppUpdateService {
     try {
       const installed = await this.port.installed();
       if (!installed) {
-        if (manual) this.publish({ message: 'Ang in-app update ay gumagana sa Android phone.' });
+        if (manual) this.publish({ phase: 'idle', message: 'Hindi masuri ang bersyon ng app. Subukan muli mamaya.' });
         return;
       }
       if (!this.initialized) { await this.port.clean(); this.initialized = true; }
@@ -56,7 +56,7 @@ export class AppUpdateService {
       const raw = await this.port.latest();
       const release = raw ? AppRelease.parse(raw) : null;
       if (!release || !release.isNewerThan(installed.code)) {
-        this.publish({ phase: 'idle', release: null, message: 'Nasa pinakabagong bersyon na ang iyong tindahan.' });
+        this.publish({ phase: 'idle', release: null, message: `Nasa pinakabagong bersyon ka na (v${installed.version}).` });
       } else {
         this.publish({ phase: 'available', release: release.metadata, progress: 0, message: '',
           dismissed: !manual && previous.release?.version_code === release.metadata.version_code && previous.dismissed });

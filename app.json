@@ -37,7 +37,7 @@
       ],
       "package": "com.jesar.tindahanhelper",
       "backgroundColor": "#0D7A52",
-      "versionCode": 10016
+      "versionCode": 10017
     },
     "web": {
       "output": "static",
