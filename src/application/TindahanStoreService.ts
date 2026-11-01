@@ -667,7 +667,7 @@ export class TindahanStoreService {
                 sale.product_name,
                 -sale.quantity,
                 sale.cost_php || 0,
-                `POS Sale (${sale.tx_id})`,
+                `Benta (${sale.tx_id})`,
                 sale.tx_id,
                 sale.created_at
               ]);
@@ -2108,7 +2108,7 @@ export class TindahanStoreService {
                 prevStock,
                 resStock,
                 req.unitCostPhp,
-                `POS Sale (${newTx.id})`,
+                `Benta (${newTx.id})`,
                 newTx.id,
               ]
             );
@@ -2184,7 +2184,7 @@ export class TindahanStoreService {
             previousStock: product.baseStockCount,
             resultingStock: product.baseStockCount - item.quantity,
             unitCostPhp: product.unitCostPhp,
-            reason: `POS Sale (${newTx.id})`,
+            reason: `Benta (${newTx.id})`,
             referenceId: newTx.id,
           });
           if (!options.isOneTimeBulkOrder) {

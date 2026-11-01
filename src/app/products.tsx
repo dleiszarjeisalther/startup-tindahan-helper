@@ -10,6 +10,7 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import * as ImagePicker from 'expo-image-picker';
@@ -28,6 +29,7 @@ import {
   ConfirmationModal,
   ConfirmationType,
 } from '@/presentation/components/ConfirmationModal';
+import { ExpiryDatePickerModal } from '@/presentation/components/ExpiryDatePickerModal';
 import { SellingUnitTier } from '@/domain/entities/Product';
 import { Money } from '@/domain/value-objects/Money';
 
@@ -92,6 +94,8 @@ export default function ProductListScreen() {
   // Online catalog lookup state
   const [isLookingUpOnline, setIsLookingUpOnline] = useState(false);
   const [onlineNotice, setOnlineNotice] = useState<string | null>(null);
+  const [onlineFound, setOnlineFound] = useState<boolean>(false);
+  const [expiryPickerVisible, setExpiryPickerVisible] = useState<boolean>(false);
   const lookupSeqRef = useRef(0);
   const lookupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -200,6 +204,7 @@ export default function ProductListScreen() {
       const currentSeq = ++lookupSeqRef.current;
       setIsLookingUpOnline(true);
       setOnlineNotice(null);
+      setOnlineFound(false);
 
       try {
         const res = await lookupOnlineCatalog(clean);
@@ -211,15 +216,18 @@ export default function ProductListScreen() {
           if (res.imageUrl) setNewImageUri(res.imageUrl);
           if (res.inferredCategory) setNewCategory(res.inferredCategory);
           const srcTag = res.source ? ` [${res.source}]` : '';
+          setOnlineFound(true);
           setOnlineNotice(
-            `✓ Nahanap ang paninda online${srcTag}: "${res.productName ?? 'Paninda'}" (Nailagay na ang litrato at pangalan)`
+            `Nahanap ang paninda online${srcTag}: "${res.productName ?? 'Paninda'}" (Nailagay na ang litrato at pangalan)`
           );
         } else {
-          setOnlineNotice('ℹ️ Hindi nahanap online. Maaari mong ilagay ang pangalan at litrato nang mano-mano o i-tap ang "Maghanap Online".');
+          setOnlineFound(false);
+          setOnlineNotice('Hindi nahanap online. Maaari mong ilagay ang pangalan at litrato nang mano-mano o i-tap ang "Maghanap Online".');
         }
       } catch {
         if (lookupSeqRef.current === currentSeq) {
-          setOnlineNotice('ℹ️ Hindi makakonekta online. I-tap ang "Maghanap Online" para subukan ulit.');
+          setOnlineFound(false);
+          setOnlineNotice('Hindi makakonekta online. I-tap ang "Maghanap Online" para subukan ulit.');
         }
       } finally {
         if (lookupSeqRef.current === currentSeq) {
@@ -233,6 +241,7 @@ export default function ProductListScreen() {
   const handleBarcodeChange = useCallback(
     (code: string, mode: 'SCAN' | 'MANUAL' | 'GENERATE_TINGI') => {
       setOnlineNotice(null);
+      setOnlineFound(false);
       setBarcodeMode(mode);
 
       if (lookupTimerRef.current) {
@@ -301,6 +310,7 @@ export default function ProductListScreen() {
     setPackagingType('PACK');
     setNewImageUri(null);
     setOnlineNotice(null);
+      setOnlineFound(false);
   }, []);
 
   const handleTakePhoto = async () => {
@@ -478,7 +488,7 @@ export default function ProductListScreen() {
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      showToast(`✓ Naidagdag ang "${res.product.name}" [${res.product.barcode}] sa tindahan`, 'success');
+      showToast(`Naidagdag ang "${res.product.name}" [${res.product.barcode}] sa tindahan`, 'success');
       resetForm();
       setShowAddForm(false);
     } catch (err) {
@@ -560,7 +570,7 @@ export default function ProductListScreen() {
           />
           {searchQuery.length > 0 ? (
             <Pressable onPress={() => setSearchQuery('')} hitSlop={8}>
-              <Text style={styles.clearIcon}>✕</Text>
+              <Ionicons name="close-circle" size={18} color="#94A3B8" />
             </Pressable>
           ) : null}
         </View>
@@ -660,7 +670,7 @@ export default function ProductListScreen() {
                         setNewImageUri(null);
                       }}
                     >
-                      <Text style={styles.photoRemoveBtnText}>✕</Text>
+                      <Ionicons name="close" size={14} color="#FFFFFF" />
                     </Pressable>
                   </View>
                 ) : (
@@ -715,26 +725,37 @@ export default function ProductListScreen() {
               {/* Online Lookup Status Badge & Action */}
               {isLookingUpOnline ? (
                 <View style={styles.onlineBadgeLoading}>
-                  <Text style={styles.onlineBadgeTextLoading}>
-                    🔍 Hinahanap ang paninda sa online catalog...
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <ActivityIndicator size="small" color="#0D7A52" style={{ marginRight: 6 }} />
+                    <Text style={styles.onlineBadgeTextLoading}>
+                      Hinahanap ang paninda sa online catalog...
+                    </Text>
+                  </View>
                 </View>
               ) : (
                 <View style={styles.onlineNoticeContainer}>
                   {onlineNotice ? (
                     <View
-                      style={
-                        onlineNotice.startsWith('✓')
+                      style={[
+                        onlineFound
                           ? styles.onlineBadgeSuccess
-                          : styles.onlineBadgeNeutral
-                      }
+                          : styles.onlineBadgeNeutral,
+                        { flexDirection: 'row', alignItems: 'flex-start' }
+                      ]}
                     >
+                      <Ionicons
+                        name={onlineFound ? 'checkmark-circle' : 'information-circle'}
+                        size={16}
+                        color={onlineFound ? '#0D7A52' : '#6B7280'}
+                        style={{ marginRight: 6, marginTop: 1 }}
+                      />
                       <Text
-                        style={
-                          onlineNotice.startsWith('✓')
+                        style={[
+                          onlineFound
                             ? styles.onlineBadgeTextSuccess
-                            : styles.onlineBadgeTextNeutral
-                        }
+                            : styles.onlineBadgeTextNeutral,
+                          { flex: 1 }
+                        ]}
                       >
                         {onlineNotice}
                       </Text>
@@ -743,7 +764,7 @@ export default function ProductListScreen() {
 
                   {newBarcode.trim().length >= 6 &&
                   newBarcode !== 'AUTO-TINGI-CODE' &&
-                  (!onlineNotice || !onlineNotice.startsWith('✓')) ? (
+                  (!onlineNotice || !onlineFound) ? (
                     <Pressable
                       style={styles.retryOnlineBtn}
                       onPress={() => performOnlineLookup(newBarcode)}
@@ -821,7 +842,7 @@ export default function ProductListScreen() {
                     style={{ marginRight: 4 }}
                   />
                   <Text style={[styles.unitToggleText, packagingType === 'PACK' && styles.unitToggleTextActive]}>
-                    📦 Naka-Pack
+                    Naka-Pack
                   </Text>
                 </Pressable>
 
@@ -850,7 +871,7 @@ export default function ProductListScreen() {
                     style={{ marginRight: 4 }}
                   />
                   <Text style={[styles.unitToggleText, packagingType === 'PIECE' && styles.unitToggleTextActive]}>
-                    🏷️ Tingi Lang
+                    Tingi Lang
                   </Text>
                 </Pressable>
 
@@ -862,13 +883,13 @@ export default function ProductListScreen() {
                   }}
                 >
                   <Ionicons
-                    name="scale"
+                    name="scale-outline"
                     size={15}
                     color={packagingType === 'KG' ? '#0D7A52' : '#64748B'}
                     style={{ marginRight: 4 }}
                   />
                   <Text style={[styles.unitToggleText, packagingType === 'KG' && styles.unitToggleTextActive]}>
-                    ⚖️ Kilo (kg)
+                    Kilo (kg)
                   </Text>
                 </Pressable>
               </View>
@@ -878,9 +899,12 @@ export default function ProductListScreen() {
                 /* PACK MODE: Auto-fill from Wholesale Pack Cost & Count */
                 <View style={{ gap: 10 }}>
                   <View style={styles.costSectionCard}>
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#166534', marginBottom: 2 }}>
-                      🧾 Puhunan sa Resibo (Wholesale Pack)
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                      <Ionicons name="receipt-outline" size={16} color="#166534" />
+                      <Text style={{ fontSize: 13, fontWeight: '700', color: '#166534' }}>
+                        Puhunan sa Resibo (Wholesale Pack)
+                      </Text>
+                    </View>
                     <View style={styles.twoColRow}>
                       <View style={{ flex: 1.2 }}>
                         <Text style={styles.fieldLabel}>Presyo ng 1 Pack (₱) *</Text>
@@ -980,7 +1004,7 @@ export default function ProductListScreen() {
                       <View style={styles.sneakPeekBanner}>
                         <View style={styles.sneakPeekHeader}>
                           <Ionicons name="calculator-outline" size={14} color="#065F46" />
-                          <Text style={styles.sneakPeekTitle}>⚡ Kusa Nang Kinalkula ng App:</Text>
+                          <Text style={styles.sneakPeekTitle}>Kusa Nang Kinalkula ng App:</Text>
                         </View>
                         <View style={styles.sneakPeekMetrics}>
                           <View style={styles.sneakPeekItem}>
@@ -1079,7 +1103,7 @@ export default function ProductListScreen() {
 
                     {roundingSuggestions.length > 0 ? (
                       <View style={styles.roundingBox}>
-                        <Text style={styles.roundingTitle}>🪙 Walang Barya Helper:</Text>
+                        <Text style={styles.roundingTitle}>Walang Barya Helper:</Text>
                         <View style={styles.roundingChipsRow}>
                           {roundingSuggestions.map((roundPrice: number) => (
                             <Pressable
@@ -1129,7 +1153,7 @@ export default function ProductListScreen() {
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                       <Ionicons name="gift-outline" size={16} color="#0D7A52" />
                       <Text style={{ fontSize: 13, fontWeight: '700', color: '#166534' }}>
-                        📦 Presyo ng Benta sa Buong Pack ({packPiecesCountNum} piraso)
+                        Presyo ng Benta sa Buong Pack ({packPiecesCountNum} piraso)
                       </Text>
                     </View>
                     <Text style={{ fontSize: 11, color: '#4B5563', lineHeight: 16 }}>
@@ -1139,7 +1163,7 @@ export default function ProductListScreen() {
                     {currentEnteredPrice > 0 ? (
                       <View style={{ marginTop: 2 }}>
                         <Text style={{ fontSize: 11, color: '#374151', marginBottom: 4, fontWeight: '600' }}>
-                          💡 Mungkahing Presyo ng Pack (Tingi: ₱{currentEnteredPrice.toFixed(2)} × {packPiecesCountNum} pcs = ₱{(currentEnteredPrice * packPiecesCountNum).toFixed(2)}):
+                          Mungkahing Presyo ng Pack (Tingi: ₱{currentEnteredPrice.toFixed(2)} × {packPiecesCountNum} pcs = ₱{(currentEnteredPrice * packPiecesCountNum).toFixed(2)}):
                         </Text>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
                           {[
@@ -1209,17 +1233,36 @@ export default function ProductListScreen() {
                     />
                   </View>
 
-                  {/* Expiry Date */}
-                  <View>
-                    <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal - YYYY-MM-DD):</Text>
-                    <TextInput
-                      style={styles.textInput}
-                      value={newExpiryDate}
-                      onChangeText={setNewExpiryDate}
-                      placeholder="Hal. 2026-12-31"
-                      placeholderTextColor="#9CA3AF"
-                      maxLength={10}
-                    />
+                  {/* Expiry Date Card & Calendar Selection */}
+                  <View style={styles.expiryCard}>
+                    <View style={styles.expiryHeaderRow}>
+                      <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal):</Text>
+                      <Text style={styles.expiryHelperChip}>Para sa expiry alert</Text>
+                    </View>
+                    <Pressable
+                      style={styles.expiryTrigger}
+                      onPress={() => setExpiryPickerVisible(true)}
+                      accessibilityRole="button"
+                      accessibilityLabel="Pumili ng petsa ng expiry sa kalendaryo"
+                    >
+                      <Ionicons name="calendar-outline" size={16} color="#0D7A52" />
+                      <Text style={newExpiryDate ? styles.expiryTriggerText : styles.expiryTriggerPlaceholder}>
+                        {newExpiryDate ? newExpiryDate : 'Pumili ng petsa sa kalendaryo...'}
+                      </Text>
+                      {newExpiryDate ? (
+                        <Pressable hitSlop={8} onPress={() => setNewExpiryDate('')}>
+                          <Ionicons name="close-circle" size={16} color="#94A3B8" />
+                        </Pressable>
+                      ) : null}
+                    </Pressable>
+                  </View>
+
+                  {/* Reassurance Shield Banner */}
+                  <View style={styles.reassuranceBanner}>
+                    <Ionicons name="shield-checkmark" size={16} color="#0D7A52" />
+                    <Text style={styles.reassuranceText}>
+                      Ligtas at Sigurado: Ang bagong paninda at panimulang stock ay awtomatikong mare-rekord sa History.
+                    </Text>
                   </View>
                 </View>
               ) : packagingType === 'PIECE' ? (
@@ -1280,7 +1323,7 @@ export default function ProductListScreen() {
                       <View style={styles.sneakPeekBanner}>
                         <View style={styles.sneakPeekHeader}>
                           <Ionicons name="calculator-outline" size={14} color="#065F46" />
-                          <Text style={styles.sneakPeekTitle}>⚡ Kwenta ng Puhunan at Stock:</Text>
+                          <Text style={styles.sneakPeekTitle}>Kwenta ng Puhunan at Stock:</Text>
                         </View>
                         <View style={styles.sneakPeekMetrics}>
                           <View style={styles.sneakPeekItem}>
@@ -1378,7 +1421,7 @@ export default function ProductListScreen() {
 
                     {roundingSuggestions.length > 0 ? (
                       <View style={styles.roundingBox}>
-                        <Text style={styles.roundingTitle}>🪙 Walang Barya Helper:</Text>
+                        <Text style={styles.roundingTitle}>Walang Barya Helper:</Text>
                         <View style={styles.roundingChipsRow}>
                           {roundingSuggestions.map((roundPrice: number) => (
                             <Pressable
@@ -1423,17 +1466,36 @@ export default function ProductListScreen() {
                     ) : null}
                   </View>
 
-                  {/* Expiry Date */}
-                  <View>
-                    <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal - YYYY-MM-DD):</Text>
-                    <TextInput
-                      style={styles.textInput}
-                      value={newExpiryDate}
-                      onChangeText={setNewExpiryDate}
-                      placeholder="Hal. 2026-12-31"
-                      placeholderTextColor="#9CA3AF"
-                      maxLength={10}
-                    />
+                  {/* Expiry Date Card & Calendar Selection */}
+                  <View style={styles.expiryCard}>
+                    <View style={styles.expiryHeaderRow}>
+                      <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal):</Text>
+                      <Text style={styles.expiryHelperChip}>Para sa expiry alert</Text>
+                    </View>
+                    <Pressable
+                      style={styles.expiryTrigger}
+                      onPress={() => setExpiryPickerVisible(true)}
+                      accessibilityRole="button"
+                      accessibilityLabel="Pumili ng petsa ng expiry sa kalendaryo"
+                    >
+                      <Ionicons name="calendar-outline" size={16} color="#0D7A52" />
+                      <Text style={newExpiryDate ? styles.expiryTriggerText : styles.expiryTriggerPlaceholder}>
+                        {newExpiryDate ? newExpiryDate : 'Pumili ng petsa sa kalendaryo...'}
+                      </Text>
+                      {newExpiryDate ? (
+                        <Pressable hitSlop={8} onPress={() => setNewExpiryDate('')}>
+                          <Ionicons name="close-circle" size={16} color="#94A3B8" />
+                        </Pressable>
+                      ) : null}
+                    </Pressable>
+                  </View>
+
+                  {/* Reassurance Shield Banner */}
+                  <View style={styles.reassuranceBanner}>
+                    <Ionicons name="shield-checkmark" size={16} color="#0D7A52" />
+                    <Text style={styles.reassuranceText}>
+                      Ligtas at Sigurado: Ang bagong paninda at panimulang stock ay awtomatikong mare-rekord sa History.
+                    </Text>
                   </View>
                 </View>
               ) : (
@@ -1494,7 +1556,7 @@ export default function ProductListScreen() {
                       <View style={styles.sneakPeekBanner}>
                         <View style={styles.sneakPeekHeader}>
                           <Ionicons name="calculator-outline" size={14} color="#065F46" />
-                          <Text style={styles.sneakPeekTitle}>⚡ Kwenta ng Puhunan at Stock:</Text>
+                          <Text style={styles.sneakPeekTitle}>Kwenta ng Puhunan at Stock:</Text>
                         </View>
                         <View style={styles.sneakPeekMetrics}>
                           <View style={styles.sneakPeekItem}>
@@ -1593,7 +1655,7 @@ export default function ProductListScreen() {
 
                     {roundingSuggestions.length > 0 ? (
                       <View style={styles.roundingBox}>
-                        <Text style={styles.roundingTitle}>🪙 Walang Barya Helper:</Text>
+                        <Text style={styles.roundingTitle}>Walang Barya Helper:</Text>
                         <View style={styles.roundingChipsRow}>
                           {roundingSuggestions.map((roundPrice: number) => (
                             <Pressable
@@ -1638,17 +1700,36 @@ export default function ProductListScreen() {
                     ) : null}
                   </View>
 
-                  {/* Expiry Date */}
-                  <View>
-                    <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal - YYYY-MM-DD):</Text>
-                    <TextInput
-                      style={styles.textInput}
-                      value={newExpiryDate}
-                      onChangeText={setNewExpiryDate}
-                      placeholder="Hal. 2026-12-31"
-                      placeholderTextColor="#9CA3AF"
-                      maxLength={10}
-                    />
+                  {/* Expiry Date Card & Calendar Selection */}
+                  <View style={styles.expiryCard}>
+                    <View style={styles.expiryHeaderRow}>
+                      <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal):</Text>
+                      <Text style={styles.expiryHelperChip}>Para sa expiry alert</Text>
+                    </View>
+                    <Pressable
+                      style={styles.expiryTrigger}
+                      onPress={() => setExpiryPickerVisible(true)}
+                      accessibilityRole="button"
+                      accessibilityLabel="Pumili ng petsa ng expiry sa kalendaryo"
+                    >
+                      <Ionicons name="calendar-outline" size={16} color="#0D7A52" />
+                      <Text style={newExpiryDate ? styles.expiryTriggerText : styles.expiryTriggerPlaceholder}>
+                        {newExpiryDate ? newExpiryDate : 'Pumili ng petsa sa kalendaryo...'}
+                      </Text>
+                      {newExpiryDate ? (
+                        <Pressable hitSlop={8} onPress={() => setNewExpiryDate('')}>
+                          <Ionicons name="close-circle" size={16} color="#94A3B8" />
+                        </Pressable>
+                      ) : null}
+                    </Pressable>
+                  </View>
+
+                  {/* Reassurance Shield Banner */}
+                  <View style={styles.reassuranceBanner}>
+                    <Ionicons name="shield-checkmark" size={16} color="#0D7A52" />
+                    <Text style={styles.reassuranceText}>
+                      Ligtas at Sigurado: Ang bagong paninda at panimulang stock ay awtomatikong mare-rekord sa History.
+                    </Text>
                   </View>
                 </View>
               )}
@@ -1660,12 +1741,22 @@ export default function ProductListScreen() {
               >
                 <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
                 <Text style={styles.saveBtnText}>
-                  {isSubmitting ? 'Isinusumite...' : '✓ I-save ang Paninda'}
+                  {isSubmitting ? 'Isinusumite...' : 'I-save ang Paninda'}
                 </Text>
               </Pressable>
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
+
+        <ExpiryDatePickerModal
+          visible={expiryPickerVisible}
+          currentDate={newExpiryDate}
+          onSelect={(dateStr: string) => {
+            setNewExpiryDate(dateStr);
+            setExpiryPickerVisible(false);
+          }}
+          onClose={() => setExpiryPickerVisible(false)}
+        />
       </Modal>
 
       {/* Vertical Product List */}
@@ -1730,7 +1821,7 @@ export default function ProductListScreen() {
               try {
                 addToCart(item.id, 1);
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                showToast(`✓ Naidagdag ang 1× ${item.name} sa Bagong Benta`, 'success');
+                showToast(`Naidagdag ang 1× ${item.name} sa Bagong Benta`, 'success');
               } catch (error) {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
                 const errorMsg =
@@ -1788,16 +1879,19 @@ export default function ProductListScreen() {
                     ]}
                   >
                     {item.stockStatus === 'IN_STOCK'
-                      ? `✓ In stock (${item.formattedStock})`
+                      ? `In stock (${item.formattedStock})`
                       : item.stockStatus === 'LOW_STOCK'
-                      ? `⚠ Low Stock (${item.formattedStock})`
-                      : '⊗ Out of Stock (0)'}
+                      ? `Low Stock (${item.formattedStock})`
+                      : 'Out of Stock (0)'}
                   </Text>
                 </View>
               </View>
             </View>
 
-            <Text style={styles.chevron}>+🛒</Text>
+            <View style={styles.cartActionBtn}>
+              <Ionicons name="cart-outline" size={16} color="#0D7A52" />
+              <Text style={styles.cartActionBtnText}>Benta</Text>
+            </View>
           </Pressable>
         ))}
 
@@ -1863,7 +1957,7 @@ export default function ProductListScreen() {
           try {
             setCartItemQuantity(productId, qty);
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-            showToast(`✓ Naidagdag ang ${qty} kg na ${weightModalProduct?.name} sa Bagong Benta`, 'success');
+            showToast(`Naidagdag ang ${qty} kg na ${weightModalProduct?.name} sa Bagong Benta`, 'success');
           } catch (error) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
             const errorMsg = error instanceof Error ? error.message : 'Could not update cart.';
@@ -2641,5 +2735,82 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: '#475569',
+  },
+
+  expiryCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    padding: 12,
+    gap: 8,
+  },
+  expiryHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  expiryHelperChip: {
+    fontSize: 11,
+    color: '#9CA3AF',
+    fontWeight: '500',
+  },
+  expiryTrigger: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    minHeight: 48,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#F9FAFB',
+  },
+  expiryTriggerText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  expiryTriggerPlaceholder: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#9CA3AF',
+  },
+  reassuranceBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  reassuranceText: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#166534',
+    lineHeight: 18,
+  },
+  cartActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    minHeight: 40,
+  },
+  cartActionBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0D7A52',
   },
 });

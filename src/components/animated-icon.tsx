@@ -79,7 +79,7 @@ export function AnimatedSplashOverlay() {
           <Text style={styles.brandTitleWhite}>Tindahan</Text>
           <Text style={styles.brandTitleAccent}>Helper</Text>
         </View>
-        <Text style={styles.brandTagline}>Sari-sari Store POS & Inventory</Text>
+        <Text style={styles.brandTagline}>Sari-sari Store Benta at Imbentaryo</Text>
       </Animated.View>
     </Animated.View>
   );

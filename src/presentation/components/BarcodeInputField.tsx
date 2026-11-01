@@ -1,6 +1,7 @@
 // src/presentation/components/BarcodeInputField.tsx
 import React, { useState } from 'react';
 import { View, TextInput, Pressable, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from 'expo-router';
 import { BarcodeScannerViewfinder } from './BarcodeScannerViewfinder';
 
@@ -68,9 +69,17 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
           style={[styles.scanButton, scannerOpen ? styles.scanButtonActive : null]}
           hitSlop={8}
           onPress={() => setScannerOpen((prev) => !prev)}
+          accessibilityRole="button"
+          accessibilityLabel={scannerOpen ? 'Isara ang camera scanner' : 'I-scan ang barcode gamit ang camera'}
         >
+          <Ionicons
+            name={scannerOpen ? 'close' : 'scan-outline'}
+            size={16}
+            color="#FFFFFF"
+            style={{ marginRight: 4 }}
+          />
           <Text style={styles.scanButtonText}>
-            {scannerOpen ? '✕ Close' : '📷 Scan'}
+            {scannerOpen ? 'Isara' : 'I-scan'}
           </Text>
         </Pressable>
         {showTingiButton ? (
@@ -103,7 +112,8 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
                 onPress={() => setScannerOpen(false)}
                 hitSlop={8}
               >
-                <Text style={styles.closeCamText}>✕ Close</Text>
+                <Ionicons name="close" size={14} color="#FFFFFF" style={{ marginRight: 2 }} />
+                <Text style={styles.closeCamText}>Isara</Text>
               </Pressable>
             }
           />
@@ -137,6 +147,8 @@ const styles = StyleSheet.create({
   },
   scanButton: {
     minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#0F6E43',
     paddingHorizontal: 16,
@@ -166,6 +178,8 @@ const styles = StyleSheet.create({
     borderColor: '#334155',
   },
   closeCamBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'rgba(239, 68, 68, 0.85)',
     paddingHorizontal: 10,
     paddingVertical: 5,

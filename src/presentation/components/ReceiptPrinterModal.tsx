@@ -78,7 +78,7 @@ export function ReceiptPrinterModal({
     if (!receiptData) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setIsPrinting(true);
-    setStatusMessage('Sending ESC/POS print job...');
+    setStatusMessage('Ipinapadala sa resibo printer...');
     try {
       const commands = EscPosReceiptFormatter.formatReceipt(receiptData, paperWidth);
       const result = await bluetoothThermalPrinterService.printReceipt(commands);
@@ -115,7 +115,7 @@ export function ReceiptPrinterModal({
             <View>
               <Text style={styles.title}>Thermal Receipt Slip</Text>
               <Text style={styles.subtitle}>
-                ESC/POS Bluetooth & Digital Share
+                Bluetooth Resibo at Digital Share
               </Text>
             </View>
             <TouchableOpacity

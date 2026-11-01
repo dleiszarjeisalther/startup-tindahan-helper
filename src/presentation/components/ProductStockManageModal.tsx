@@ -155,7 +155,7 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
     setConfirmState({
       visible: true,
       type: 'unpack',
-      title: 'Buksan Bilang Tingi (📦)',
+      title: 'Buksan Bilang Tingi',
       message: `Bubuksan ang ${inputQty} ${packName} (${packMultiplier}x) upang maging +${tingiQty} retail tingi piraso.`,
       itemName: product.name,
       details: [
@@ -191,7 +191,7 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
       setConfirmState({
         visible: true,
         type: 'home_use',
-        title: 'Bawas: Gamit sa Bahay (🏠)',
+        title: 'Bawas: Gamit sa Bahay',
         message: `Ibabawas ang ${inputQty} pcs para sa pansariling konsumo ng pamilya. Hindi ito mabibilang sa Benta at hindi mababawasan ang Pera sa Kaha.`,
         itemName: product.name,
         details: [
@@ -229,7 +229,7 @@ export const ProductStockManageModal: React.FC<ProductStockManageModalProps> = (
       setConfirmState({
         visible: true,
         type: 'damaged',
-        title: 'Bawas: Sira / Expired (⚠️)',
+        title: 'Bawas: Sira / Expired',
         message: `Ibabawas ang ${inputQty} pcs sa mabebentang stock at itatala sa listahan ng sira o expired na paninda (para sa B.O. / return sa supplier).`,
         itemName: product.name,
         details: [

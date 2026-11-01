@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
-    "mtime": 1793156511.0236547,
-    "seen": 1793157343.5499601,
-    "ast_hash": "a2203dc0662eaee9d76a45434a4a7518",
+    "mtime": 1793158139.0691643,
+    "seen": 1793158762.258798,
+    "ast_hash": "9db68e44feb346908a7157a6c98a6e9f",
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
-    "mtime": 1793157216.780949,
-    "seen": 1793157343.5500119,
-    "ast_hash": "825ab0b8b2eb923cd944230327c7e9b0",
+    "mtime": 1793158618.4152398,
+    "seen": 1793158762.2588124,
+    "ast_hash": "69575182b02171033badfe240daa032c",
     "semantic_hash": ""
   },
   "src/application/ProductOnboardingService.ts": {
@@ -1494,15 +1494,15 @@
     "semantic_hash": ""
   },
   "scripts/test-dashboard-analytics.cjs": {
-    "mtime": 1793156141.4490328,
-    "seen": 1793157343.5498307,
-    "ast_hash": "f6053380a054a6931580d05b2dec6996",
+    "mtime": 1793158625.9874027,
+    "seen": 1793158762.2587488,
+    "ast_hash": "e6830e008b754a8ed204c6d6266100c6",
     "semantic_hash": ""
   },
   "src/domain/strategies/DashboardAnalyticsEngine.ts": {
-    "mtime": 1793156496.3240204,
-    "seen": 1793157343.5503452,
-    "ast_hash": "dc9a0e0470fc84c132860b682b4572d4",
+    "mtime": 1793158097.6685514,
+    "seen": 1793158762.2588959,
+    "ast_hash": "2a32b19cc6b56f08946036c63a98668a",
     "semantic_hash": ""
   }
 }

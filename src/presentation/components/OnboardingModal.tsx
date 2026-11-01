@@ -19,6 +19,7 @@ import { useLicensing } from '../hooks/useLicensing';
 import { useTindahanStore } from '../hooks/useTindahanStore';
 import { isValidPhilippinePhoneNumber } from '../../infrastructure/services/LicensingService';
 import { PrivacyPolicyModal } from './PrivacyPolicyModal';
+import { ConfirmationModal } from './ConfirmationModal';
 
 interface OnboardingModalProps {
   visible: boolean;
@@ -34,24 +35,49 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
   const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [validationModal, setValidationModal] = useState<{
+    title: string;
+    message: string;
+    type?: 'warning' | 'danger';
+  } | null>(null);
   const [privacyModalVisible, setPrivacyModalVisible] = useState(false);
   const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
 
   const handleSubmit = async () => {
     if (!ownerName.trim()) {
-      setErrorMessage('Pakilagay ang iyong pangalan (May-ari / Tindera).');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      setValidationModal({
+        type: 'warning',
+        title: 'Kailangan ng Impormasyon',
+        message: 'Pakilagay ang iyong pangalan (May-ari o Tindera) bago magpatuloy.',
+      });
       return;
     }
     if (!storeName.trim()) {
-      setErrorMessage('Pakilagay ang pangalan ng iyong tindahan.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      setValidationModal({
+        type: 'warning',
+        title: 'Kailangan ng Impormasyon',
+        message: 'Pakilagay ang pangalan ng iyong tindahan upang mai-rehistro ang trial.',
+      });
       return;
     }
     if (!isValidPhilippinePhoneNumber(phoneNumber)) {
-      setErrorMessage('Pakilagay ang wastong 11-digit mobile number na nagsisimula sa 09 (hal. 09171234567).');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      setValidationModal({
+        type: 'warning',
+        title: 'Maling Numero ng Cellphone',
+        message: 'Pakilagay ang wastong 11-digit mobile number na nagsisimula sa 09 (hal. 09171234567).',
+      });
       return;
     }
     if (!agreedToPrivacy) {
-      setErrorMessage('Paki-tsek ang kahon upang sumang-ayon sa Patakaran sa Privacy bago magpatuloy.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      setValidationModal({
+        type: 'warning',
+        title: 'Patakaran sa Privacy',
+        message: 'Paki-tsek ang kahon upang sumang-ayon sa Patakaran sa Privacy bago magpatuloy.',
+      });
       return;
     }
 
@@ -83,6 +109,11 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
       });
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      setValidationModal({
+        type: 'danger',
+        title: 'Hindi Na-activate ang Trial',
+        message: result.message,
+      });
       setErrorMessage(result.message);
     }
   };
@@ -247,6 +278,16 @@ export function OnboardingModal({ visible }: OnboardingModalProps) {
       <PrivacyPolicyModal
         visible={privacyModalVisible}
         onClose={() => setPrivacyModalVisible(false)}
+      />
+      <ConfirmationModal
+        visible={!!validationModal}
+        type={validationModal?.type ?? 'warning'}
+        title={validationModal?.title ?? 'Paalala'}
+        message={validationModal?.message ?? ''}
+        confirmText="Naintindihan"
+        cancelText={null}
+        onConfirm={() => setValidationModal(null)}
+        onCancel={() => setValidationModal(null)}
       />
     </Modal>
   );

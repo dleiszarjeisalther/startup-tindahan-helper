@@ -808,7 +808,7 @@ export default function StoreSettingsScreen() {
                   <View style={styles.rowTextCol}>
                     <Text style={styles.rowTitle}>Resibo Printer (Bluetooth Thermal Printer)</Text>
                     <Text style={styles.rowValue}>
-                      I-pares at subukan ang 58mm / 80mm ESC/POS resibo printer
+                      I-pares at subukan ang 58mm / 80mm Bluetooth resibo printer
                     </Text>
                   </View>
                   <Ionicons name="print-outline" size={20} color="#0D7A52" />

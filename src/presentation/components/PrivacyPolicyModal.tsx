@@ -152,7 +152,7 @@ export function PrivacyPolicyModal({ visible, onClose }: PrivacyPolicyModalProps
               </Text>
               <Text style={styles.bulletItem}>
                 • <Text style={styles.bold}>Bluetooth:</Text> Ginagamit upang kumonekta sa wireless
-                ESC/POS 58mm/80mm thermal receipt printer.
+                58mm/80mm thermal receipt printer.
               </Text>
               <Text style={styles.bulletItem}>
                 • <Text style={styles.bold}>Internet:</Text> Kinakailangan lamang sa unang araw ng
