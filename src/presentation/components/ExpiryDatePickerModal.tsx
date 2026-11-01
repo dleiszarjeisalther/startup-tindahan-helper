@@ -65,12 +65,20 @@ export const ExpiryDatePickerModal: React.FC<ExpiryDatePickerModalProps> = ({
 
   const availableYears = useMemo(() => {
     const currentYear = new Date().getFullYear();
-    return [currentYear, currentYear + 1, currentYear + 2, currentYear + 3, currentYear + 4];
+    const list: number[] = [];
+    // Dynamic forward-looking range: current year - 1 up to current year + 20
+    for (let y = currentYear - 1; y <= currentYear + 20; y++) {
+      list.push(y);
+    }
+    return list;
   }, []);
+
+  const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
 
   const [prevVisible, setPrevVisible] = useState(visible);
   if (prevVisible !== visible) {
     setPrevVisible(visible);
+    setIsYearDropdownOpen(false);
     if (visible) {
       if (currentDate && /^\d{4}-\d{2}-\d{2}$/.test(currentDate)) {
         const parts = currentDate.split('-').map(Number);
@@ -224,36 +232,69 @@ export const ExpiryDatePickerModal: React.FC<ExpiryDatePickerModalProps> = ({
 
             {/* Calendar Controls */}
             <View style={styles.calendarContainer}>
-              {/* Year Selector Chips */}
-              <View style={{ marginBottom: 10 }}>
-                <Text style={styles.sectionHeaderTitle}>TAON</Text>
-                <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
-                  {availableYears.map((yr) => {
-                    const isSelectedYear = calendarMonth.getFullYear() === yr;
-                    return (
-                      <Pressable
-                        key={yr}
-                        style={[
-                          styles.yearChip,
-                          isSelectedYear && styles.yearChipActive,
-                        ]}
-                        onPress={() => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                          setCalendarMonth(new Date(yr, calendarMonth.getMonth(), 1));
-                        }}
-                      >
-                        <Text
-                          style={[
-                            styles.yearChipText,
-                            isSelectedYear && styles.yearChipTextActive,
-                          ]}
-                        >
-                          {yr}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
+              {/* Year Dropdown Selector */}
+              <View style={styles.yearDropdownSection}>
+                <View style={styles.yearDropdownHeaderRow}>
+                  <Text style={styles.sectionHeaderTitle}>TAON</Text>
+                  <Pressable
+                    style={styles.yearDropdownTrigger}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                      setIsYearDropdownOpen(!isYearDropdownOpen);
+                    }}
+                    accessibilityRole="combobox"
+                    accessibilityLabel="Pumili ng taon ng expiry"
+                  >
+                    <Text style={styles.yearDropdownTriggerText}>
+                      {calendarMonth.getFullYear()}
+                    </Text>
+                    <Ionicons
+                      name={isYearDropdownOpen ? 'chevron-up' : 'chevron-down'}
+                      size={15}
+                      color="#0D7A52"
+                    />
+                  </Pressable>
                 </View>
+
+                {isYearDropdownOpen && (
+                  <View style={styles.yearDropdownMenu}>
+                    <ScrollView
+                      style={styles.yearDropdownScroll}
+                      nestedScrollEnabled
+                      showsVerticalScrollIndicator
+                    >
+                      {availableYears.map((yr) => {
+                        const isSelectedYear = calendarMonth.getFullYear() === yr;
+                        return (
+                          <Pressable
+                            key={yr}
+                            style={[
+                              styles.yearDropdownItem,
+                              isSelectedYear && styles.yearDropdownItemActive,
+                            ]}
+                            onPress={() => {
+                              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                              setCalendarMonth(new Date(yr, calendarMonth.getMonth(), 1));
+                              setIsYearDropdownOpen(false);
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.yearDropdownItemText,
+                                isSelectedYear && styles.yearDropdownItemTextActive,
+                              ]}
+                            >
+                              {yr}
+                            </Text>
+                            {isSelectedYear && (
+                              <Ionicons name="checkmark" size={15} color="#0D7A52" />
+                            )}
+                          </Pressable>
+                        );
+                      })}
+                    </ScrollView>
+                  </View>
+                )}
               </View>
 
               {/* Month Selector Chips */}
@@ -503,27 +544,66 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     letterSpacing: 0.5,
   },
-  yearChip: {
-    minWidth: 70,
-    paddingVertical: 7,
-    paddingHorizontal: 12,
+  yearDropdownSection: {
+    marginBottom: 10,
+  },
+  yearDropdownHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    borderRadius: 8,
-    backgroundColor: '#F3F4F6',
+  },
+  yearDropdownTrigger: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 10,
+    backgroundColor: '#F0FDF4',
     borderWidth: 1.5,
+    borderColor: '#A7F3D0',
+  },
+  yearDropdownTriggerText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0D7A52',
+  },
+  yearDropdownMenu: {
+    marginTop: 6,
+    maxHeight: 160,
+    borderRadius: 12,
+    borderWidth: 1,
     borderColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    overflow: 'hidden',
   },
-  yearChipActive: {
-    backgroundColor: '#0D7A52',
-    borderColor: '#0D7A52',
+  yearDropdownScroll: {
+    maxHeight: 160,
   },
-  yearChipText: {
+  yearDropdownItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#F3F4F6',
+  },
+  yearDropdownItemActive: {
+    backgroundColor: '#ECFDF5',
+  },
+  yearDropdownItemText: {
     fontSize: 13,
     fontWeight: '600',
     color: '#374151',
   },
-  yearChipTextActive: {
-    color: '#FFFFFF',
+  yearDropdownItemTextActive: {
+    color: '#0D7A52',
     fontWeight: '800',
   },
   monthChip: {

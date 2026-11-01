@@ -405,6 +405,16 @@ export default function ProductListScreen() {
         return;
       }
 
+      if (newExpiryDate.trim() && !/^\d{4}-\d{2}-\d{2}$/.test(newExpiryDate.trim())) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setAlertModal({
+          type: 'warning',
+          title: 'Maling Format ng Petsa',
+          message: 'Ilagay ang petsa ng expiry sa format na YYYY-MM-DD (hal. 2026-12-31) o i-clear kung walang expiry.',
+        });
+        return;
+      }
+
       const priceMoney = Money.fromPhp(parseFloat(newPricePhp.replace(/[^0-9.]/g, '') || '0'));
       if (priceMoney.centavos <= 0) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
@@ -1280,24 +1290,46 @@ export default function ProductListScreen() {
                   <View style={styles.expiryCard}>
                     <View style={styles.expiryHeaderRow}>
                       <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal):</Text>
-                      <Text style={styles.expiryHelperChip}>Para sa expiry alert</Text>
+                      <Text style={styles.expiryHelperChip}>YYYY-MM-DD o Kalendaryo</Text>
                     </View>
-                    <Pressable
-                      style={styles.expiryTrigger}
-                      onPress={() => setExpiryPickerVisible(true)}
-                      accessibilityRole="button"
-                      accessibilityLabel="Pumili ng petsa ng expiry sa kalendaryo"
-                    >
-                      <Ionicons name="calendar-outline" size={16} color="#0D7A52" />
-                      <Text style={newExpiryDate ? styles.expiryTriggerText : styles.expiryTriggerPlaceholder}>
-                        {newExpiryDate ? newExpiryDate : 'Pumili ng petsa sa kalendaryo...'}
-                      </Text>
+                    <View style={styles.expiryInputWrapper}>
+                      <TextInput
+                        style={styles.expiryTextInput}
+                        value={newExpiryDate}
+                        onChangeText={(val) => {
+                          const filtered = val.replace(/[^0-9-]/g, '').slice(0, 10);
+                          setNewExpiryDate(filtered);
+                        }}
+                        placeholder="Hal. 2026-12-31"
+                        placeholderTextColor="#94A3B8"
+                        keyboardType="numbers-and-punctuation"
+                        maxLength={10}
+                        accessibilityLabel="I-type ang petsa ng expiry"
+                      />
                       {newExpiryDate ? (
-                        <Pressable hitSlop={8} onPress={() => setNewExpiryDate('')}>
-                          <Ionicons name="close-circle" size={16} color="#94A3B8" />
+                        <Pressable
+                          hitSlop={8}
+                          onPress={() => setNewExpiryDate('')}
+                          style={styles.expiryClearBtn}
+                          accessibilityRole="button"
+                          accessibilityLabel="I-clear ang petsa"
+                        >
+                          <Ionicons name="close-circle" size={18} color="#94A3B8" />
                         </Pressable>
                       ) : null}
-                    </Pressable>
+                      <Pressable
+                        style={styles.expiryCalendarBtn}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          setExpiryPickerVisible(true);
+                        }}
+                        hitSlop={8}
+                        accessibilityRole="button"
+                        accessibilityLabel="Pumili ng petsa ng expiry sa kalendaryo"
+                      >
+                        <Ionicons name="calendar-outline" size={20} color="#0D7A52" />
+                      </Pressable>
+                    </View>
                   </View>
 
                   {/* Reassurance Shield Banner */}
@@ -1513,24 +1545,46 @@ export default function ProductListScreen() {
                   <View style={styles.expiryCard}>
                     <View style={styles.expiryHeaderRow}>
                       <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal):</Text>
-                      <Text style={styles.expiryHelperChip}>Para sa expiry alert</Text>
+                      <Text style={styles.expiryHelperChip}>YYYY-MM-DD o Kalendaryo</Text>
                     </View>
-                    <Pressable
-                      style={styles.expiryTrigger}
-                      onPress={() => setExpiryPickerVisible(true)}
-                      accessibilityRole="button"
-                      accessibilityLabel="Pumili ng petsa ng expiry sa kalendaryo"
-                    >
-                      <Ionicons name="calendar-outline" size={16} color="#0D7A52" />
-                      <Text style={newExpiryDate ? styles.expiryTriggerText : styles.expiryTriggerPlaceholder}>
-                        {newExpiryDate ? newExpiryDate : 'Pumili ng petsa sa kalendaryo...'}
-                      </Text>
+                    <View style={styles.expiryInputWrapper}>
+                      <TextInput
+                        style={styles.expiryTextInput}
+                        value={newExpiryDate}
+                        onChangeText={(val) => {
+                          const filtered = val.replace(/[^0-9-]/g, '').slice(0, 10);
+                          setNewExpiryDate(filtered);
+                        }}
+                        placeholder="Hal. 2026-12-31"
+                        placeholderTextColor="#94A3B8"
+                        keyboardType="numbers-and-punctuation"
+                        maxLength={10}
+                        accessibilityLabel="I-type ang petsa ng expiry"
+                      />
                       {newExpiryDate ? (
-                        <Pressable hitSlop={8} onPress={() => setNewExpiryDate('')}>
-                          <Ionicons name="close-circle" size={16} color="#94A3B8" />
+                        <Pressable
+                          hitSlop={8}
+                          onPress={() => setNewExpiryDate('')}
+                          style={styles.expiryClearBtn}
+                          accessibilityRole="button"
+                          accessibilityLabel="I-clear ang petsa"
+                        >
+                          <Ionicons name="close-circle" size={18} color="#94A3B8" />
                         </Pressable>
                       ) : null}
-                    </Pressable>
+                      <Pressable
+                        style={styles.expiryCalendarBtn}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          setExpiryPickerVisible(true);
+                        }}
+                        hitSlop={8}
+                        accessibilityRole="button"
+                        accessibilityLabel="Pumili ng petsa ng expiry sa kalendaryo"
+                      >
+                        <Ionicons name="calendar-outline" size={20} color="#0D7A52" />
+                      </Pressable>
+                    </View>
                   </View>
 
                   {/* Reassurance Shield Banner */}
@@ -1747,24 +1801,46 @@ export default function ProductListScreen() {
                   <View style={styles.expiryCard}>
                     <View style={styles.expiryHeaderRow}>
                       <Text style={styles.fieldLabel}>Petsa ng Expiry (Opsyonal):</Text>
-                      <Text style={styles.expiryHelperChip}>Para sa expiry alert</Text>
+                      <Text style={styles.expiryHelperChip}>YYYY-MM-DD o Kalendaryo</Text>
                     </View>
-                    <Pressable
-                      style={styles.expiryTrigger}
-                      onPress={() => setExpiryPickerVisible(true)}
-                      accessibilityRole="button"
-                      accessibilityLabel="Pumili ng petsa ng expiry sa kalendaryo"
-                    >
-                      <Ionicons name="calendar-outline" size={16} color="#0D7A52" />
-                      <Text style={newExpiryDate ? styles.expiryTriggerText : styles.expiryTriggerPlaceholder}>
-                        {newExpiryDate ? newExpiryDate : 'Pumili ng petsa sa kalendaryo...'}
-                      </Text>
+                    <View style={styles.expiryInputWrapper}>
+                      <TextInput
+                        style={styles.expiryTextInput}
+                        value={newExpiryDate}
+                        onChangeText={(val) => {
+                          const filtered = val.replace(/[^0-9-]/g, '').slice(0, 10);
+                          setNewExpiryDate(filtered);
+                        }}
+                        placeholder="Hal. 2026-12-31"
+                        placeholderTextColor="#94A3B8"
+                        keyboardType="numbers-and-punctuation"
+                        maxLength={10}
+                        accessibilityLabel="I-type ang petsa ng expiry"
+                      />
                       {newExpiryDate ? (
-                        <Pressable hitSlop={8} onPress={() => setNewExpiryDate('')}>
-                          <Ionicons name="close-circle" size={16} color="#94A3B8" />
+                        <Pressable
+                          hitSlop={8}
+                          onPress={() => setNewExpiryDate('')}
+                          style={styles.expiryClearBtn}
+                          accessibilityRole="button"
+                          accessibilityLabel="I-clear ang petsa"
+                        >
+                          <Ionicons name="close-circle" size={18} color="#94A3B8" />
                         </Pressable>
                       ) : null}
-                    </Pressable>
+                      <Pressable
+                        style={styles.expiryCalendarBtn}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                          setExpiryPickerVisible(true);
+                        }}
+                        hitSlop={8}
+                        accessibilityRole="button"
+                        accessibilityLabel="Pumili ng petsa ng expiry sa kalendaryo"
+                      >
+                        <Ionicons name="calendar-outline" size={20} color="#0D7A52" />
+                      </Pressable>
+                    </View>
                   </View>
 
                   {/* Reassurance Shield Banner */}
@@ -2838,6 +2914,37 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: '#9CA3AF',
+  },
+  expiryInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    paddingLeft: 12,
+    paddingRight: 6,
+  },
+  expiryTextInput: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0F172A',
+    paddingVertical: 0,
+    height: '100%',
+  },
+  expiryClearBtn: {
+    padding: 6,
+    marginRight: 4,
+  },
+  expiryCalendarBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: '#ECFDF5',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   reassuranceBanner: {
     flexDirection: 'row',

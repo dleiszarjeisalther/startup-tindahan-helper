@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/app/inventory.tsx": {
-    "mtime": 1793514456.4585714,
-    "seen": 1793514576.6738026,
-    "ast_hash": "759c917391c87f5f7c431f7b9f010537",
+    "mtime": 1793515088.7337801,
+    "seen": 1793515393.6583996,
+    "ast_hash": "68af27b8e7705479f4603657248338a1",
     "semantic_hash": ""
   },
   "src/app/more.tsx": {
@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
-    "mtime": 1793513689.6841824,
-    "seen": 1793514576.673826,
-    "ast_hash": "83677ebfdfa0fb0d848a080008a11103",
+    "mtime": 1793515125.1650012,
+    "seen": 1793515393.6584156,
+    "ast_hash": "9575920d3c0fa3f63709312fdf38dd7e",
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {

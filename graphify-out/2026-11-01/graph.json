@@ -9620,7 +9620,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L4040"
+      "source_location": "L4039"
     },
     {
       "id": "src_presentation_components_barcodeinputfield",
@@ -9890,7 +9890,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/products.tsx",
-      "source_location": "L2056"
+      "source_location": "L2055"
     },
     {
       "id": "src_domain_value_objects_money",
@@ -20374,7 +20374,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2736",
+      "source_location": "L2735",
       "weight": 1.0
     },
     {
@@ -20386,7 +20386,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L2739",
+      "source_location": "L2738",
       "weight": 1.0
     },
     {
@@ -20398,7 +20398,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L4031",
+      "source_location": "L4030",
       "weight": 1.0
     },
     {
@@ -20554,7 +20554,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L1882",
+      "source_location": "L1881",
       "weight": 1.0
     },
     {
@@ -20566,7 +20566,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L2018",
+      "source_location": "L2017",
       "weight": 1.0
     },
     {
@@ -42516,7 +42516,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/inventory.tsx",
-      "source_location": "L4040",
+      "source_location": "L4039",
       "weight": 1.0
     },
     {
@@ -42659,7 +42659,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/products.tsx",
-      "source_location": "L2056",
+      "source_location": "L2055",
       "weight": 1.0
     },
     {
@@ -51766,5 +51766,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "e4d1abe942f4c45afdd2e72118d1a4dedbf2bd39"
+  "built_at_commit": "569ed1360447fa4c228df0573132ea269565825b"
 }
