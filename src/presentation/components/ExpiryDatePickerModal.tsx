@@ -1,13 +1,13 @@
 // src/presentation/components/ExpiryDatePickerModal.tsx — Single Date Calendar Picker for Product Expiry
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
-  Modal,
   View,
   Text,
   Pressable,
   ScrollView,
   StyleSheet,
   Platform,
+  BackHandler,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -164,16 +164,21 @@ export const ExpiryDatePickerModal: React.FC<ExpiryDatePickerModalProps> = ({
     { m: 11, label: 'Dis' },
   ];
 
+  useEffect(() => {
+    if (!visible) return;
+    const backSub = BackHandler.addEventListener('hardwareBackPress', () => {
+      onClose();
+      return true;
+    });
+    return () => backSub.remove();
+  }, [visible, onClose]);
+
+  if (!visible) return null;
+
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <View style={styles.modalOverlay}>
-        <Pressable style={styles.modalBackdrop} onPress={onClose} />
-        <View style={styles.modalContainer}>
+    <View style={styles.modalOverlay} pointerEvents="auto">
+      <Pressable style={styles.modalBackdrop} onPress={onClose} />
+      <View style={styles.modalContainer}>
           <View style={styles.modalDragHandle} />
 
           {/* Modal Header */}
@@ -389,15 +394,20 @@ export const ExpiryDatePickerModal: React.FC<ExpiryDatePickerModalProps> = ({
           </ScrollView>
         </View>
       </View>
-    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(15, 23, 42, 0.65)',
     justifyContent: 'flex-end',
+    zIndex: 99999,
+    elevation: 99,
   },
   modalBackdrop: {
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,

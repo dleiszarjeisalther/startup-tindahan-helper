@@ -701,6 +701,7 @@ export default function ProductListScreen() {
             </View>
 
             <ScrollView
+              style={{ flex: 1 }}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={styles.modalScrollContent}
@@ -1804,17 +1805,18 @@ export default function ProductListScreen() {
               </Pressable>
             </View>
           </View>
-        </KeyboardAvoidingView>
 
-        <ExpiryDatePickerModal
-          visible={expiryPickerVisible}
-          currentDate={newExpiryDate}
-          onSelect={(dateStr: string) => {
-            setNewExpiryDate(dateStr);
-            setExpiryPickerVisible(false);
-          }}
-          onClose={() => setExpiryPickerVisible(false)}
-        />
+          {/* In-Modal Expiry Date Picker Overlay */}
+          <ExpiryDatePickerModal
+            visible={expiryPickerVisible}
+            currentDate={newExpiryDate}
+            onSelect={(dateStr: string) => {
+              setNewExpiryDate(dateStr);
+              setExpiryPickerVisible(false);
+            }}
+            onClose={() => setExpiryPickerVisible(false)}
+          />
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* Vertical Product List */}
@@ -2159,6 +2161,8 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 36 : 24,
     width: '100%',
     maxHeight: '90%',
+    flexShrink: 1,
+    overflow: 'hidden',
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: -6 },
     shadowOpacity: 0.3,
