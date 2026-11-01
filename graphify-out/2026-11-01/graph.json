@@ -56,58 +56,6 @@
       "source_location": "L3"
     },
     {
-      "id": "src_app_history_datefilter",
-      "label": "DateFilter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "datefilter",
-      "source_file": "src/app/history.tsx",
-      "source_location": "L39"
-    },
-    {
-      "id": "src_app_history_historycategoryfilter",
-      "label": "HistoryCategoryFilter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "historycategoryfilter",
-      "source_file": "src/app/history.tsx",
-      "source_location": "L28"
-    },
-    {
-      "id": "src_app_history_movementfilter",
-      "label": "MovementFilter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "movementfilter",
-      "source_file": "src/app/history.tsx",
-      "source_location": "L30"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_daterangefilter",
-      "label": "DateRangeFilter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "daterangefilter",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L93"
-    },
-    {
       "id": "src_application_tindahanstoreservice_saletransactionrecord",
       "label": "SaleTransactionRecord",
       "_callable": true,
@@ -119,32 +67,6 @@
       "norm_label": "saletransactionrecord",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L137"
-    },
-    {
-      "id": "src_presentation_components_cancelexchangecreditmodal_cancelexchangecreditmodalprops",
-      "label": "CancelExchangeCreditModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "cancelexchangecreditmodalprops",
-      "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodalprops",
-      "label": "DateRangeCalendarModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "daterangecalendarmodalprops",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L16"
     },
     {
       "id": "src_presentation_components_transactiondetailmodal_returndisposition",
@@ -186,6 +108,19 @@
       "source_location": "L21"
     },
     {
+      "id": "src_app_notifications_alertfilter",
+      "label": "AlertFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
+      "file_type": "code",
+      "norm_label": "alertfilter",
+      "source_file": "src/app/notifications.tsx",
+      "source_location": "L11"
+    },
+    {
       "id": "src_application_tindahanstoreservice_storesnapshot",
       "label": "StoreSnapshot",
       "_callable": true,
@@ -223,6 +158,19 @@
       "norm_label": "storealert",
       "source_file": "src/domain/services/StoreAlertPolicy.ts",
       "source_location": "L6"
+    },
+    {
+      "id": "src_domain_services_storealertpolicy_storealertkind",
+      "label": "StoreAlertKind",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
+      "file_type": "code",
+      "norm_label": "storealertkind",
+      "source_file": "src/domain/services/StoreAlertPolicy.ts",
+      "source_location": "L3"
     },
     {
       "id": "src_domain_services_storealertpolicy_storealertpolicy",
@@ -433,6 +381,19 @@
       "source_location": "L24"
     },
     {
+      "id": "src_domain_strategies_dashboardanalyticsengine_dashboardfinancialmetrics",
+      "label": "DashboardFinancialMetrics",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 115,
+      "community_name": "Money",
+      "file_type": "code",
+      "norm_label": "dashboardfinancialmetrics",
+      "source_file": "src/domain/strategies/DashboardAnalyticsEngine.ts",
+      "source_location": "L64"
+    },
+    {
       "id": "src_domain_strategies_dashboardanalyticsengine_paymentdistributionitem",
       "label": "PaymentDistributionItem",
       "_callable": true,
@@ -444,19 +405,6 @@
       "norm_label": "paymentdistributionitem",
       "source_file": "src/domain/strategies/DashboardAnalyticsEngine.ts",
       "source_location": "L107"
-    },
-    {
-      "id": "src_domain_strategies_dashboardanalyticsengine_trendbarpoint",
-      "label": "TrendBarPoint",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 115,
-      "community_name": "Money",
-      "file_type": "code",
-      "norm_label": "trendbarpoint",
-      "source_file": "src/domain/strategies/DashboardAnalyticsEngine.ts",
-      "source_location": "L82"
     },
     {
       "id": "src_domain_value_objects_money_money",
@@ -478,7 +426,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": "ilocalnotificationscheduler",
       "source_file": "src/application/ILocalNotificationScheduler.ts",
@@ -491,7 +439,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": "localnotificationrequest",
       "source_file": "src/application/ILocalNotificationScheduler.ts",
@@ -504,37 +452,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": "expolocalnotificationscheduler",
       "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
       "source_location": "L11"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_beepplayer",
-      "label": "BeepPlayer",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "beepplayer",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice",
-      "label": "SoundFeedbackService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "soundfeedbackservice",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L13"
     },
     {
       "id": "src_app_checkout_confirmationstate",
@@ -693,56 +615,17 @@
       "source_location": "L22"
     },
     {
-      "id": "src_presentation_components_privacypolicymodal_privacypolicymodalprops",
-      "label": "PrivacyPolicyModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "settings.tsx",
-      "file_type": "code",
-      "norm_label": "privacypolicymodalprops",
-      "source_file": "src/presentation/components/PrivacyPolicyModal.tsx",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_app_checkout_cartitemstepperprops",
-      "label": "CartItemStepperProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "cartitemstepperprops",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L53"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_paymenttendertype",
-      "label": "PaymentTenderType",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "paymenttendertype",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L59"
-    },
-    {
       "id": "src_presentation_components_barcodeinputfield_barcodeinputfieldprops",
       "label": "BarcodeInputFieldProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodeinputfieldprops",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L7"
+      "source_location": "L8"
     },
     {
       "id": "src_presentation_components_barcodescannerviewfinder_barcodescannerviewfinderprops",
@@ -751,7 +634,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodescannerviewfinderprops",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
@@ -764,7 +647,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "floatingtoastprops",
       "source_file": "src/presentation/components/FloatingToast.tsx",
@@ -777,11 +660,37 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "toasttype",
       "source_file": "src/presentation/components/FloatingToast.tsx",
       "source_location": "L14"
+    },
+    {
+      "id": "src_app_checkout_cartitemstepperprops",
+      "label": "CartItemStepperProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cartitemstepperprops",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L53"
+    },
+    {
+      "id": "src_presentation_components_cancelexchangecreditmodal_cancelexchangecreditmodalprops",
+      "label": "CancelExchangeCreditModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cancelexchangecreditmodalprops",
+      "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
+      "source_location": "L12"
     },
     {
       "id": "src_presentation_components_weightquantitymodal_weightquantitymodalprops",
@@ -789,7 +698,7 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 120,
+      "community": 125,
       "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "weightquantitymodalprops",
@@ -802,7 +711,7 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 120,
+      "community": 125,
       "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "weightquantityproduct",
@@ -815,38 +724,12 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 120,
+      "community": 125,
       "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "weightquantitysheetprops",
       "source_file": "src/presentation/components/WeightQuantityModal.tsx",
       "source_location": "L54"
-    },
-    {
-      "id": "src_presentation_components_onboardingmodal_onboardingmodalprops",
-      "label": "OnboardingModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 125,
-      "community_name": "useLicensing",
-      "file_type": "code",
-      "norm_label": "onboardingmodalprops",
-      "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L23"
-    },
-    {
-      "id": "src_presentation_components_trialbanner_trialbannerprops",
-      "label": "TrialBannerProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 125,
-      "community_name": "useLicensing",
-      "file_type": "code",
-      "norm_label": "trialbannerprops",
-      "source_file": "src/presentation/components/TrialBanner.tsx",
-      "source_location": "L7"
     },
     {
       "id": "src_domain_strategies_dashboardanalyticsengine_dashboardanalyticsengine",
@@ -860,32 +743,6 @@
       "norm_label": "dashboardanalyticsengine",
       "source_file": "src/domain/strategies/DashboardAnalyticsEngine.ts",
       "source_location": "L127"
-    },
-    {
-      "id": "src_application_productonboardingservice_addproductcommand",
-      "label": "AddProductCommand",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 131,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "addproductcommand",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_application_productonboardingservice_addproductresult",
-      "label": "AddProductResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 131,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "addproductresult",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L25"
     },
     {
       "id": "src_domain_entities_product_productdto",
@@ -1096,19 +953,6 @@
       "source_location": "L55"
     },
     {
-      "id": "src_domain_strategies_dashboardanalyticsengine_dashboardfinancialmetrics",
-      "label": "DashboardFinancialMetrics",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 136,
-      "community_name": "DashboardAnalyticsEngine.ts",
-      "file_type": "code",
-      "norm_label": "dashboardfinancialmetrics",
-      "source_file": "src/domain/strategies/DashboardAnalyticsEngine.ts",
-      "source_location": "L64"
-    },
-    {
       "id": "src_domain_strategies_dashboardanalyticsengine_dashboardsalelineitem",
       "label": "DashboardSaleLineItem",
       "_callable": true,
@@ -1213,6 +1057,19 @@
       "source_location": "L15"
     },
     {
+      "id": "src_domain_strategies_dashboardanalyticsengine_trendbarpoint",
+      "label": "TrendBarPoint",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 136,
+      "community_name": "DashboardAnalyticsEngine.ts",
+      "file_type": "code",
+      "norm_label": "trendbarpoint",
+      "source_file": "src/domain/strategies/DashboardAnalyticsEngine.ts",
+      "source_location": "L82"
+    },
+    {
       "id": "src_presentation_components_productthumbnail_productthumbnailprops",
       "label": "ProductThumbnailProps",
       "_callable": true,
@@ -1239,6 +1096,110 @@
       "source_location": "L53"
     },
     {
+      "id": "src_app_history_datefilter",
+      "label": "DateFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "datefilter",
+      "source_file": "src/app/history.tsx",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_app_history_historycategoryfilter",
+      "label": "HistoryCategoryFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "historycategoryfilter",
+      "source_file": "src/app/history.tsx",
+      "source_location": "L28"
+    },
+    {
+      "id": "src_app_history_movementfilter",
+      "label": "MovementFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "movementfilter",
+      "source_file": "src/app/history.tsx",
+      "source_location": "L30"
+    },
+    {
+      "id": "src_app_history_unifiedactivityitem",
+      "label": "UnifiedActivityItem",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "unifiedactivityitem",
+      "source_file": "src/app/history.tsx",
+      "source_location": "L41"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_cashdraweradjustmentrecord",
+      "label": "CashDrawerAdjustmentRecord",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "cashdraweradjustmentrecord",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L99"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_daterangefilter",
+      "label": "DateRangeFilter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "daterangefilter",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L93"
+    },
+    {
+      "id": "src_application_tindahanstoreservice_stockmovementrecord",
+      "label": "StockMovementRecord",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "stockmovementrecord",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L202"
+    },
+    {
+      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodalprops",
+      "label": "DateRangeCalendarModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "daterangecalendarmodalprops",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L16"
+    },
+    {
       "id": "src_domain_services_pinsecurityengine_pinsecurityengine",
       "label": "PinSecurityEngine",
       "_callable": true,
@@ -1258,7 +1219,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "appupdateport",
       "source_file": "src/application/AppUpdateService.ts",
@@ -1271,7 +1232,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "appupdateservice",
       "source_file": "src/application/AppUpdateService.ts",
@@ -1284,7 +1245,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "installedapp",
       "source_file": "src/application/AppUpdateService.ts",
@@ -1297,7 +1258,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "updatephase",
       "source_file": "src/application/AppUpdateService.ts",
@@ -1310,7 +1271,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "updatesnapshot",
       "source_file": "src/application/AppUpdateService.ts",
@@ -1323,7 +1284,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "apprelease",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -1336,7 +1297,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "releasemetadata",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -1349,7 +1310,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "androidappupdateport",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -1362,7 +1323,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "nativeupdater",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -1551,13 +1512,65 @@
       "source_location": "L18"
     },
     {
+      "id": "src_infrastructure_services_soundfeedbackservice_beepplayer",
+      "label": "BeepPlayer",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "beepplayer",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice",
+      "label": "SoundFeedbackService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "soundfeedbackservice",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_application_productonboardingservice_addproductcommand",
+      "label": "AddProductCommand",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "addproductcommand",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_application_productonboardingservice_addproductresult",
+      "label": "AddProductResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "addproductresult",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L25"
+    },
+    {
       "id": "src_application_productonboardingservice_productonboardingservice",
       "label": "ProductOnboardingService",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "productonboardingservice",
       "source_file": "src/application/ProductOnboardingService.ts",
@@ -1570,7 +1583,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "externalproductcatalogresult",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -1583,7 +1596,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "iexternalcataloglookupservice",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -1596,7 +1609,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "openfactsapiresponse",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -1609,7 +1622,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "openfactsproductpayload",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -1622,7 +1635,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "openfoodfactsapiclient",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -1635,7 +1648,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "upcitemdbpayload",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -1759,6 +1772,19 @@
       "source_location": "L24"
     },
     {
+      "id": "src_presentation_components_expirydatepickermodal_expirydatepickermodalprops",
+      "label": "ExpiryDatePickerModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "ExpiryDatePickerModal.tsx",
+      "file_type": "code",
+      "norm_label": "expirydatepickermodalprops",
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L15"
+    },
+    {
       "id": "modules_apk_updater_android_src_main_java_expo_modules_apkupdater_apkupdatermodule_apkfileprovider",
       "label": "ApkFileProvider",
       "_callable": true,
@@ -1809,19 +1835,6 @@
       "norm_label": "barcode",
       "source_file": "src/domain/value-objects/Barcode.ts",
       "source_location": "L5"
-    },
-    {
-      "id": "src_app_history_unifiedactivityitem",
-      "label": "UnifiedActivityItem",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "unifiedactivityitem",
-      "source_file": "src/app/history.tsx",
-      "source_location": "L41"
     },
     {
       "id": "src_application_tindahanstoreservice_activeexchangecreditinfo",
@@ -1889,19 +1902,6 @@
       "source_location": "L91"
     },
     {
-      "id": "src_application_tindahanstoreservice_cashdraweradjustmentrecord",
-      "label": "CashDrawerAdjustmentRecord",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "cashdraweradjustmentrecord",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L99"
-    },
-    {
       "id": "src_application_tindahanstoreservice_daysalesbucket",
       "label": "DaySalesBucket",
       "_callable": true,
@@ -1941,6 +1941,19 @@
       "source_location": "L246"
     },
     {
+      "id": "src_application_tindahanstoreservice_paymenttendertype",
+      "label": "PaymentTenderType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "TindahanStoreService.ts",
+      "file_type": "code",
+      "norm_label": "paymenttendertype",
+      "source_file": "src/application/TindahanStoreService.ts",
+      "source_location": "L59"
+    },
+    {
       "id": "src_application_tindahanstoreservice_returndisposition",
       "label": "ReturnDisposition",
       "_callable": true,
@@ -1978,19 +1991,6 @@
       "norm_label": "salelineitemrecord",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L79"
-    },
-    {
-      "id": "src_application_tindahanstoreservice_stockmovementrecord",
-      "label": "StockMovementRecord",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "TindahanStoreService.ts",
-      "file_type": "code",
-      "norm_label": "stockmovementrecord",
-      "source_file": "src/application/TindahanStoreService.ts",
-      "source_location": "L202"
     },
     {
       "id": "src_application_tindahanstoreservice_stockmovementtype",
@@ -2162,6 +2162,45 @@
       "source_location": "L18"
     },
     {
+      "id": "src_presentation_components_onboardingmodal_onboardingmodalprops",
+      "label": "OnboardingModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "onboardingmodalprops",
+      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_presentation_components_privacypolicymodal_privacypolicymodalprops",
+      "label": "PrivacyPolicyModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "privacypolicymodalprops",
+      "source_file": "src/presentation/components/PrivacyPolicyModal.tsx",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_presentation_components_trialbanner_trialbannerprops",
+      "label": "TrialBannerProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "trialbannerprops",
+      "source_file": "src/presentation/components/TrialBanner.tsx",
+      "source_location": "L7"
+    },
+    {
       "id": "src_presentation_components_trialexpiredmodal_trialexpiredmodalprops",
       "label": "TrialExpiredModalProps",
       "_callable": true,
@@ -2175,19 +2214,6 @@
       "source_location": "L20"
     },
     {
-      "id": "src_app_notifications_alertfilter",
-      "label": "AlertFilter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "alertfilter",
-      "source_file": "src/app/notifications.tsx",
-      "source_location": "L11"
-    },
-    {
       "id": "src_app_utang_filtertype",
       "label": "FilterType",
       "_callable": true,
@@ -2199,19 +2225,6 @@
       "norm_label": "filtertype",
       "source_file": "src/app/utang.tsx",
       "source_location": "L42"
-    },
-    {
-      "id": "src_domain_services_storealertpolicy_storealertkind",
-      "label": "StoreAlertKind",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "storealertkind",
-      "source_file": "src/domain/services/StoreAlertPolicy.ts",
-      "source_location": "L3"
     },
     {
       "id": "src_presentation_localization_i18n_supportedlanguage",
@@ -2648,6 +2661,42 @@
       "source_location": "L152"
     },
     {
+      "id": "src_app_explore_getlocalizedmonths",
+      "label": "getLocalizedMonths()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "getlocalizedmonths()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L23"
+    },
+    {
+      "id": "src_app_explore_getphilippineseasoninfo",
+      "label": "getPhilippineSeasonInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "getphilippineseasoninfo()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L56"
+    },
+    {
+      "id": "src_app_explore_seasonalforecastscreen",
+      "label": "SeasonalForecastScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "seasonalforecastscreen()",
+      "source_file": "src/app/explore.tsx",
+      "source_location": "L97"
+    },
+    {
       "id": "src_app_index_posscanproductscreen",
       "label": "PosScanProductScreen()",
       "_callable": true,
@@ -2672,6 +2721,18 @@
       "source_location": "L50"
     },
     {
+      "id": "src_app_more_menuprofilescreen",
+      "label": "MenuProfileScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "menuprofilescreen()",
+      "source_file": "src/app/more.tsx",
+      "source_location": "L39"
+    },
+    {
       "id": "src_app_notifications_notificationsscreen",
       "label": "NotificationsScreen()",
       "_callable": true,
@@ -2693,7 +2754,7 @@
       "file_type": "code",
       "norm_label": "productlistscreen()",
       "source_file": "src/app/products.tsx",
-      "source_location": "L34"
+      "source_location": "L36"
     },
     {
       "id": "src_app_settings_storesettingsscreen",
@@ -2706,6 +2767,78 @@
       "norm_label": "storesettingsscreen()",
       "source_file": "src/app/settings.tsx",
       "source_location": "L51"
+    },
+    {
+      "id": "src_components_animated_icon_animatedicon",
+      "label": "AnimatedIcon()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "animatedicon()",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L88"
+    },
+    {
+      "id": "src_components_animated_icon_animatedsplashoverlay",
+      "label": "AnimatedSplashOverlay()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "animatedsplashoverlay()",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_animated_icon_animatedsplashoverlay_prepareanddisplaysplash",
+      "label": "prepareAndDisplaySplash()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "prepareanddisplaysplash()",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_components_app_tabs_apptabs",
+      "label": "AppTabs()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "apptabs()",
+      "source_file": "src/components/app-tabs.tsx",
+      "source_location": "L243"
+    },
+    {
+      "id": "src_components_app_tabs_customtindahantabbar",
+      "label": "CustomTindahanTabBar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "customtindahantabbar()",
+      "source_file": "src/components/app-tabs.tsx",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_presentation_components_appupdateprompt_appupdateprompt",
+      "label": "AppUpdatePrompt()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "appupdateprompt()",
+      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
+      "source_location": "L10"
     },
     {
       "id": "src_presentation_hooks_usetindahanstore_addcashadjustment",
@@ -3414,6 +3547,18 @@
       "norm_label": "voidentiretransaction()",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L58"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstoreprovider",
+      "label": "TindahanStoreProvider()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "tindahanstoreprovider()",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L7"
     },
     {
       "id": "src_presentation_providers_tindahanstoreprovider_usetindahanstoreservice",
@@ -4556,64 +4701,16 @@
       "source_location": "L15"
     },
     {
-      "id": "src_app_history_stockmovementhistoryscreen",
-      "label": "StockMovementHistoryScreen()",
+      "id": "src_presentation_components_receiptprintermodal_receiptprintermodal",
+      "label": "ReceiptPrinterModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 106,
       "community_name": "sales.tsx",
       "file_type": "code",
-      "norm_label": "stockmovementhistoryscreen()",
-      "source_file": "src/app/history.tsx",
-      "source_location": "L65"
-    },
-    {
-      "id": "src_app_sales_saleshistoryscreen",
-      "label": "SalesHistoryScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "saleshistoryscreen()",
-      "source_file": "src/app/sales.tsx",
-      "source_location": "L67"
-    },
-    {
-      "id": "src_presentation_components_cancelexchangecreditmodal_cancelexchangecreditmodal",
-      "label": "CancelExchangeCreditModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "cancelexchangecreditmodal()",
-      "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
-      "source_location": "L21"
-    },
-    {
-      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodal",
-      "label": "DateRangeCalendarModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "daterangecalendarmodal()",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L34"
-    },
-    {
-      "id": "src_presentation_components_daterangecalendarmodal_issameday",
-      "label": "isSameDay()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "issameday()",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L26"
+      "norm_label": "receiptprintermodal()",
+      "source_file": "src/presentation/components/ReceiptPrinterModal.tsx",
+      "source_location": "L30"
     },
     {
       "id": "src_presentation_components_transactiondetailmodal_transactiondetailmodal",
@@ -5101,7 +5198,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": "tablayout()",
       "source_file": "src/app/_layout.tsx",
@@ -5113,7 +5210,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": ".clearschedule()",
       "source_file": "src/application/ILocalNotificationScheduler.ts",
@@ -5125,7 +5222,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": ".replaceschedule()",
       "source_file": "src/application/ILocalNotificationScheduler.ts",
@@ -5137,59 +5234,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": ".requestpermission()",
       "source_file": "src/application/ILocalNotificationScheduler.ts",
       "source_location": "L10"
-    },
-    {
-      "id": "src_components_animated_icon_animatedicon",
-      "label": "AnimatedIcon()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "animatedicon()",
-      "source_file": "src/components/animated-icon.tsx",
-      "source_location": "L88"
-    },
-    {
-      "id": "src_components_animated_icon_animatedsplashoverlay",
-      "label": "AnimatedSplashOverlay()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "animatedsplashoverlay()",
-      "source_file": "src/components/animated-icon.tsx",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_components_animated_icon_animatedsplashoverlay_prepareanddisplaysplash",
-      "label": "prepareAndDisplaySplash()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "prepareanddisplaysplash()",
-      "source_file": "src/components/animated-icon.tsx",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_components_app_tabs_apptabs",
-      "label": "AppTabs()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "apptabs()",
-      "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L243"
     },
     {
       "id": "src_infrastructure_services_expolocalnotificationscheduler_expolocalnotificationscheduler_clearschedule",
@@ -5197,7 +5246,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": ".clearschedule()",
       "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
@@ -5209,7 +5258,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": ".ensurechannel()",
       "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
@@ -5221,7 +5270,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": ".loadmodule()",
       "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
@@ -5233,7 +5282,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": ".replaceschedule()",
       "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
@@ -5245,71 +5294,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": ".requestpermission()",
       "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
       "source_location": "L43"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L19"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_createpool",
-      "label": ".createPool()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": ".createpool()",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_initplayer",
-      "label": ".initPlayer()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": ".initplayer()",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L46"
-    },
-    {
-      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_playbarcodebeep",
-      "label": ".playBarcodeBeep()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": ".playbarcodebeep()",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L80"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstoreprovider",
-      "label": "TindahanStoreProvider()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "tindahanstoreprovider()",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L7"
     },
     {
       "id": "src_presentation_components_appupdateprompt_appupdatemenuitem",
@@ -5324,16 +5313,16 @@
       "source_location": "L248"
     },
     {
-      "id": "src_presentation_components_appupdateprompt_appupdateprompt",
-      "label": "AppUpdatePrompt()",
+      "id": "src_presentation_components_confirmationmodal_confirmationmodal",
+      "label": "ConfirmationModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 118,
       "community_name": "settings.tsx",
       "file_type": "code",
-      "norm_label": "appupdateprompt()",
-      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
-      "source_location": "L10"
+      "norm_label": "confirmationmodal()",
+      "source_file": "src/presentation/components/ConfirmationModal.tsx",
+      "source_location": "L118"
     },
     {
       "id": "src_presentation_components_gcashqrmodal_gcashqrmodal",
@@ -5346,18 +5335,6 @@
       "norm_label": "gcashqrmodal()",
       "source_file": "src/presentation/components/GcashQrModal.tsx",
       "source_location": "L34"
-    },
-    {
-      "id": "src_presentation_components_privacypolicymodal_privacypolicymodal",
-      "label": "PrivacyPolicyModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "settings.tsx",
-      "file_type": "code",
-      "norm_label": "privacypolicymodal()",
-      "source_file": "src/presentation/components/PrivacyPolicyModal.tsx",
-      "source_location": "L22"
     },
     {
       "id": "src_components_animated_icon_web_animatedicon",
@@ -5384,28 +5361,16 @@
       "source_location": "L8"
     },
     {
-      "id": "src_app_checkout_cartitemstepper",
-      "label": "CartItemStepper()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "cartitemstepper()",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L63"
-    },
-    {
       "id": "src_presentation_components_barcodeinputfield_barcodeinputfield",
       "label": "BarcodeInputField()",
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodeinputfield()",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "src_presentation_components_barcodescannerviewfinder_barcodescannerviewfinder",
@@ -5413,35 +5378,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodescannerviewfinder()",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
       "source_location": "L59"
-    },
-    {
-      "id": "src_presentation_components_confirmationmodal_confirmationmodal",
-      "label": "ConfirmationModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "confirmationmodal()",
-      "source_file": "src/presentation/components/ConfirmationModal.tsx",
-      "source_location": "L118"
-    },
-    {
-      "id": "src_presentation_components_floatingtoast_floatingtoast",
-      "label": "FloatingToast()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "floatingtoast()",
-      "source_file": "src/presentation/components/FloatingToast.tsx",
-      "source_location": "L24"
     },
     {
       "id": "src_presentation_components_productstockmanagemodal_productstockmanagemodal",
@@ -5449,7 +5390,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "productstockmanagemodal()",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
@@ -5461,35 +5402,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "productthumbnail()",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
       "source_location": "L13"
-    },
-    {
-      "id": "src_presentation_components_unitselectionmodal_unitselectionmodal",
-      "label": "UnitSelectionModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "unitselectionmodal()",
-      "source_file": "src/presentation/components/UnitSelectionModal.tsx",
-      "source_location": "L30"
-    },
-    {
-      "id": "src_presentation_components_weightquantitymodal_weightquantitymodal",
-      "label": "WeightQuantityModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "weightquantitymodal()",
-      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
-      "source_location": "L417"
     },
     {
       "id": "src_presentation_hooks_useidempotentsubmit_useidempotentsubmit",
@@ -5497,7 +5414,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "useidempotentsubmit()",
       "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
@@ -5516,16 +5433,28 @@
       "source_location": "L447"
     },
     {
-      "id": "src_app_checkout_checkoutnewsalescreen",
-      "label": "CheckoutNewSaleScreen()",
+      "id": "src_app_checkout_cartitemstepper",
+      "label": "CartItemStepper()",
       "_callable": true,
       "_origin": "ast",
       "community": 125,
-      "community_name": "useLicensing",
+      "community_name": "checkout.tsx",
       "file_type": "code",
-      "norm_label": "checkoutnewsalescreen()",
+      "norm_label": "cartitemstepper()",
       "source_file": "src/app/checkout.tsx",
-      "source_location": "L172"
+      "source_location": "L63"
+    },
+    {
+      "id": "src_presentation_components_cancelexchangecreditmodal_cancelexchangecreditmodal",
+      "label": "CancelExchangeCreditModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cancelexchangecreditmodal()",
+      "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
+      "source_location": "L21"
     },
     {
       "id": "src_presentation_components_licensinggate_uselicensinggate",
@@ -5533,47 +5462,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 125,
-      "community_name": "useLicensing",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "uselicensinggate()",
       "source_file": "src/presentation/components/LicensingGate.tsx",
       "source_location": "L16"
     },
     {
-      "id": "src_presentation_components_onboardingmodal_onboardingmodal",
-      "label": "OnboardingModal()",
+      "id": "src_presentation_components_unitselectionmodal_unitselectionmodal",
+      "label": "UnitSelectionModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 125,
-      "community_name": "useLicensing",
+      "community_name": "checkout.tsx",
       "file_type": "code",
-      "norm_label": "onboardingmodal()",
-      "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L27"
+      "norm_label": "unitselectionmodal()",
+      "source_file": "src/presentation/components/UnitSelectionModal.tsx",
+      "source_location": "L30"
     },
     {
-      "id": "src_presentation_components_trialbanner_trialbanner",
-      "label": "TrialBanner()",
+      "id": "src_presentation_components_weightquantitymodal_weightquantitymodal",
+      "label": "WeightQuantityModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 125,
-      "community_name": "useLicensing",
+      "community_name": "checkout.tsx",
       "file_type": "code",
-      "norm_label": "trialbanner()",
-      "source_file": "src/presentation/components/TrialBanner.tsx",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_presentation_hooks_uselicensing_uselicensing",
-      "label": "useLicensing()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 125,
-      "community_name": "useLicensing",
-      "file_type": "code",
-      "norm_label": "uselicensing()",
-      "source_file": "src/presentation/hooks/useLicensing.ts",
-      "source_location": "L14"
+      "norm_label": "weightquantitymodal()",
+      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
+      "source_location": "L417"
     },
     {
       "id": "scripts_generate_ui_mockups_generate",
@@ -5598,18 +5515,6 @@
       "norm_label": ".computemetrics()",
       "source_file": "src/domain/strategies/DashboardAnalyticsEngine.ts",
       "source_location": "L205"
-    },
-    {
-      "id": "src_domain_strategies_dashboardanalyticsengine_dashboardanalyticsengine_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 128,
-      "community_name": "DashboardAnalyticsEngine",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/domain/strategies/DashboardAnalyticsEngine.ts",
-      "source_location": "L130"
     },
     {
       "id": "src_domain_strategies_dashboardanalyticsengine_dashboardanalyticsengine_getpaymentdistribution",
@@ -5754,6 +5659,18 @@
       "norm_label": ".getproductssnapshot()",
       "source_file": "src/application/TindahanStoreService.ts",
       "source_location": "L1347"
+    },
+    {
+      "id": "src_domain_strategies_dashboardanalyticsengine_dashboardanalyticsengine_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 131,
+      "community_name": "Product.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/domain/strategies/DashboardAnalyticsEngine.ts",
+      "source_location": "L130"
     },
     {
       "id": "src_infrastructure_repositories_inmemoryproductrepository_inmemoryproductrepository_getinitialdtos",
@@ -5929,7 +5846,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 16,
-      "community_name": "+not-found.tsx",
+      "community_name": "expo-router",
       "file_type": "code",
       "norm_label": "notfound()",
       "source_file": "src/app/+not-found.tsx",
@@ -6212,6 +6129,30 @@
       "source_location": "L199"
     },
     {
+      "id": "src_presentation_components_daterangecalendarmodal_daterangecalendarmodal",
+      "label": "DateRangeCalendarModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "daterangecalendarmodal()",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L34"
+    },
+    {
+      "id": "src_presentation_components_daterangecalendarmodal_issameday",
+      "label": "isSameDay()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "issameday()",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L26"
+    },
+    {
       "id": "src_application_tindahanstoreservice_tindahanstoreservice_setownermasterpin",
       "label": ".setOwnerMasterPin()",
       "_callable": true,
@@ -6313,7 +6254,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "setup()",
       "source_file": "scripts/test-app-updates.cjs",
@@ -6325,7 +6266,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".clean()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6337,7 +6278,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".download()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6349,7 +6290,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".install()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6361,7 +6302,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".installed()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6373,7 +6314,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".latest()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6385,7 +6326,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".check()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6397,7 +6338,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6409,7 +6350,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".dismiss()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6421,7 +6362,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".download()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6433,7 +6374,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".getsnapshot()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6445,7 +6386,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".install()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6457,7 +6398,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".publish()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6469,7 +6410,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".show()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6481,7 +6422,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".subscribe()",
       "source_file": "src/application/AppUpdateService.ts",
@@ -6493,7 +6434,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -6505,7 +6446,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".isnewerthan()",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -6517,7 +6458,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".parse()",
       "source_file": "src/domain/entities/AppRelease.ts",
@@ -6529,7 +6470,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".clean()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6541,7 +6482,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".download()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6553,7 +6494,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".install()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6565,7 +6506,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".installed()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6577,7 +6518,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".latest()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6589,7 +6530,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".native()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6601,7 +6542,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".addlistener()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6613,7 +6554,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".clean()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6625,7 +6566,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".download()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6637,7 +6578,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".install()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -6649,7 +6590,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": ".installed()",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -7316,12 +7257,60 @@
       "source_location": "L337"
     },
     {
+      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_createpool",
+      "label": ".createPool()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": ".createpool()",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_initplayer",
+      "label": ".initPlayer()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": ".initplayer()",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L46"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice_soundfeedbackservice_playbarcodebeep",
+      "label": ".playBarcodeBeep()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": ".playbarcodebeep()",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L80"
+    },
+    {
       "id": "src_application_productonboardingservice_productonboardingservice_constructor",
       "label": ".constructor()",
       "_callable": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/application/ProductOnboardingService.ts",
@@ -7333,7 +7322,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".lookuponlinecatalog()",
       "source_file": "src/application/ProductOnboardingService.ts",
@@ -7345,7 +7334,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".downloadimagelocally()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -7357,7 +7346,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".lookupbarcode()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -7369,7 +7358,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".downloadimagelocally()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -7381,7 +7370,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".fetchjsonwithtimeout()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -7393,7 +7382,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".infercategory()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -7405,7 +7394,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": ".lookupbarcode()",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -7664,16 +7653,40 @@
       "source_location": "L32"
     },
     {
-      "id": "src_presentation_components_receiptprintermodal_receiptprintermodal",
-      "label": "ReceiptPrinterModal()",
+      "id": "src_presentation_components_expirydatepickermodal_expirydatepickermodal",
+      "label": "ExpiryDatePickerModal()",
       "_callable": true,
       "_origin": "ast",
-      "community": 69,
-      "community_name": "ReceiptPrinterModal.tsx",
+      "community": 70,
+      "community_name": "ExpiryDatePickerModal.tsx",
       "file_type": "code",
-      "norm_label": "receiptprintermodal()",
-      "source_file": "src/presentation/components/ReceiptPrinterModal.tsx",
-      "source_location": "L30"
+      "norm_label": "expirydatepickermodal()",
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_presentation_components_expirydatepickermodal_formatdatetoiso",
+      "label": "formatDateToISO()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "ExpiryDatePickerModal.tsx",
+      "file_type": "code",
+      "norm_label": "formatdatetoiso()",
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_presentation_components_expirydatepickermodal_issameday",
+      "label": "isSameDay()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "ExpiryDatePickerModal.tsx",
+      "file_type": "code",
+      "norm_label": "issameday()",
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L24"
     },
     {
       "id": "scripts_test_multi_quantity_refund_cancelexchangecredit",
@@ -8204,6 +8217,18 @@
       "source_location": "L74"
     },
     {
+      "id": "src_app_checkout_checkoutnewsalescreen",
+      "label": "CheckoutNewSaleScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "checkoutnewsalescreen()",
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L172"
+    },
+    {
       "id": "src_infrastructure_services_licensingservice_formattimeremaining",
       "label": "formatTimeRemaining()",
       "_callable": true,
@@ -8540,6 +8565,42 @@
       "source_location": "L22"
     },
     {
+      "id": "src_presentation_components_onboardingmodal_onboardingmodal",
+      "label": "OnboardingModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "onboardingmodal()",
+      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "source_location": "L28"
+    },
+    {
+      "id": "src_presentation_components_privacypolicymodal_privacypolicymodal",
+      "label": "PrivacyPolicyModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "privacypolicymodal()",
+      "source_file": "src/presentation/components/PrivacyPolicyModal.tsx",
+      "source_location": "L22"
+    },
+    {
+      "id": "src_presentation_components_trialbanner_trialbanner",
+      "label": "TrialBanner()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "trialbanner()",
+      "source_file": "src/presentation/components/TrialBanner.tsx",
+      "source_location": "L11"
+    },
+    {
       "id": "src_presentation_components_trialexpiredmodal_trialexpiredmodal",
       "label": "TrialExpiredModal()",
       "_callable": true,
@@ -8552,52 +8613,40 @@
       "source_location": "L26"
     },
     {
-      "id": "src_app_explore_getlocalizedmonths",
-      "label": "getLocalizedMonths()",
+      "id": "src_presentation_hooks_uselicensing_uselicensing",
+      "label": "useLicensing()",
       "_callable": true,
       "_origin": "ast",
-      "community": 83,
-      "community_name": "utang.tsx",
+      "community": 80,
+      "community_name": "LicensingService.ts",
       "file_type": "code",
-      "norm_label": "getlocalizedmonths()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L23"
+      "norm_label": "uselicensing()",
+      "source_file": "src/presentation/hooks/useLicensing.ts",
+      "source_location": "L14"
     },
     {
-      "id": "src_app_explore_getphilippineseasoninfo",
-      "label": "getPhilippineSeasonInfo()",
+      "id": "src_app_history_stockmovementhistoryscreen",
+      "label": "StockMovementHistoryScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 83,
       "community_name": "utang.tsx",
       "file_type": "code",
-      "norm_label": "getphilippineseasoninfo()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L56"
+      "norm_label": "stockmovementhistoryscreen()",
+      "source_file": "src/app/history.tsx",
+      "source_location": "L65"
     },
     {
-      "id": "src_app_explore_seasonalforecastscreen",
-      "label": "SeasonalForecastScreen()",
+      "id": "src_app_sales_saleshistoryscreen",
+      "label": "SalesHistoryScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 83,
       "community_name": "utang.tsx",
       "file_type": "code",
-      "norm_label": "seasonalforecastscreen()",
-      "source_file": "src/app/explore.tsx",
-      "source_location": "L97"
-    },
-    {
-      "id": "src_app_more_menuprofilescreen",
-      "label": "MenuProfileScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "menuprofilescreen()",
-      "source_file": "src/app/more.tsx",
-      "source_location": "L39"
+      "norm_label": "saleshistoryscreen()",
+      "source_file": "src/app/sales.tsx",
+      "source_location": "L67"
     },
     {
       "id": "src_app_utang_sukiutangledgerscreen",
@@ -8612,16 +8661,16 @@
       "source_location": "L44"
     },
     {
-      "id": "src_components_app_tabs_customtindahantabbar",
-      "label": "CustomTindahanTabBar()",
+      "id": "src_presentation_components_floatingtoast_floatingtoast",
+      "label": "FloatingToast()",
       "_callable": true,
       "_origin": "ast",
       "community": 83,
       "community_name": "utang.tsx",
       "file_type": "code",
-      "norm_label": "customtindahantabbar()",
-      "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L10"
+      "norm_label": "floatingtoast()",
+      "source_file": "src/presentation/components/FloatingToast.tsx",
+      "source_location": "L24"
     },
     {
       "id": "src_presentation_components_screensafeareaview_screensafeareaview",
@@ -8804,6 +8853,105 @@
       "source_location": "L4"
     },
     {
+      "id": "src_app_layout",
+      "label": "_layout.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "_layout.tsx",
+      "source_file": "src/app/_layout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_animated_icon",
+      "label": "animated-icon.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "animated-icon.tsx",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_animated_icon_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/components/animated-icon.tsx",
+      "source_location": "L100"
+    },
+    {
+      "id": "src_components_app_tabs",
+      "label": "app-tabs.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "app-tabs.tsx",
+      "source_file": "src/components/app-tabs.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_app_tabs_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/components/app-tabs.tsx",
+      "source_location": "L268"
+    },
+    {
+      "id": "src_infrastructure_container_appupdateservice",
+      "label": "appUpdateService",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "appupdateservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_infrastructure_container_tindahanstoreservice",
+      "label": "tindahanStoreService",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "tindahanstoreservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_presentation_components_appupdateprompt",
+      "label": "AppUpdatePrompt.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "appupdateprompt.tsx",
+      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_appupdateprompt_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
+      "source_location": "L288"
+    },
+    {
       "id": "src_presentation_hooks_usetindahanstore",
       "label": "useTindahanStore.ts",
       "_origin": "ast",
@@ -8813,6 +8961,39 @@
       "norm_label": "usetindahanstore.ts",
       "source_file": "src/presentation/hooks/useTindahanStore.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider",
+      "label": "TindahanStoreProvider.tsx",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "tindahanstoreprovider.tsx",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstorecontext",
+      "label": "TindahanStoreContext",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "code",
+      "norm_label": "tindahanstorecontext",
+      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
+      "source_location": "L5"
+    },
+    {
+      "id": "ref_expo_asset",
+      "label": "expo-asset",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "useTindahanStore",
+      "file_type": "concept",
+      "norm_label": "expo-asset",
+      "source_file": "app.json",
+      "source_location": "L46"
     },
     {
       "id": "scripts_render_shotstack_ad",
@@ -8881,28 +9062,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_app_history",
-      "label": "history.tsx",
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "history.tsx",
-      "source_file": "src/app/history.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_history_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/history.tsx",
-      "source_location": "L902"
-    },
-    {
       "id": "src_app_sales",
       "label": "sales.tsx",
       "_origin": "ast",
@@ -8958,50 +9117,6 @@
       "source_location": "L1847"
     },
     {
-      "id": "src_presentation_components_cancelexchangecreditmodal",
-      "label": "CancelExchangeCreditModal.tsx",
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "cancelexchangecreditmodal.tsx",
-      "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_cancelexchangecreditmodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
-      "source_location": "L138"
-    },
-    {
-      "id": "src_presentation_components_daterangecalendarmodal",
-      "label": "DateRangeCalendarModal.tsx",
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "daterangecalendarmodal.tsx",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_daterangecalendarmodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 106,
-      "community_name": "sales.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
-      "source_location": "L770"
-    },
-    {
       "id": "src_presentation_components_transactiondetailmodal",
       "label": "TransactionDetailModal.tsx",
       "_origin": "ast",
@@ -9022,6 +9137,39 @@
       "norm_label": "styles",
       "source_file": "src/presentation/components/TransactionDetailModal.tsx",
       "source_location": "L697"
+    },
+    {
+      "id": "src_app_notifications",
+      "label": "notifications.tsx",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
+      "file_type": "code",
+      "norm_label": "notifications.tsx",
+      "source_file": "src/app/notifications.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_notifications_filters",
+      "label": "FILTERS",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
+      "file_type": "code",
+      "norm_label": "filters",
+      "source_file": "src/app/notifications.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_app_notifications_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "StoreAlertPolicy.ts",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/notifications.tsx",
+      "source_location": "L139"
     },
     {
       "id": "src_domain_services_storealertpolicy",
@@ -9321,91 +9469,14 @@
       "source_location": "L41"
     },
     {
-      "id": "app_expo_plugins",
-      "label": "plugins",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "plugins",
-      "source_file": "app.json",
-      "source_location": "L46"
-    },
-    {
-      "id": "src_app_layout",
-      "label": "_layout.tsx",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "_layout.tsx",
-      "source_file": "src/app/_layout.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "src_application_ilocalnotificationscheduler",
       "label": "ILocalNotificationScheduler.ts",
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": "ilocalnotificationscheduler.ts",
       "source_file": "src/application/ILocalNotificationScheduler.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_animated_icon",
-      "label": "animated-icon.tsx",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "animated-icon.tsx",
-      "source_file": "src/components/animated-icon.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_animated_icon_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/components/animated-icon.tsx",
-      "source_location": "L100"
-    },
-    {
-      "id": "src_infrastructure_container_tindahanstoreservice",
-      "label": "tindahanStoreService",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "tindahanstoreservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_infrastructure_services_barcodebeepdatauri",
-      "label": "barcodeBeepDataUri.ts",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "barcodebeepdatauri.ts",
-      "source_file": "src/infrastructure/services/barcodeBeepDataUri.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_services_barcodebeepdatauri_barcode_beep_data_uri",
-      "label": "BARCODE_BEEP_DATA_URI",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "barcode_beep_data_uri",
-      "source_file": "src/infrastructure/services/barcodeBeepDataUri.ts",
       "source_location": "L1"
     },
     {
@@ -9413,84 +9484,18 @@
       "label": "ExpoLocalNotificationScheduler.ts",
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "code",
       "norm_label": "expolocalnotificationscheduler.ts",
       "source_file": "src/infrastructure/services/ExpoLocalNotificationScheduler.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_infrastructure_services_soundfeedbackservice",
-      "label": "SoundFeedbackService.ts",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "soundfeedbackservice.ts",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider",
-      "label": "TindahanStoreProvider.tsx",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "tindahanstoreprovider.tsx",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_providers_tindahanstoreprovider_tindahanstorecontext",
-      "label": "TindahanStoreContext",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "code",
-      "norm_label": "tindahanstorecontext",
-      "source_file": "src/presentation/providers/TindahanStoreProvider.tsx",
-      "source_location": "L5"
-    },
-    {
-      "id": "docref_rfc_2397",
-      "label": "RFC-2397",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "concept",
-      "norm_label": "rfc-2397",
-      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "ref_expo_asset",
-      "label": "expo-asset",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "concept",
-      "norm_label": "expo-asset",
-      "source_file": "app.json",
-      "source_location": "L46"
-    },
-    {
-      "id": "ref_expo_audio",
-      "label": "expo-audio",
-      "_origin": "ast",
-      "community": 117,
-      "community_name": "_layout.tsx",
-      "file_type": "concept",
-      "norm_label": "expo-audio",
-      "source_file": "app.json",
-      "source_location": "L46"
-    },
-    {
       "id": "ref_expo_notifications",
       "label": "expo-notifications",
       "_origin": "ast",
       "community": 117,
-      "community_name": "_layout.tsx",
+      "community_name": "ILocalNotificationScheduler",
       "file_type": "concept",
       "norm_label": "expo-notifications",
       "source_file": "app.json",
@@ -9539,28 +9544,6 @@
       "norm_label": "styles",
       "source_file": "src/app/settings.tsx",
       "source_location": "L1539"
-    },
-    {
-      "id": "src_presentation_components_appupdateprompt",
-      "label": "AppUpdatePrompt.tsx",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "settings.tsx",
-      "file_type": "code",
-      "norm_label": "appupdateprompt.tsx",
-      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_appupdateprompt_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "settings.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/AppUpdatePrompt.tsx",
-      "source_location": "L288"
     },
     {
       "id": "src_presentation_components_confirmationmodal",
@@ -9616,39 +9599,6 @@
       "norm_label": "styles",
       "source_file": "src/presentation/components/GcashQrModal.tsx",
       "source_location": "L385"
-    },
-    {
-      "id": "src_presentation_components_privacypolicymodal",
-      "label": "PrivacyPolicyModal.tsx",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "settings.tsx",
-      "file_type": "code",
-      "norm_label": "privacypolicymodal.tsx",
-      "source_file": "src/presentation/components/PrivacyPolicyModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_privacypolicymodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "settings.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/PrivacyPolicyModal.tsx",
-      "source_location": "L248"
-    },
-    {
-      "id": "ref_expo_sharing",
-      "label": "expo-sharing",
-      "_origin": "ast",
-      "community": 118,
-      "community_name": "settings.tsx",
-      "file_type": "concept",
-      "norm_label": "expo-sharing",
-      "source_file": "app.json",
-      "source_location": "L46"
     },
     {
       "id": "entry",
@@ -9717,55 +9667,11 @@
       "source_location": "L75"
     },
     {
-      "id": "src_app_checkout",
-      "label": "checkout.tsx",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "checkout.tsx",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_checkout_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/checkout.tsx",
-      "source_location": "L1598"
-    },
-    {
-      "id": "src_app_index",
-      "label": "index.tsx",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "index.tsx",
-      "source_file": "src/app/index.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_index_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/index.tsx",
-      "source_location": "L838"
-    },
-    {
       "id": "src_app_inventory",
       "label": "inventory.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "inventory.tsx",
       "source_file": "src/app/inventory.tsx",
@@ -9776,7 +9682,7 @@
       "label": "STOCK_FILTERS",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "stock_filters",
       "source_file": "src/app/inventory.tsx",
@@ -9787,7 +9693,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/inventory.tsx",
@@ -9798,7 +9704,7 @@
       "label": "products.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "products.tsx",
       "source_file": "src/app/products.tsx",
@@ -9809,40 +9715,18 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/products.tsx",
-      "source_location": "L1902"
-    },
-    {
-      "id": "src_domain_value_objects_money",
-      "label": "Money.ts",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "money.ts",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_domain_value_objects_money_phpcurrencyformatter",
-      "label": "phpCurrencyFormatter",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "phpcurrencyformatter",
-      "source_file": "src/domain/value-objects/Money.ts",
-      "source_location": "L3"
+      "source_location": "L1996"
     },
     {
       "id": "src_presentation_components_barcodeinputfield",
       "label": "BarcodeInputField.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodeinputfield.tsx",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
@@ -9853,18 +9737,18 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L116"
+      "source_location": "L126"
     },
     {
       "id": "src_presentation_components_barcodescannerviewfinder",
       "label": "BarcodeScannerViewfinder.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "barcodescannerviewfinder.tsx",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
@@ -9875,7 +9759,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/BarcodeScannerViewfinder.tsx",
@@ -9886,7 +9770,7 @@
       "label": "FloatingToast.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "floatingtoast.tsx",
       "source_file": "src/presentation/components/FloatingToast.tsx",
@@ -9897,7 +9781,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/FloatingToast.tsx",
@@ -9908,7 +9792,7 @@
       "label": "ProductStockManageModal.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "productstockmanagemodal.tsx",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
@@ -9919,7 +9803,7 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/ProductStockManageModal.tsx",
@@ -9930,7 +9814,7 @@
       "label": "ProductThumbnail.tsx",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "productthumbnail.tsx",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
@@ -9941,77 +9825,22 @@
       "label": "styles",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/presentation/components/ProductThumbnail.tsx",
       "source_location": "L65"
     },
     {
-      "id": "src_presentation_components_weightquantitymodal",
-      "label": "WeightQuantityModal.tsx",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "weightquantitymodal.tsx",
-      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_presentation_components_weightquantitymodal_preset_peso_amounts",
-      "label": "PRESET_PESO_AMOUNTS",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "preset_peso_amounts",
-      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
-      "source_location": "L52"
-    },
-    {
-      "id": "src_presentation_components_weightquantitymodal_preset_weights",
-      "label": "PRESET_WEIGHTS",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "preset_weights",
-      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
-      "source_location": "L39"
-    },
-    {
-      "id": "src_presentation_components_weightquantitymodal_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
-      "source_location": "L444"
-    },
-    {
       "id": "src_presentation_hooks_useidempotentsubmit",
       "label": "useIdempotentSubmit.ts",
       "_origin": "ast",
       "community": 120,
-      "community_name": "checkout.tsx",
+      "community_name": "inventory.tsx",
       "file_type": "code",
       "norm_label": "useidempotentsubmit.ts",
       "source_file": "src/presentation/hooks/useIdempotentSubmit.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "ref_expo_router",
-      "label": "expo-router",
-      "_origin": "ast",
-      "community": 120,
-      "community_name": "checkout.tsx",
-      "file_type": "concept",
-      "norm_label": "expo-router",
-      "source_file": "app.json",
-      "source_location": "L46"
     },
     {
       "id": "docs_apk_updates",
@@ -10163,59 +9992,136 @@
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_components_onboardingmodal",
-      "label": "OnboardingModal.tsx",
+      "id": "src_app_checkout",
+      "label": "checkout.tsx",
       "_origin": "ast",
       "community": 125,
-      "community_name": "useLicensing",
+      "community_name": "checkout.tsx",
       "file_type": "code",
-      "norm_label": "onboardingmodal.tsx",
-      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "norm_label": "checkout.tsx",
+      "source_file": "src/app/checkout.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_components_onboardingmodal_styles",
+      "id": "src_app_checkout_styles",
       "label": "styles",
       "_origin": "ast",
       "community": 125,
-      "community_name": "useLicensing",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
-      "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L255"
+      "source_file": "src/app/checkout.tsx",
+      "source_location": "L1598"
     },
     {
-      "id": "src_presentation_components_trialbanner",
-      "label": "TrialBanner.tsx",
+      "id": "src_app_index",
+      "label": "index.tsx",
       "_origin": "ast",
       "community": 125,
-      "community_name": "useLicensing",
+      "community_name": "checkout.tsx",
       "file_type": "code",
-      "norm_label": "trialbanner.tsx",
-      "source_file": "src/presentation/components/TrialBanner.tsx",
+      "norm_label": "index.tsx",
+      "source_file": "src/app/index.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_presentation_components_trialbanner_styles",
+      "id": "src_app_index_styles",
       "label": "styles",
       "_origin": "ast",
       "community": 125,
-      "community_name": "useLicensing",
+      "community_name": "checkout.tsx",
       "file_type": "code",
       "norm_label": "styles",
-      "source_file": "src/presentation/components/TrialBanner.tsx",
-      "source_location": "L61"
+      "source_file": "src/app/index.tsx",
+      "source_location": "L838"
     },
     {
-      "id": "src_presentation_hooks_uselicensing_isfeaturelocked",
-      "label": "isFeatureLocked",
+      "id": "src_domain_value_objects_money",
+      "label": "Money.ts",
       "_origin": "ast",
       "community": 125,
-      "community_name": "useLicensing",
+      "community_name": "checkout.tsx",
       "file_type": "code",
-      "norm_label": "isfeaturelocked",
-      "source_file": "src/presentation/hooks/useLicensing.ts",
-      "source_location": "L10"
+      "norm_label": "money.ts",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_domain_value_objects_money_phpcurrencyformatter",
+      "label": "phpCurrencyFormatter",
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "phpcurrencyformatter",
+      "source_file": "src/domain/value-objects/Money.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_presentation_components_cancelexchangecreditmodal",
+      "label": "CancelExchangeCreditModal.tsx",
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "cancelexchangecreditmodal.tsx",
+      "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_cancelexchangecreditmodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/CancelExchangeCreditModal.tsx",
+      "source_location": "L138"
+    },
+    {
+      "id": "src_presentation_components_weightquantitymodal",
+      "label": "WeightQuantityModal.tsx",
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "weightquantitymodal.tsx",
+      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_weightquantitymodal_preset_peso_amounts",
+      "label": "PRESET_PESO_AMOUNTS",
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "preset_peso_amounts",
+      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
+      "source_location": "L52"
+    },
+    {
+      "id": "src_presentation_components_weightquantitymodal_preset_weights",
+      "label": "PRESET_WEIGHTS",
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "preset_weights",
+      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_presentation_components_weightquantitymodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 125,
+      "community_name": "checkout.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/WeightQuantityModal.tsx",
+      "source_location": "L444"
     },
     {
       "id": "index",
@@ -10790,17 +10696,6 @@
       "source_location": "L4"
     },
     {
-      "id": "src_application_productonboardingservice",
-      "label": "ProductOnboardingService.ts",
-      "_origin": "ast",
-      "community": 131,
-      "community_name": "Product.ts",
-      "file_type": "code",
-      "norm_label": "productonboardingservice.ts",
-      "source_file": "src/application/ProductOnboardingService.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_domain_entities_product",
       "label": "Product.ts",
       "_origin": "ast",
@@ -10977,11 +10872,22 @@
       "source_location": "L1"
     },
     {
+      "id": "app_expo_plugins",
+      "label": "plugins",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "expo-router",
+      "file_type": "code",
+      "norm_label": "plugins",
+      "source_file": "app.json",
+      "source_location": "L46"
+    },
+    {
       "id": "src_app_not_found",
       "label": "+not-found.tsx",
       "_origin": "ast",
       "community": 16,
-      "community_name": "+not-found.tsx",
+      "community_name": "expo-router",
       "file_type": "code",
       "norm_label": "+not-found.tsx",
       "source_file": "src/app/+not-found.tsx",
@@ -10992,11 +10898,33 @@
       "label": "styles",
       "_origin": "ast",
       "community": 16,
-      "community_name": "+not-found.tsx",
+      "community_name": "expo-router",
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/+not-found.tsx",
       "source_location": "L25"
+    },
+    {
+      "id": "ref_expo_router",
+      "label": "expo-router",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "expo-router",
+      "file_type": "concept",
+      "norm_label": "expo-router",
+      "source_file": "app.json",
+      "source_location": "L46"
+    },
+    {
+      "id": "ref_expo_sharing",
+      "label": "expo-sharing",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "expo-router",
+      "file_type": "concept",
+      "norm_label": "expo-sharing",
+      "source_file": "app.json",
+      "source_location": "L46"
     },
     {
       "id": "scripts_sound_feedback_test",
@@ -11294,6 +11222,50 @@
       "norm_label": "source",
       "source_file": "scripts/patch-camera-preview.cjs",
       "source_location": "L8"
+    },
+    {
+      "id": "src_app_history",
+      "label": "history.tsx",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "history.tsx",
+      "source_file": "src/app/history.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_history_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/app/history.tsx",
+      "source_location": "L902"
+    },
+    {
+      "id": "src_presentation_components_daterangecalendarmodal",
+      "label": "DateRangeCalendarModal.tsx",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "daterangecalendarmodal.tsx",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_daterangecalendarmodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "history.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/DateRangeCalendarModal.tsx",
+      "source_location": "L770"
     },
     {
       "id": "package_dependencies_expo_image",
@@ -11660,7 +11632,7 @@
       "label": "test-app-updates.cjs",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "test-app-updates.cjs",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11671,7 +11643,7 @@
       "label": "active",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "active",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11682,7 +11654,7 @@
       "label": "{ AppRelease }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "{ apprelease }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11693,7 +11665,7 @@
       "label": "{ AppUpdateService }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "{ appupdateservice }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11704,7 +11676,7 @@
       "label": "assert",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "assert",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11715,7 +11687,7 @@
       "label": "before",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "before",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11726,7 +11698,7 @@
       "label": "enhanced",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "enhanced",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11737,7 +11709,7 @@
       "label": "fs",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "fs",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11748,7 +11720,7 @@
       "label": "nullMedia",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "nullmedia",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11759,7 +11731,7 @@
       "label": "parsed",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "parsed",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11770,7 +11742,7 @@
       "label": "release",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "release",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11781,7 +11753,7 @@
       "label": "{ service }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "{ service }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11792,7 +11764,7 @@
       "label": "{ service, installs }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "{ service, installs }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11803,7 +11775,7 @@
       "label": "{ test }",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "{ test }",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11814,7 +11786,7 @@
       "label": "ts",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "ts",
       "source_file": "scripts/test-app-updates.cjs",
@@ -11825,7 +11797,7 @@
       "label": "AppUpdateService.ts",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "appupdateservice.ts",
       "source_file": "src/application/AppUpdateService.ts",
@@ -11836,95 +11808,18 @@
       "label": "AppRelease.ts",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "apprelease.ts",
       "source_file": "src/domain/entities/AppRelease.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_infrastructure_container",
-      "label": "container.ts",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "container.ts",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_infrastructure_container_appupdateservice",
-      "label": "appUpdateService",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "appupdateservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "src_infrastructure_container_localnotificationscheduler",
-      "label": "localNotificationScheduler",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "localnotificationscheduler",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_infrastructure_container_openfoodfactsapiclient",
-      "label": "openFoodFactsApiClient",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "openfoodfactsapiclient",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_infrastructure_container_productonboardingservice",
-      "label": "productOnboardingService",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "productonboardingservice",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_infrastructure_container_productrepository",
-      "label": "productRepository",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "productrepository",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_infrastructure_container_seasonalforecastengine",
-      "label": "seasonalForecastEngine",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "container.ts",
-      "file_type": "code",
-      "norm_label": "seasonalforecastengine",
-      "source_file": "src/infrastructure/container.ts",
-      "source_location": "L23"
-    },
-    {
       "id": "src_infrastructure_services_androidappupdateport",
       "label": "AndroidAppUpdatePort.ts",
       "_origin": "ast",
       "community": 29,
-      "community_name": "container.ts",
+      "community_name": "test-app-updates.cjs",
       "file_type": "code",
       "norm_label": "androidappupdateport.ts",
       "source_file": "src/infrastructure/services/AndroidAppUpdatePort.ts",
@@ -14143,6 +14038,61 @@
       "source_location": "L1"
     },
     {
+      "id": "src_infrastructure_services_barcodebeepdatauri",
+      "label": "barcodeBeepDataUri.ts",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "barcodebeepdatauri.ts",
+      "source_file": "src/infrastructure/services/barcodeBeepDataUri.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_services_barcodebeepdatauri_barcode_beep_data_uri",
+      "label": "BARCODE_BEEP_DATA_URI",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "barcode_beep_data_uri",
+      "source_file": "src/infrastructure/services/barcodeBeepDataUri.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_services_soundfeedbackservice",
+      "label": "SoundFeedbackService.ts",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "code",
+      "norm_label": "soundfeedbackservice.ts",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "docref_rfc_2397",
+      "label": "RFC-2397",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "concept",
+      "norm_label": "rfc-2397",
+      "source_file": "src/infrastructure/services/SoundFeedbackService.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "ref_expo_audio",
+      "label": "expo-audio",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "SoundFeedbackService.ts",
+      "file_type": "concept",
+      "norm_label": "expo-audio",
+      "source_file": "app.json",
+      "source_location": "L46"
+    },
+    {
       "id": "marketing_sales_pitches_merchant_onboarding_script",
       "label": "merchant-onboarding-script.md",
       "_origin": "ast",
@@ -14287,11 +14237,88 @@
       "source_location": "L7"
     },
     {
+      "id": "src_application_productonboardingservice",
+      "label": "ProductOnboardingService.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "productonboardingservice.ts",
+      "source_file": "src/application/ProductOnboardingService.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_container",
+      "label": "container.ts",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "container.ts",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_infrastructure_container_localnotificationscheduler",
+      "label": "localNotificationScheduler",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "localnotificationscheduler",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_infrastructure_container_openfoodfactsapiclient",
+      "label": "openFoodFactsApiClient",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "openfoodfactsapiclient",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_infrastructure_container_productonboardingservice",
+      "label": "productOnboardingService",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "productonboardingservice",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_infrastructure_container_productrepository",
+      "label": "productRepository",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "productrepository",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_infrastructure_container_seasonalforecastengine",
+      "label": "seasonalForecastEngine",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "container.ts",
+      "file_type": "code",
+      "norm_label": "seasonalforecastengine",
+      "source_file": "src/infrastructure/container.ts",
+      "source_location": "L23"
+    },
+    {
       "id": "src_infrastructure_services_openfoodfactsapiclient",
       "label": "OpenFoodFactsApiClient.ts",
       "_origin": "ast",
       "community": 62,
-      "community_name": "OpenFoodFactsApiClient.ts",
+      "community_name": "container.ts",
       "file_type": "code",
       "norm_label": "openfoodfactsapiclient.ts",
       "source_file": "src/infrastructure/services/OpenFoodFactsApiClient.ts",
@@ -17304,6 +17331,28 @@
       "source_location": "L14"
     },
     {
+      "id": "src_presentation_components_expirydatepickermodal",
+      "label": "ExpiryDatePickerModal.tsx",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "ExpiryDatePickerModal.tsx",
+      "file_type": "code",
+      "norm_label": "expirydatepickermodal.tsx",
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_expirydatepickermodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "ExpiryDatePickerModal.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L396"
+    },
+    {
       "id": "requirements_traceability_matrix",
       "label": "REQUIREMENTS_TRACEABILITY_MATRIX.md",
       "_origin": "ast",
@@ -18355,6 +18404,72 @@
       "source_location": "L84"
     },
     {
+      "id": "src_presentation_components_onboardingmodal",
+      "label": "OnboardingModal.tsx",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "onboardingmodal.tsx",
+      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_onboardingmodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "source_location": "L296"
+    },
+    {
+      "id": "src_presentation_components_privacypolicymodal",
+      "label": "PrivacyPolicyModal.tsx",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "privacypolicymodal.tsx",
+      "source_file": "src/presentation/components/PrivacyPolicyModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_privacypolicymodal_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/PrivacyPolicyModal.tsx",
+      "source_location": "L248"
+    },
+    {
+      "id": "src_presentation_components_trialbanner",
+      "label": "TrialBanner.tsx",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "trialbanner.tsx",
+      "source_file": "src/presentation/components/TrialBanner.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_presentation_components_trialbanner_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "src/presentation/components/TrialBanner.tsx",
+      "source_location": "L61"
+    },
+    {
       "id": "src_presentation_components_trialexpiredmodal",
       "label": "TrialExpiredModal.tsx",
       "_origin": "ast",
@@ -18397,6 +18512,17 @@
       "norm_label": "checkonlineapproval",
       "source_file": "src/presentation/hooks/useLicensing.ts",
       "source_location": "L8"
+    },
+    {
+      "id": "src_presentation_hooks_uselicensing_isfeaturelocked",
+      "label": "isFeatureLocked",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "LicensingService.ts",
+      "file_type": "code",
+      "norm_label": "isfeaturelocked",
+      "source_file": "src/presentation/hooks/useLicensing.ts",
+      "source_location": "L10"
     },
     {
       "id": "src_presentation_hooks_uselicensing_registertrial",
@@ -18629,39 +18755,6 @@
       "source_location": "L629"
     },
     {
-      "id": "src_app_notifications",
-      "label": "notifications.tsx",
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "notifications.tsx",
-      "source_file": "src/app/notifications.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_notifications_filters",
-      "label": "FILTERS",
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "filters",
-      "source_file": "src/app/notifications.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_app_notifications_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/app/notifications.tsx",
-      "source_location": "L139"
-    },
-    {
       "id": "src_app_utang",
       "label": "utang.tsx",
       "_origin": "ast",
@@ -18682,28 +18775,6 @@
       "norm_label": "styles",
       "source_file": "src/app/utang.tsx",
       "source_location": "L1277"
-    },
-    {
-      "id": "src_components_app_tabs",
-      "label": "app-tabs.tsx",
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "app-tabs.tsx",
-      "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_app_tabs_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 83,
-      "community_name": "utang.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "src/components/app-tabs.tsx",
-      "source_location": "L268"
     },
     {
       "id": "src_presentation_components_screensafeareaview",
@@ -20483,7 +20554,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L1731",
+      "source_location": "L1822",
       "weight": 1.0
     },
     {
@@ -20495,7 +20566,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L1864",
+      "source_location": "L1958",
       "weight": 1.0
     },
     {
@@ -20507,7 +20578,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L205",
+      "source_location": "L210",
       "weight": 1.0
     },
     {
@@ -20519,7 +20590,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L346",
+      "source_location": "L356",
       "weight": 1.0
     },
     {
@@ -20531,19 +20602,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L398",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_products_productlistscreen",
-      "target": "src_presentation_hooks_usetindahanstore_usetindahanstore",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/app/products.tsx",
-      "source_location": "L45",
+      "source_location": "L408",
       "weight": 1.0
     },
     {
@@ -20555,7 +20614,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L454",
+      "source_location": "L464",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_products_productlistscreen",
+      "target": "src_presentation_hooks_usetindahanstore_usetindahanstore",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/app/products.tsx",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -20567,7 +20638,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -25443,6 +25514,30 @@
       "weight": 1.0
     },
     {
+      "source": "src_presentation_components_expirydatepickermodal_expirydatepickermodal",
+      "target": "src_presentation_components_expirydatepickermodal_formatdatetoiso",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_expirydatepickermodal_expirydatepickermodal",
+      "target": "src_presentation_components_expirydatepickermodal_issameday",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L330",
+      "weight": 1.0
+    },
+    {
       "source": "src_presentation_components_licensinggate_licensinggate",
       "target": "src_presentation_hooks_uselicensing_uselicensing",
       "relation": "calls",
@@ -25487,7 +25582,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -25499,7 +25594,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -25511,7 +25606,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L49",
+      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -25523,7 +25618,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L73",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -28558,7 +28653,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -28570,7 +28665,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -28582,7 +28677,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -28594,7 +28689,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -28606,7 +28701,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -28618,7 +28713,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -28630,7 +28725,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -28642,7 +28737,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -28654,7 +28749,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -28666,7 +28761,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -28678,7 +28773,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -28690,7 +28785,19 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L27",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_products",
+      "target": "src_presentation_components_expirydatepickermodal_expirydatepickermodal",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/products.tsx",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -28702,7 +28809,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -28714,7 +28821,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -30346,7 +30453,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -30455,6 +30562,18 @@
       "context": "import",
       "source_file": "src/presentation/components/OnboardingModal.tsx",
       "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_onboardingmodal",
+      "target": "src_presentation_components_confirmationmodal_confirmationmodal",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -32158,7 +32277,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -32170,7 +32289,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -32182,7 +32301,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -32194,7 +32313,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -32206,7 +32325,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -32218,7 +32337,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -32230,7 +32349,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -32242,7 +32361,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -32254,7 +32373,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -32266,7 +32385,19 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L27",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_products",
+      "target": "src_presentation_components_expirydatepickermodal",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/products.tsx",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -32278,7 +32409,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -32290,7 +32421,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/products.tsx",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -33646,7 +33777,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -33658,7 +33789,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -33791,6 +33922,18 @@
       "context": "import",
       "source_file": "src/presentation/components/OnboardingModal.tsx",
       "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_onboardingmodal",
+      "target": "src_presentation_components_confirmationmodal",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -42492,7 +42635,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/products.tsx",
-      "source_location": "L1902",
+      "source_location": "L1996",
       "weight": 1.0
     },
     {
@@ -42503,7 +42646,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/products.tsx",
-      "source_location": "L34",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -44637,7 +44780,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L116",
+      "source_location": "L126",
       "weight": 1.0
     },
     {
@@ -44648,7 +44791,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -44659,7 +44802,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/BarcodeInputField.tsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -44861,6 +45004,61 @@
       "weight": 1.0
     },
     {
+      "source": "src_presentation_components_expirydatepickermodal",
+      "target": "src_presentation_components_expirydatepickermodal_expirydatepickermodalprops",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_expirydatepickermodal",
+      "target": "src_presentation_components_expirydatepickermodal_issameday",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_expirydatepickermodal",
+      "target": "src_presentation_components_expirydatepickermodal_formatdatetoiso",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_expirydatepickermodal",
+      "target": "src_presentation_components_expirydatepickermodal_expirydatepickermodal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_expirydatepickermodal",
+      "target": "src_presentation_components_expirydatepickermodal_styles",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/ExpiryDatePickerModal.tsx",
+      "source_location": "L396",
+      "weight": 1.0
+    },
+    {
       "source": "src_presentation_components_floatingtoast",
       "target": "src_presentation_components_floatingtoast_toasttype",
       "relation": "contains",
@@ -45011,18 +45209,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L23",
-      "weight": 1.0
-    },
-    {
-      "source": "src_presentation_components_onboardingmodal",
-      "target": "src_presentation_components_onboardingmodal_styles",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L255",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -45033,7 +45220,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/presentation/components/OnboardingModal.tsx",
-      "source_location": "L27",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "src_presentation_components_onboardingmodal",
+      "target": "src_presentation_components_onboardingmodal_styles",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/presentation/components/OnboardingModal.tsx",
+      "source_location": "L296",
       "weight": 1.0
     },
     {
@@ -51544,5 +51742,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "3872dbc1e924cc229c8e4c6ad437598b0d068262"
+  "built_at_commit": "309ef22cd9654cd2058814d397e7b540c8bcdbcf"
 }

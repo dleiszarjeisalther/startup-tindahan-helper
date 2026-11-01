@@ -73,7 +73,7 @@ export const BarcodeInputField: React.FC<BarcodeInputFieldProps> = ({
           accessibilityLabel={scannerOpen ? 'Isara ang camera scanner' : 'I-scan ang barcode gamit ang camera'}
         >
           <Ionicons
-            name={scannerOpen ? 'close' : 'scan-outline'}
+            name={scannerOpen ? 'close' : 'barcode-outline'}
             size={16}
             color="#FFFFFF"
             style={{ marginRight: 4 }}

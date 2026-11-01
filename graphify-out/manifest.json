@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
-    "mtime": 1793510574.7527728,
-    "seen": 1793510907.4216022,
-    "ast_hash": "7240fa47b01f6d7aaa50685cdded01ed",
+    "mtime": 1793511511.8870845,
+    "seen": 1793511685.6798892,
+    "ast_hash": "9b21afaa42b65c8518161f135f83ac95",
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {
@@ -270,9 +270,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/BarcodeInputField.tsx": {
-    "mtime": 1793510774.2584386,
-    "seen": 1793510907.421842,
-    "ast_hash": "4f167ad4465fb19c337fdf78c68ce148",
+    "mtime": 1793511458.356813,
+    "seen": 1793511685.6800692,
+    "ast_hash": "b3a88892ab79edbd112c44f7b1ef98e1",
     "semantic_hash": ""
   },
   "src/presentation/components/ProductThumbnail.tsx": {

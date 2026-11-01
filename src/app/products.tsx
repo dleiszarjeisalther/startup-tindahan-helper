@@ -624,22 +624,77 @@ export default function ProductListScreen() {
           <View style={styles.modalContentCard}>
             <View style={styles.modalDragHandle} />
 
-            <View style={styles.modalHeaderRow}>
-              <View style={styles.modalHeaderTitleGroup}>
-                <View style={styles.modalHeaderIconBadge}>
-                  <Ionicons name="add-circle" size={20} color="#0D7A52" />
-                </View>
-                <View>
-                  <Text style={styles.modalTitleText}>Magdagdag ng Paninda</Text>
-                  <Text style={styles.modalSubtitleBarcode}>
-                    Ilagay ang detalye at presyo ng paninda
+            <View style={styles.productHeaderRow}>
+              <View style={styles.productHeaderLeft}>
+                <Pressable
+                  style={styles.headerThumbnailWrap}
+                  onPress={() => handleTakePhoto()}
+                  accessibilityRole="button"
+                  accessibilityLabel="Kumuha ng litrato gamit ang camera"
+                >
+                  {newImageUri ? (
+                    <Image
+                      source={{ uri: newImageUri }}
+                      style={styles.headerThumbnailImage}
+                      contentFit="cover"
+                      transition={150}
+                      cachePolicy="memory-disk"
+                    />
+                  ) : (
+                    <View style={styles.headerThumbnailPlaceholder}>
+                      <Ionicons name="camera-outline" size={22} color="#94A3B8" />
+                      <Text style={styles.headerThumbnailPlaceholderText}>Litrato</Text>
+                    </View>
+                  )}
+                </Pressable>
+
+                <View style={styles.productHeaderInfo}>
+                  <View style={styles.headerBadge}>
+                    <Text style={styles.headerBadgeText}>+ BAGONG PANINDA</Text>
+                  </View>
+                  <Text style={styles.productNameText} numberOfLines={1}>
+                    {newName.trim() || 'Bagong Paninda'}
                   </Text>
+                  <Text style={styles.productBarcodeSubtext} numberOfLines={1}>
+                    {newBarcode.trim() || 'Walang Barcode'} • {newCategory || 'Pangkalahatan'}
+                  </Text>
+
+                  {/* Header Action Pills Row (Same as Edit UI) */}
+                  <View style={styles.headerActionPillsRow}>
+                    <Pressable
+                      style={styles.pillEdit}
+                      onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        handleTakePhoto();
+                      }}
+                    >
+                      <Ionicons name="camera-outline" size={13} color="#0D7A52" />
+                      <Text style={styles.pillEditText}>Kuha Litrato</Text>
+                    </Pressable>
+
+                    <Pressable
+                      style={styles.pillPhoto}
+                      onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        handlePickImage();
+                      }}
+                    >
+                      <Ionicons name="images-outline" size={13} color="#334155" />
+                      <Text style={styles.pillPhotoText}>Galerya</Text>
+                    </Pressable>
+                  </View>
                 </View>
               </View>
+
               <Pressable
-                onPress={() => setShowAddForm(false)}
-                hitSlop={10}
-                style={styles.modalCloseCircle}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  setShowAddForm(false);
+                }}
+                style={styles.closeCircleButton}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel="Isara ang modal"
               >
                 <Ionicons name="close" size={20} color="#64748B" />
               </Pressable>
@@ -650,67 +705,55 @@ export default function ProductListScreen() {
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={styles.modalScrollContent}
             >
-              {/* Photo Selection Row */}
-              <Text style={styles.fieldLabel}>Litrato ng Paninda (Camera / Gallery):</Text>
-              <View style={styles.photoPickerRow}>
-                {newImageUri ? (
-                  <View style={styles.photoPreviewContainer}>
-                    <Image
-                      source={{ uri: newImageUri }}
-                      style={styles.photoPreviewImage}
-                      contentFit="cover"
-                      transition={150}
-                      cachePolicy="memory-disk"
+              {/* 1. LIVE SUMMARY KPI CARD (Matches Edit Modal Overview!) */}
+              <View style={styles.statusOverviewCard}>
+                {/* Column 1: Panimulang Stock */}
+                <View style={styles.statusCol}>
+                  <Text style={styles.statusColLabel}>Panimulang Stock</Text>
+                  <View style={styles.statusStockValueRow}>
+                    <View
+                      style={[
+                        styles.stockDot,
+                        { backgroundColor: parsedStock > 0 ? '#16A34A' : '#DC2626' },
+                      ]}
                     />
-                    <Pressable
-                      style={styles.photoRemoveBtn}
-                      hitSlop={8}
-                      onPress={() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                        setNewImageUri(null);
-                      }}
-                    >
-                      <Ionicons name="close" size={14} color="#FFFFFF" />
-                    </Pressable>
+                    <Text style={styles.statusStockValueText}>
+                      {packagingType === 'KG' ? `${parsedStock || 0} kg` : `${parsedStock || 0} pcs`}
+                    </Text>
                   </View>
-                ) : (
-                  <Pressable
-                    style={styles.photoPlaceholderBtn}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      handlePickImage();
-                    }}
-                  >
-                    <Ionicons name="camera-outline" size={24} color="#94A3B8" />
-                    <Text style={styles.photoPlaceholderText}>Walang Litrato</Text>
-                  </Pressable>
-                )}
+                  <Text style={[styles.statusStockSubtext, { color: '#15803D' }]}>
+                    {packagingType === 'PACK'
+                      ? `${bundlePacksCountNum > 0 ? bundlePacksCountNum : 1} pack × ${packPiecesCountNum > 0 ? packPiecesCountNum : 10} pcs`
+                      : 'Sapat ang stock'}
+                  </Text>
+                </View>
 
-                <View style={styles.photoActionsCol}>
-                  <Pressable
-                    style={styles.cameraBtn}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      handleTakePhoto();
-                    }}
-                  >
-                    <Ionicons name="camera" size={16} color="#FFFFFF" />
-                    <Text style={styles.cameraBtnText}>
-                      {newImageUri ? 'Kumuha Muli' : 'Kumuha sa Camera'}
+                <View style={styles.statusDivider} />
+
+                {/* Column 2: Presyo ng Benta */}
+                <View style={styles.statusCol}>
+                  <Text style={styles.statusColLabel}>Presyo ng Benta</Text>
+                  <Text style={styles.statusPriceValueText}>
+                    ₱{currentEnteredPrice > 0 ? currentEnteredPrice.toFixed(2) : '0.00'}
+                  </Text>
+                  <Text style={styles.statusCostSubtext}>
+                    Puhunan: ₱{effectiveUnitCost.toFixed(2)}
+                  </Text>
+                </View>
+
+                <View style={styles.statusDivider} />
+
+                {/* Column 3: Tubo bawat Piraso */}
+                <View style={styles.statusCol}>
+                  <Text style={styles.statusColLabel}>Tubo bawat Piraso</Text>
+                  <Text style={styles.statusTuboValueText}>
+                    {profitPerPiece >= 0 ? `+₱${profitPerPiece.toFixed(2)}` : `-₱${Math.abs(profitPerPiece).toFixed(2)}`}
+                  </Text>
+                  <View style={styles.marginBadge}>
+                    <Text style={styles.marginBadgeText}>
+                      {effectiveUnitCost > 0 ? Math.round((profitPerPiece / effectiveUnitCost) * 100) : 0}% kita
                     </Text>
-                  </Pressable>
-                  <Pressable
-                    style={styles.galleryBtn}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                      handlePickImage();
-                    }}
-                  >
-                    <Ionicons name="images" size={16} color="#334155" />
-                    <Text style={styles.galleryBtnText}>
-                      {newImageUri ? 'Palitan sa Gallery' : 'Pumili sa Gallery'}
-                    </Text>
-                  </Pressable>
+                  </View>
                 </View>
               </View>
 
@@ -1734,17 +1777,32 @@ export default function ProductListScreen() {
                 </View>
               )}
 
+              </ScrollView>
+
+            {/* STICKY BOTTOM ACTION BAR (Matches Edit UI & HTML Reference) */}
+            <View style={styles.modalStickyFooter}>
               <Pressable
-                style={[styles.saveBtn, isSubmitting ? styles.btnDisabled : null]}
+                style={styles.resetModalBtn}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  resetForm();
+                }}
+              >
+                <Ionicons name="refresh-outline" size={16} color="#64748B" style={{ marginRight: 4 }} />
+                <Text style={styles.resetModalBtnText}>I-reset</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.saveModalBtn, isSubmitting ? styles.btnDisabled : null]}
                 disabled={isSubmitting}
                 onPress={() => handleSaveProduct()}
               >
                 <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
-                <Text style={styles.saveBtnText}>
-                  {isSubmitting ? 'Isinusumite...' : 'I-save ang Paninda'}
+                <Text style={styles.saveModalBtnText}>
+                  {isSubmitting ? 'Isinusumite...' : 'I-save ang Paninda at Litrato'}
                 </Text>
               </Pressable>
-            </ScrollView>
+            </View>
           </View>
         </KeyboardAvoidingView>
 
@@ -2812,5 +2870,238 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: '#0D7A52',
+  },
+  // Edit Modal Matching Styles
+  productHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+    backgroundColor: '#FFFFFF',
+  },
+  productHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    flex: 1,
+    marginRight: 8,
+  },
+  headerThumbnailWrap: {
+    width: 60,
+    height: 60,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    overflow: 'hidden',
+    backgroundColor: '#F8FAFC',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerThumbnailImage: {
+    width: '100%',
+    height: '100%',
+  },
+  headerThumbnailPlaceholder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerThumbnailPlaceholderText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#94A3B8',
+    marginTop: 1,
+  },
+  productHeaderInfo: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  headerBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginBottom: 2,
+  },
+  headerBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#15803D',
+    letterSpacing: 0.5,
+  },
+  productNameText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  productBarcodeSubtext: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
+    fontWeight: '500',
+  },
+  headerActionPillsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 6,
+  },
+  pillEdit: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#0D7A52',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  pillEditText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D7A52',
+  },
+  pillPhoto: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  pillPhotoText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#334155',
+  },
+  closeCircleButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statusOverviewCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  statusCol: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statusColLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  statusStockValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 4,
+  },
+  stockDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  statusStockValueText: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  statusStockSubtext: {
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  statusDivider: {
+    width: 1,
+    backgroundColor: '#F1F5F9',
+    marginVertical: 4,
+  },
+  statusPriceValueText: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginTop: 4,
+  },
+  statusCostSubtext: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  statusTuboValueText: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginTop: 4,
+  },
+  marginBadge: {
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginTop: 3,
+  },
+  marginBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#15803D',
+  },
+  modalStickyFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+  },
+  resetModalBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    backgroundColor: '#F8FAFC',
+  },
+  resetModalBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  saveModalBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+    borderRadius: 12,
+    backgroundColor: '#0D7A52',
+  },
+  saveModalBtnText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
 });

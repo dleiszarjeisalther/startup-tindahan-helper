@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/app/products.tsx": {
-    "mtime": 1793255124.4461935,
-    "seen": 1793255553.900924,
-    "ast_hash": "c961aeadf69d24fc046e8abf578072d3",
+    "mtime": 1793510574.7527728,
+    "seen": 1793510907.4216022,
+    "ast_hash": "7240fa47b01f6d7aaa50685cdded01ed",
     "semantic_hash": ""
   },
   "src/app/sales.tsx": {
@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "src/app/settings.tsx": {
-    "mtime": 1793269963.7458024,
-    "seen": 1793270556.6473129,
-    "ast_hash": "4f15f3c2c2f1a3f234cd897f8b8f5186",
+    "mtime": 1793510373.5809314,
+    "seen": 1793510907.4216151,
+    "ast_hash": "d686a18fdee4b3d588b67629b69ba4de",
     "semantic_hash": ""
   },
   "src/application/ProductOnboardingService.ts": {
@@ -132,15 +132,15 @@
     "semantic_hash": ""
   },
   "src/application/TindahanStoreService.ts": {
-    "mtime": 1793269315.7949367,
-    "seen": 1793270556.6473324,
-    "ast_hash": "330398f29cf9ff2edd45efac8b99ead4",
+    "mtime": 1793510373.5727792,
+    "seen": 1793510907.4216428,
+    "ast_hash": "4a363c8afcb6acf56c48f34650556d40",
     "semantic_hash": ""
   },
   "src/components/animated-icon.tsx": {
-    "mtime": 1792932596.2753344,
-    "seen": 1792932793.7354372,
-    "ast_hash": "a2808890018cf6ac96e244e4018e9687",
+    "mtime": 1793510373.566296,
+    "seen": 1793510907.4216468,
+    "ast_hash": "750c04b514aa621d3bdc6847fcc02a91",
     "semantic_hash": ""
   },
   "src/components/animated-icon.web.tsx": {
@@ -270,9 +270,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/BarcodeInputField.tsx": {
-    "mtime": 1793113445.8824205,
-    "seen": 1793113747.1311607,
-    "ast_hash": "f680bce9b88eb03ea739daa264d6d4bb",
+    "mtime": 1793510774.2584386,
+    "seen": 1793510907.421842,
+    "ast_hash": "4f167ad4465fb19c337fdf78c68ce148",
     "semantic_hash": ""
   },
   "src/presentation/components/ProductThumbnail.tsx": {
@@ -612,9 +612,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/ReceiptPrinterModal.tsx": {
-    "mtime": 1792267796.6898766,
-    "seen": 1792269459.5679033,
-    "ast_hash": "2665cdff792d287e6ad91a0d9afad1d8",
+    "mtime": 1793510373.5849295,
+    "seen": 1793510907.4219718,
+    "ast_hash": "0b552916eb3407ef6606dce55e5fe3a0",
     "semantic_hash": ""
   },
   "src/infrastructure/services/BiometricAuthService.ts": {
@@ -1200,15 +1200,15 @@
     "semantic_hash": ""
   },
   "src/presentation/components/OnboardingModal.tsx": {
-    "mtime": 1793269358.251842,
-    "seen": 1793270556.6475182,
-    "ast_hash": "e19e26034d9b984324216d3de79f50a4",
+    "mtime": 1793510342.3235638,
+    "seen": 1793510907.42193,
+    "ast_hash": "8bf7f2679e98dd86d5d31bc4e4b4a7d8",
     "semantic_hash": ""
   },
   "src/presentation/components/PrivacyPolicyModal.tsx": {
-    "mtime": 1792635713.104459,
-    "seen": 1792677665.0423222,
-    "ast_hash": "579a57107b2b73e22cc3e5c3b86ce96c",
+    "mtime": 1793510373.5885355,
+    "seen": 1793510907.4219499,
+    "ast_hash": "72b10d9cabfceeeccc0e17428c649821",
     "semantic_hash": ""
   },
   "src/presentation/components/ScreenSafeAreaView.tsx": {
@@ -1422,9 +1422,9 @@
     "semantic_hash": ""
   },
   "src/presentation/components/ProductStockManageModal.tsx": {
-    "mtime": 1793152270.208223,
-    "seen": 1793152685.5726092,
-    "ast_hash": "5bfac65a68f3b6a7ebbb726e558f5c7a",
+    "mtime": 1793510406.0182981,
+    "seen": 1793510907.4219568,
+    "ast_hash": "a13de83fa4e1a25027df76acd0fab029",
     "semantic_hash": ""
   },
   "src/presentation/components/TransactionDetailModal.tsx": {
@@ -1509,6 +1509,12 @@
     "mtime": 1793278449.7447717,
     "seen": 1793278735.2811277,
     "ast_hash": "d3777d3286f58ee9ef2d80d701f74613",
+    "semantic_hash": ""
+  },
+  "src/presentation/components/ExpiryDatePickerModal.tsx": {
+    "mtime": 1793510697.2245414,
+    "seen": 1793510907.4218743,
+    "ast_hash": "db16cf2180df5ee2f13152c48567a6d2",
     "semantic_hash": ""
   }
 }

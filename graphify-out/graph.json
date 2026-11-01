@@ -9719,7 +9719,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "src/app/products.tsx",
-      "source_location": "L1996"
+      "source_location": "L2054"
     },
     {
       "id": "src_presentation_components_barcodeinputfield",
@@ -20554,7 +20554,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L1822",
+      "source_location": "L1880",
       "weight": 1.0
     },
     {
@@ -20566,7 +20566,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/products.tsx",
-      "source_location": "L1958",
+      "source_location": "L2016",
       "weight": 1.0
     },
     {
@@ -42635,7 +42635,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/products.tsx",
-      "source_location": "L1996",
+      "source_location": "L2054",
       "weight": 1.0
     },
     {
@@ -51742,5 +51742,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "309ef22cd9654cd2058814d397e7b540c8bcdbcf"
+  "built_at_commit": "e674915a49ed216d940844d836eb7386b0ed26cc"
 }
