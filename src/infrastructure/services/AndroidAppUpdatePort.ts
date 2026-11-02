@@ -34,20 +34,25 @@ export class AndroidAppUpdatePort implements AppUpdatePort {
       // Native updater threw or unavailable; fallback below
     }
 
-    const appBuildCode = Application.nativeBuildVersion ? parseInt(Application.nativeBuildVersion, 10) : 0;
-    const constBuildCode = Constants.nativeBuildVersion ? parseInt(Constants.nativeBuildVersion, 10) : 0;
+    const inExpoGo = isRunningInExpoGo();
+
+    // 1. Authoritative configuration from app.json
     const configCode = Constants.expoConfig?.android?.versionCode ?? 0;
+    const configVersion = Constants.expoConfig?.version ?? '';
+
+    // 2. OS-level native package info (standalone production/preview APK only; never in Expo Go where it reports Expo Go's SDK version)
+    const appBuildCode = !inExpoGo && Application.nativeBuildVersion ? parseInt(Application.nativeBuildVersion, 10) : 0;
+    const appVersion = !inExpoGo ? (Application.nativeApplicationVersion || '') : '';
+
+    const constBuildCode = !inExpoGo && Constants.nativeBuildVersion ? parseInt(Constants.nativeBuildVersion, 10) : 0;
+    const constVersion = !inExpoGo ? (Constants.nativeAppVersion || '') : '';
 
     const code =
-      (appBuildCode > 0 ? appBuildCode : 0) ||
       (configCode > 0 ? configCode : 0) ||
+      (appBuildCode > 0 ? appBuildCode : 0) ||
       (constBuildCode > 0 ? constBuildCode : 0);
 
-    const version =
-      Application.nativeApplicationVersion ||
-      Constants.expoConfig?.version ||
-      Constants.nativeAppVersion ||
-      '';
+    const version = configVersion || appVersion || constVersion || '';
 
     if (code > 0) {
       return { version, code };
