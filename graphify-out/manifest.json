@@ -42,9 +42,9 @@
     "semantic_hash": "6b9302c1f72c315e90233c7539c48c9f"
   },
   "app.json": {
-    "mtime": 1793336352.7803144,
-    "seen": 1793362372.3928435,
-    "ast_hash": "ad64401fad792754a3e70d29185f8910",
+    "mtime": 1793581374.7683663,
+    "seen": 1793581732.333489,
+    "ast_hash": "eee151eb540a9a7edba1ee540126c18c",
     "semantic_hash": ""
   },
   "assets/expo.icon/icon.json": {
@@ -60,9 +60,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1793278449.7447717,
-    "seen": 1793278735.2810483,
-    "ast_hash": "726598da590f3cee585ecc3056f1ea3a",
+    "mtime": 1793581383.114365,
+    "seen": 1793581732.3335657,
+    "ast_hash": "4dda58590d9fe81503e78029a01498e1",
     "semantic_hash": ""
   },
   "scripts/reset-project.js": {
@@ -294,10 +294,10 @@
     "semantic_hash": ""
   },
   "tsconfig.json": {
-    "mtime": 1791869029.3146446,
-    "seen": 1791873707.9413376,
-    "ast_hash": "6794be22dd9dd00003515895d3b4ff06",
-    "semantic_hash": "6794be22dd9dd00003515895d3b4ff06"
+    "mtime": 1793581483.7759986,
+    "seen": 1793581732.334119,
+    "ast_hash": "c70496911181c90faa8213f2c8db2d1a",
+    "semantic_hash": ""
   },
   "AGENTS.md": {
     "mtime": 1793113520.8688364,
@@ -1182,9 +1182,9 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/LicensingService.ts": {
-    "mtime": 1792679563.2670279,
-    "seen": 1792705325.8387842,
-    "ast_hash": "9241efe53ff4ad31002aecf1705dac66",
+    "mtime": 1793581356.2640195,
+    "seen": 1793581732.3338358,
+    "ast_hash": "893156197452876c63b81befe53df7c0",
     "semantic_hash": ""
   },
   "src/presentation/components/GcashQrModal.tsx": {
@@ -1302,9 +1302,9 @@
     "semantic_hash": ""
   },
   "modules/apk-updater/android/build.gradle": {
-    "mtime": 1792739250.977934,
-    "seen": 1792752065.3408575,
-    "ast_hash": "527b6c131003a7eccecc6026339de5e1",
+    "mtime": 1793528298.8420222,
+    "seen": 1793528724.9480186,
+    "ast_hash": "cee1fecba8824476d5534bde2f1ba937",
     "semantic_hash": ""
   },
   "modules/apk-updater/android/src/main/java/expo/modules/apkupdater/ApkUpdaterModule.kt": {
@@ -1326,15 +1326,15 @@
     "semantic_hash": ""
   },
   "scripts/test-app-updates.cjs": {
-    "mtime": 1793145681.816034,
-    "seen": 1793145986.494169,
-    "ast_hash": "d3bb86b35d7202f1c08e7759e5a9a17c",
+    "mtime": 1793528567.977211,
+    "seen": 1793528724.9480946,
+    "ast_hash": "d071fca9bcdd5d837f9117921a1db572",
     "semantic_hash": ""
   },
   "src/application/AppUpdateService.ts": {
-    "mtime": 1793198374.7673354,
-    "seen": 1793198605.3382761,
-    "ast_hash": "ff292add7e13f873aa37b62f976acab9",
+    "mtime": 1793528443.2792475,
+    "seen": 1793528724.9481928,
+    "ast_hash": "f6cfdb6579e80242bd64843658fd8e2b",
     "semantic_hash": ""
   },
   "src/domain/entities/AppRelease.ts": {
@@ -1344,15 +1344,15 @@
     "semantic_hash": ""
   },
   "src/infrastructure/services/AndroidAppUpdatePort.ts": {
-    "mtime": 1793278673.254027,
-    "seen": 1793278735.2818913,
-    "ast_hash": "dde1b2d740a5032690809eb7644bd4ba",
+    "mtime": 1793584673.3094678,
+    "seen": 1793584881.483405,
+    "ast_hash": "9e393e395cadbbc92d9b7d77f0f7bf92",
     "semantic_hash": ""
   },
   "src/presentation/components/AppUpdatePrompt.tsx": {
-    "mtime": 1793145580.1466117,
-    "seen": 1793145986.494615,
-    "ast_hash": "3bbe674637fa09ae8be2e2e4dca8eccc",
+    "mtime": 1793583389.7215505,
+    "seen": 1793583703.8743672,
+    "ast_hash": "2fb2b5b899c0d251b708069e77300a7b",
     "semantic_hash": ""
   },
   "supabase/migrations/20261023000000_app_releases.sql": {
@@ -1515,6 +1515,24 @@
     "mtime": 1793516136.5220258,
     "seen": 1793516709.488454,
     "ast_hash": "6e05227e93029d3d05d4db153a53df72",
+    "semantic_hash": ""
+  },
+  "modules/apk-updater/index.ts": {
+    "mtime": 1793528291.181874,
+    "seen": 1793528724.9480336,
+    "ast_hash": "69e03754b2ebf9aff59b3331ad413e08",
+    "semantic_hash": ""
+  },
+  "modules/apk-updater/package.json": {
+    "mtime": 1793528283.8591967,
+    "seen": 1793528724.9480379,
+    "ast_hash": "a0735f30e00fd10738489aa08f87c370",
+    "semantic_hash": ""
+  },
+  "supabase/functions/notify-payment/index.ts": {
+    "mtime": 1793581269.5397992,
+    "seen": 1793581732.3340917,
+    "ast_hash": "214d1bba3e12924a1a5bd4ef705845da",
     "semantic_hash": ""
   }
 }

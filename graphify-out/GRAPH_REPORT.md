@@ -1,16 +1,16 @@
-# Graph Report - startupTindahanHelper  (2026-11-01)
+# Graph Report - startupTindahanHelper  (2026-11-02)
 
 ## Corpus Check
-- 154 files · ~513,912 words
+- 157 files · ~515,076 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1659 nodes · 2796 edges · 133 communities (60 shown, 56 thin omitted)
+- 1679 nodes · 2811 edges · 142 communities (68 shown, 57 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 93 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ff7b2fec`
+- Built from commit: `2659fc4a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,19 +22,20 @@
 - expo
 - package.json
 - SeasonalForecastEngine.ts
-- include
+- tsconfig.json
 - TindahanStoreService.ts
 - reset-project.js
 - TindahanStoreService
+- checkout.tsx
 - animated-icon.web.tsx
 - 4. Common Problems in Seasonal Product Forecasting & Their Solutions
 - eslint.config.js
 - use-color-scheme.web.ts
-- checkout.tsx
+- _layout.tsx
 - sound-feedback.test.cjs
 - SynchronousKeyValueStorage
 - dependencies
-- history.tsx
+- TransactionDetailModal.tsx
 - expo-image
 - expo-linking
 - expo-router
@@ -73,7 +74,7 @@
 - expo-camera
 - Grassroots & Barangay Ground Activation Playbook
 - expo-clipboard
-- SoundFeedbackService.ts
+- SqliteDatabase
 - 🎙️ Step-by-Step Script (Conversational Taglish)
 - container.ts
 - Functional Requirements Specification (FRS)
@@ -83,6 +84,7 @@
 - 5. Core Business Rules (BR)
 - 5. Core Business Rules (BR)
 - ReceiptPrinterModal.tsx
+- ApkUpdaterNativeModule
 - 3. Functional Requirements Traceability Matrix (`FR-xxx`)
 - 3. Functional Requirements Traceability Matrix (`FR-xxx`)
 - expo-haptics
@@ -99,8 +101,8 @@
 - App Store Optimization (ASO) & Store Listing Copy
 - Marketing Collateral: Flyers, Tarpaulins & Counter Signs
 - Startup Tindahan Helper — Marketing Kit & Strategy Hub
-- expo-device
-- expo-constants
+- InventoryManagementScreen
+- history.tsx
 - expo-sharing
 - runMultiUnitTests
 - runBackupRestoreTests
@@ -110,27 +112,34 @@
 - expo-file-system
 - public.device_trials
 - public.payment_requests
-- TransactionDetailModal.tsx
+- DashboardAnalyticsEngine.ts
 - StoreAlertPolicy.ts
-- SqliteDatabase
+- SoundFeedbackService.ts
 - TutorialContext.tsx
 - expo-system-ui
 - react-dom
-- react-native-web
-- Money
+- PosScanProductScreen
+- StoreSettingsScreen
 - ILocalNotificationScheduler
 - more.tsx
 - inventory.tsx
 - Android APK updates
 - patch-expo-notifications.cjs
 - 20261023000000_app_releases.sql
-- index.tsx
+- products.tsx
 - DashboardAnalyticsEngine
+- SeasonalForecastScreen
 - test-product-image-edit.cjs
-- Product.ts
+- index.tsx
+- apk-updater/package.json
 - KeyValueStorage.ts
 - settings.tsx
-- DashboardAnalyticsEngine.ts
+- Money
+- notify-payment/index.ts
+- expo-asset
+- expo-crypto
+- expo-splash-screen
+- react-native-screens
 
 ## God Nodes (most connected - your core abstractions)
 1. `TindahanStoreService` - 96 edges
@@ -149,7 +158,7 @@
   scripts/test-app-updates.cjs → src/application/AppUpdateService.ts
 - `ApkUpdaterModule` --inherits--> `Module`  [EXTRACTED]
   modules/apk-updater/android/src/main/java/expo/modules/apkupdater/ApkUpdaterModule.kt → scripts/test-tutorial-state.cjs
-- `TrendBarPoint` --references--> `Money`  [EXTRACTED]
+- `DashboardFinancialMetrics` --references--> `Money`  [EXTRACTED]
   src/domain/strategies/DashboardAnalyticsEngine.ts → src/domain/value-objects/Money.ts
 - `PaymentDistributionSummary` --references--> `Money`  [EXTRACTED]
   src/domain/strategies/DashboardAnalyticsEngine.ts → src/domain/value-objects/Money.ts
@@ -159,11 +168,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (133 total, 56 thin omitted)
+## Communities (142 total, 57 thin omitted)
 
 ### Community 1 - "useTindahanStore"
-Cohesion: 0.05
-Nodes (81): expo-asset, getLocalizedMonths(), getPhilippineSeasonInfo(), SeasonalForecastScreen(), PosScanProductScreen(), InventoryManagementScreen(), MenuProfileScreen(), NotificationsScreen() (+73 more)
+Cohesion: 0.12
+Nodes (31): addCashAdjustment(), addManualUtangEntry(), addOrUpdateMonthlySalesRecord(), addUtangCustomer(), cancelExchangeCredit(), clearCart(), completeSale(), deleteCashAdjustment() (+23 more)
 
 ### Community 2 - "patch-camera-preview.cjs"
 Cohesion: 0.40
@@ -175,7 +184,7 @@ Nodes (20): styles, ExternalLink(), Props, HintRowProps, styles, styles, ThemedT
 
 ### Community 4 - "expo"
 Cohesion: 0.05
-Nodes (43): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, backgroundColor, package, permissions (+35 more)
+Nodes (39): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, backgroundColor, package, permissions (+31 more)
 
 ### Community 5 - "package.json"
 Cohesion: 0.07
@@ -185,17 +194,21 @@ Nodes (26): eslint, eslint-config-expo, buildFromSource, android, devDependencie
 Cohesion: 0.19
 Nodes (9): BaseSeasonalStrategy, ColdStartCategoryStrategy, ForecastConfidenceTier, getPhilippineCategorySeasonality(), InitialCycle12MonthStrategy, ISeasonalForecastStrategy, Recurring24MonthYoYStrategy, SeasonalForecastEngine (+1 more)
 
-### Community 7 - "include"
-Cohesion: 0.15
-Nodes (12): ./assets/*, expo-env.d.ts, expo/tsconfig.base, .expo/types/**/*.ts, **/*.ts, **/*.tsx, compilerOptions, paths (+4 more)
+### Community 7 - "tsconfig.json"
+Cohesion: 0.12
+Nodes (15): ./assets/*, expo-env.d.ts, expo/tsconfig.base, .expo/types/**/*.ts, node_modules, supabase/**/*, **/*.ts, **/*.tsx (+7 more)
 
 ### Community 8 - "TindahanStoreService.ts"
-Cohesion: 0.11
-Nodes (18): ActiveExchangeCreditInfo, AddToCartResult, CartItemDTO, CartSummaryDTO, CashAdjustmentType, DaySalesBucket, DEFAULT_CATEGORIES, HeldCartRecord (+10 more)
+Cohesion: 0.09
+Nodes (21): UnifiedActivityItem, ActiveExchangeCreditInfo, AddToCartResult, CartItemDTO, CartSummaryDTO, CashAdjustmentType, CashDrawerAdjustmentRecord, DaySalesBucket (+13 more)
 
 ### Community 9 - "reset-project.js"
 Cohesion: 0.22
 Nodes (7): exampleDirPath, fs, oldDirs, path, readline, rl, root
+
+### Community 11 - "checkout.tsx"
+Cohesion: 0.24
+Nodes (8): expo-sharing, CartItemStepperProps, CheckoutNewSaleScreen(), styles, GcashQrModal(), GcashQrModalProps, styles, useLicensingGate()
 
 ### Community 12 - "animated-icon.web.tsx"
 Cohesion: 0.29
@@ -205,9 +218,9 @@ Nodes (4): glowKeyframe, keyframe, logoKeyframe, styles
 Cohesion: 0.05
 Nodes (43): 1. How Seasonal Product Forecasting Works, 2. Mathematical Model & Forecasting Formulas, 3. Worked Concrete Example: School Supplies Before School Year vs. Ordinary Months, 4. Common Problems in Seasonal Product Forecasting & Their Solutions, Complete Solution Architecture (Single-User Owner Model), Executive Summary, Part 1: Audit of the Current Juan's Store POS UI Prototype, Part 2: Common POS System Problems & Comprehensive Solutions (+35 more)
 
-### Community 16 - "checkout.tsx"
-Cohesion: 0.18
-Nodes (9): plugins, expo-router, expo-sharing, CartItemStepperProps, styles, styles, GcashQrModal(), GcashQrModalProps (+1 more)
+### Community 16 - "_layout.tsx"
+Cohesion: 0.11
+Nodes (16): plugins, expo-asset, expo-notifications, TabLayout(), AnimatedSplashOverlay(), styles, AppTabs(), CustomTindahanTabBar() (+8 more)
 
 ### Community 17 - "sound-feedback.test.cjs"
 Cohesion: 0.17
@@ -215,11 +228,11 @@ Nodes (10): assert, h, initialPlayers, newPlayers, { readFileSync }, recoveredPl
 
 ### Community 19 - "dependencies"
 Cohesion: 0.18
-Nodes (11): expo, expo-asset, expo-crypto, expo-splash-screen, dependencies, expo, expo-asset, expo-crypto (+3 more)
+Nodes (11): expo, expo-application, expo-constants, expo-device, dependencies, expo, expo-application, expo-constants (+3 more)
 
-### Community 20 - "history.tsx"
-Cohesion: 0.21
-Nodes (12): DateFilter, HistoryCategoryFilter, MovementFilter, styles, UnifiedActivityItem, CashDrawerAdjustmentRecord, DateRangeFilter, StockMovementRecord (+4 more)
+### Community 20 - "TransactionDetailModal.tsx"
+Cohesion: 0.22
+Nodes (9): SaleTransactionRecord, CancelExchangeCreditModal(), CancelExchangeCreditModalProps, styles, ReturnDisposition, ReturnResolution, styles, TransactionDetailModal() (+1 more)
 
 ### Community 25 - "Data Input, Data Output & Mobile POS UX Best Practices (React Native + Expo)"
 Cohesion: 0.11
@@ -253,9 +266,9 @@ Nodes (3): public.app_config, public.device_trials, public.payment_requests
 Cohesion: 0.14
 Nodes (13): 🏬 Activation Channel 1: The Wholesaler Corridors (Puregold & Super8 Lines), 🏘️ Activation Channel 2: Barangay Negosyo Roadshow, 🏷️ Activation Channel 3: Point-of-Sale Counter Sticking Strategy, 🤝 Activation Channel 4: "Suki-to-Suki" Merchant Referral Mechanics, "Dito, Malinaw ang Listahan!" Store Counter Badges, Execution Strategy, Execution Strategy, Grassroots & Barangay Ground Activation Playbook (+5 more)
 
-### Community 60 - "SoundFeedbackService.ts"
-Cohesion: 0.27
-Nodes (5): RFC-2397, expo-audio, BARCODE_BEEP_DATA_URI, BeepPlayer, SoundFeedbackService
+### Community 60 - "SqliteDatabase"
+Cohesion: 0.15
+Nodes (6): expo-sqlite, SqliteDatabase, BackupDataPayload, BackupExportResult, BackupRestoreResult, DatabaseBackupService
 
 ### Community 61 - "🎙️ Step-by-Step Script (Conversational Taglish)"
 Cohesion: 0.17
@@ -293,6 +306,10 @@ Nodes (29): 1.1 Context & Problem Statement, 1.2 Proposed Solution Vision, 1. Pr
 Cohesion: 0.10
 Nodes (11): EscPosReceiptFormatter, PaperWidth, ReceiptData, ReceiptLineItem, appReceiptPrinterService, BluetoothPrinterDevice, BluetoothThermalPrinterService, IReceiptPrinterService (+3 more)
 
+### Community 70 - "ApkUpdaterNativeModule"
+Cohesion: 0.18
+Nodes (4): ApkUpdater, ApkUpdaterNativeModule, DownloadProgressEvent, InstalledApp
+
 ### Community 71 - "3. Functional Requirements Traceability Matrix (`FR-xxx`)"
 Cohesion: 0.12
 Nodes (16): 1. Traceability Architecture & Executive Dashboard, 2. Stakeholder Needs Traceability Matrix (`SN-xxx`), 3. Functional Requirements Traceability Matrix (`FR-xxx`), 4. Non-Functional Requirements Traceability Matrix (`NFR-xxx`), 5. Backward Traceability & Gap Analysis, 6. Primary Artifact Deliverable, Module 1: POS & Barcode Checkout (`FR-POS-xxx`), Module 2: Tender & Checkout Settlement (`FR-TND-xxx`) (+8 more)
@@ -313,9 +330,13 @@ Nodes (30): FileProvider, ApkFileProvider, ApkUpdaterModule, PackageInfo, addPro
 Cohesion: 0.40
 Nodes (4): Sheet: Executive Summary, Sheet: Functional RTM, Sheet: Non-Functional RTM, Sheet: Stakeholder Needs Trace
 
+### Community 78 - "Barcode"
+Cohesion: 0.14
+Nodes (5): UnitOfMeasure, IProductRepository, Barcode, BarcodeSource, ProductRow
+
 ### Community 80 - "LicensingService.ts"
 Cohesion: 0.06
-Nodes (44): CheckoutNewSaleScreen(), formatTimeRemaining(), getCompletedSalesCount(), getDeviceHardwareFingerprint(), getSecretSalt(), isValidPhilippinePhoneNumber(), LicensingService, LicensingState (+36 more)
+Nodes (36): formatTimeRemaining(), getCompletedSalesCount(), getDeviceHardwareFingerprint(), getSecretSalt(), isValidPhilippinePhoneNumber(), LicensingService, LicensingState, Listener (+28 more)
 
 ### Community 82 - "Social Media Content Strategy & Viral Video Scripts"
 Cohesion: 0.20
@@ -341,37 +362,49 @@ Nodes (6): [BACK SIDE], 📄 Collateral Item 1: Half-Page (A5) Wholesaler Handou
 Cohesion: 0.33
 Nodes (5): 🗓️ Acquisition Milestones & Growth Goals, 💎 Core Value Propositions (The 5 Pillars), 📁 Marketing Directory Map, Startup Tindahan Helper — Marketing Kit & Strategy Hub, 🎯 Target Audience Snapshot
 
+### Community 88 - "InventoryManagementScreen"
+Cohesion: 0.18
+Nodes (12): InventoryManagementScreen(), ProductListScreen(), addCategory(), addProductToDatabase(), addToCart(), deleteCategory(), deleteProductFromDatabase(), lookupOnlineCatalog() (+4 more)
+
+### Community 89 - "history.tsx"
+Cohesion: 0.17
+Nodes (11): expo-router, DateFilter, HistoryCategoryFilter, MovementFilter, styles, styles, DateRangeFilter, DateRangeCalendarModal() (+3 more)
+
 ### Community 91 - "runMultiUnitTests"
 Cohesion: 0.24
 Nodes (5): assert, runMultiUnitTests(), calculateBaseUnitsDeducted(), getTier(), validateStock()
 
-### Community 106 - "TransactionDetailModal.tsx"
-Cohesion: 0.22
-Nodes (9): SaleTransactionRecord, CancelExchangeCreditModal(), CancelExchangeCreditModalProps, styles, ReturnDisposition, ReturnResolution, styles, TransactionDetailModal() (+1 more)
+### Community 106 - "DashboardAnalyticsEngine.ts"
+Cohesion: 0.15
+Nodes (13): ProductVisual, AnalyticsPeriod, DashboardCashAdjustment, DashboardFinancialMetrics, DashboardSaleLineItem, DashboardSaleTransaction, DashboardTopProduct, DateFilterInput (+5 more)
 
 ### Community 107 - "StoreAlertPolicy.ts"
 Cohesion: 0.13
 Nodes (15): AlertFilter, FILTERS, styles, StoreSnapshot, parseDueAt(), ProductAlertSource, StoreAlert, StoreAlertKind (+7 more)
 
-### Community 108 - "SqliteDatabase"
-Cohesion: 0.15
-Nodes (6): expo-sqlite, SqliteDatabase, BackupDataPayload, BackupExportResult, BackupRestoreResult, DatabaseBackupService
+### Community 108 - "SoundFeedbackService.ts"
+Cohesion: 0.27
+Nodes (5): RFC-2397, expo-audio, BARCODE_BEEP_DATA_URI, BeepPlayer, SoundFeedbackService
 
 ### Community 111 - "TutorialContext.tsx"
 Cohesion: 0.13
 Nodes (20): FINGERTIP_OFFSET_X, GLOVE_ASSET, MickeyGlovePointer(), MickeyGlovePointerProps, styles, SpotlightOverlay(), styles, styles (+12 more)
 
-### Community 115 - "Money"
-Cohesion: 0.15
-Nodes (4): DashboardFinancialMetrics, PaymentDistributionItem, Money, WeightQuantitySheet()
+### Community 114 - "PosScanProductScreen"
+Cohesion: 0.20
+Nodes (10): PosScanProductScreen(), NotificationsScreen(), convertExchangeCreditToCashRefund(), lockStore(), markAlertRead(), markAllAlertsRead(), toggleBrownoutBatterySaver(), undoExchangeCreditReturn() (+2 more)
+
+### Community 115 - "StoreSettingsScreen"
+Cohesion: 0.25
+Nodes (8): StoreSettingsScreen(), clearAllDatabaseData(), enableStoreSecurity(), exportDatabaseBackup(), restoreDatabaseBackup(), retryNotificationSchedule(), setOwnerMasterPin(), setPhoneNotificationsEnabled()
 
 ### Community 117 - "ILocalNotificationScheduler"
-Cohesion: 0.22
-Nodes (5): expo-notifications, TabLayout(), ILocalNotificationScheduler, LocalNotificationRequest, ExpoLocalNotificationScheduler
+Cohesion: 0.27
+Nodes (3): ILocalNotificationScheduler, LocalNotificationRequest, ExpoLocalNotificationScheduler
 
 ### Community 118 - "more.tsx"
-Cohesion: 0.19
-Nodes (15): ConfirmationState, ConfirmationState, ConfirmationState, styles, ConfirmationState, ConfirmationState, ConfirmationState, AppUpdateMenuItem() (+7 more)
+Cohesion: 0.15
+Nodes (18): ConfirmationState, ConfirmationState, ConfirmationState, styles, ConfirmationState, ConfirmationState, ConfirmationState, AppUpdateMenuItem() (+10 more)
 
 ### Community 120 - "inventory.tsx"
 Cohesion: 0.15
@@ -385,41 +418,49 @@ Nodes (5): Android APK updates, Configuration and builds, Device behavior and re
 Cohesion: 0.50
 Nodes (3): fs, path, targetFile
 
-### Community 125 - "index.tsx"
-Cohesion: 0.13
-Nodes (17): styles, styles, phpCurrencyFormatter, ConfirmationModal(), useLicensingGate(), ProductStockManageModal(), styles, ProductThumbnail() (+9 more)
+### Community 125 - "products.tsx"
+Cohesion: 0.21
+Nodes (10): styles, phpCurrencyFormatter, ConfirmationModal(), PRESET_PESO_AMOUNTS, PRESET_WEIGHTS, styles, WeightQuantityModal(), WeightQuantityModalProps (+2 more)
 
-### Community 131 - "Product.ts"
-Cohesion: 0.18
-Nodes (10): ProductDTO, SellingUnitTier, StockStatus, UnitOfMeasure, BarcodeSource, ProductRow, ProductStockManageModalProps, styles (+2 more)
+### Community 129 - "SeasonalForecastScreen"
+Cohesion: 0.29
+Nodes (7): getLocalizedMonths(), getPhilippineSeasonInfo(), SeasonalForecastScreen(), MenuProfileScreen(), adjustInventoryStock(), getMonthlySalesHistory(), updateSettings()
+
+### Community 131 - "index.tsx"
+Cohesion: 0.16
+Nodes (17): styles, ProductDTO, SellingUnitTier, StockStatus, ProductStockManageModal(), ProductStockManageModalProps, styles, ProductThumbnail() (+9 more)
+
+### Community 133 - "apk-updater/package.json"
+Cohesion: 0.33
+Nodes (5): description, main, name, types, version
 
 ### Community 135 - "settings.tsx"
 Cohesion: 0.15
 Nodes (15): GASTOS_CATEGORIES, PANUKLI_CATEGORIES, PERIODS, styles, styles, BiometricAuthService, BiometricCapability, FloatingToast() (+7 more)
 
-### Community 136 - "DashboardAnalyticsEngine.ts"
+### Community 136 - "Money"
 Cohesion: 0.15
-Nodes (13): ProductVisual, AnalyticsPeriod, DashboardCashAdjustment, DashboardSaleLineItem, DashboardSaleTransaction, DashboardTopProduct, DateFilterInput, DateRangeFilter (+5 more)
+Nodes (4): PaymentDistributionItem, TrendBarPoint, Money, WeightQuantitySheet()
 
 ## Knowledge Gaps
-- **676 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+671 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 856 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **56 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **689 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+684 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 876 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **57 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `expo-camera` connect `package.json` to `inventory.tsx`?**
-  _High betweenness centrality (0.066) - this node is a cross-community bridge._
+  _High betweenness centrality (0.071) - this node is a cross-community bridge._
 - **Are the 58 inferred relationships involving `useTindahanStore()` (e.g. with `addCashAdjustment()` and `addCategory()`) actually correct?**
   _`useTindahanStore()` has 58 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `slug`, `version` to the rest of the system?**
-  _676 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _689 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Product` be split into smaller, more focused modules?**
-  _Cohesion score 0.08095238095238096 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07807807807807808 - nodes in this community are weakly interconnected._
 - **Should `useTindahanStore` be split into smaller, more focused modules?**
-  _Cohesion score 0.050817160367722165 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12298387096774194 - nodes in this community are weakly interconnected._
 - **Should `app-tabs.web.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._
 - **Should `expo` be split into smaller, more focused modules?**
-  _Cohesion score 0.048625792811839326 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
