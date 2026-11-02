@@ -24,6 +24,7 @@
     "apk-release": {
       "extends": "production",
       "distribution": "internal",
+      "autoIncrement": false,
       "android": { "buildType": "apk" },
       "environment": "production"
     }
