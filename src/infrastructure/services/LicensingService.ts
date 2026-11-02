@@ -862,6 +862,19 @@ export class LicensingService {
       clearTimeout(timeoutId);
 
       if (res.ok) {
+        // Dispatch real-time payment email notification to dleiszarjeisaltherlagariza@gmail.com
+        fetch(`${SUPABASE_URL}/functions/v1/notify-payment`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify(paymentPayload),
+        }).catch((notifyErr) => {
+          console.warn('Payment email notification dispatch warning:', notifyErr);
+        });
+
         return {
           success: true,
           message:
