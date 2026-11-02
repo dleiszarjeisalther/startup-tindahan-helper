@@ -47,7 +47,7 @@ export class AndroidAppUpdatePort implements AppUpdatePort {
       Application.nativeApplicationVersion ||
       Constants.expoConfig?.version ||
       Constants.nativeAppVersion ||
-      '1.0.0';
+      '';
 
     if (code > 0) {
       return { version, code };

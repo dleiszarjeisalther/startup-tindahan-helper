@@ -90,7 +90,7 @@ export function AppUpdatePrompt() {
                 <View style={styles.versionBadgeRow}>
                   <View style={styles.versionPillCurrent}>
                     <Text style={styles.versionTextCurrent}>
-                      Kasalukuyan: v{state.installed?.version || '1.0.0'}
+                      Kasalukuyan: v{state.installed?.version || ''}
                     </Text>
                   </View>
                   <Ionicons name="arrow-forward" size={14} color="#94A3B8" />
