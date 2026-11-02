@@ -1,4 +1,5 @@
 import { isRunningInExpoGo, requireOptionalNativeModule } from 'expo';
+import * as Application from 'expo-application';
 import Constants from 'expo-constants';
 import { Linking, Platform } from 'react-native';
 import { AppUpdatePort, InstalledApp } from '../../application/AppUpdateService';
@@ -28,15 +29,22 @@ export class AndroidAppUpdatePort implements AppUpdatePort {
         }
       }
     } catch {
-      // Native updater threw or unavailable; fallback to Constants
+      // Native updater threw or unavailable; fallback below
     }
 
+    const appBuildCode = Application.nativeBuildVersion ? parseInt(Application.nativeBuildVersion, 10) : 0;
+    const constBuildCode = Constants.nativeBuildVersion ? parseInt(Constants.nativeBuildVersion, 10) : 0;
+    const configCode = Constants.expoConfig?.android?.versionCode ?? 0;
+
     const code =
-      Constants.expoConfig?.android?.versionCode ??
-      (Constants.nativeBuildVersion ? parseInt(Constants.nativeBuildVersion, 10) : 0);
+      (appBuildCode > 0 ? appBuildCode : 0) ||
+      (configCode > 0 ? configCode : 0) ||
+      (constBuildCode > 0 ? constBuildCode : 0);
+
     const version =
-      Constants.expoConfig?.version ??
-      Constants.nativeAppVersion ??
+      Application.nativeApplicationVersion ||
+      Constants.expoConfig?.version ||
+      Constants.nativeAppVersion ||
       '1.0.0';
 
     if (code > 0) {
