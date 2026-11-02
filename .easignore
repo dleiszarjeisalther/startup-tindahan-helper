@@ -4,8 +4,8 @@ node_modules/
 *.apk
 *.zip
 tindahan-helper.apk
-android/
-ios/
+/android/
+/ios/
 marketing/
 graphify-out/
 dist/

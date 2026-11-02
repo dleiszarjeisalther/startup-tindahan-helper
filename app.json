@@ -7,20 +7,10 @@
     "icon": "./assets/images/icon.png",
     "scheme": "tindahanpos",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0D7A52"
-    },
     "ios": {
       "icon": "./assets/expo.icon"
     },
     "android": {
-      "splash": {
-        "image": "./assets/images/splash-icon.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#0D7A52"
-      },
       "adaptiveIcon": {
         "backgroundColor": "#0D7A52",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -33,7 +23,8 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.FOREGROUND_SERVICE",
-        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.REQUEST_INSTALL_PACKAGES"
       ],
       "package": "com.jesar.tindahanhelper",
       "backgroundColor": "#0D7A52",
