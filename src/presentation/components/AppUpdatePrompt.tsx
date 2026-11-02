@@ -1,6 +1,5 @@
 import React, { useEffect, useSyncExternalStore } from 'react';
-import { AppState, Linking, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { isRunningInExpoGo, requireOptionalNativeModule } from 'expo';
+import { AppState, Linking, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import * as WebBrowser from 'expo-web-browser';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,10 +11,6 @@ export function AppUpdatePrompt() {
   const state = useSyncExternalStore(appUpdateService.subscribe, appUpdateService.getSnapshot, appUpdateService.getSnapshot);
   const { cartSummary } = useTindahanStore();
   const insets = useSafeAreaInsets();
-  const isNativeAvailable =
-    Platform.OS === 'android' &&
-    !isRunningInExpoGo() &&
-    Boolean(requireOptionalNativeModule('ApkUpdater'));
 
   // Safe to prompt if there's no ongoing unsaved sale items in the cart
   const isSafe = cartSummary.items.length === 0;
@@ -71,10 +66,6 @@ export function AppUpdatePrompt() {
   };
 
   const handlePrimaryAction = () => {
-    if (!isNativeAvailable) {
-      handleManualBrowserDownload();
-      return;
-    }
     if (ready) {
       void appUpdateService.install();
     } else {
@@ -205,9 +196,7 @@ export function AppUpdatePrompt() {
               >
                 <Ionicons
                   name={
-                    !isNativeAvailable
-                      ? 'globe-outline'
-                      : installing
+                    installing
                       ? 'hourglass-outline'
                       : downloading
                       ? 'cloud-download-outline'
@@ -219,9 +208,7 @@ export function AppUpdatePrompt() {
                   color="#FFFFFF"
                 />
                 <Text style={styles.primaryButtonText}>
-                  {!isNativeAvailable
-                    ? 'I-download sa Browser'
-                    : installing
+                  {installing
                     ? 'Inihahanda...'
                     : downloading
                     ? `Dina-download (${percent}%)…`
@@ -247,15 +234,15 @@ export function AppUpdatePrompt() {
                 </Pressable>
               ) : null}
 
-              {/* Direct Browser Download Link (Fallback) */}
-              {state.release?.apk_url ? (
+              {/* Direct Browser Download Link (Emergency Fallback on Error) */}
+              {isError && state.release?.apk_url ? (
                 <Pressable
                   accessibilityRole="button"
                   style={styles.fallbackButton}
                   onPress={handleManualBrowserDownload}
                 >
                   <Ionicons name="globe-outline" size={15} color="#059669" />
-                  <Text style={styles.fallbackButtonText}>I-download sa Browser</Text>
+                  <Text style={styles.fallbackButtonText}>I-download sa Browser kung may aberya</Text>
                 </Pressable>
               ) : null}
             </View>

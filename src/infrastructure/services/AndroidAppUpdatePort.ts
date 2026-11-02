@@ -1,6 +1,8 @@
 import { isRunningInExpoGo, requireOptionalNativeModule } from 'expo';
 import * as Application from 'expo-application';
 import Constants from 'expo-constants';
+import { Directory, File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { Linking, Platform } from 'react-native';
 import { AppUpdatePort, InstalledApp } from '../../application/AppUpdateService';
 import { ReleaseMetadata } from '../../domain/entities/AppRelease';
@@ -59,6 +61,14 @@ export class AndroidAppUpdatePort implements AppUpdatePort {
       await this.native()?.clean();
     } catch {
       // Ignore cleanup error if native updater is missing
+    }
+    try {
+      const targetDir = new Directory(Paths.cache, 'apk-updates');
+      if (targetDir.exists) {
+        targetDir.delete();
+      }
+    } catch {
+      // Ignore cleanup error
     }
   }
   async latest(): Promise<unknown | null> {
@@ -164,28 +174,64 @@ export class AndroidAppUpdatePort implements AppUpdatePort {
   }
   async download(release: Readonly<ReleaseMetadata>, progress: (fraction: number) => void): Promise<void> {
     const native = this.native();
-    if (!native) {
-      if (release.apk_url) {
-        progress(1);
-        await Linking.openURL(release.apk_url);
+    if (native) {
+      const subscription = native.addListener('progress', event => progress(Math.max(0, Math.min(1, event.fraction))));
+      try {
+        await native.download(release.apk_url, release.sha256, release.version_code, release.size_bytes);
         return;
+      } finally {
+        subscription.remove();
       }
-      throw new Error('Hindi ma-download ang update. Pakibisita ang website para sa pinakabagong bersyon.');
     }
-    const subscription = native.addListener('progress', event => progress(Math.max(0, Math.min(1, event.fraction))));
-    try { await native.download(release.apk_url, release.sha256, release.version_code, release.size_bytes); }
-    finally { subscription.remove(); }
+
+    // Direct In-App Download Fallback (no browser redirect)
+    if (Platform.OS === 'android' && release.apk_url) {
+      const targetDir = new Directory(Paths.cache, 'apk-updates');
+      if (!targetDir.exists) {
+        targetDir.create();
+      }
+      const targetFile = new File(targetDir, 'verified.apk');
+      if (targetFile.exists) {
+        targetFile.delete();
+      }
+      progress(0.1);
+      await File.downloadFileAsync(release.apk_url, targetFile);
+      progress(1);
+      return;
+    }
+
+    throw new Error('Hindi ma-download ang update. Pakibisita ang website para sa pinakabagong bersyon.');
   }
+
   async install(release: Readonly<ReleaseMetadata>): Promise<'permission' | 'installer'> {
     const native = this.native();
-    if (!native) {
-      if (release.apk_url) {
-        await Linking.openURL(release.apk_url);
+    if (native) {
+      return native.install(release.sha256, release.version_code, release.size_bytes);
+    }
+
+    // Direct In-App Installer Fallback (triggers Android Package Installer)
+    if (Platform.OS === 'android') {
+      const targetDir = new Directory(Paths.cache, 'apk-updates');
+      const targetFile = new File(targetDir, 'verified.apk');
+      if (targetFile.exists) {
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(targetFile.uri, {
+            mimeType: 'application/vnd.android.package-archive',
+            dialogTitle: 'I-install ang Bagong Bersyon ng Tindahan Helper',
+            UTI: 'com.android.package-archive',
+          });
+          return 'installer';
+        }
+        await Linking.openURL(targetFile.uri);
         return 'installer';
       }
-      throw new Error('Hindi mabuksan ang installer. Pakisubukang i-download sa browser.');
     }
-    return native.install(release.sha256, release.version_code, release.size_bytes);
+
+    if (release.apk_url) {
+      await Linking.openURL(release.apk_url);
+      return 'installer';
+    }
+    throw new Error('Hindi mabuksan ang installer.');
   }
 }
 
