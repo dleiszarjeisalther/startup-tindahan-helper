@@ -1171,6 +1171,20 @@ export default function SukiUtangLedgerScreen() {
               </Pressable>
             </View>
           </View>
+
+          {/* In-Modal Due Date Picker Overlay */}
+          <ExpiryDatePickerModal
+            visible={dueDatePickerVisible && dueDatePickerTarget === 'add'}
+            currentDate={newCustDueDate}
+            defaultMonthOffset={0}
+            title="Petsa ng Singilan sa Utang"
+            subtitle="Pumili ng buwan, taon, at araw sa kalendaryo para sa due date"
+            onSelect={(dateStr: string) => {
+              setNewCustDueDate(dateStr);
+              setDueDatePickerVisible(false);
+            }}
+            onClose={() => setDueDatePickerVisible(false)}
+          />
         </KeyboardAvoidingView>
       </Modal>
 
@@ -1297,6 +1311,20 @@ export default function SukiUtangLedgerScreen() {
               </>
             ) : null}
           </View>
+
+          {/* In-Modal Due Date Picker Overlay for Edit */}
+          <ExpiryDatePickerModal
+            visible={dueDatePickerVisible && dueDatePickerTarget === 'edit'}
+            currentDate={editCustDueDate}
+            defaultMonthOffset={0}
+            title="Petsa ng Singilan sa Utang"
+            subtitle="Pumili ng buwan, taon, at araw sa kalendaryo para sa due date"
+            onSelect={(dateStr: string) => {
+              setEditCustDueDate(dateStr);
+              setDueDatePickerVisible(false);
+            }}
+            onClose={() => setDueDatePickerVisible(false)}
+          />
         </KeyboardAvoidingView>
       </Modal>
 
@@ -1334,23 +1362,6 @@ export default function SukiUtangLedgerScreen() {
             router.replace('/more');
           }
         }}
-      />
-
-      <ExpiryDatePickerModal
-        visible={dueDatePickerVisible}
-        currentDate={dueDatePickerTarget === 'add' ? newCustDueDate : editCustDueDate}
-        defaultMonthOffset={0}
-        title="Petsa ng Singilan sa Utang"
-        subtitle="Pumili ng buwan, taon, at araw sa kalendaryo para sa due date"
-        onSelect={(dateStr: string) => {
-          if (dueDatePickerTarget === 'add') {
-            setNewCustDueDate(dateStr);
-          } else {
-            setEditCustDueDate(dateStr);
-          }
-          setDueDatePickerVisible(false);
-        }}
-        onClose={() => setDueDatePickerVisible(false)}
       />
     </ScreenSafeAreaView>
   );
