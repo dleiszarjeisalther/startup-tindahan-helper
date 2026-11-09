@@ -27,6 +27,7 @@ import {
   ConfirmationModalDetail,
 } from '@/presentation/components/ConfirmationModal';
 import { PinChallengeModal } from '@/presentation/components/PinChallengeModal';
+import { ExpiryDatePickerModal } from '@/presentation/components/ExpiryDatePickerModal';
 
 interface ConfirmationState {
   type: ConfirmationType;
@@ -97,6 +98,8 @@ export default function SukiUtangLedgerScreen() {
   const [editCustLimit, setEditCustLimit] = useState('');
   const [editCustDueDate, setEditCustDueDate] = useState('');
   const [editCustError, setEditCustError] = useState<string | null>(null);
+  const [dueDatePickerVisible, setDueDatePickerVisible] = useState(false);
+  const [dueDatePickerTarget, setDueDatePickerTarget] = useState<'add' | 'edit'>('add');
 
   // Toast / Feedback
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -1109,15 +1112,46 @@ export default function SukiUtangLedgerScreen() {
             </View>
 
             <Text style={[styles.modalInputLabel, { marginTop: 12 }]}>Due Date (Opsyonal)</Text>
-            <TextInput
-              style={styles.modalInputField}
-              value={newCustDueDate}
-              onChangeText={setNewCustDueDate}
-              placeholder="YYYY-MM-DD — fallback ay 7 araw"
-              placeholderTextColor="#9CA3AF"
-              keyboardType="numbers-and-punctuation"
-              maxLength={10}
-            />
+            <View style={styles.expiryInputWrapper}>
+              <TextInput
+                style={styles.expiryTextInput}
+                value={newCustDueDate}
+                onChangeText={(val) => {
+                  const filtered = val.replace(/[^0-9-]/g, '').slice(0, 10);
+                  setNewCustDueDate(filtered);
+                }}
+                placeholder="YYYY-MM-DD — fallback ay 7 araw"
+                placeholderTextColor="#9CA3AF"
+                keyboardType="numbers-and-punctuation"
+                maxLength={10}
+              />
+              <View style={styles.expiryActionButtonsRow}>
+                {newCustDueDate ? (
+                  <Pressable
+                    hitSlop={8}
+                    onPress={() => setNewCustDueDate('')}
+                    style={styles.expiryClearBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel="I-clear ang due date"
+                  >
+                    <Ionicons name="close-circle" size={18} color="#94A3B8" />
+                  </Pressable>
+                ) : null}
+                <Pressable
+                  style={styles.expiryCalendarBtn}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    setDueDatePickerTarget('add');
+                    setDueDatePickerVisible(true);
+                  }}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityLabel="Pumili ng due date sa kalendaryo"
+                >
+                  <Ionicons name="calendar-outline" size={20} color="#0D7A52" />
+                </Pressable>
+              </View>
+            </View>
 
             {addModalError ? (
               <View style={styles.modalErrorContainer}>
@@ -1202,15 +1236,46 @@ export default function SukiUtangLedgerScreen() {
                 />
 
                 <Text style={[styles.modalInputLabel, { marginTop: 12 }]}>Due Date (Opsyonal)</Text>
-                <TextInput
-                  style={styles.modalInputField}
-                  value={editCustDueDate}
-                  onChangeText={setEditCustDueDate}
-                  placeholder="YYYY-MM-DD — fallback ay 7 araw"
-                  placeholderTextColor="#9CA3AF"
-                  keyboardType="numbers-and-punctuation"
-                  maxLength={10}
-                />
+                <View style={styles.expiryInputWrapper}>
+                  <TextInput
+                    style={styles.expiryTextInput}
+                    value={editCustDueDate}
+                    onChangeText={(val) => {
+                      const filtered = val.replace(/[^0-9-]/g, '').slice(0, 10);
+                      setEditCustDueDate(filtered);
+                    }}
+                    placeholder="YYYY-MM-DD — fallback ay 7 araw"
+                    placeholderTextColor="#9CA3AF"
+                    keyboardType="numbers-and-punctuation"
+                    maxLength={10}
+                  />
+                  <View style={styles.expiryActionButtonsRow}>
+                    {editCustDueDate ? (
+                      <Pressable
+                        hitSlop={8}
+                        onPress={() => setEditCustDueDate('')}
+                        style={styles.expiryClearBtn}
+                        accessibilityRole="button"
+                        accessibilityLabel="I-clear ang due date"
+                      >
+                        <Ionicons name="close-circle" size={18} color="#94A3B8" />
+                      </Pressable>
+                    ) : null}
+                    <Pressable
+                      style={styles.expiryCalendarBtn}
+                      onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                        setDueDatePickerTarget('edit');
+                        setDueDatePickerVisible(true);
+                      }}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel="Pumili ng due date sa kalendaryo"
+                    >
+                      <Ionicons name="calendar-outline" size={20} color="#0D7A52" />
+                    </Pressable>
+                  </View>
+                </View>
 
                 {editCustError ? (
                   <View style={styles.modalErrorContainer}>
@@ -1269,6 +1334,23 @@ export default function SukiUtangLedgerScreen() {
             router.replace('/more');
           }
         }}
+      />
+
+      <ExpiryDatePickerModal
+        visible={dueDatePickerVisible}
+        currentDate={dueDatePickerTarget === 'add' ? newCustDueDate : editCustDueDate}
+        defaultMonthOffset={0}
+        title="Petsa ng Singilan sa Utang"
+        subtitle="Pumili ng buwan, taon, at araw sa kalendaryo para sa due date"
+        onSelect={(dateStr: string) => {
+          if (dueDatePickerTarget === 'add') {
+            setNewCustDueDate(dateStr);
+          } else {
+            setEditCustDueDate(dateStr);
+          }
+          setDueDatePickerVisible(false);
+        }}
+        onClose={() => setDueDatePickerVisible(false)}
       />
     </ScreenSafeAreaView>
   );
@@ -2075,5 +2157,40 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '800',
     color: '#FFFFFF',
+  },
+  expiryInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    paddingLeft: 12,
+    paddingRight: 6,
+  },
+  expiryTextInput: {
+    flex: 1,
+    height: '100%',
+    color: '#0F172A',
+    fontSize: 14,
+    fontWeight: '500',
+    padding: 0,
+  },
+  expiryActionButtonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  expiryClearBtn: {
+    padding: 6,
+    marginRight: 4,
+  },
+  expiryCalendarBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: '#ECFDF5',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

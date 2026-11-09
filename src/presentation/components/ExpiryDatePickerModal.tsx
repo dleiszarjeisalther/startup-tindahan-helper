@@ -19,6 +19,7 @@ export interface ExpiryDatePickerModalProps {
   onClose: () => void;
   title?: string;
   subtitle?: string;
+  defaultMonthOffset?: number;
 }
 
 const isSameDay = (d1: Date, d2: Date): boolean => {
@@ -43,6 +44,7 @@ export const ExpiryDatePickerModal: React.FC<ExpiryDatePickerModalProps> = ({
   onClose,
   title = 'Petsa ng Expiry ng Paninda',
   subtitle = 'Pumili ng buwan, taon, at araw sa kalendaryo para sa expiry alert',
+  defaultMonthOffset = 6,
 }) => {
   const initialDate = useMemo(() => {
     if (currentDate && /^\d{4}-\d{2}-\d{2}$/.test(currentDate)) {
@@ -50,9 +52,9 @@ export const ExpiryDatePickerModal: React.FC<ExpiryDatePickerModalProps> = ({
       return new Date(parts[0], parts[1] - 1, parts[2]);
     }
     const today = new Date();
-    // Default forward by 6 months for typical sari-sari store shelf-life
-    return new Date(today.getFullYear(), today.getMonth() + 6, today.getDate());
-  }, [currentDate]);
+    // Default forward by defaultMonthOffset (6 months for typical sari-sari expiry, 0 for utang)
+    return new Date(today.getFullYear(), today.getMonth() + defaultMonthOffset, today.getDate());
+  }, [currentDate, defaultMonthOffset]);
 
   const [calendarMonth, setCalendarMonth] = useState<Date>(initialDate);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
@@ -87,7 +89,11 @@ export const ExpiryDatePickerModal: React.FC<ExpiryDatePickerModalProps> = ({
         setCalendarMonth(parsed);
       } else {
         const today = new Date();
-        const futureDefault = new Date(today.getFullYear(), today.getMonth() + 6, today.getDate());
+        const futureDefault = new Date(
+          today.getFullYear(),
+          today.getMonth() + defaultMonthOffset,
+          today.getDate()
+        );
         setSelectedDate(null);
         setCalendarMonth(futureDefault);
       }

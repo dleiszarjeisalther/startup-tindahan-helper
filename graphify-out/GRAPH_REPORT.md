@@ -1,16 +1,16 @@
-# Graph Report - startupTindahanHelper  (2026-11-02)
+# Graph Report - startupTindahanHelper  (2026-11-09)
 
 ## Corpus Check
-- 157 files · ~515,076 words
+- 157 files · ~515,572 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1679 nodes · 2811 edges · 142 communities (68 shown, 57 thin omitted)
+- 1679 nodes · 2813 edges · 142 communities (68 shown, 57 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 93 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2659fc4a`
+- Built from commit: `f082cc55`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -96,7 +96,7 @@
 - LicensingService.ts
 - @expo/ui
 - Social Media Content Strategy & Viral Video Scripts
-- utang.tsx
+- settings.tsx
 - Brand Identity & Positioning Guide
 - App Store Optimization (ASO) & Store Listing Copy
 - Marketing Collateral: Flyers, Tarpaulins & Counter Signs
@@ -133,7 +133,7 @@
 - index.tsx
 - apk-updater/package.json
 - KeyValueStorage.ts
-- settings.tsx
+- PinChallengeModal.tsx
 - Money
 - notify-payment/index.ts
 - expo-asset
@@ -342,9 +342,9 @@ Nodes (36): formatTimeRemaining(), getCompletedSalesCount(), getDeviceHardwareFi
 Cohesion: 0.20
 Nodes (9): 📅 4-Week Social Media Content Calendar, 📱 Facebook Group Seeding & Organic Strategy, Key Target Communities, Script 1: "Ang Misteryo ng Nawawalang Utang" (Relatable Drama / Comedy), Script 2: "Bakit Walang Tubo ang Tindahan Mo?" (Educational & Reality Check), Script 3: "Si Ate Joy at ang Nakalilitong Sukli" (Speed & Accuracy), Social Media Content Strategy & Viral Video Scripts, Value-First Post Templates (No Spamming) (+1 more)
 
-### Community 83 - "utang.tsx"
-Cohesion: 0.17
-Nodes (13): styles, StockMovementHistoryScreen(), SalesHistoryScreen(), FilterType, styles, SukiUtangLedgerScreen(), ScreenSafeAreaView(), dictionaries (+5 more)
+### Community 83 - "settings.tsx"
+Cohesion: 0.11
+Nodes (25): expo-router, styles, StockMovementHistoryScreen(), styles, GASTOS_CATEGORIES, PANUKLI_CATEGORIES, PERIODS, SalesHistoryScreen() (+17 more)
 
 ### Community 84 - "Brand Identity & Positioning Guide"
 Cohesion: 0.22
@@ -367,8 +367,8 @@ Cohesion: 0.18
 Nodes (12): InventoryManagementScreen(), ProductListScreen(), addCategory(), addProductToDatabase(), addToCart(), deleteCategory(), deleteProductFromDatabase(), lookupOnlineCatalog() (+4 more)
 
 ### Community 89 - "history.tsx"
-Cohesion: 0.17
-Nodes (11): expo-router, DateFilter, HistoryCategoryFilter, MovementFilter, styles, styles, DateRangeFilter, DateRangeCalendarModal() (+3 more)
+Cohesion: 0.25
+Nodes (9): DateFilter, HistoryCategoryFilter, MovementFilter, styles, DateRangeFilter, DateRangeCalendarModal(), DateRangeCalendarModalProps, isSameDay() (+1 more)
 
 ### Community 91 - "runMultiUnitTests"
 Cohesion: 0.24
@@ -434,9 +434,9 @@ Nodes (17): styles, ProductDTO, SellingUnitTier, StockStatus, ProductStockManage
 Cohesion: 0.33
 Nodes (5): description, main, name, types, version
 
-### Community 135 - "settings.tsx"
-Cohesion: 0.15
-Nodes (15): GASTOS_CATEGORIES, PANUKLI_CATEGORIES, PERIODS, styles, styles, BiometricAuthService, BiometricCapability, FloatingToast() (+7 more)
+### Community 135 - "PinChallengeModal.tsx"
+Cohesion: 0.31
+Nodes (5): BiometricAuthService, BiometricCapability, PinChallengeModal(), PinChallengeModalProps, styles
 
 ### Community 136 - "Money"
 Cohesion: 0.15

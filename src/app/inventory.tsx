@@ -1416,7 +1416,7 @@ export default function InventoryManagementScreen() {
                 >
                   {filterLabel}
                 </Text>
-                {badgeCount !== null && (filter === 'All' || filter === 'In Stock' || badgeCount > 0) ? (
+                {badgeCount !== null ? (
                   <View
                     style={[
                       styles.filterBadgePill,

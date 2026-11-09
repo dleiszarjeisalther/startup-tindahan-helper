@@ -52,6 +52,7 @@ export default function PosScanProductScreen() {
     unreadAlertCount,
     markAlertRead,
     markAllAlertsRead,
+    transactions,
   } = useTindahanStore();
   const t = getTranslations(settings?.language);
   const { isFeatureLocked, isLicensed, isRegistered } = useLicensing();
@@ -273,10 +274,37 @@ export default function PosScanProductScreen() {
     }
   };
 
+  const isTingiProduct = (p: ProductDTO): boolean => {
+    if (p.barcodeSource === 'GENERATED_TINGI' || p.barcode.startsWith('TINGI-')) return true;
+    const nameLower = p.name.toLowerCase();
+    const catLower = p.category.toLowerCase();
+    if (nameLower.includes('tingi') || catLower.includes('tingi') || nameLower.includes('sachet')) return true;
+    if (nameLower.includes('egg') || nameLower.includes('itlog')) return true;
+    if (p.defaultPricePhp > 0 && p.defaultPricePhp <= 20) return true;
+    return false;
+  };
+
+  const productSalesMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const tx of transactions) {
+      if (tx.status === 'VOIDED' || tx.transactionType === 'UTANG_PAYMENT') continue;
+      for (const item of tx.items) {
+        const netQty = Math.max(0, item.quantity - (item.returnedQty || 0));
+        map.set(item.productId, (map.get(item.productId) || 0) + netQty);
+      }
+    }
+    return map;
+  }, [transactions]);
+
+  const tingiCount = useMemo(
+    () => products.filter((p) => isTingiProduct(p)).length,
+    [products]
+  );
+
   const filteredProducts = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    return products.filter((p) => {
-      if (onlyTingi && p.barcodeSource !== 'GENERATED_TINGI' && p.defaultPricePhp > 20) {
+    const matched = products.filter((p) => {
+      if (onlyTingi && !isTingiProduct(p)) {
         return false;
       }
       if (!q) return true;
@@ -286,7 +314,34 @@ export default function PosScanProductScreen() {
         p.category.toLowerCase().includes(q)
       );
     });
-  }, [products, onlyTingi, searchQuery]);
+
+    return matched.sort((a, b) => {
+      const aTingi = isTingiProduct(a);
+      const bTingi = isTingiProduct(b);
+
+      // Put tingi on top by default
+      if (aTingi && !bTingi) return -1;
+      if (!aTingi && bTingi) return 1;
+
+      // When both are tingi, sort by sales count descending (e.g. egg product sold more => on top)
+      if (aTingi && bTingi) {
+        const aSales = productSalesMap.get(a.id) || 0;
+        const bSales = productSalesMap.get(b.id) || 0;
+        if (bSales !== aSales) {
+          return bSales - aSales;
+        }
+        return a.name.localeCompare(b.name);
+      }
+
+      // When both are non-tingi, sort by sales count descending, then by name
+      const aSales = productSalesMap.get(a.id) || 0;
+      const bSales = productSalesMap.get(b.id) || 0;
+      if (bSales !== aSales) {
+        return bSales - aSales;
+      }
+      return a.name.localeCompare(b.name);
+    });
+  }, [products, onlyTingi, searchQuery, productSalesMap]);
 
   const cartItemStatsByProductId = useMemo(() => {
     const map = new Map<
@@ -542,7 +597,7 @@ export default function PosScanProductScreen() {
               <Text
                 style={[styles.miniPillText, onlyTingi ? styles.miniPillTextActive : null]}
               >
-                ⚡ Tingi / Sachet
+                ⚡ Tingi / Sachet ({tingiCount})
               </Text>
             </Pressable>
           </View>
