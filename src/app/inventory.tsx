@@ -93,7 +93,8 @@ export default function InventoryManagementScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchScanning, setIsSearchScanning] = useState(false);
   const activeSearchScanning = isSearchScanning && isFocused;
-  const [showAddForm, setShowAddForm] = useState(products.length === 0);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const handledAutoBarcodeRef = useRef<string | null>(null);
   const [selectedModalProduct, setSelectedModalProduct] = useState<ProductDTO | null>(null);
   const [newExpiryDate, setNewExpiryDate] = useState<string>('');
   const [editExpiryDate, setEditExpiryDate] = useState<string>('');
@@ -533,7 +534,7 @@ export default function InventoryManagementScreen() {
     const markupDiff = Math.max(0, price - finalUnitCost);
 
     setConfirmDialog({
-      type: 'info',
+      type: 'update',
       title: 'Kumpirmahin ang Pagbabago',
       itemName: editName.trim(),
       message: 'Nais mo bang i-save ang mga sumusunod na pagbabago sa paninda?',
@@ -860,27 +861,36 @@ export default function InventoryManagementScreen() {
     };
   }, []);
 
+  const handleBarcodeChangeRef = useRef(handleBarcodeChange);
   useEffect(() => {
+    handleBarcodeChangeRef.current = handleBarcodeChange;
+  }, [handleBarcodeChange]);
+
+  useEffect(() => {
+    if (!isFocused) return;
     if (params.autoBarcode) {
       const code = String(params.autoBarcode).trim();
-      if (code) {
+      if (code && handledAutoBarcodeRef.current !== code) {
+        handledAutoBarcodeRef.current = code;
+        router.setParams({ autoBarcode: undefined });
         const timer = setTimeout(() => {
           setShowAddForm(true);
-          handleBarcodeChange(code, 'SCAN');
+          handleBarcodeChangeRef.current(code, 'SCAN');
         }, 0);
         return () => clearTimeout(timer);
       }
     }
-  }, [params.autoBarcode, handleBarcodeChange]);
+  }, [params.autoBarcode, isFocused, router]);
 
   useEffect(() => {
+    if (!isFocused) return;
     if (params.openAdd !== 'true') return;
+    router.setParams({ openAdd: undefined });
     const timer = setTimeout(() => {
       setShowAddForm(true);
-      router.setParams({ openAdd: undefined });
     }, 0);
     return () => clearTimeout(timer);
-  }, [params.openAdd, router]);
+  }, [params.openAdd, isFocused, router]);
 
   const handleSearchBarcodeScanned = useCallback(
     async (code: string) => {

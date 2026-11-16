@@ -21,7 +21,8 @@ export type ConfirmationType =
   | 'danger'
   | 'warning'
   | 'info'
-  | 'success';
+  | 'success'
+  | 'update';
 
 export interface ConfirmationModalDetail {
   label: string;
@@ -102,8 +103,8 @@ const THEMES: Record<ConfirmationType, TypeTheme> = {
     badgeLabel: 'PAALALA',
   },
   info: {
-    primary: '#0284C7',
-    primaryLight: '#F0F9FF',
+    primary: '#0D7A52',
+    primaryLight: '#ECFDF5',
     icon: 'information-circle-outline',
     badgeLabel: 'IMPORMASYON',
   },
@@ -112,6 +113,12 @@ const THEMES: Record<ConfirmationType, TypeTheme> = {
     primaryLight: '#ECFDF5',
     icon: 'checkmark-circle-outline',
     badgeLabel: 'TAGUMPAY',
+  },
+  update: {
+    primary: '#0D7A52',
+    primaryLight: '#ECFDF5',
+    icon: 'checkmark-circle-outline',
+    badgeLabel: 'PAGBABAGO',
   },
 };
 

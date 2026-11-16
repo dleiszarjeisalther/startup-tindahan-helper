@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Modal,
+  Share,
 } from 'react-native';
 import { ScreenSafeAreaView } from '@/presentation/components/ScreenSafeAreaView';
 import * as Haptics from 'expo-haptics';
@@ -99,7 +100,6 @@ export default function SeasonalForecastScreen() {
   const {
     products,
     settings,
-    adjustInventoryStock,
     getMonthlySalesHistory,
     updateSettings,
   } = useTindahanStore();
@@ -131,11 +131,48 @@ export default function SeasonalForecastScreen() {
     return { product: p, forecast };
   });
 
+  const selectedMonthObj = localizedMonths.find((m) => m.month === selectedTargetMonth);
+  const targetMonthName = selectedMonthObj ? selectedMonthObj.name : `Buwan ${selectedTargetMonth}`;
+
   const seasonInfo = getPhilippineSeasonInfo(selectedTargetMonth, t);
   const totalRecommendedRestockUnits = allForecasts.reduce(
     (sum, item) => sum + item.forecast.recommendedRestockQty,
     0
   );
+
+  const handleShareRecommendations = async () => {
+    try {
+      const currentYear = new Date().getFullYear();
+      const storeName = settings?.storeName || 'Tindahan Helper';
+
+      const needingRestock = allForecasts.filter((item) => item.forecast.recommendedRestockQty > 0);
+      if (needingRestock.length === 0) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        setRestockToast('Lahat ng paninda ay may sapat na stock para sa buwang ito.');
+        return;
+      }
+
+      const lines = [
+        `📋 Rekomendasyon sa Pamimili (${targetMonthName} ${currentYear})`,
+        `Tindahan: ${storeName}`,
+        '',
+        ...needingRestock.map(
+          (item) =>
+            `• ${item.product.name}: +${item.forecast.recommendedRestockQty} pcs (Kasalukuyang Stock: ${item.product.stockCount} pcs)`
+        ),
+        '',
+        '💡 Tala: Batay ito sa seasonal demand mula sa nakaraang benta.',
+      ];
+
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+      await Share.share({
+        title: `Rekomendasyon sa Pamimili - ${targetMonthName}`,
+        message: lines.join('\n'),
+      });
+    } catch (err) {
+      console.warn('[SeasonalForecast] Share error:', err);
+    }
+  };
 
   const seasonPresets = [
     {
@@ -228,6 +265,15 @@ export default function SeasonalForecastScreen() {
             {t.seasonalForecastSub}
           </Text>
         </View>
+        <Pressable
+          style={styles.headerShareBtn}
+          onPress={handleShareRecommendations}
+          hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel="I-share ang Rekomendasyon sa Pamimili"
+        >
+          <Ionicons name="share-outline" size={20} color="#FFFFFF" />
+        </Pressable>
       </View>
 
       <ScrollView
@@ -313,6 +359,21 @@ export default function SeasonalForecastScreen() {
             })}
           </View>
         </View>
+
+        {/* Share Shopping Recommendation List Button */}
+        {totalRecommendedRestockUnits > 0 ? (
+          <Pressable
+            style={styles.shareListBtn}
+            onPress={handleShareRecommendations}
+            accessibilityRole="button"
+            accessibilityLabel="I-share ang Rekomendasyon sa Pamimili"
+          >
+            <Ionicons name="share-social-outline" size={18} color="#FFFFFF" />
+            <Text style={styles.shareListBtnText}>
+              I-share ang Rekomendasyon sa Pamimili ({totalRecommendedRestockUnits} pcs)
+            </Text>
+          </Pressable>
+        ) : null}
 
         {products.length === 0 ? (
           <View style={styles.emptyCard}>
@@ -453,30 +514,17 @@ export default function SeasonalForecastScreen() {
                     </View>
                   </View>
 
-                  {/* 1-Tap Restock Action on Card */}
+                  {/* Pure Advisory Recommendation Badge */}
                   {fc.recommendedRestockQty > 0 ? (
-                    <Pressable
-                      style={styles.restockActionBtn}
-                      onPress={async () => {
-                        Haptics.notificationAsync(
-                          Haptics.NotificationFeedbackType.Success
-                        ).catch(() => {});
-                        await adjustInventoryStock({
-                          productId: fc.productId,
-                          mode: 'RESTOCK',
-                          quantity: fc.recommendedRestockQty,
-                        });
-                        setRestockToast(
-                          t.restockSuccessToast(fc.recommendedRestockQty, fc.productName)
-                        );
-                      }}
-                    >
-                      <Text style={styles.restockActionText}>
-                        {t.restockActionBtnLabel(fc.recommendedRestockQty)}
+                    <View style={styles.advisoryBadge}>
+                      <Ionicons name="bulb-outline" size={16} color="#B45309" />
+                      <Text style={styles.advisoryBadgeText}>
+                        💡 Rekomendasyon: Maghanda ng dagdag na +{fc.recommendedRestockQty} pcs bago mag-{targetMonthName}
                       </Text>
-                    </Pressable>
+                    </View>
                   ) : (
                     <View style={styles.inStockBadge}>
+                      <Ionicons name="checkmark-circle-outline" size={16} color="#15803D" />
                       <Text style={styles.inStockBadgeText}>
                         {t.inStockSufficientBadge(fc.currentStock)}
                       </Text>
@@ -584,40 +632,14 @@ export default function SeasonalForecastScreen() {
               </View>
             </ScrollView>
 
-            {/* Modal Bottom Action */}
+            {/* Modal Bottom Action (Pure Informational Close) */}
             <View style={styles.modalFooter}>
-              {detailItem && detailItem.forecast.recommendedRestockQty > 0 ? (
-                <Pressable
-                  style={styles.modalRestockBtn}
-                  onPress={async () => {
-                    Haptics.notificationAsync(
-                      Haptics.NotificationFeedbackType.Success
-                    ).catch(() => {});
-                    await adjustInventoryStock({
-                      productId: detailItem.product.id,
-                      mode: 'RESTOCK',
-                      quantity: detailItem.forecast.recommendedRestockQty,
-                    });
-                    setRestockToast(
-                      t.restockSuccessToast(detailItem.forecast.recommendedRestockQty, detailItem.product.name)
-                    );
-                    setDetailItem(null);
-                  }}
-                >
-                  <Text style={styles.modalRestockBtnText}>
-                    {t.modalRestockBtnLabel(detailItem.forecast.recommendedRestockQty)}
-                  </Text>
-                </Pressable>
-              ) : (
-                <Pressable
-                  style={styles.modalCloseDoneBtn}
-                  onPress={() => setDetailItem(null)}
-                >
-                  <Text style={styles.modalCloseDoneBtnText}>
-                    {t.modalStockSufficientCloseBtn}
-                  </Text>
-                </Pressable>
-              )}
+              <Pressable
+                style={styles.modalCloseDoneBtn}
+                onPress={() => setDetailItem(null)}
+              >
+                <Text style={styles.modalCloseDoneBtnText}>Naintindihan</Text>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -1222,5 +1244,53 @@ const styles = StyleSheet.create({
     color: '#475569',
     fontSize: 13,
     fontWeight: '700',
+  },
+  headerShareBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shareListBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#0D7A52',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 6,
+    shadowColor: '#0D7A52',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  shareListBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  advisoryBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#FEF3C7',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginTop: 4,
+  },
+  advisoryBadgeText: {
+    flex: 1,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#92400E',
+    lineHeight: 16,
   },
 });

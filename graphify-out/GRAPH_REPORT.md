@@ -1,16 +1,16 @@
-# Graph Report - startupTindahanHelper  (2026-11-09)
+# Graph Report - startupTindahanHelper  (2026-11-16)
 
 ## Corpus Check
-- 157 files · ~515,612 words
+- 157 files · ~515,896 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1679 nodes · 2813 edges · 142 communities (68 shown, 57 thin omitted)
+- 1679 nodes · 2812 edges · 142 communities (68 shown, 57 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 93 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f24d1133`
+- Built from commit: `bd7ced0b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -171,8 +171,8 @@
 ## Communities (142 total, 57 thin omitted)
 
 ### Community 1 - "useTindahanStore"
-Cohesion: 0.12
-Nodes (31): addCashAdjustment(), addManualUtangEntry(), addOrUpdateMonthlySalesRecord(), addUtangCustomer(), cancelExchangeCredit(), clearCart(), completeSale(), deleteCashAdjustment() (+23 more)
+Cohesion: 0.11
+Nodes (34): NotificationsScreen(), addCashAdjustment(), addManualUtangEntry(), addOrUpdateMonthlySalesRecord(), addUtangCustomer(), cancelExchangeCredit(), clearCart(), completeSale() (+26 more)
 
 ### Community 2 - "patch-camera-preview.cjs"
 Cohesion: 0.40
@@ -363,8 +363,8 @@ Cohesion: 0.33
 Nodes (5): 🗓️ Acquisition Milestones & Growth Goals, 💎 Core Value Propositions (The 5 Pillars), 📁 Marketing Directory Map, Startup Tindahan Helper — Marketing Kit & Strategy Hub, 🎯 Target Audience Snapshot
 
 ### Community 88 - "InventoryManagementScreen"
-Cohesion: 0.18
-Nodes (12): InventoryManagementScreen(), ProductListScreen(), addCategory(), addProductToDatabase(), addToCart(), deleteCategory(), deleteProductFromDatabase(), lookupOnlineCatalog() (+4 more)
+Cohesion: 0.25
+Nodes (8): InventoryManagementScreen(), addCategory(), adjustInventoryStock(), deleteCategory(), deleteProductFromDatabase(), setOperatingMode(), updateCategory(), updateProductImage()
 
 ### Community 89 - "history.tsx"
 Cohesion: 0.25
@@ -391,8 +391,8 @@ Cohesion: 0.13
 Nodes (20): FINGERTIP_OFFSET_X, GLOVE_ASSET, MickeyGlovePointer(), MickeyGlovePointerProps, styles, SpotlightOverlay(), styles, styles (+12 more)
 
 ### Community 114 - "PosScanProductScreen"
-Cohesion: 0.20
-Nodes (10): PosScanProductScreen(), NotificationsScreen(), convertExchangeCreditToCashRefund(), lockStore(), markAlertRead(), markAllAlertsRead(), toggleBrownoutBatterySaver(), undoExchangeCreditReturn() (+2 more)
+Cohesion: 0.18
+Nodes (12): PosScanProductScreen(), ProductListScreen(), addProductToDatabase(), addToCart(), convertExchangeCreditToCashRefund(), lockStore(), lookupOnlineCatalog(), setCartItemQuantity() (+4 more)
 
 ### Community 115 - "StoreSettingsScreen"
 Cohesion: 0.25
@@ -423,8 +423,8 @@ Cohesion: 0.21
 Nodes (10): styles, phpCurrencyFormatter, ConfirmationModal(), PRESET_PESO_AMOUNTS, PRESET_WEIGHTS, styles, WeightQuantityModal(), WeightQuantityModalProps (+2 more)
 
 ### Community 129 - "SeasonalForecastScreen"
-Cohesion: 0.29
-Nodes (7): getLocalizedMonths(), getPhilippineSeasonInfo(), SeasonalForecastScreen(), MenuProfileScreen(), adjustInventoryStock(), getMonthlySalesHistory(), updateSettings()
+Cohesion: 0.33
+Nodes (6): getLocalizedMonths(), getPhilippineSeasonInfo(), SeasonalForecastScreen(), MenuProfileScreen(), getMonthlySalesHistory(), updateSettings()
 
 ### Community 131 - "index.tsx"
 Cohesion: 0.16
@@ -459,7 +459,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Product` be split into smaller, more focused modules?**
   _Cohesion score 0.07807807807807808 - nodes in this community are weakly interconnected._
 - **Should `useTindahanStore` be split into smaller, more focused modules?**
-  _Cohesion score 0.12298387096774194 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11428571428571428 - nodes in this community are weakly interconnected._
 - **Should `app-tabs.web.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._
 - **Should `expo` be split into smaller, more focused modules?**
